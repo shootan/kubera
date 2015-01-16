@@ -1,28 +1,4 @@
-int is_log_out(DWORD *cbTransferred, SOCKET *client_sock, SOCKETINFO *ptr, SOCKADDR_IN *clientaddr, int retval) 
-{         
-	// 비동기입출력결과확인 
-	if(retval == 0 || *cbTransferred == 0) 
-	{ 
-		if(retval == 0) 
-		{ 
-			DWORD temp1, temp2; 
-			WSAGetOverlappedResult(ptr->sock, &(ptr->overlapped), 
-				&temp1, FALSE, &temp2); 
-			err_display("WSAGetOverlappedResult()"); 
-		} 
-		closesocket(ptr->sock); 
-		printf("[TCP 서버] 클라이언트종료: IP 주소= %s, 포트번호= %d \n", 
-			inet_ntoa(clientaddr->sin_addr), 
-			ntohs(clientaddr->sin_port)); 
-		/*list< SOCKET >::iterator iterEnd = list1.end();
-		for(list< int >::iterator iterPos = list1.begin(); iterPos != iterEnd; 	++iterPos )
-		{
-			
-		}*/
-		delete ptr;
-
-		return 1; 
-	} 
+int is_log_out(
 	return 0; 
 } 
 
