@@ -1,3 +1,53 @@
+
+	SOCKET client_sock = accept(*listen_sock, (SOCKADDR *)&clientaddr, &addrlen); 
+	list1.push_back(client_sock);
+	if(client_sock == INVALID_SOCKET) 
+	{ 
+		err_display("accept()"); 
+		return -1; 
+	} 
+	printf("[TCP 서버] 클라이언트접속: IP 주소= %s, 포트번호= %d \n", 
+		inet_ntoa(clientaddr.sin_addr), 
+		ntohs(clientaddr.sin_port)); 
+
+	// 소켓과입출력완료포트연결 
+	HANDLE hResult = CreateIoCompletionPort((HANDLE)client_sock, 
+		*hcp, (DWORD)client_sock, 0); 
+	if(hResult == NULL) 
+	{ 
+		err_quit("create iocp"); 
+	} 
+
+	// 소켓정보구조체할당 
+	SOCKETINFO *ptr = new SOCKETINFO; 
+	if(ptr == NULL) 
+	{ 
+		err_quit("[오류] 메모리부족!!\n"); 
+	} 
+	ZeroMemory(&(ptr->overlapped), sizeof(ptr->overlapped)); 
+	ptr->sock = client_sock; 
+	ptr->recvbytes = 0; 
+	ptr->sendbytes = 0; 
+	ptr->wsabuf.buf = ptr->buf; 
+	ptr->wsabuf.len = BUFSIZE; 
+
+	// 비동기입출력시작 
+	DWORD recvbytes; 
+	DWORD flags = 0; 
+	retval = WSARecv(client_sock, &(ptr->wsabuf), 1, &recvbytes, &flags, &(ptr->overlapped), NULL);
+	if(retval == SOCKET_ERROR) 
+	{ 
+		if(WSAGetLastError() != ERROR_IO_PENDING) 
+		{ 
+			err_display("wsarecv()"); 
+		} 
+		return -1; 
+	}
+	
+
+	return 0; 
+} 
+
 int is_log_out(DWORD *cbTransferred, SOCKET *client_sock, SOCKETINFO *ptr, SOCKADDR_IN *clientaddr, int retval) 
 {         
 	// 비동기입출력결과확인 
