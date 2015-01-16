@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 	SOCKET client_sock = accept(*listen_sock, (SOCKADDR *)&clientaddr, &addrlen); 
 	list1.push_back(client_sock);
@@ -73,6 +74,9 @@ int is_log_out(DWORD *cbTransferred, SOCKET *client_sock, SOCKETINFO *ptr, SOCKA
 
 		return 1; 
 	} 
+=======
+int is_log_out(
+>>>>>>> origin/master
 	return 0; 
 } 
 
