@@ -1,35 +1,4 @@
-//#pragma comment(lib, "ws2_32")
-//#include <winsock2.h> 
-//#include <stdlib.h> 
-//#include <stdio.h>
-//#include <list>
-//using namespace std;
-//#define BUFSIZE 512
-//// 소켓정보를저장하기위한구조체 
-//struct SOCKETINFO 
-//{ 
-//	OVERLAPPED overlapped; 
-//	//SOCKET sock; 
-//	char buf[BUFSIZE+1]; 
-//	int recvbytes; 
-//	int sendbytes; 
-//	WSABUF wsabuf; 
-//};
-//
-//list<SOCKET> list1;
-//// 소켓입출력함수 
-//DWORD WINAPI WorkerThread(LPVOID arg);
-//// 오류출력함수 
-//void err_quit(char *msg); 
-//void err_display(char *msg); 
-//
-//int accept_proc(SOCKET *listen_sock, HANDLE *hcp) 
-//{ 
-//	
-//	int retval; 
-//	// accept() 
-//	SOCKADDR_IN clientaddr; 
-//	int addrlen = sizeof(clientaddr); 
+
 	SOCKET client_sock = accept(*listen_sock, (SOCKADDR *)&clientaddr, &addrlen); 
 	list1.push_back(client_sock);
 	if(client_sock == INVALID_SOCKET) 
