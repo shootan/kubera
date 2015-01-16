@@ -4,17 +4,7 @@
 #include <stdio.h>
 #include <list>
 using namespace std;
-#define BUFSIZE 512
-// 소켓정보를저장하기위한구조체 
-struct SOCKETINFO 
-{ 
-	OVERLAPPED overlapped; 
-	SOCKET sock; 
-	char buf[BUFSIZE+1]; 
-	int recvbytes; 
-	int sendbytes; 
-	WSABUF wsabuf; 
-};
+
 
 list<SOCKET> list1;
 // 소켓입출력함수 
@@ -33,7 +23,7 @@ int accept_proc(SOCKET *listen_sock, HANDLE *hcp)
 	SOCKET client_sock = accept(*listen_sock, (SOCKADDR *)&clientaddr, &addrlen); 
 	list1.push_back(client_sock);
 	if(client_sock == INVALID_SOCKET) 
-	{ 
+	{ asfasdfasdf
 		err_display("accept()"); 
 		return -1; 
 	} 
@@ -42,19 +32,7 @@ int accept_proc(SOCKET *listen_sock, HANDLE *hcp)
 		ntohs(clientaddr.sin_port)); 
 
 	// 소켓과입출력완료포트연결 
-	HANDLE hResult = CreateIoCompletionPort((HANDLE)client_sock, 
-		*hcp, (DWORD)client_sock, 0); 
-	if(hResult == NULL) 
-	{ 
-		err_quit("create iocp"); 
-	} 
 
-	// 소켓정보구조체할당 
-	SOCKETINFO *ptr = new SOCKETINFO; 
-	if(ptr == NULL) 
-	{ 
-		err_quit("[오류] 메모리부족!!\n"); 
-	} 
 	ZeroMemory(&(ptr->overlapped), sizeof(ptr->overlapped)); 
 	ptr->sock = client_sock; 
 	ptr->recvbytes = 0; 
