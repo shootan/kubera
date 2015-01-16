@@ -1,26 +1,142 @@
-﻿빌드 시작: 2015-01-09 오후 4:58:09
-     1>2 노드의 "C:\Users\Cho\Documents\Visual Studio 2010\Projects\IOCP ex\IOCP ex\IOCP ex.vcxproj" 프로젝트(build 대상)입니다.
+﻿빌드 시작: 2015-01-16 오후 4:20:15
+     1>2 노드의 "C:\Users\유지헌\Documents\GitHub\kubera-1\IOCP ex\IOCP ex\IOCP ex.vcxproj" 프로젝트(build 대상)입니다.
      1>InitializeBuildStatus:
-         "Debug\IOCP ex.unsuccessfulbuild"에 연결(touching)하고 있습니다.
+         "AlwaysCreate"이(가) 지정되었기 때문에 "Debug\IOCP ex.unsuccessfulbuild"을(를) 만들고 있습니다.
        ClCompile:
-         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt test.cpp
-         test.cpp
-       ManifestResourceCompile:
-         모든 출력이 최신 상태입니다.
-       Link:
-         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Cho\Documents\Visual Studio 2010\Projects\IOCP ex\Debug\IOCP ex.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\IOCP ex.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\Cho\Documents\Visual Studio 2010\Projects\IOCP ex\Debug\IOCP ex.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Cho\Documents\Visual Studio 2010\Projects\IOCP ex\Debug\IOCP ex.lib" /MACHINE:X86 "Debug\IOCP ex.exe.embed.manifest.res"
-         Debug\test.obj
-       Manifest:
-         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"Debug\IOCP ex.exe.embed.manifest" /manifest "Debug\IOCP ex.exe.intermediate.manifest"
-         모든 출력이 최신 상태입니다.
-       LinkEmbedManifest:
-         모든 출력이 최신 상태입니다.
-         IOCP ex.vcxproj -> C:\Users\Cho\Documents\Visual Studio 2010\Projects\IOCP ex\Debug\IOCP ex.exe
-       FinalizeBuildStatus:
-         "Debug\IOCP ex.unsuccessfulbuild" 파일을 삭제하고 있습니다.
-         "Debug\IOCP ex.lastbuildstate"에 연결(touching)하고 있습니다.
-     1>"C:\Users\Cho\Documents\Visual Studio 2010\Projects\IOCP ex\IOCP ex\IOCP ex.vcxproj" 프로젝트를 빌드했습니다(build 대상).
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt Main.cpp
+         Main.cpp
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(33): error C2146: 구문 오류 : ';'이(가) 'client_sock' 식별자 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(33): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(33): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(33): error C2065: 'listen_sock' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(33): error C2065: 'SOCKADDR' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(33): error C2059: 구문 오류 : ')'
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(34): error C2143: 구문 오류 : ';'이(가) '.' 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(34): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(35): error C2059: 구문 오류 : 'if'
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(36): error C2143: 구문 오류 : ';'이(가) '{' 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(36): error C2447: '{' : 함수 헤더가 없습니다. 이전 스타일의 형식 목록입니까?
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(41): error C2065: 'clientaddr' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(41): error C2228: '.sin_addr' 왼쪽에는 클래스/구조체/공용 구조체가 있어야 합니다.
+                 ''unknown-type'' 형식입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(41): error C3861: 'inet_ntoa': 식별자를 찾을 수 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(42): error C2065: 'clientaddr' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(42): error C2228: '.sin_port' 왼쪽에는 클래스/구조체/공용 구조체가 있어야 합니다.
+                 ''unknown-type'' 형식입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(42): error C3861: 'ntohs': 식별자를 찾을 수 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(42): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(42): error C2078: 이니셜라이저가 너무 많습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(45): error C2146: 구문 오류 : ';'이(가) 'hResult' 식별자 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(45): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(45): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(45): error C2146: 구문 오류 : ')'이(가) 'client_sock' 식별자 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(45): error C3861: 'CreateIoCompletionPort': 식별자를 찾을 수 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(46): error C2059: 구문 오류 : ')'
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(47): error C2059: 구문 오류 : 'if'
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(48): error C2143: 구문 오류 : ';'이(가) '{' 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(48): error C2447: '{' : 함수 헤더가 없습니다. 이전 스타일의 형식 목록입니까?
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(53): error C2143: 구문 오류 : ';'이(가) '*' 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(53): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(53): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(53): error C2061: 구문 오류 : 식별자 'SOCKETINFO'
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(55): error C2143: 구문 오류 : ';'이(가) '{' 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(55): error C2447: '{' : 함수 헤더가 없습니다. 이전 스타일의 형식 목록입니까?
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(58): error C2227: '->overlapped' 왼쪽은 클래스/구조체/공용 구조체/제네릭 형식을 가리켜야 합니다.
+                 'int *' 형식입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(58): error C2227: '->overlapped' 왼쪽은 클래스/구조체/공용 구조체/제네릭 형식을 가리켜야 합니다.
+                 'int *' 형식입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(58): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(58): error C2078: 이니셜라이저가 너무 많습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(59): error C2143: 구문 오류 : ';'이(가) '->' 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(59): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(59): error C2040: 'ptr' : 'int'의 간접 참조 수준이 'int *'과(와) 다릅니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(60): error C2143: 구문 오류 : ';'이(가) '->' 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(60): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(60): error C2040: 'ptr' : 'int'의 간접 참조 수준이 'int *'과(와) 다릅니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(61): error C2143: 구문 오류 : ';'이(가) '->' 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(61): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(61): error C2040: 'ptr' : 'int'의 간접 참조 수준이 'int *'과(와) 다릅니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(62): error C2143: 구문 오류 : ';'이(가) '->' 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(62): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(62): error C2040: 'ptr' : 'int'의 간접 참조 수준이 'int *'과(와) 다릅니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(63): error C2143: 구문 오류 : ';'이(가) '->' 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(63): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(63): error C2040: 'ptr' : 'int'의 간접 참조 수준이 'int *'과(와) 다릅니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(66): error C2146: 구문 오류 : ';'이(가) 'recvbytes' 식별자 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(66): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(66): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(67): error C2146: 구문 오류 : ';'이(가) 'flags' 식별자 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(67): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(67): error C2086: 'int DWORD' : 재정의
+                 c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(66) : 'DWORD' 선언을 참조하십시오.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(67): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(68): error C4430: 형식 지정자가 없습니다. int로 가정합니다. 참고: C++에서는 기본 int를 지원하지 않습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(68): error C2227: '->wsabuf' 왼쪽은 클래스/구조체/공용 구조체/제네릭 형식을 가리켜야 합니다.
+                 'int *' 형식입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(68): error C2227: '->overlapped' 왼쪽은 클래스/구조체/공용 구조체/제네릭 형식을 가리켜야 합니다.
+                 'int *' 형식입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(68): error C2065: 'NULL' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(68): error C3861: 'WSARecv': 식별자를 찾을 수 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(69): error C2059: 구문 오류 : 'if'
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(70): error C2143: 구문 오류 : ';'이(가) '{' 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(70): error C2447: '{' : 함수 헤더가 없습니다. 이전 스타일의 형식 목록입니까?
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(79): error C2059: 구문 오류 : 'return'
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(80): error C2059: 구문 오류 : '}'
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(80): error C2143: 구문 오류 : ';'이(가) '}' 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(80): error C2059: 구문 오류 : '}'
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(83): error C2143: 구문 오류 : ';'이(가) '{' 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(83): error C2447: '{' : 함수 헤더가 없습니다. 이전 스타일의 형식 목록입니까?
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(110): error C2297: '*' : 오른쪽 피연산자 형식으로 'int *'을(를) 사용할 수 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(111): error C2448: 'send_proc' : 함수 스타일 이니셜라이저가 함수 정의처럼 나타납니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(133): error C2297: '*' : 오른쪽 피연산자 형식으로 'int *'을(를) 사용할 수 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(134): error C2448: 'recv_proc' : 함수 스타일 이니셜라이저가 함수 정의처럼 나타납니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(163): error C2512: 'main::Stack' : 사용할 수 있는 적절한 기본 생성자가 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(164): error C2027: 정의되지 않은 형식 'main::Stack'을(를) 사용했습니다.
+                 c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(162) : 'main::Stack' 선언을 참조하십시오.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(164): error C2227: '->Count' 왼쪽은 클래스/구조체/공용 구조체/제네릭 형식을 가리켜야 합니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(167): error C2065: 'WSADATA' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(167): error C2146: 구문 오류 : ';'이(가) 'wsa' 식별자 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(167): error C2065: 'wsa' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(168): error C2065: 'wsa' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(168): error C3861: 'WSAStartup': 식별자를 찾을 수 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(168): error C3861: 'MAKEWORD': 식별자를 찾을 수 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(171): error C3861: 'WSAGetLastError': 식별자를 찾을 수 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(174): error C2146: 구문 오류 : ';'이(가) 'hcp' 식별자 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(174): error C2065: 'hcp' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(174): error C2065: 'INVALID_HANDLE_VALUE' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(174): error C2065: 'NULL' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(174): error C3861: 'CreateIoCompletionPort': 식별자를 찾을 수 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(175): error C2065: 'hcp' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(175): error C2065: 'NULL' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(179): error C2065: 'SYSTEM_INFO' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(179): error C2146: 구문 오류 : ';'이(가) 'si' 식별자 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(179): error C2065: 'si' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(180): error C2065: 'si' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(180): error C3861: 'GetSystemInfo': 식별자를 찾을 수 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(183): error C2146: 구문 오류 : ';'이(가) 'hThread' 식별자 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(183): error C2065: 'hThread' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(184): error C2146: 구문 오류 : ';'이(가) 'ThreadId' 식별자 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(184): error C2065: 'ThreadId' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(185): error C2065: 'si' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(185): error C2228: '.dwNumberOfProcessors' 왼쪽에는 클래스/구조체/공용 구조체가 있어야 합니다.
+                 ''unknown-type'' 형식입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(187): error C2065: 'hThread' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(187): error C2065: 'NULL' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(187): error C2065: 'WorkerThread' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(187): error C2065: 'hcp' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(187): error C2065: 'ThreadId' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(187): error C3861: 'CreateThread': 식별자를 찾을 수 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(188): error C2065: 'hThread' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(188): error C2065: 'NULL' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(190): error C2065: 'hThread' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(190): error C3861: 'CloseHandle': 식별자를 찾을 수 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(194): error C2146: 구문 오류 : ';'이(가) 'listen_sock' 식별자 앞에 없습니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(194): error C2065: 'listen_sock' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(194): error C2065: 'AF_INET' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(194): error C2065: 'SOCK_STREAM' : 선언되지 않은 식별자입니다.
+     1>c:\users\유지헌\documents\github\kubera-1\iocp ex\iocp ex\main.cpp(194): fatal error C1003: 오류 수가 100개를 초과했습니다. 컴파일을 중지합니다.
+     1>"C:\Users\유지헌\Documents\GitHub\kubera-1\IOCP ex\IOCP ex\IOCP ex.vcxproj" 프로젝트를 빌드했습니다(build 대상). - 실패
 
-빌드했습니다.
+빌드하지 못했습니다.
 
-경과 시간: 00:00:01.18
+경과 시간: 00:00:00.61
