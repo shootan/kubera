@@ -3,8 +3,9 @@
 
 class Network 
 {
-private:
+protected:
 	SOCKET m_ListenSock;
+	SOCKET m_ConnectSock;
 	WSADATA m_Wsa;
 	
 public:
@@ -12,6 +13,8 @@ public:
 	~Network();
 
 	BOOL InitServer(int _port);
+	BOOL InitClient(char *_ip, int _port);
+
 	void ShutDown();
 
 };

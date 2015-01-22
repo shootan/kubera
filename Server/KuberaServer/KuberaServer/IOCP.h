@@ -14,7 +14,7 @@ struct IOBuffer{
 class IOCPServer : public Network
 {
 private:
-	//버퍼 관리
+	//버퍼를 리스트로 관리해줄 포인터
 	IOBuffer* m_pNextBufferList;
 
 	//IO핸들
@@ -23,6 +23,7 @@ private:
 public:
 	BOOL StartServer(int port);
 	BOOL InitThread();
+	void CreateBuffer(IOBuffer* buffer);
 
 private: 
 	DWORD WINAPI ListenThread(LPVOID arg);
