@@ -20,12 +20,16 @@ private:
 	//IO핸들
 	HANDLE m_hIO;
 
+	IOCPServer();
+	~IOCPServer();
+
 public:
 	BOOL StartServer(int port);
 	BOOL InitThread();
 	void CreateBuffer(IOBuffer* buffer);
 
 private: 
+	//스레드
 	DWORD WINAPI ListenThread(LPVOID arg);
 	DWORD WINAPI WorkerThread(LPVOID arg);
 

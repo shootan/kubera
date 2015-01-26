@@ -95,16 +95,16 @@ LRESULT CALLBACK MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bo
 void CALLBACK OnKeyboard( UINT nChar, bool bKeyDown, bool bAltDown, void* pUserContext );
 void CALLBACK OnGUIEvent( UINT nEvent, int nControlID, CDXUTControl* pControl, void* pUserContext );
 
-extern bool CALLBACK IsD3D9DeviceAcceptable( D3DCAPS9* pCaps, D3DFORMAT AdapterFormat, D3DFORMAT BackBufferFormat,
-                                             bool bWindowed, void* pUserContext );
-extern HRESULT CALLBACK OnD3D9CreateDevice( IDirect3DDevice9* pd3dDevice,
-                                            const D3DSURFACE_DESC* pBackBufferSurfaceDesc, void* pUserContext );
-extern HRESULT CALLBACK OnD3D9ResetDevice( IDirect3DDevice9* pd3dDevice, const D3DSURFACE_DESC* pBackBufferSurfaceDesc,
-                                           void* pUserContext );
-extern void CALLBACK OnD3D9FrameRender( IDirect3DDevice9* pd3dDevice, double fTime, float fElapsedTime,
-                                        void* pUserContext );
-extern void CALLBACK OnD3D9LostDevice( void* pUserContext );
-extern void CALLBACK OnD3D9DestroyDevice( void* pUserContext );
+//extern bool CALLBACK IsD3D9DeviceAcceptable( D3DCAPS9* pCaps, D3DFORMAT AdapterFormat, D3DFORMAT BackBufferFormat,
+//                                             bool bWindowed, void* pUserContext );
+//extern HRESULT CALLBACK OnD3D9CreateDevice( IDirect3DDevice9* pd3dDevice,
+//                                            const D3DSURFACE_DESC* pBackBufferSurfaceDesc, void* pUserContext );
+//extern HRESULT CALLBACK OnD3D9ResetDevice( IDirect3DDevice9* pd3dDevice, const D3DSURFACE_DESC* pBackBufferSurfaceDesc,
+//                                           void* pUserContext );
+//extern void CALLBACK OnD3D9FrameRender( IDirect3DDevice9* pd3dDevice, double fTime, float fElapsedTime,
+//                                        void* pUserContext );
+//extern void CALLBACK OnD3D9LostDevice( void* pUserContext );
+//extern void CALLBACK OnD3D9DestroyDevice( void* pUserContext );
 
 bool CALLBACK IsD3D11DeviceAcceptable(const CD3D11EnumAdapterInfo *AdapterInfo, UINT Output, const CD3D11EnumDeviceInfo *DeviceInfo,
                                        DXGI_FORMAT BackBufferFormat, bool bWindowed, void* pUserContext );
@@ -214,12 +214,6 @@ HRESULT LoadFBX(const char* filename, std::vector<FBXVertex>* pOutVertexVector, 
 					vertices[j*3+k].norm.y = fbxVecNorm.mData[1];
 					vertices[j*3+k].norm.z = fbxVecNorm.mData[2];
 
-					//uv
-					//char szTmp[256];
-					//sprintf(szTmp, "%d,%d == pos : %f %f %f   norm : %f %f %f \n", j,k,
-					//	vertex.pos.x, vertex.pos.y, vertex.pos.z,
-					//	vertex.norm.x, vertex.norm.y, vertex.norm.z);
-					//OutputDebugStringA(szTmp);
 					pOutVertexVector->push_back(vertices[j*3+k]);
 				}
 			}
@@ -402,12 +396,12 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
     DXUTSetCallbackFrameMove( OnFrameMove );
 
 
-    DXUTSetCallbackD3D9DeviceAcceptable( IsD3D9DeviceAcceptable );
+   /* DXUTSetCallbackD3D9DeviceAcceptable( IsD3D9DeviceAcceptable );
     DXUTSetCallbackD3D9DeviceCreated( OnD3D9CreateDevice );
     DXUTSetCallbackD3D9DeviceReset( OnD3D9ResetDevice );
     DXUTSetCallbackD3D9FrameRender( OnD3D9FrameRender );
     DXUTSetCallbackD3D9DeviceLost( OnD3D9LostDevice );
-    DXUTSetCallbackD3D9DeviceDestroyed( OnD3D9DestroyDevice );
+    DXUTSetCallbackD3D9DeviceDestroyed( OnD3D9DestroyDevice );*/
 
 
     DXUTSetCallbackD3D11DeviceAcceptable( IsD3D11DeviceAcceptable );
@@ -867,19 +861,8 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
 
     for( UINT subset = 0; subset < 1; ++subset )
     {
-        // Get the subset
-        //pSubset = g_Mesh11.GetSubset( 0, subset );
-
-        //PrimType = CDXUTSDKMesh::GetPrimitiveType11( ( SDKMESH_PRIMITIVE_TYPE )pSubset->PrimitiveType );
-
 		pd3dImmediateContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 
-        // TODO: D3D11 - material loading
-		//ID3D11ShaderResourceView* pDiffuseRV = g_Mesh11.GetMaterial( pSubset->MaterialID )->pDiffuseRV11;
-		//pd3dImmediateContext->PSSetShaderResources( 0, 1, &pDiffuseRV );
-
-
-		//pd3dImmediateContext->DrawIndexed( ( UINT )pSubset->IndexCount, 0, ( UINT )pSubset->VertexStart );
 		pd3dImmediateContext->Draw(m_verts.size(), 0);
     }
 

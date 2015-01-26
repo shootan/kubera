@@ -23,7 +23,7 @@
 //--------------------------------------------------------------------------------------
 extern CDXUTDialogResourceManager   g_DialogResourceManager; // manager for shared resources of dialogs
 extern CModelViewerCamera           g_Camera;               // A model viewing camera
-extern CDXUTDirectionWidget g_LightControl;
+extern CDXUTDirectionWidget			g_LightControl;
 extern CD3DSettingsDlg              g_D3DSettingsDlg;       // Device settings dialog
 extern CDXUTDialog                  g_HUD;                  // manages the 3D   
 extern CDXUTDialog                  g_SampleUI;             // dialog for sample specific controls
