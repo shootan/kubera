@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "IOCP.h"
 
-static IOCPServer Server;
+IOCPServer Server;
 int main()
 {
 	Server.StartServer(9000);

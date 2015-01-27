@@ -10,4 +10,9 @@
 // BUFSIZE
 #define BUFSIZE 1024*2
 
-
+// STATE
+struct UserState{
+#define CONNECT		0
+#define WAIT			1
+#define PLAYGAME		2
+};
