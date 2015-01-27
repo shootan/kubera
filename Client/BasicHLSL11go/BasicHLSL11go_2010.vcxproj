@@ -406,7 +406,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BasicHLSL11go.cpp" />
-    <ClCompile Include="BasicHLSL9.cpp" />
+    <ClCompile Include="BasicHLSL9.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="BasicHLSL11go_VS.hlsl" />

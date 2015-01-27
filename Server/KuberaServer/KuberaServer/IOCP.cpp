@@ -1,5 +1,16 @@
 #include "IOCP.h"
 
+IOCPServer::IOCPServer()
+{
+	m_pNextBufferList = NULL;
+	m_hIO = NULL;
+}
+
+IOCPServer::~IOCPServer()
+{
+
+}
+
 BOOL IOCPServer::StartServer(int port)
 {
 	m_hIO = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0); 
@@ -36,11 +47,13 @@ DWORD WINAPI IOCPServer::ListenThread(LPVOID arg)
 		//버퍼 생성
 		IOBuffer* buffer = new IOBuffer;
 		ZeroMemory(buffer, sizeof(IOBuffer));
-
-
+		buffer->m_pNext = m_pNextBufferList;
+		m_pNextBufferList = buffer;
 
 		//버퍼생성후 Recv로 대기.
 		//WSARecv(client_sock, )
+
+
 		
 	}
 
