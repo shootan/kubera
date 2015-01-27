@@ -15,6 +15,7 @@
 #include "resource.h"
 #include <fbxsdk.h>
 #include <vector>
+#include "Textureclass.h"
 
 //--------------------------------------------------------------------------------------
 // Global variables
@@ -45,11 +46,13 @@ ID3D11SamplerState*         g_pSamLinear = NULL;
 
 
 int g_vertexCount, g_indexCount;
+CTextureclass* g_Texture = NULL;
 
 struct FBXVertex
 {
 	D3DXVECTOR3 pos;
 	D3DXVECTOR3 norm;
+	D3DXVECTOR2 uv;
 };
 typedef std::vector<FBXVertex> FBXVERTS;
 FBXVERTS m_verts;
@@ -126,6 +129,9 @@ HRESULT LoadFBX(const char* filename, std::vector<FBXVertex>* pOutVertexVector, 
 HRESULT OnCreateFBXDevice(ID3D11Device* pd3dDevice);
 bool ComputeBoundingSphereFromList(D3DXVECTOR3& outCenter, float& outRadius);
 bool ComputeBoundingSphereFromList(D3DXVECTOR3& outCenter, float& outRadius, FBXVERTS& verts);
+bool LoadTexture(ID3D11Device* pd3dDevice, WCHAR* filename);
+void ReleaseTexture();
+
 
 HRESULT OnCreateFBXDevice(ID3D11Device* pd3dDevice)
 {
@@ -185,6 +191,13 @@ HRESULT LoadFBX(const char* filename, std::vector<FBXVertex>* pOutVertexVector, 
 
 			FbxMesh* pMesh = (FbxMesh*)pFbxChildNode->GetNodeAttribute();
 
+			FbxGeometryElementUV* IUVElement = pMesh->GetElementUV(0);
+			if(!IUVElement)
+				return S_FALSE;
+
+			if(IUVElement->GetMappingMode() != FbxGeometryElement::eByPolygonVertex && IUVElement->GetMappingMode() != FbxGeometryElement::eByControlPoint)
+				return S_FALSE;
+
 			FbxVector4* pVertices = pMesh->GetControlPoints();
 
 			int ployCount = pMesh->GetPolygonCount();
@@ -215,11 +228,11 @@ HRESULT LoadFBX(const char* filename, std::vector<FBXVertex>* pOutVertexVector, 
 					vertices[j*3+k].norm.z = fbxVecNorm.mData[2];
 
 					//uv
-					//char szTmp[256];
-					//sprintf(szTmp, "%d,%d == pos : %f %f %f   norm : %f %f %f \n", j,k,
-					//	vertex.pos.x, vertex.pos.y, vertex.pos.z,
-					//	vertex.norm.x, vertex.norm.y, vertex.norm.z);
-					//OutputDebugStringA(szTmp);
+					int ITextureUVIndex = pMesh->GetTextureUVIndex(j, k);
+					FbxVector2 fbxVecUV = IUVElement->GetDirectArray().GetAt(ITextureUVIndex);
+					vertices[j*3+k].uv.x = (float)fbxVecUV.mData[0];
+					vertices[j*3+k].uv.y = 1- (float)fbxVecUV.mData[1];
+
 					pOutVertexVector->push_back(vertices[j*3+k]);
 				}
 			}
@@ -267,6 +280,37 @@ HRESULT LoadFBX(const char* filename, std::vector<FBXVertex>* pOutVertexVector, 
 	pd3dDevice->CreateBuffer(&indexBufferDesc, &indexData, &g_pIndexBuffer);
 
 	return S_OK;
+}
+
+bool LoadTexture(ID3D11Device* pd3dDevice, WCHAR* filename)
+{
+	bool result;
+
+	g_Texture = new CTextureclass;
+	if(!g_Texture)
+	{
+		return false;
+	}
+
+	result = g_Texture->Initialize(pd3dDevice, filename);
+	if(!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void ReleaseTexture()
+{
+	if(g_Texture)
+	{
+		g_Texture->Release();
+		delete g_Texture;
+		g_Texture = 0;
+	}
+
+	return;
 }
 
 bool ComputeBoundingSphereFromList(D3DXVECTOR3& outCenter, float& outRadius)
@@ -660,6 +704,7 @@ HRESULT CALLBACK OnD3D11CreateDevice( ID3D11Device* pd3dDevice, const DXGI_SURFA
 	//load fbx
 
 	OnCreateFBXDevice(pd3dDevice);
+	LoadTexture(pd3dDevice, L"hill.tif");
 	ComputeBoundingSphereFromList(vCenter, fObjectRadius);
 
     D3DXMatrixTranslation( &g_mCenterMesh, -vCenter.x, -vCenter.y, -vCenter.z );
@@ -689,7 +734,7 @@ HRESULT CALLBACK OnD3D11CreateDevice( ID3D11Device* pd3dDevice, const DXGI_SURFA
     {
         { "POSITION",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "NORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-       // { "TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT,    0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT,    0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 
     V_RETURN( pd3dDevice->CreateInputLayout( layout, ARRAYSIZE( layout ), pVertexShaderBuffer->GetBufferPointer(),
@@ -880,6 +925,7 @@ void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext*
 
 
 		//pd3dImmediateContext->DrawIndexed( ( UINT )pSubset->IndexCount, 0, ( UINT )pSubset->VertexStart );
+		pd3dImmediateContext->PSSetShaderResources(0, 1, g_Texture->GetTextureA());
 		pd3dImmediateContext->Draw(m_verts.size(), 0);
     }
 
@@ -910,6 +956,7 @@ void CALLBACK OnD3D11DestroyDevice( void* pUserContext )
     //CDXUTDirectionWidget::StaticOnD3D11DestroyDevice();
     DXUTGetGlobalResourceCache().OnDestroyDevice();
     SAFE_DELETE( g_pTxtHelper );
+	ReleaseTexture();
 
     g_Mesh11.Destroy();
                 
