@@ -39,6 +39,20 @@ BOOL IOCPServer::InitThread()
 	DWORD ThreadID;
 	
 	m_hListenThread = CreateThread(NULL, 0, ListenThread, this, 0, &ThreadID);
+	if(m_hListenThread == NULL)
+		return FALSE;
+
+	// CPU 갯수확인 
+	SYSTEM_INFO si; 
+	GetSystemInfo(&si); 
+
+	// (CPU 개수* 2)개의작업자스레드생성 
+	for(int i=0; i < (int)si.dwNumberOfProcessors*2; ++i) 
+	{ 
+		m_hWorkerThread = CreateThread(NULL, 0, WorkerThread, this, 0, &ThreadID); 
+		if(m_hWorkerThread == NULL) 
+			return FALSE;
+	} 
 	return TRUE;
 }
 
@@ -95,11 +109,28 @@ DWORD WINAPI IOCPServer::WorkerThread(LPVOID arg)
 	int retval = 0;
 	DWORD dwSize;
 	IOBuffer* buff;
+	IOCPServer* server = (IOCPServer*)arg;
 	while(1)
 	{
-		//GetQueuedCompletionStatus(m_hIO, &dwSize, (PULONG_PTR)&buff, (LPOVERLAPPED*)&buff->m_Overlapped, INFINITE);
+		GetQueuedCompletionStatus(server->m_hIO, &dwSize, (PULONG_PTR)&buff, (LPOVERLAPPED*)&buff->m_Overlapped, INFINITE);
 
-		//switch(buff->m_Buf)
+		// 클라이언트정보얻기 
+		SOCKADDR_IN clientaddr; 
+		int addrlen = sizeof(clientaddr); 
+		getpeername(buff->m_ClientSock, (SOCKADDR*)&clientaddr, &addrlen); 
+
+		if(dwSize == 0)
+		{
+			break;
+		}
+		else
+		{
+			DWORD b;
+			b= dwSize;
+
+		}
+
+		
 	}
 	return 0;
 }
