@@ -2,25 +2,32 @@
 #include "Network.h"
 
 
+typedef enum OPCODE
+{
+	OP_INIT,
+	OP_RECV,
+	OP_RECV_DONE
+} OPCODE;
 
 struct IOBuffer{
-	SOCKET m_ClientSock;
-	OVERLAPPED m_Overlapped; 
-	char m_Buf[BUFSIZE+1]; 
-	int recvbytes; 
-	int sendbytes; 
-	WSABUF wsabuf;
-	IOBuffer *m_pNext;
+	SOCKET		m_ClientSock;
+	OVERLAPPED	m_Overlapped; 
+	char		m_Buf[BUFSIZE+1]; 
+	int			m_iRecvbytes; 
+	int			m_iSendbytes; 
+	WSABUF		m_Wsabuf;
+	OPCODE		m_Opcode;
+	IOBuffer*	m_pNext;
 };
 
 class IOCPServer : public Network
 {
 private: 
 	//스레드
-	static DWORD WINAPI ListenThread(LPVOID arg);
-	static DWORD WINAPI WorkerThread(LPVOID arg);
+	static UINT WINAPI ListenThread(LPVOID arg);
+	static UINT WINAPI WorkerThread(LPVOID arg);
 
-	public:
+public:
 	//버퍼를 리스트로 관리해줄 포인터
 	IOBuffer* m_pNextBufferList;
 
@@ -36,10 +43,14 @@ private:
 	//
 	BOOL m_bServerStart;
 	BOOL m_bServerShutDown;
-	
 
-	
+	//OpCode
+	void OnInit(IOBuffer* _buff);
+	void OnRecv(IOBuffer* _buff, char* _recvBuff, int _size);
+	void OnRecvFinish(IOBuffer* _buff, DWORD _size);
 
+	void SetOpCode(IOBuffer* _buff, OPCODE _opCode);
+	
 public:
 	IOCPServer();
 	~IOCPServer();
@@ -47,7 +58,4 @@ public:
 	BOOL StartServer(int port);
 	BOOL InitThread();
 	void CreateBuffer(IOBuffer* buffer);
-
-
-
 };

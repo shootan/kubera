@@ -17,4 +17,7 @@ public:
 
 	void ShutDown();
 
+	void err_display(char *msg);
+	void err_quit(char *msg);
+
 };

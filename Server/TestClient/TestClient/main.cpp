@@ -26,7 +26,7 @@ int main()
 	ZeroMemory(&ServerAddr, sizeof(SOCKADDR_IN));
 	ServerAddr.sin_family		= AF_INET;
 	ServerAddr.sin_port			= htons(MY_SERVER_PORT);
-	ServerAddr.sin_addr.s_addr	= inet_addr("127.0.0.1");
+	ServerAddr.sin_addr.s_addr	= inet_addr("192.168.0.9");
 
 	int Result = WSAConnect(g_mysocket, (sockaddr *) &ServerAddr, sizeof(ServerAddr), NULL, NULL, NULL, NULL);
 
@@ -37,7 +37,7 @@ int main()
 
 	while(1)
 	{
-
+		Sleep(1000);
 	}
 
 	return 0;
