@@ -22,11 +22,6 @@ struct IOBuffer{
 
 class IOCPServer : public Network
 {
-private: 
-	//스레드
-	static UINT WINAPI ListenThread(LPVOID arg);
-	static UINT WINAPI WorkerThread(LPVOID arg);
-
 public:
 	//버퍼를 리스트로 관리해줄 포인터
 	IOBuffer* m_pNextBufferList;
@@ -44,13 +39,6 @@ public:
 	BOOL m_bServerStart;
 	BOOL m_bServerShutDown;
 
-	//OpCode
-	void OnInit(IOBuffer* _buff);
-	void OnRecv(IOBuffer* _buff, char* _recvBuff, int _size);
-	void OnRecvFinish(IOBuffer* _buff, DWORD _size);
-
-	void SetOpCode(IOBuffer* _buff, OPCODE _opCode);
-	
 public:
 	IOCPServer();
 	~IOCPServer();
@@ -58,4 +46,15 @@ public:
 	BOOL StartServer(int port);
 	BOOL InitThread();
 	void CreateBuffer(IOBuffer* buffer);
+
+	//OpCode
+	void OnInit(IOBuffer* _buff);
+	void OnRecv(IOBuffer* _buff, char* _recvBuff, int _size);
+	void OnRecvFinish(IOBuffer* _buff, DWORD _size);
+
+	void SetOpCode(IOBuffer* _buff, OPCODE _opCode);
+
+	//스레드
+	static UINT WINAPI ListenThread(LPVOID arg);
+	static UINT WINAPI WorkerThread(LPVOID arg);
 };

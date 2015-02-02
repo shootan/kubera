@@ -694,6 +694,8 @@ HRESULT CALLBACK OnD3D11CreateDevice( ID3D11Device* pd3dDevice, const DXGI_SURFA
 
 	D3DXMatrixTranslation( &g_mCenterMesh, -vCenter.x, -vCenter.y, -vCenter.z );
 	D3DXMATRIXA16 m;
+	D3DXMatrixRotationX(&m, D3DX_PI / 2.0f);
+	g_mCenterMesh *= m;
 	D3DXMatrixRotationY( &m, D3DX_PI );
 	g_mCenterMesh *= m;
 	D3DXMatrixRotationX( &m, D3DX_PI / 2.0f );

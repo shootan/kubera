@@ -76,7 +76,7 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 			inet_ntoa(pThis->m_ClinetAddr.sin_addr), 
 			ntohs(pThis->m_ClinetAddr.sin_port)); 
 
-		CreateIoCompletionPort((HANDLE)client_sock, pThis->m_hIO, 0, 0);
+		
 
 		//버퍼 생성
 		IOBuffer* buffer = new IOBuffer;
@@ -93,16 +93,18 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 		//비동기 입출력 시작
 		DWORD recvbytes;
 		DWORD flags = 0;
+		CreateIoCompletionPort((HANDLE)client_sock, pThis->m_hIO, (DWORD)buffer, 0);
 
-		int retval = WSARecv(client_sock, &(buffer->m_Wsabuf), 1, &recvbytes, &flags, &(buffer->m_Overlapped), NULL);
-		if(retval == SOCKET_ERROR)
+		//int retval = WSARecv(client_sock, &(buffer->m_Wsabuf), 1, &recvbytes, &flags, &(buffer->m_Overlapped), NULL);
+		PostQueuedCompletionStatus(pThis->m_hIO, 0, (ULONG_PTR)buffer, &buffer->m_Overlapped);
+		/*if(retval == SOCKET_ERROR)
 		{
 			if(WSAGetLastError() != ERROR_IO_PENDING)
 			{ 
 				return -1;
 			} 
 			
-		}		
+		}	*/	
 	}
 }
 
@@ -112,10 +114,11 @@ UINT WINAPI IOCPServer::WorkerThread(LPVOID arg)
 	DWORD dwSize;
 	IOBuffer* buff;
 	unsigned long key;
+	LPOVERLAPPED over;
 	IOCPServer* server = (IOCPServer*)arg;
 	while(!server->m_bServerShutDown)
 	{
-		GetQueuedCompletionStatus(server->m_hIO, &dwSize, (PULONG_PTR)&buff, (LPOVERLAPPED*)&buff, INFINITE);
+		GetQueuedCompletionStatus(server->m_hIO, &dwSize, (PULONG_PTR)&buff, (LPOVERLAPPED*)&over, INFINITE);
 
 		// 클라이언트정보얻기 
 		SOCKADDR_IN clientaddr; 
@@ -128,7 +131,7 @@ UINT WINAPI IOCPServer::WorkerThread(LPVOID arg)
 			server->OnInit(buff);
 			break;
 		case OP_RECV:
-			server->OnRecv(buff, buff->m_Wsabuf.buf, BUFSIZE);
+			server->OnRecv(buff, buff->m_Buf, BUFSIZE);
 			break;
 		case OP_RECV_DONE:
 			server->OnRecvFinish(buff, dwSize);
@@ -170,7 +173,7 @@ void IOCPServer::OnRecv(IOBuffer* _buff, char* _recvBuff, int _size)
 
 	if ( retval == SOCKET_ERROR && (ERROR_IO_PENDING != WSAGetLastError())) 
 	{
-		// 중요한 error
+		// error
 	}
 }
 
@@ -181,8 +184,14 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 		// 클라이언트 종료
 	}
 
+	_buff->m_iRecvbytes = _size;
+	_buff->m_Buf[_buff->m_iRecvbytes] = 0;
+	printf("[RECV] %s\n", _buff->m_Buf);
+	
+	
 	SetOpCode(_buff, OP_RECV);
 	BOOL bSuccess = PostQueuedCompletionStatus(m_hIO, 0, (ULONG_PTR)_buff, &(_buff->m_Overlapped));
+	_buff->m_iRecvbytes = 0;
 
 	if ( !bSuccess && WSAGetLastError() != ERROR_IO_PENDING )
 	{
