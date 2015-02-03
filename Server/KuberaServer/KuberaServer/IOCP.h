@@ -11,6 +11,7 @@ typedef enum OPCODE
 
 struct IOBuffer{
 	SOCKET		m_ClientSock;
+	int			m_Id;
 	OVERLAPPED	m_Overlapped; 
 	char		m_Buf[BUFSIZE+1]; 
 	int			m_iRecvbytes; 
@@ -36,10 +37,14 @@ public:
 	SOCKADDR_IN m_ClinetAddr;
 
 	//
-	BOOL m_bServerStart;
-	BOOL m_bServerShutDown;
+	BOOL	m_bServerStart;
+	BOOL	m_bServerShutDown;
 
-public:
+	int		m_iClientCount;	
+
+	
+	
+	//ÇÔ¼ö
 	IOCPServer();
 	~IOCPServer();
 

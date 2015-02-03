@@ -11,6 +11,8 @@ IOCPServer::IOCPServer()
 	m_bServerShutDown = TRUE;
 	m_bServerStart = FALSE;
 
+	m_iClientCount = 0;
+
 	ZeroMemory(&m_ClinetAddr, sizeof(SOCKADDR));
 }
 
@@ -71,12 +73,11 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 		if (client_sock == INVALID_SOCKET) {
 			exit(-1);
 		}
-
-		printf("[TCP 서버] 클라이언트접속: IP 주소= %s, 포트번호= %d \n", 
-			inet_ntoa(pThis->m_ClinetAddr.sin_addr), 
-			ntohs(pThis->m_ClinetAddr.sin_port)); 
-
 		
+		pThis->m_iClientCount++;
+		printf("IP 주소= %s, 포트번호= %d , Count = %d\n", 
+			inet_ntoa(pThis->m_ClinetAddr.sin_addr), 
+			ntohs(pThis->m_ClinetAddr.sin_port), pThis->m_iClientCount); 
 
 		//버퍼 생성
 		IOBuffer* buffer = new IOBuffer;
@@ -95,16 +96,7 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 		DWORD flags = 0;
 		CreateIoCompletionPort((HANDLE)client_sock, pThis->m_hIO, (DWORD)buffer, 0);
 
-		//int retval = WSARecv(client_sock, &(buffer->m_Wsabuf), 1, &recvbytes, &flags, &(buffer->m_Overlapped), NULL);
 		PostQueuedCompletionStatus(pThis->m_hIO, 0, (ULONG_PTR)buffer, &buffer->m_Overlapped);
-		/*if(retval == SOCKET_ERROR)
-		{
-			if(WSAGetLastError() != ERROR_IO_PENDING)
-			{ 
-				return -1;
-			} 
-			
-		}	*/	
 	}
 }
 
@@ -116,6 +108,7 @@ UINT WINAPI IOCPServer::WorkerThread(LPVOID arg)
 	unsigned long key;
 	LPOVERLAPPED over;
 	IOCPServer* server = (IOCPServer*)arg;
+
 	while(!server->m_bServerShutDown)
 	{
 		GetQueuedCompletionStatus(server->m_hIO, &dwSize, (PULONG_PTR)&buff, (LPOVERLAPPED*)&over, INFINITE);
@@ -181,13 +174,13 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 {
 	if ( _size == 0 )
 	{
-		// 클라이언트 종료
+		m_iClientCount--;
+		return;
 	}
 
 	_buff->m_iRecvbytes = _size;
 	_buff->m_Buf[_buff->m_iRecvbytes] = 0;
 	printf("[RECV] %s\n", _buff->m_Buf);
-	
 	
 	SetOpCode(_buff, OP_RECV);
 	BOOL bSuccess = PostQueuedCompletionStatus(m_hIO, 0, (ULONG_PTR)_buff, &(_buff->m_Overlapped));

@@ -20,8 +20,8 @@ void Network::err_quit(char *msg)
 		FORMAT_MESSAGE_FROM_SYSTEM, 
 		NULL, WSAGetLastError(), 
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), 
-		(LPTSTR)&lpMsgBuf, 0, NULL); 
-	//MessageBox(NULL, (LPCTSTR)lpMsgBuf, msg, MB_ICONERROR); 
+		(LPTSTR)&lpMsgBuf, 0, NULL);
+	printf("[%s] %s", msg, (LPCTSTR)lpMsgBuf); 
 	LocalFree(lpMsgBuf); 
 	exit(-1); 
 }
