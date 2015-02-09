@@ -75,8 +75,7 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 		}
 		
 		pThis->m_iClientCount++;
-		printf("IP 주소= %s, 포트번호= %d , Count = %d\n", 
-			inet_ntoa(pThis->m_ClinetAddr.sin_addr), 
+		printf("IP 주소= %s, 포트번호= %d , Count = %d\n", inet_ntoa(pThis->m_ClinetAddr.sin_addr), 
 			ntohs(pThis->m_ClinetAddr.sin_port), pThis->m_iClientCount); 
 
 		//버퍼 생성
@@ -113,7 +112,7 @@ UINT WINAPI IOCPServer::WorkerThread(LPVOID arg)
 	{
 		GetQueuedCompletionStatus(server->m_hIO, &dwSize, (PULONG_PTR)&buff, (LPOVERLAPPED*)&over, INFINITE);
 
-		// 클라이언트정보얻기 
+		// 클라이언트정보얻기
 		SOCKADDR_IN clientaddr; 
 		int addrlen = sizeof(clientaddr); 
 		getpeername(buff->m_ClientSock, (SOCKADDR*)&clientaddr, &addrlen);
@@ -180,7 +179,8 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 
 	_buff->m_iRecvbytes = _size;
 	_buff->m_Buf[_buff->m_iRecvbytes] = 0;
-	printf("[RECV] %s\n", _buff->m_Buf);
+	
+	printf("[RECV] %s \n", _buff->m_Buf);
 	
 	SetOpCode(_buff, OP_RECV);
 	BOOL bSuccess = PostQueuedCompletionStatus(m_hIO, 0, (ULONG_PTR)_buff, &(_buff->m_Overlapped));

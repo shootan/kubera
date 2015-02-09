@@ -30,6 +30,9 @@
     <ClCompile Include="IOCP.cpp">
       <Filter>Network</Filter>
     </ClCompile>
+    <ClCompile Include="test.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Network.h">
