@@ -121,7 +121,6 @@ bool ComputeBoundingSphereFromList(D3DXVECTOR3& outCenter, float& outRadius, FBX
 bool LoadTexture(ID3D11Device* pd3dDevice, WCHAR* filename);
 void ReleaseTexture();
 
-
 HRESULT OnCreateFBXDevice(ID3D11Device* pd3dDevice)
 {
 	HRESULT hr;
