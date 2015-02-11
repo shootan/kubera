@@ -9,7 +9,7 @@ CGameObject::CGameObject(void)
 	m_Pos = D3DXVECTOR3(0, 0, 0);
 	m_vDestination = m_Pos;
 	m_Scale = D3DXVECTOR3(1,1,1);
-	m_Rot = 0.0f;
+	m_Rot = 1.0f;
 
 	m_vFacingDirection= D3DXVECTOR3(0,0,1);
 
@@ -56,21 +56,29 @@ void CGameObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
 	D3DXMatrixIdentity(&mtxScale);
 
 	D3DXMatrixScaling(&mtxScale, m_Scale.x, m_Scale.y, m_Scale.z);
-	mWorld *= mtxScale;
+	//mWorld *= mtxScale;
 
 	//R
 	D3DXMATRIX mtxRotate;
 	D3DXMatrixIdentity(&mtxRotate);
 
-	D3DXMatrixRotationY(&mtxRotate, m_Rot);
-	mWorld *= mtxRotate;
+	if(m_axis == 1)
+		D3DXMatrixRotationX(&mtxRotate, D3DX_PI / m_Rot);
+	else if(m_axis == 2)
+		D3DXMatrixRotationY(&mtxRotate, D3DX_PI / m_Rot);
+	else if(m_axis == 3)
+		D3DXMatrixRotationZ(&mtxRotate, D3DX_PI / m_Rot);
+
+	//mWorld *= mtxRotate;
 
 	//T
 	D3DXMATRIX mtxTrans;
 	D3DXMatrixIdentity(&mtxTrans);
 
 	D3DXMatrixTranslation(&mtxTrans, m_Pos.x, m_Pos.y, m_Pos.z);
-	mWorld *= mtxTrans;
+	//mWorld *= mtxTrans;
+
+	mWorld = mtxScale * mtxRotate * mtxTrans;
 	m_d3dxmtxWorld = mWorld;
 
 	if (m_pMesh) m_pMesh->Render(pd3dDeviceContext);
@@ -81,8 +89,9 @@ void CGameObject::SetScale(D3DXVECTOR3 _size)
 	m_Scale = _size;
 }
 
-void CGameObject::SetRotation(float _rot)
+void CGameObject::SetRotation(int xyz, float _rot)
 {
+	m_axis = xyz;
 	m_Rot = _rot;
 }
 
@@ -108,7 +117,8 @@ void CGameObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
 	if ( cross.y >  0.0f ) {
 		fAngle *=-1.0f;
 	}
-	this->SetRotation(fAngle);
+	fAngle /= D3DX_PI;
+	this->SetRotation(2, 1/fAngle);
 
 	m_vWalkIncrement *= m_fWalkSpeed;       
 
@@ -134,7 +144,7 @@ void CGameObject::Update(float _fMoveIncrement)
 
 CRotatingObject::CRotatingObject()
 {
-	this->SetRotation(180.0f);
+	//this->SetRotation(2, 180.0f);
 }
 
 CRotatingObject::~CRotatingObject()

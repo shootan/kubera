@@ -27,30 +27,38 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_ppShaders[0]->CreateShader(pd3dDevice, 2);
 
 	//게임 객체에 대한 포인터들의 배열을 정의한다.
-	m_nObjects = 1;
+	m_nObjects = 2;
 	m_ppObjects = new CGameObject*[m_nObjects]; 
 
 	//정육면체 메쉬를 생성하고 객체에 연결한다.
 	//CCubeMesh *pMesh = new CCubeMesh(pd3dDevice, 15.0f, 15.0f, 15.0f);
-	CFBXMesh *pFBXMesh = new CFBXMesh(pd3dDevice, L"micro_wizard.fbx");
+	CFBXMesh *pFBXMesh = new CFBXMesh(pd3dDevice, L"Wizard.FBX");
+	//CFBXMesh *pFBXMesh = new CFBXMesh(pd3dDevice, L"20box.fbx");
 	pFBXMesh->LoadTexture(pd3dDevice, L"micro_wizard_col.tif");
+	CFBXMesh *pPlane = new CFBXMesh(pd3dDevice, L"floor.FBX");
+	pPlane->LoadTexture(pd3dDevice, L"floor.png");
 	
 
 	//삼각형 객체(CTriangleObject)를 생성하고 삼각형 메쉬를 연결한다.
 	CGameObject *pObject = new CRotatingObject();
 	pObject->SetMesh(pFBXMesh);
 	pObject->SetScale(D3DXVECTOR3(0.2, 0.2, 0.2));
+	//pObject->SetRotation(2, 180);
 	m_Control.m_Player = pObject;
 
 
 	CGameObject *pObject2 = new CRotatingObject();
-	pObject2->SetMesh(pFBXMesh);
+	pObject2->SetMesh(pPlane);
+	pObject2->SetScale(D3DXVECTOR3(4, 4, 4));
+	//pObject2->SetRotation(2, 180);
+	pObject2->SetRotation(1, -2);
 	pFBXMesh->Release();
 
  	//삼각형 객체를 쉐이더 객체에 연결한다.
  	m_ppShaders[0]->AddObject(pObject);
+	m_ppShaders[0]->AddObject(pObject2);
  	m_ppObjects[0] = pObject;
- 	
+	m_ppObjects[1] = pObject2;
 }
 
 void CScene::ReleaseObjects()

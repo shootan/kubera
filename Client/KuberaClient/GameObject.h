@@ -13,6 +13,7 @@ private:
 	D3DXVECTOR3 m_Pos;
 	D3DXVECTOR3 m_Scale;
 	FLOAT		m_Rot;
+	int			m_axis;
 	D3DXVECTOR3 m_vDestination;
 	D3DXVECTOR3 m_vWalkIncrement;
 	D3DXVECTOR3 m_vFacingDirection;
@@ -30,7 +31,7 @@ public:
 	virtual void Animate(float fTimeElapsed);
 	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext);
 	virtual void SetScale(D3DXVECTOR3 _size);
-	virtual void SetRotation(float _rot);
+	virtual void SetRotation(int xyz, float _rot);  // x =1 y = 2 z =3
 	virtual void SetPosition(D3DXVECTOR3 _pos);
 	virtual void SetNewDestination ( D3DXVECTOR3 _pos );
 	void Update(float _fMoveIncrement);

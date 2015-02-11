@@ -269,7 +269,7 @@ void CGameFramework::BuildObjects()
 	////카메라 객체를 플레이어 객체에 설정한다. 
 	//m_ppPlayers[0]->SetCamera(pCamera);
 	//m_ppPlayers[0]->CreateShaderVariables(m_pd3dDevice);
-	D3DXVECTOR3 d3dxvEyePosition = D3DXVECTOR3(0.0f, 150.0f, -200.0f);
+	D3DXVECTOR3 d3dxvEyePosition = D3DXVECTOR3(0.0f, 150.0f, 200.0f);
 	D3DXVECTOR3 d3dxvLookAt = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_vCamera.SetViewParams( &d3dxvEyePosition, &d3dxvLookAt );
 
