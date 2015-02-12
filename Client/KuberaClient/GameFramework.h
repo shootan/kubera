@@ -26,6 +26,9 @@ private:
 	CModelViewerCamera m_vCamera;
 	ID3D11Buffer *m_pd3dcbViewProjection;
 
+	float m_CameraPosX;
+	float m_CameraPosZ;
+
 	//디바이스 인터페이스에 대한 포인터이다. 주로 리소스를 생성하기 위하여 필요하다.
 	ID3D11Device *m_pd3dDevice;
 	//스왑 체인 인터페이스에 대한 포인터이다. 주로 디스플레이를 제어하기 위하여 필요하다.
@@ -62,4 +65,7 @@ public:
 	void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	LRESULT CALLBACK OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
+
+	//카메라 움직임
+	void SetCameraPos();
 };

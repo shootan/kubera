@@ -14,6 +14,9 @@ CGameFramework::CGameFramework()
 
 	m_pScene = NULL;
 	_tcscpy_s(m_pszBuffer, _T("Kubera ("));
+
+	m_CameraPosX = 0.f;
+	m_CameraPosZ = -200.f;
 }
 
 CGameFramework::~CGameFramework()
@@ -269,9 +272,6 @@ void CGameFramework::BuildObjects()
 	////카메라 객체를 플레이어 객체에 설정한다. 
 	//m_ppPlayers[0]->SetCamera(pCamera);
 	//m_ppPlayers[0]->CreateShaderVariables(m_pd3dDevice);
-	D3DXVECTOR3 d3dxvEyePosition = D3DXVECTOR3(0.0f, 150.0f, 200.0f);
-	D3DXVECTOR3 d3dxvLookAt = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_vCamera.SetViewParams( &d3dxvEyePosition, &d3dxvLookAt );
 
 	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice);
 
@@ -309,6 +309,8 @@ void CGameFramework::FrameAdvance()
 	ProcessInput();
 	AnimateObjects();
 
+	SetCameraPos();
+
 	float fClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; 
 	//렌더 타겟 뷰를 색상(RGB: 0.0f, 0.125f, 0.3f)으로 지운다. 
 	m_pd3dDeviceContext->ClearRenderTargetView(m_pd3dRenderTargetView, fClearColor);
@@ -344,3 +346,15 @@ void CGameFramework::FrameAdvance()
 
 }
 
+void CGameFramework::SetCameraPos()
+{
+
+	D3DXVECTOR3 d3dxvEyePosition = D3DXVECTOR3(m_CameraPosX, 150.0f, m_CameraPosZ);
+	D3DXVECTOR3 d3dxvLookAt = D3DXVECTOR3(m_CameraPosX, 0.0f, m_CameraPosZ+50.0f);
+	m_vCamera.SetViewParams( &d3dxvEyePosition, &d3dxvLookAt );
+
+	if(m_pScene->GetMousePosX() < 10) m_CameraPosX -= 400 * m_GameTimer.GetTimeElapsed();
+	if(m_pScene->GetMousePosY() < 10) m_CameraPosZ += 400 * m_GameTimer.GetTimeElapsed();
+	if(m_pScene->GetMousePosX() > FRAME_BUFFER_WIDTH - 10) m_CameraPosX += 400 * m_GameTimer.GetTimeElapsed();
+	if(m_pScene->GetMousePosY() > FRAME_BUFFER_HEIGHT - 10) m_CameraPosZ -= 400 * m_GameTimer.GetTimeElapsed();
+}

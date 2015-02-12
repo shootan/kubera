@@ -300,6 +300,7 @@ VOID CBaseCamera::SetProjParams( FLOAT fFOV, FLOAT fAspect, FLOAT fNearPlane,
     m_fFarPlane = fFarPlane;
 
     D3DXMatrixPerspectiveFovLH( &m_mProj, fFOV, fAspect, fNearPlane, fFarPlane );
+	//D3DXMatrixOrthoLH(&m_mProj, 800,600, fNearPlane, fFarPlane);
 }
 
 

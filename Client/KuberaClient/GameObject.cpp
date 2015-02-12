@@ -98,6 +98,7 @@ void CGameObject::SetRotation(int xyz, float _rot)
 void CGameObject::SetPosition(D3DXVECTOR3 _pos)
 {
 	m_Pos = _pos;
+	m_vDestination = _pos;
 }
 
 void CGameObject::SetNewDestination ( D3DXVECTOR3 _pos ) {

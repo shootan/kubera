@@ -13,7 +13,8 @@ private:
 	CGameObject **m_ppObjects;       
 	int m_nObjects;
 
-	
+	int m_MousePosX;
+	int m_MousePosY;
 
 public:
 	CScene(void);
@@ -32,5 +33,7 @@ public:
 	void AnimateObjects(float fTimeElapsed);
 	void Render(ID3D11DeviceContext *pd3dDeviceContext);
 
+	int GetMousePosX();
+	int GetMousePosY();
 };
 
