@@ -68,4 +68,5 @@ public:
 
 	//카메라 움직임
 	void SetCameraPos();
+	void SetViewport(ID3D11DeviceContext *pd3dDeviceContext, DWORD xStart, DWORD yStart, DWORD nWidth, DWORD nHeight, float fMinZ=0.0f, float fMaxZ=1.0f);
 };

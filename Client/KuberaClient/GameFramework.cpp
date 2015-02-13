@@ -79,6 +79,18 @@ bool CGameFramework::CreateRenderTargetDepthStencilView()
 
 }
 
+void CGameFramework::SetViewport(ID3D11DeviceContext *pd3dDeviceContext, DWORD xTopLeft, DWORD yTopLeft, DWORD nWidth, DWORD nHeight, float fMinZ, float fMaxZ)
+{
+	D3D11_VIEWPORT m_d3dViewport;
+	m_d3dViewport.TopLeftX = float(0);
+	m_d3dViewport.TopLeftY = float(0);
+	m_d3dViewport.Width = float(m_nWndClientWidth);
+	m_d3dViewport.Height = float(m_nWndClientHeight);
+	m_d3dViewport.MinDepth = 0;
+	m_d3dViewport.MaxDepth = 1.0f;
+	m_pd3dDeviceContext->RSSetViewports(1, &m_d3dViewport);
+}
+
 bool CGameFramework::CreateDirect3DDisplay()
 {
 	RECT rcClient;
@@ -196,6 +208,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			if (m_pd3dDepthStencilView) m_pd3dDepthStencilView->Release();
 
 			m_pDXGISwapChain->ResizeBuffers(2, m_nWndClientWidth, m_nWndClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+			SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.0f, 1.0f);
 
 			CreateRenderTargetDepthStencilView();
 
@@ -253,15 +266,9 @@ void CGameFramework::BuildObjects()
 	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	m_pd3dDevice->CreateBuffer(&bd, NULL, &m_pd3dcbViewProjection);
-	//pCamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.0f, 1.0f);
-	D3D11_VIEWPORT m_d3dViewport;
-	m_d3dViewport.TopLeftX = float(0);
-	m_d3dViewport.TopLeftY = float(0);
-	m_d3dViewport.Width = float(m_nWndClientWidth);
-	m_d3dViewport.Height = float(m_nWndClientHeight);
-	m_d3dViewport.MinDepth = 0;
-	m_d3dViewport.MaxDepth = 1.0f;
-	m_pd3dDeviceContext->RSSetViewports(1, &m_d3dViewport);
+
+	SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.0f, 1.0f);
+	
 	////투영 변환 행렬을 생성한다. 
 	//pCamera->GenerateProjectionMatrix(1.0f, 500.0f, float(m_nWndClientWidth)/float(m_nWndClientHeight), 90.0f);
 	m_vCamera.SetProjParams((float)D3DXToRadian(90.0f), float(m_nWndClientWidth)/float(m_nWndClientHeight), 1.0f, 500.0f);
@@ -355,6 +362,6 @@ void CGameFramework::SetCameraPos()
 
 	if(m_pScene->GetMousePosX() < 10) m_CameraPosX -= 400 * m_GameTimer.GetTimeElapsed();
 	if(m_pScene->GetMousePosY() < 10) m_CameraPosZ += 400 * m_GameTimer.GetTimeElapsed();
-	if(m_pScene->GetMousePosX() > FRAME_BUFFER_WIDTH - 10) m_CameraPosX += 400 * m_GameTimer.GetTimeElapsed();
-	if(m_pScene->GetMousePosY() > FRAME_BUFFER_HEIGHT - 10) m_CameraPosZ -= 400 * m_GameTimer.GetTimeElapsed();
+	if(m_pScene->GetMousePosX() > m_nWndClientWidth - 10) m_CameraPosX += 400 * m_GameTimer.GetTimeElapsed();
+	if(m_pScene->GetMousePosY() > m_nWndClientHeight - 10) m_CameraPosZ -= 400 * m_GameTimer.GetTimeElapsed();
 }

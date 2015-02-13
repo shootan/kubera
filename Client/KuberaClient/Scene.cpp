@@ -37,7 +37,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	CFBXMesh *pFBXMesh = new CFBXMesh(pd3dDevice, L"micro_wizard.FBX");
 	pFBXMesh->LoadTexture(pd3dDevice, L"micro_wizard_col.tif");
 
-	CFBXMesh *pPlane = new CFBXMesh(pd3dDevice, L"floor.FBX");
+	CFBXMesh *pPlane = new CFBXMesh(pd3dDevice, L"Plane.FBX");
 	pPlane->LoadTexture(pd3dDevice, L"floor.png");
 
 	CFBXMesh *pFBXMesh1 = new CFBXMesh(pd3dDevice, L"20Box.FBX");
