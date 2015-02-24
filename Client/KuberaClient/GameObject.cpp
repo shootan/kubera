@@ -142,23 +142,3 @@ void CGameObject::Update(float _fMoveIncrement)
 		if ( finished < 0.0f ) m_Pos = m_vDestination;
 	}
 }
-
-CRotatingObject::CRotatingObject()
-{
-	//this->SetRotation(2, 180.0f);
-}
-
-CRotatingObject::~CRotatingObject()
-{
-}
-
-void CRotatingObject::Animate(float fTimeElapsed)
-{
-
-}
-
-void CRotatingObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
-{
-	CGameObject::Render(pd3dDeviceContext);
-}
-

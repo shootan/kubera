@@ -11,11 +11,14 @@ CScene::CScene(void)
 
 	m_MousePosX = 0;
 	m_MousePosY = 0;
+
+	m_bRbutton = FALSE;
 }
 
 
 CScene::~CScene(void)
 {
+
 }
 
 void CScene::BuildObjects(ID3D11Device *pd3dDevice)
@@ -44,20 +47,20 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	pFBXMesh1->LoadTexture(pd3dDevice, L"micro_wizard_col.tif");
 
 	//삼각형 객체(CTriangleObject)를 생성하고 삼각형 메쉬를 연결한다.
-	CGameObject *pObject = new CRotatingObject();
+	CGameObject *pObject = new CGameObject();
 	pObject->SetMesh(pFBXMesh);
 	pObject->SetScale(D3DXVECTOR3(0.2, 0.2, 0.2));
 	//pObject->SetRotation(2, 180);
 	m_Control.m_Player = pObject;
 
 
-	CGameObject *pObject2 = new CRotatingObject();
+	CGameObject *pObject2 = new CGameObject();
 	pObject2->SetMesh(pPlane);
 	pObject2->SetScale(D3DXVECTOR3(20, 20, 20));
 	//pObject2->SetRotation(2, 180);
 	pObject2->SetRotation(1, -2);
 
-	CGameObject *pObject3 = new CRotatingObject();
+	CGameObject *pObject3 = new CGameObject();
 	pObject3->SetMesh(pFBXMesh1);
 	
 	pObject3->SetPosition(D3DXVECTOR3(25,0,0));
@@ -106,19 +109,25 @@ bool CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 			break;
 		}
 	case WM_LBUTTONDOWN:
+		
+		break;
+	case WM_RBUTTONDOWN:
 		m_MousePosX = (INT)LOWORD(lParam); 
 		m_MousePosY = (INT)HIWORD(lParam);
 		m_Control.TouchDown((float)m_MousePosX, (float)m_MousePosY, hWnd);
-		break;
-	case WM_RBUTTONDOWN:
-		break;
-	case WM_LBUTTONUP:
+		m_bRbutton = TRUE;
 		break;
 	case WM_RBUTTONUP:
+		m_bRbutton = FALSE;
+		break;
+	case WM_LBUTTONUP:
 		break;
 	case WM_MOUSEMOVE:
 		m_MousePosX = (INT)LOWORD(lParam); 
 		m_MousePosY = (INT)HIWORD(lParam);
+
+		if(m_bRbutton == TRUE)
+			m_Control.TouchDown((float)m_MousePosX, (float)m_MousePosY, hWnd);
 		//OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
 		break;
 	case WM_KEYDOWN:
@@ -139,7 +148,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 	for (int j = 0; j < m_nObjects; j++)
 	{
 			m_ppObjects[j]->Animate(fTimeElapsed);
-			m_ppObjects[j]->Update(5.0f);
+			m_ppObjects[j]->Update(1.0f);
 	}
 
 }

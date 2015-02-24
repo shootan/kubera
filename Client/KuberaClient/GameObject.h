@@ -40,16 +40,3 @@ public:
 
 	D3DXVECTOR3 GetPosition() { return m_Pos; }
 };
-
-
-
-class CRotatingObject : public CGameObject
-{
-public:
-	float a;
-	CRotatingObject();
-	virtual ~CRotatingObject();
-
-	virtual void Animate(float fTimeElapsed);
-	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext);
-};

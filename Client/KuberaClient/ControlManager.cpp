@@ -31,7 +31,7 @@ void ControlManager::CalculateScreenRayFromCoordinates( float x, float y, D3DXVE
 	GetClientRect(hWnd, &windowRect);
 	const D3DXMATRIX* pmatProj = m_Camera->GetProjMatrix();
 
-	// Compute the vector of the ray in screen space
+	//3DÁÂÇ¥·Î º¯°æ
 	D3DXVECTOR3 v;
 	v.x = ( ( ( 2.0f * x ) / windowRect.right ) - 1 ) / pmatProj->_11;
 	v.y = -( ( ( 2.0f * y ) / windowRect.bottom) - 1 ) / pmatProj->_22;

@@ -16,6 +16,8 @@ private:
 	int m_MousePosX;
 	int m_MousePosY;
 
+	BOOL m_bRbutton;
+
 public:
 	CScene(void);
 	~CScene(void);
