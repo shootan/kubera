@@ -85,8 +85,8 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 		buffer->m_pNext = pThis->m_pNextBufferList;
 		pThis->m_pNextBufferList = buffer;
 		buffer->m_iRecvbytes = 0;
-		buffer->m_iRecvbytes = 0;
-		buffer->m_Wsabuf.buf = buffer->m_Buf;
+		buffer->m_iSendbytes = 0;
+		buffer->m_Wsabuf.buf = buffer->m_RecvBuf;
 		buffer->m_Wsabuf.len = BUFSIZE;
 		buffer->m_ClientSock = client_sock;
 		buffer->m_Opcode = OP_INIT;
@@ -113,7 +113,12 @@ UINT WINAPI IOCPServer::WorkerThread(LPVOID arg)
 	{
 		GetQueuedCompletionStatus(server->m_hIO, &dwSize, (PULONG_PTR)&buff, (LPOVERLAPPED*)&over, INFINITE);
 
-		// 클라이언트정보얻기 
+		if(dwSize == 0)
+		{
+			//접속해제
+		}
+
+		// 클라이언트정보얻기
 		SOCKADDR_IN clientaddr; 
 		int addrlen = sizeof(clientaddr); 
 		getpeername(buff->m_ClientSock, (SOCKADDR*)&clientaddr, &addrlen);
@@ -124,10 +129,13 @@ UINT WINAPI IOCPServer::WorkerThread(LPVOID arg)
 			server->OnInit(buff);
 			break;
 		case OP_RECV:
-			server->OnRecv(buff, buff->m_Buf, BUFSIZE);
+			server->OnRecv(buff, buff->m_RecvBuf, BUFSIZE);
 			break;
 		case OP_RECV_DONE:
 			server->OnRecvFinish(buff, dwSize);
+			break;
+		case OP_SEND_FINISH:
+
 			break;
 		}
 	}
@@ -179,8 +187,8 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 	}
 
 	_buff->m_iRecvbytes = _size;
-	_buff->m_Buf[_buff->m_iRecvbytes] = 0;
-	printf("[RECV] %s\n", _buff->m_Buf);
+	_buff->m_RecvBuf[_buff->m_iRecvbytes] = 0;
+	printf("[RECV] %s\n", _buff->m_RecvBuf);
 	
 	SetOpCode(_buff, OP_RECV);
 	BOOL bSuccess = PostQueuedCompletionStatus(m_hIO, 0, (ULONG_PTR)_buff, &(_buff->m_Overlapped));
@@ -190,4 +198,27 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 	{
 		// error
 	}
+}
+
+void IOCPServer::OnSendFinish(IOBuffer* _buff, DWORD _size)
+{
+	if ( _size == 0 )
+	{
+		m_iClientCount--;
+		return;
+	}
+
+	SetOpCode(_buff, OP_RECV);
+	_buff->m_iRecvbytes = 0;
+	BOOL bSuccess = PostQueuedCompletionStatus(m_hIO, 0, (ULONG_PTR)_buff, &(_buff->m_Overlapped));
+	
+	if ( !bSuccess && WSAGetLastError() != ERROR_IO_PENDING )
+	{
+		// error
+	}
+}
+
+BOOL IOCPServer::SendData()
+{
+	return TRUE;
 }

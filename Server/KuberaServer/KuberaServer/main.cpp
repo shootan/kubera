@@ -7,7 +7,7 @@ int main()
 	Server.StartServer(9000);
 	while(1)
 	{
-		Sleep(1000);
+		Sleep(500);
 	}
 	return 0;
 }
