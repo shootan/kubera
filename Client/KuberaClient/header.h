@@ -29,3 +29,14 @@
 #include "DXUTsettingsDlg.h"
 #include "SDKmisc.h"
 #include "SDKMesh.h"
+
+struct Vector3
+{
+	int x, y, z;
+};
+
+struct PlayerInfo{
+	Vector3 m_Pos;
+	Vector3 m_Scale;
+	float	m_Rot;
+};

@@ -17,6 +17,9 @@
     <Filter Include="shader">
       <UniqueIdentifier>{7084be95-2686-419d-962e-a15867c9900f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{3931fe96-8ec7-44e5-b142-d0adadc95e06}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="KuberaClientProject.cpp" />
@@ -71,6 +74,9 @@
     <ClCompile Include="Textureclass.cpp" />
     <ClCompile Include="ControlManager.cpp">
       <Filter>소스코드</Filter>
+    </ClCompile>
+    <ClCompile Include="Network.cpp">
+      <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -128,6 +134,9 @@
     <ClInclude Include="Textureclass.h" />
     <ClInclude Include="ControlManager.h">
       <Filter>소스코드</Filter>
+    </ClInclude>
+    <ClInclude Include="Network.h">
+      <Filter>Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

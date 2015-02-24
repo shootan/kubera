@@ -81,6 +81,8 @@ void CGameObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
 	mWorld = mtxScale * mtxRotate * mtxTrans;
 	m_d3dxmtxWorld = mWorld;
 
+
+
 	if (m_pMesh) m_pMesh->Render(pd3dDeviceContext);
 }
 
@@ -131,10 +133,10 @@ bool CGameObject::InMotion()
 	else return true;
 }
 
-void CGameObject::Update(float _fMoveIncrement)
+void CGameObject::Update(float fTimeElapsed)
 {
 	if ( InMotion() ) {
-		D3DXVECTOR3 update_delta = m_vWalkIncrement * _fMoveIncrement;
+		D3DXVECTOR3 update_delta = m_vWalkIncrement * 1.0f;
 		D3DXVECTOR3 location_vector = m_vDestination - m_Pos;
 		m_Pos += update_delta;
 		//determine  if we've moved past our target ( so we can stop ).

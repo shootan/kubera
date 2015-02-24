@@ -384,6 +384,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="KuberaClientProject.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Network.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Textureclass.cpp" />
@@ -407,6 +408,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="header.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Network.h" />
     <CLInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />

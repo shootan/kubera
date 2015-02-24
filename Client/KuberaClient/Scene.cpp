@@ -148,7 +148,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 	for (int j = 0; j < m_nObjects; j++)
 	{
 			m_ppObjects[j]->Animate(fTimeElapsed);
-			m_ppObjects[j]->Update(1.0f);
+			m_ppObjects[j]->Update(fTimeElapsed);
 	}
 
 }
