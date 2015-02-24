@@ -356,8 +356,8 @@ void CGameFramework::FrameAdvance()
 void CGameFramework::SetCameraPos()
 {
 
-	D3DXVECTOR3 d3dxvEyePosition = D3DXVECTOR3(m_CameraPosX, 150.0f, m_CameraPosZ);
-	D3DXVECTOR3 d3dxvLookAt = D3DXVECTOR3(m_CameraPosX, 0.0f, m_CameraPosZ+50.0f);
+	D3DXVECTOR3 d3dxvEyePosition = D3DXVECTOR3(m_CameraPosX, 50.0f, m_CameraPosZ);
+	D3DXVECTOR3 d3dxvLookAt = D3DXVECTOR3(m_CameraPosX, 0.0f, m_CameraPosZ+17.0f);
 	m_vCamera.SetViewParams( &d3dxvEyePosition, &d3dxvLookAt );
 
 	if(m_pScene->GetMousePosX() < 10) m_CameraPosX -= 400 * m_GameTimer.GetTimeElapsed();

@@ -13,6 +13,7 @@ CScene::CScene(void)
 	m_MousePosY = 0;
 
 	m_bRbutton = FALSE;
+	m_bJoinOtherPlayer = FALSE;
 }
 
 
@@ -37,7 +38,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 
 	//정육면체 메쉬를 생성하고 객체에 연결한다.
 	//CCubeMesh *pMesh = new CCubeMesh(pd3dDevice, 15.0f, 15.0f, 15.0f);
-	CFBXMesh *pFBXMesh = new CFBXMesh(pd3dDevice, L"micro_wizard.FBX");
+	CFBXMesh *pFBXMesh = new CFBXMesh(pd3dDevice, L"Wizard101310.FBX");
 	pFBXMesh->LoadTexture(pd3dDevice, L"micro_wizard_col.tif");
 
 	CFBXMesh *pPlane = new CFBXMesh(pd3dDevice, L"Plane.FBX");
@@ -49,16 +50,16 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	//삼각형 객체(CTriangleObject)를 생성하고 삼각형 메쉬를 연결한다.
 	CGameObject *pObject = new CGameObject();
 	pObject->SetMesh(pFBXMesh);
-	pObject->SetScale(D3DXVECTOR3(0.2, 0.2, 0.2));
+	//pObject->SetScale(D3DXVECTOR3(0.2, 0.2, 0.2));
 	//pObject->SetRotation(2, 180);
 	m_Control.m_Player = pObject;
 
-
 	CGameObject *pObject2 = new CGameObject();
 	pObject2->SetMesh(pPlane);
-	pObject2->SetScale(D3DXVECTOR3(20, 20, 20));
+	//pObject2->SetScale(D3DXVECTOR3(20, 20, 20));
 	//pObject2->SetRotation(2, 180);
 	pObject2->SetRotation(1, -2);
+	//pObject2->SetRotation(2, 2);
 
 	CGameObject *pObject3 = new CGameObject();
 	pObject3->SetMesh(pFBXMesh1);
@@ -170,4 +171,16 @@ int CScene::GetMousePosX()
 int CScene::GetMousePosY()
 {
 	return m_MousePosY;
+}
+
+void CScene::AddOtherPlayer(ID3D11Device *pd3dDevice)
+{
+	CFBXMesh *pOtherPlayerMesh = new CFBXMesh(pd3dDevice, L"micro_wizard.FBX");  //FBX 파일 이름 넘겨받은값 넣어주기
+	pOtherPlayerMesh->LoadTexture(pd3dDevice, L"micro_wizard_col.tif"); //텍스쳐 이름 넘겨받은값 넣어주기
+
+	OtherPlayer *pObjectPlayer = new OtherPlayer();
+	pObjectPlayer->SetMesh(pOtherPlayerMesh);
+
+	m_ppShaders[0]->AddObject(pObjectPlayer);  //세팅시 배열 숫자 조정
+	m_ppObjects[0] = pObjectPlayer;  //세팅시 배열 숫자 조정
 }

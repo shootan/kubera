@@ -40,3 +40,14 @@ public:
 
 	D3DXVECTOR3 GetPosition() { return m_Pos; }
 };
+
+
+class OtherPlayer:public CGameObject
+{
+public:
+	OtherPlayer(void);
+	~OtherPlayer(void);
+
+	virtual void Animate(float fTimeElapsed);
+	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext);
+};

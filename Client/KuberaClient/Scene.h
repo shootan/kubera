@@ -18,6 +18,7 @@ private:
 
 	BOOL m_bRbutton;
 
+	BOOL m_bJoinOtherPlayer;
 public:
 	CScene(void);
 	~CScene(void);
@@ -37,5 +38,7 @@ public:
 
 	int GetMousePosX();
 	int GetMousePosY();
+
+	void AddOtherPlayer(ID3D11Device *pd3dDevice);
 };
 

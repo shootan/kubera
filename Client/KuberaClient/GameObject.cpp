@@ -136,11 +136,31 @@ bool CGameObject::InMotion()
 void CGameObject::Update(float fTimeElapsed)
 {
 	if ( InMotion() ) {
-		D3DXVECTOR3 update_delta = m_vWalkIncrement * 1.0f;
+		D3DXVECTOR3 update_delta = m_vWalkIncrement * 5.0f;
 		D3DXVECTOR3 location_vector = m_vDestination - m_Pos;
 		m_Pos += update_delta;
 		//determine  if we've moved past our target ( so we can stop ).
 		float finished = D3DXVec3Dot( &m_vWalkIncrement, &location_vector );
 		if ( finished < 0.0f ) m_Pos = m_vDestination;
 	}
+}
+
+
+OtherPlayer::OtherPlayer(void) : CGameObject()
+{
+}
+
+
+OtherPlayer::~OtherPlayer(void)
+{
+}
+
+void OtherPlayer::Animate(float fTimeElapsed)
+{
+	CGameObject::Animate(fTimeElapsed);
+}
+
+void OtherPlayer::Render(ID3D11DeviceContext *pd3dDeviceContext)
+{
+	CGameObject::Render(pd3dDeviceContext);
 }
