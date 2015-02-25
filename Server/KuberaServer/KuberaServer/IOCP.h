@@ -20,14 +20,23 @@ struct IOBuffer{
 	int			m_iSendbytes;
 	WSABUF		m_Wsabuf;
 	OPCODE		m_Opcode;
+	PlayerInfo	m_PlayerData;
+	BOOL		m_Use;
 	IOBuffer*	m_pNext;
+};
+
+struct Player{
+	int m_Id;
+	PlayerPacket	m_PI;
+	Player*			m_pNext;
 };
 
 class IOCPServer : public Network
 {
 public:
-	//버퍼를 리스트로 관리해줄 포인터
-	IOBuffer* m_pNextBufferList;
+	//리스트로 관리해줄 포인터
+	IOBuffer*	m_pNextBufferList;
+	Player*		m_pPlayerList;
 
 	//핸들
 	HANDLE m_hIO;
@@ -43,6 +52,8 @@ public:
 	BOOL	m_bServerShutDown;
 
 	int		m_iClientCount;
+
+	char	m_ID[100];
 	
 	//함수
 	IOCPServer();
@@ -64,6 +75,7 @@ public:
 
 	// Send
 	BOOL SendData();
+	void SendPacket(IOBuffer* _buffer, void *_packet);
 
 	//스레드
 	static UINT WINAPI ListenThread(LPVOID arg);

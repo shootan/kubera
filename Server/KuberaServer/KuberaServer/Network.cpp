@@ -101,3 +101,4 @@ BOOL Network::InitClient(char *_ip, int _port)
 
 	return TRUE;
 }
+

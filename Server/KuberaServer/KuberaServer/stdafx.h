@@ -22,3 +22,9 @@ struct PlayerInfo{
 	Vector3 m_Scale;
 	float	m_Rot;
 };
+
+struct PlayerPacket
+{
+	int			size;
+	PlayerInfo	PI;
+};
