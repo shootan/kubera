@@ -14,6 +14,7 @@ CScene::CScene(void)
 
 	m_bRbutton = FALSE;
 	m_bJoinOtherPlayer = FALSE;
+	m_bJoin = FALSE;
 }
 
 
@@ -30,10 +31,10 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_ppShaders = new CObjectShader*[m_nShaders];
 	//CObjectShader 클래스 객체를 생성한다.
 	m_ppShaders[0] = new CObjectShader();
-	m_ppShaders[0]->CreateShader(pd3dDevice, 3);
+	m_ppShaders[0]->CreateShader(pd3dDevice, 4);
 
 	//게임 객체에 대한 포인터들의 배열을 정의한다.
-	m_nObjects = 3;
+	m_nObjects = 4;
 	m_ppObjects = new CGameObject*[m_nObjects]; 
 
 	//정육면체 메쉬를 생성하고 객체에 연결한다.
@@ -76,6 +77,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
  	m_ppObjects[0] = pObject;
 	m_ppObjects[1] = pObject2;
 	m_ppObjects[2] = pObject3;
+	m_ppObjects[3] = NULL;
 }
 
 void CScene::ReleaseObjects()
@@ -144,12 +146,21 @@ bool CScene::ProcessInput()
 	return(false);
 }
 
-void CScene::AnimateObjects(float fTimeElapsed)
+void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 {
+	if(m_bJoinOtherPlayer == TRUE && m_bJoin == FALSE)
+	{
+		AddOtherPlayer(pd3dDevice);
+		m_bJoinOtherPlayer = FALSE;
+		m_bJoin  = TRUE;
+	}
+
 	for (int j = 0; j < m_nObjects; j++)
 	{
-			m_ppObjects[j]->Animate(fTimeElapsed);
-			m_ppObjects[j]->Update(fTimeElapsed);
+		if(m_ppObjects[j] == NULL) continue;
+
+		m_ppObjects[j]->Animate(fTimeElapsed);
+		m_ppObjects[j]->Update(fTimeElapsed);
 	}
 
 }
@@ -175,12 +186,18 @@ int CScene::GetMousePosY()
 
 void CScene::AddOtherPlayer(ID3D11Device *pd3dDevice)
 {
-	CFBXMesh *pOtherPlayerMesh = new CFBXMesh(pd3dDevice, L"micro_wizard.FBX");  //FBX 파일 이름 넘겨받은값 넣어주기
+	CFBXMesh *pOtherPlayerMesh = new CFBXMesh(pd3dDevice, L"Wizard101310.FBX");  //FBX 파일 이름 넘겨받은값 넣어주기
 	pOtherPlayerMesh->LoadTexture(pd3dDevice, L"micro_wizard_col.tif"); //텍스쳐 이름 넘겨받은값 넣어주기
 
 	OtherPlayer *pObjectPlayer = new OtherPlayer();
 	pObjectPlayer->SetMesh(pOtherPlayerMesh);
 
 	m_ppShaders[0]->AddObject(pObjectPlayer);  //세팅시 배열 숫자 조정
-	m_ppObjects[0] = pObjectPlayer;  //세팅시 배열 숫자 조정
+	m_ppObjects[3] = pObjectPlayer;  //세팅시 배열 숫자 조정
+}
+
+
+CGameObject* CScene::GetObject(int num)
+{
+	return m_ppObjects[num];
 }

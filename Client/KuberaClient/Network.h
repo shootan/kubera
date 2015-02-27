@@ -12,7 +12,8 @@ class Network
 public:
 	SOCKET m_ConnectSock;
 	WSADATA m_Wsa;
-	PlayerInfo PI;
+	PlayerPacket PI;
+	bool m_bJoinPlayer;
 
 	Network();
 	~Network();
@@ -24,7 +25,7 @@ public:
 	void err_display(char *msg);
 	void err_quit(char *msg);
 
-	BOOL SendData(PlayerInfo* _pi);
+	BOOL SendData(PlayerPacket* PI);
 
 
 	//½º·¹µå

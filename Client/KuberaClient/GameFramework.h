@@ -2,6 +2,7 @@
 #include "header.h"
 #include "Timer.h"
 #include "Scene.h"
+#include "Network.h"
 
 
 struct VS_CB_VIEWPROJECTION_MATRIX
@@ -39,6 +40,10 @@ private:
 	ID3D11RenderTargetView *m_pd3dRenderTargetView;
 	ID3D11Texture2D *m_pd3dDepthStencilBuffer;
 	ID3D11DepthStencilView *m_pd3dDepthStencilView;
+
+	// Network
+	Network Net;
+	float time;
 	
 public:
 	CGameFramework();

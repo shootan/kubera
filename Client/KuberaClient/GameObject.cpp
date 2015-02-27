@@ -145,6 +145,49 @@ void CGameObject::Update(float fTimeElapsed)
 	}
 }
 
+Vector3 CGameObject::GetPos()
+{
+	Vector3 v;
+	v.x = m_Pos.x;
+	v.y = m_Pos.y;
+	v.z = m_Pos.z;
+
+	return v;
+}
+
+Vector3 CGameObject::GetScale()
+{
+	Vector3 v;
+	v.x = m_Scale.x;
+	v.y = m_Scale.y;
+	v.z = m_Scale.z;
+
+	return v;
+}
+
+float CGameObject::GetRot()
+{
+	return m_Rot;
+}
+
+void CGameObject::SetPos(Vector3 v)
+{
+	m_Pos.x = v.x;
+	m_Pos.y = v.y;
+	m_Pos.z = v.z;
+}
+
+void CGameObject::SetScale(Vector3 v)
+{
+	m_Scale.x = v.x;
+	m_Scale.y = v.y;
+	m_Scale.z = v.z;
+}
+
+void CGameObject::SetRot(float f)
+{
+	m_Rot = f;
+}
 
 OtherPlayer::OtherPlayer(void) : CGameObject()
 {

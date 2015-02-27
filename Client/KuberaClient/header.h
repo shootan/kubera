@@ -29,6 +29,7 @@
 #include "DXUTsettingsDlg.h"
 #include "SDKmisc.h"
 #include "SDKMesh.h"
+#include <process.h>
 
 struct Vector3
 {
@@ -39,4 +40,10 @@ struct PlayerInfo{
 	Vector3 m_Pos;
 	Vector3 m_Scale;
 	float	m_Rot;
+};
+
+struct PlayerPacket
+{
+	int			size;
+	PlayerInfo	PI;
 };

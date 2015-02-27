@@ -19,6 +19,7 @@ struct IOBuffer{
 	int			m_iRecvbytes;
 	int			m_iSendbytes;
 	WSABUF		m_Wsabuf;
+	WSABUF		m_SendWsabuf;
 	OPCODE		m_Opcode;
 	PlayerInfo	m_PlayerData;
 	BOOL		m_Use;
@@ -27,7 +28,7 @@ struct IOBuffer{
 
 struct Player{
 	int m_Id;
-	PlayerPacket	m_PI;
+	PlayerPacket*	m_PI;
 	Player*			m_pNext;
 };
 

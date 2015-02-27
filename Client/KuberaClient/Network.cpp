@@ -2,7 +2,8 @@
 
 Network::Network()
 {
-	ZeroMemory(&PI, sizeof(PlayerInfo));
+	ZeroMemory(&PI, sizeof(PlayerPacket));
+	m_bJoinPlayer = FALSE;
 }
 
 Network::~Network()
@@ -40,6 +41,7 @@ void Network::err_display(char *msg)
 
 BOOL Network::InitClient(char *_ip, int _port)
 {
+
 	//서버 시작
 	int retval;
 
@@ -61,6 +63,9 @@ BOOL Network::InitClient(char *_ip, int _port)
 	server_addr.sin_addr.s_addr  = inet_addr(_ip);
 
 	retval = connect(m_ConnectSock, (sockaddr*)&server_addr, sizeof(sockaddr));
+	HANDLE ThreadHandle;
+	unsigned int ThreadID;
+	ThreadHandle = (HANDLE)_beginthreadex(NULL, 0, WorkerThread, this, 0, &ThreadID);
 	if(SOCKET_ERROR == retval)
 	{
 		return FALSE;
@@ -81,25 +86,21 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 	
 	while(TRUE)
 	{
-		/*recv(server->m_ConnectSock,	(char*)&size, sizeof(int), 0);
-		
-		if(size > 0)
-		{
-			recv(server->m_ConnectSock, Buf, size, 0);
+		retval = recv(server->m_ConnectSock, (char*)&server->PI, sizeof(PlayerPacket), 0);
 
-		}*/
-		retval = recv(server->m_ConnectSock, (char*)&server->PI, sizeof(PlayerInfo), 0);
 		if(retval == SOCKET_ERROR)
 			break;
 
+		//printf("x: %d y: %d z : %d \n ", server->PI.PI.m_Pos.x, server->PI.PI.m_Pos.y, server->PI.PI.m_Pos.z);
 	}
 	return 0;
 }
 
-BOOL Network::SendData(PlayerInfo* _pi)
+BOOL Network::SendData(PlayerPacket* _pi)
 {
 	int retval = 0;
-	retval = send(m_ConnectSock, (char*)_pi, sizeof(PlayerInfo), 0);
+	int p = sizeof(PlayerPacket);
+	retval = send(m_ConnectSock, (char*)_pi, sizeof(PlayerPacket), 0);
 	if(retval == SOCKET_ERROR)
 		return FALSE;
 

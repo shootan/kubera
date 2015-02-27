@@ -35,6 +35,12 @@ public:
 	virtual void SetPosition(D3DXVECTOR3 _pos);
 	virtual void SetNewDestination ( D3DXVECTOR3 _pos );
 	void Update(float _fMoveIncrement);
+	Vector3 GetPos();
+	Vector3 GetScale();
+	float GetRot();
+	void SetPos(Vector3 v);
+	void SetScale(Vector3 v);
+	void SetRot(float f);
 
 	bool InMotion();
 

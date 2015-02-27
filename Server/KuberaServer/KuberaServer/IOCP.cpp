@@ -111,6 +111,10 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 			Player* pl = new Player;
 			ZeroMemory(pl, sizeof(Player));
 			pl->m_Id = buffer->m_Id;
+			pl->m_PI = new PlayerPacket;
+			ZeroMemory(pl->m_PI, sizeof(PlayerPacket));
+			pl->m_PI->PI.m_Pos.x = 10;
+			pl->m_PI->size = 32;
 			pl->m_pNext = pThis->m_pPlayerList;
 			pThis->m_pPlayerList = pl;
 
@@ -128,7 +132,11 @@ int IOCPServer::GetNewId()
 {
 	for(int i=1; i<100; i++)
 	{
-		if(m_ID[i] == NULL) return i;
+		if(m_ID[i] == NULL)
+		{
+			m_ID[i] = 'a';
+			return i;
+		}
 	}
 
 	return 0;
@@ -168,7 +176,7 @@ UINT WINAPI IOCPServer::WorkerThread(LPVOID arg)
 			server->OnRecvFinish(buff, dwSize);
 			break;
 		case OP_SEND_FINISH:
-
+			server->OnSendFinish(buff, dwSize);
 			break;
 		}
 	}
@@ -215,15 +223,29 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 {
 	if ( _size == 0 )
 	{
-		m_iClientCount--;
+		//m_iClientCount--;
 		return;
 	}
 	
-	_buff->m_iRecvbytes = _size;
+	/*_buff->m_iRecvbytes = _size;
 	_buff->m_RecvBuf[_buff->m_iRecvbytes] = 0;
 
-	
-	printf("[RECV] %s\n", _buff->m_RecvBuf);
+	printf("[RECV] %s\n", _buff->m_RecvBuf);*/
+
+	Player* play;
+	play = m_pPlayerList;
+
+	while(play != NULL)
+	{
+		if(_buff->m_Id == play->m_Id)
+		{
+			play->m_PI = (PlayerPacket*)_buff->m_RecvBuf;
+			
+
+			break;
+		}
+		play = play->m_pNext;
+	}
 	
 	SetOpCode(_buff, OP_RECV);
 	BOOL bSuccess = PostQueuedCompletionStatus(m_hIO, 0, (ULONG_PTR)_buff, &(_buff->m_Overlapped));
@@ -239,7 +261,7 @@ void IOCPServer::OnSendFinish(IOBuffer* _buff, DWORD _size)
 {
 	if ( _size == 0 )
 	{
-		m_iClientCount--;
+	//	m_iClientCount--;
 		return;
 	}
 
@@ -258,13 +280,23 @@ BOOL IOCPServer::SendData()
 	IOBuffer* Buffer;
 	Player*   play;
 	Buffer = m_pNextBufferList;
-	while(Buffer->m_pNext != NULL)
+	while(Buffer != NULL)
 	{
 		play = m_pPlayerList;
-		for(int i=0; i<m_iClientCount; i++)
+		while(play != NULL)
 		{
-			if(Buffer->m_Id == play->m_Id || play->m_pNext == NULL) continue;
-			this->SendPacket(Buffer, &play->m_PI);
+			EnterCriticalSection(&m_BufferListLock);
+			if( play->m_Id == Buffer->m_Id)
+			{
+				play = play->m_pNext;
+				continue;
+			}
+			if(play->m_Id == 2)
+				printf("ID : %d,   x: %d, y: %d, z : %d, size : %d \n ", play->m_Id, play->m_PI->PI.m_Pos.x, play->m_PI->PI.m_Pos.y, play->m_PI->PI.m_Pos.z, play->m_PI->size);
+			this->SendPacket(Buffer, play->m_PI);
+			this->SetOpCode(Buffer, OP_SEND_FINISH);
+			play = play->m_pNext;
+			LeaveCriticalSection(&m_BufferListLock);
 		}
 		Buffer = Buffer->m_pNext;
 	}
@@ -275,12 +307,13 @@ void IOCPServer::SendPacket(IOBuffer* _buffer, void *_packet)
 {
 	int packet_size = reinterpret_cast<unsigned char *>(_packet)[0];
 
-	_buffer->m_Wsabuf.buf = _buffer->m_SendBuf;
-	_buffer->m_Wsabuf.len = packet_size;
+	_buffer->m_SendWsabuf.buf = _buffer->m_SendBuf;
+	_buffer->m_SendWsabuf.len = packet_size;
 
 	unsigned long io_size;
 
 	memcpy(_buffer->m_SendBuf, _packet, packet_size);
+	
 
-	WSASend(_buffer->m_ClientSock, &_buffer->m_Wsabuf, 1, &io_size, NULL, &_buffer->m_Overlapped, NULL);
+	WSASend(_buffer->m_ClientSock, &_buffer->m_SendWsabuf, 1, &io_size, NULL, &_buffer->m_Overlapped, NULL);
 }

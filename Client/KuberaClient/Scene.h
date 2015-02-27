@@ -18,7 +18,8 @@ private:
 
 	BOOL m_bRbutton;
 
-	BOOL m_bJoinOtherPlayer;
+
+
 public:
 	CScene(void);
 	~CScene(void);
@@ -33,12 +34,16 @@ public:
 	void ReleaseObjects();
 
 	bool ProcessInput();
-	void AnimateObjects(float fTimeElapsed);
+	void AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice);
 	void Render(ID3D11DeviceContext *pd3dDeviceContext);
 
 	int GetMousePosX();
 	int GetMousePosY();
 
 	void AddOtherPlayer(ID3D11Device *pd3dDevice);
+
+	CGameObject* GetObject(int num);
+	BOOL m_bJoinOtherPlayer;
+	BOOL m_bJoin;
 };
 
