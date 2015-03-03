@@ -35,7 +35,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	//렌더링할 객체(게임 월드 객체)를 생성한다. 
 	BuildObjects();
 
-	Net.InitClient("192.168.0.18", 9000);
+	Net.InitClient("10.254.3.41", 9000);
 	time = 0.0f;
 
 	return(true);
@@ -338,12 +338,12 @@ void CGameFramework::FrameAdvance()
 
 		if(m_pScene->GetObject(3) != NULL)
 		{
-			D3DXVECTOR3 v;
-			v.x = Net.PI.PI.m_Pos.x;
-			v.y = Net.PI.PI.m_Pos.y;
-			v.z = Net.PI.PI.m_Pos.z;
-			m_pScene->GetObject(3)->SetPosition(v);
-			
+			//D3DXVECTOR3 v;
+			//v.x = Net.PI.PI.m_Pos.x;
+			//v.y = Net.PI.PI.m_Pos.y;
+			//v.z = Net.PI.PI.m_Pos.z;
+			//m_pScene->GetObject(3)->SetPosition(v);
+			m_pScene->GetObject(3)->SetPos(Net.PI.PI.m_Pos);
 			m_pScene->GetObject(3)->SetRot(Net.PI.PI.m_Rot);
 			m_pScene->GetObject(3)->SetScale(Net.PI.PI.m_Scale);
 
@@ -399,12 +399,30 @@ void CGameFramework::SetCameraPos()
 	D3DXVECTOR3 d3dxvLookAt = D3DXVECTOR3(m_CameraPosX, 0.0f, m_CameraPosZ+17.0f);
 	m_vCamera.SetViewParams( &d3dxvEyePosition, &d3dxvLookAt );
 
+
+
 	if(m_CameraPosX <= -500)
 	{
 		m_CameraPosX = -500;
 		if(m_pScene->GetMousePosX() > m_nWndClientWidth - 10) m_CameraPosX += 400 * m_GameTimer.GetTimeElapsed();
+
+		if(m_CameraPosZ <= -300)
+		{
+			m_CameraPosZ = -300;
+			if(m_pScene->GetMousePosY() < 10) m_CameraPosZ += 400 * m_GameTimer.GetTimeElapsed();
+			return;
+		}
+		if(m_CameraPosZ >= 300)
+		{
+			m_CameraPosZ = 300;
+			if(m_pScene->GetMousePosY() > m_nWndClientHeight - 10) m_CameraPosZ -= 400 * m_GameTimer.GetTimeElapsed();
+			return;
+		}
+
 		if(m_pScene->GetMousePosY() < 10) m_CameraPosZ += 400 * m_GameTimer.GetTimeElapsed();
 		if(m_pScene->GetMousePosY() > m_nWndClientHeight - 10) m_CameraPosZ -= 400 * m_GameTimer.GetTimeElapsed();
+		
+
 		return;
 	}
 
@@ -412,8 +430,23 @@ void CGameFramework::SetCameraPos()
 	{
 		m_CameraPosX = 500;
 		if(m_pScene->GetMousePosX() < 10) m_CameraPosX -= 400 * m_GameTimer.GetTimeElapsed();
+
+		if(m_CameraPosZ <= -300)
+		{
+			m_CameraPosZ = -300;
+			if(m_pScene->GetMousePosY() < 10) m_CameraPosZ += 400 * m_GameTimer.GetTimeElapsed();
+			return;
+		}
+		if(m_CameraPosZ >= 300)
+		{
+			m_CameraPosZ = 300;
+			if(m_pScene->GetMousePosY() > m_nWndClientHeight - 10) m_CameraPosZ -= 400 * m_GameTimer.GetTimeElapsed();
+			return;
+		}
+
 		if(m_pScene->GetMousePosY() < 10) m_CameraPosZ += 400 * m_GameTimer.GetTimeElapsed();
 		if(m_pScene->GetMousePosY() > m_nWndClientHeight - 10) m_CameraPosZ -= 400 * m_GameTimer.GetTimeElapsed();
+
 		return;
 	}
 
@@ -421,8 +454,24 @@ void CGameFramework::SetCameraPos()
 	{
 		m_CameraPosZ = 300;
 		if(m_pScene->GetMousePosY() > m_nWndClientHeight - 10) m_CameraPosZ -= 400 * m_GameTimer.GetTimeElapsed();
-		if(m_pScene->GetMousePosX() < 10) m_CameraPosX -= 400 * m_GameTimer.GetTimeElapsed();
+
+
+		if(m_CameraPosX <= -500)
+		{
+			m_CameraPosX = -500;
+			if(m_pScene->GetMousePosX() > m_nWndClientWidth - 10) m_CameraPosX += 400 * m_GameTimer.GetTimeElapsed();
+			return;
+		}
+		if(m_CameraPosX >= 500)
+		{
+			m_CameraPosX = 500;
+			if(m_pScene->GetMousePosX() < 10) m_CameraPosX -= 400 * m_GameTimer.GetTimeElapsed();
+			return;
+		}
+
 		if(m_pScene->GetMousePosX() > m_nWndClientWidth - 10) m_CameraPosX += 400 * m_GameTimer.GetTimeElapsed();
+		if(m_pScene->GetMousePosX() < 10) m_CameraPosX -= 400 * m_GameTimer.GetTimeElapsed();
+
 		return;
 	}
 
@@ -430,8 +479,23 @@ void CGameFramework::SetCameraPos()
 	{
 		m_CameraPosZ <= -300;
 		if(m_pScene->GetMousePosY() < 10) m_CameraPosZ += 400 * m_GameTimer.GetTimeElapsed();
-		if(m_pScene->GetMousePosX() < 10) m_CameraPosX -= 400 * m_GameTimer.GetTimeElapsed();
+
+		if(m_CameraPosX <= -500)
+		{
+			m_CameraPosX = -500;
+			if(m_pScene->GetMousePosX() > m_nWndClientWidth - 10) m_CameraPosX += 400 * m_GameTimer.GetTimeElapsed();
+			return;
+		}
+		if(m_CameraPosX >= 500)
+		{
+			m_CameraPosX = 500;
+			if(m_pScene->GetMousePosX() < 10) m_CameraPosX -= 400 * m_GameTimer.GetTimeElapsed();
+			return;
+		}
+
 		if(m_pScene->GetMousePosX() > m_nWndClientWidth - 10) m_CameraPosX += 400 * m_GameTimer.GetTimeElapsed();
+		if(m_pScene->GetMousePosX() < 10) m_CameraPosX -= 400 * m_GameTimer.GetTimeElapsed();
+
 		return;
 	}
 

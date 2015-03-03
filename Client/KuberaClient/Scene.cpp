@@ -42,7 +42,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	CFBXMesh *pFBXMesh = new CFBXMesh(pd3dDevice, L"Wizard101310.FBX");
 	pFBXMesh->LoadTexture(pd3dDevice, L"micro_wizard_col.tif");
 
-	CFBXMesh *pPlane = new CFBXMesh(pd3dDevice, L"Plane.FBX");
+	CFBXMesh *pPlane = new CFBXMesh(pd3dDevice, L"Plane4.FBX");
 	pPlane->LoadTexture(pd3dDevice, L"floor.png");
 
 	CFBXMesh *pFBXMesh1 = new CFBXMesh(pd3dDevice, L"20Box.FBX");
@@ -59,7 +59,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	pObject2->SetMesh(pPlane);
 	//pObject2->SetScale(D3DXVECTOR3(20, 20, 20));
 	//pObject2->SetRotation(2, 180);
-	pObject2->SetRotation(1, -2);
+	//pObject2->SetRotation(1, -2);
 	//pObject2->SetRotation(2, 2);
 
 	CGameObject *pObject3 = new CGameObject();

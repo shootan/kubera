@@ -56,4 +56,5 @@ public:
 
 	virtual void Animate(float fTimeElapsed);
 	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext);
+	void SetDirection();
 };

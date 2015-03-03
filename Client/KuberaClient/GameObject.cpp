@@ -172,16 +172,28 @@ float CGameObject::GetRot()
 
 void CGameObject::SetPos(Vector3 v)
 {
-	m_Pos.x = v.x;
-	m_Pos.y = v.y;
-	m_Pos.z = v.z;
+	D3DXVECTOR3 vec;
+
+	vec.x = v.x;
+	vec.y = v.y;
+	vec.z = v.z;
+
+	m_Pos.x = vec.x;
+	m_Pos.y = vec.y;
+	m_Pos.z = vec.z;
 }
 
 void CGameObject::SetScale(Vector3 v)
 {
-	m_Scale.x = v.x;
-	m_Scale.y = v.y;
-	m_Scale.z = v.z;
+	D3DXVECTOR3 vec;
+
+	vec.x = v.x;
+	vec.y = v.y;
+	vec.z = v.z;
+
+	m_Scale.x = vec.x;
+	m_Scale.y = vec.y;
+	m_Scale.z = vec.z;
 }
 
 void CGameObject::SetRot(float f)
@@ -206,4 +218,9 @@ void OtherPlayer::Animate(float fTimeElapsed)
 void OtherPlayer::Render(ID3D11DeviceContext *pd3dDeviceContext)
 {
 	CGameObject::Render(pd3dDeviceContext);
+}
+
+void OtherPlayer::SetDirection()
+{
+
 }
