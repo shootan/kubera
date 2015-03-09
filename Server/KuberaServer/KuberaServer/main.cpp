@@ -12,6 +12,7 @@ int main()
 	//HANDLE y  = (HANDLE)_beginthreadex(NULL, 0, Th, NULL, 0, &d);
 	while(1)
 	{
+		Sleep(50);
 		Server.SendData();
 	}
 	return 0;

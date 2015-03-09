@@ -11,6 +11,7 @@ typedef enum OPCODE
 } OPCODE;
 
 struct IOBuffer{
+	
 	SOCKET		m_ClientSock;
 	int			m_Id;
 	OVERLAPPED	m_Overlapped;
@@ -23,7 +24,9 @@ struct IOBuffer{
 	OPCODE		m_Opcode;
 	PlayerInfo	m_PlayerData;
 	BOOL		m_Use;
+	BOOL		m_Disconnect;
 	IOBuffer*	m_pNext;
+	IOBuffer*	m_pPrev;
 };
 
 struct Player{
