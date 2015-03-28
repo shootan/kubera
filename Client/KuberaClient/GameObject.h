@@ -9,6 +9,12 @@ public:
 	~CGameObject(void);
 
 private:
+	//
+	int			m_ID;
+	BOOL		m_Visible;
+	int			m_iTag;
+
+	//
 	int m_nReferences;
 	D3DXVECTOR3 m_Pos;
 	D3DXVECTOR3 m_Scale;
@@ -44,17 +50,12 @@ public:
 
 	bool InMotion();
 
+	int	GetID() { return m_ID; }
+	void SetID(int _id) { m_ID= _id;}
+	void SetVisible(BOOL _vi) { m_Visible  = _vi; }
+	BOOL GetVisible() { return m_Visible; }
+	int GetTag() { return m_iTag; }
+	void SetTag(int _tag) { m_iTag = _tag;}
+
 	D3DXVECTOR3 GetPosition() { return m_Pos; }
-};
-
-
-class OtherPlayer:public CGameObject
-{
-public:
-	OtherPlayer(void);
-	~OtherPlayer(void);
-
-	virtual void Animate(float fTimeElapsed);
-	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext);
-	void SetDirection();
 };

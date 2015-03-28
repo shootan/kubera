@@ -331,7 +331,7 @@ BOOL IOCPServer::SendData()
 				play = play->m_pNext;
 				continue;
 			}
-			printf("ID : %d,   x: %d, y: %d, z : %d, size : %d \n ", play->m_Id, play->m_PI->PI.m_Pos.x, play->m_PI->PI.m_Pos.y, play->m_PI->PI.m_Pos.z, play->m_PI->size);
+			printf("ID : %d,   x: %3f, y: %3f, z : %3f, size : %d \n ", play->m_Id, play->m_PI->PI.m_Pos.x, play->m_PI->PI.m_Pos.y, play->m_PI->PI.m_Pos.z, play->m_PI->size);
 			if(!Buffer->m_Disconnect)
 			{
 				this->SendPacket(Buffer, play->m_PI);

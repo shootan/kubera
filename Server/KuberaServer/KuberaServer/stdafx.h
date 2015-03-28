@@ -6,6 +6,7 @@
 #include <tchar.h>
 #include <WinSock2.h>
 #include <process.h>
+#include <math.h>
 
 
 // BUFSIZE
@@ -14,10 +15,11 @@
 
 struct Vector3
 {
-	int x, y, z;
+	float x, y, z;
 };
 
 struct PlayerInfo{
+	int		m_ID;
 	Vector3 m_Pos;
 	Vector3 m_Scale;
 	float	m_Rot;

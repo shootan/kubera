@@ -18,6 +18,8 @@ private:
 
 	BOOL m_bRbutton;
 
+	CFBXMesh *pHeroMesh;
+
 
 
 public:
@@ -45,5 +47,6 @@ public:
 	CGameObject* GetObject(int num);
 	BOOL m_bJoinOtherPlayer;
 	BOOL m_bJoin;
+
 };
 

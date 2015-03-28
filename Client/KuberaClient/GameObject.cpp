@@ -10,11 +10,13 @@ CGameObject::CGameObject(void)
 	m_vDestination = m_Pos;
 	m_Scale = D3DXVECTOR3(1,1,1);
 	m_Rot = 1.0f;
+	m_axis = 2;
 
 	m_vFacingDirection= D3DXVECTOR3(0,0,1);
 
 	m_nReferences = 1;
 
+	m_Visible = TRUE;
 	m_fWalkSpeed= 0.1f;
 }
 
@@ -48,6 +50,8 @@ void CGameObject::Animate(float fTimeElapsed)
 
 void CGameObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
 {
+	if(m_Visible != TRUE) return;
+
 	D3DXMATRIX mWorld;
 	D3DXMatrixIdentity(&mWorld);
 
@@ -135,7 +139,7 @@ bool CGameObject::InMotion()
 
 void CGameObject::Update(float fTimeElapsed)
 {
-	if ( InMotion() ) {
+	if ( InMotion() && m_iTag == HERO ) {
 		D3DXVECTOR3 update_delta = m_vWalkIncrement * 5.0f;
 		D3DXVECTOR3 location_vector = m_vDestination - m_Pos;
 		m_Pos += update_delta;
@@ -199,28 +203,4 @@ void CGameObject::SetScale(Vector3 v)
 void CGameObject::SetRot(float f)
 {
 	m_Rot = f;
-}
-
-OtherPlayer::OtherPlayer(void) : CGameObject()
-{
-}
-
-
-OtherPlayer::~OtherPlayer(void)
-{
-}
-
-void OtherPlayer::Animate(float fTimeElapsed)
-{
-	CGameObject::Animate(fTimeElapsed);
-}
-
-void OtherPlayer::Render(ID3D11DeviceContext *pd3dDeviceContext)
-{
-	CGameObject::Render(pd3dDeviceContext);
-}
-
-void OtherPlayer::SetDirection()
-{
-
 }

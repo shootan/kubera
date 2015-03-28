@@ -26,7 +26,7 @@ private:
 
 	CModelViewerCamera m_vCamera;
 	ID3D11Buffer *m_pd3dcbViewProjection;
-
+	PlayerPacket m_MyHero;
 	float m_CameraPosX;
 	float m_CameraPosZ;
 

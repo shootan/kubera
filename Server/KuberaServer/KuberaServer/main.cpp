@@ -1,18 +1,20 @@
 #include "stdafx.h"
 #include "IOCP.h"
+#include "Timer.h"
 
 IOCPServer Server;
-float a;
 UINT WINAPI Th(LPVOID arg);
+CTimer Timer;
 int main()
 {
-	a = 0.0f;
 	Server.StartServer(9000);
 	//unsigned int d;
 	//HANDLE y  = (HANDLE)_beginthreadex(NULL, 0, Th, NULL, 0, &d);
 	while(1)
 	{
-		Sleep(50);
+		Timer.Tick(60);
+		system("cls");
+		Timer.GetFrameRate();
 		Server.SendData();
 	}
 	return 0;

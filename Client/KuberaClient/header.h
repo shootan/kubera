@@ -33,10 +33,11 @@
 
 struct Vector3
 {
-	int x, y, z;
+	float x, y, z;
 };
 
 struct PlayerInfo{
+	int		m_ID;
 	Vector3 m_Pos;
 	Vector3 m_Scale;
 	float	m_Rot;
@@ -46,4 +47,9 @@ struct PlayerPacket
 {
 	int			size;
 	PlayerInfo	PI;
+};
+
+enum TAG
+{
+	NONE, HERO, OTHERPLAYER, OBSTACLE, PLANE
 };

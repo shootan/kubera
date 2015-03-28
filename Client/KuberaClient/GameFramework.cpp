@@ -35,7 +35,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	//렌더링할 객체(게임 월드 객체)를 생성한다. 
 	BuildObjects();
 
-	Net.InitClient("10.254.3.41", 9000);
+	Net.InitClient("192.168.0.3", 9000);
 	time = 0.0f;
 
 	return(true);
@@ -313,24 +313,20 @@ void CGameFramework::AnimateObjects()
 
 void CGameFramework::FrameAdvance()
 {    
-	m_GameTimer.Tick();
+	m_GameTimer.Tick(60);
 
-	time += 0.01f;
-	if(time > 0.5f)
-	{
-		PlayerPacket* a = new PlayerPacket;
-		ZeroMemory(a, sizeof(PlayerPacket));
-		a->size= sizeof(PlayerPacket);
-		a->PI.m_Pos = m_pScene->GetObject(0)->GetPos();
-		a->PI.m_Scale = m_pScene->GetObject(0)->GetScale();
-		a->PI.m_Rot = m_pScene->GetObject(0)->GetRot();
 
-		Net.SendData(a);
+	PlayerPacket* a = new PlayerPacket;
+	ZeroMemory(a, sizeof(PlayerPacket));
+	a->size= sizeof(PlayerPacket);
+	a->PI.m_Pos = m_pScene->GetObject(0)->GetPos();
+	a->PI.m_Scale = m_pScene->GetObject(0)->GetScale();
+	a->PI.m_Rot = m_pScene->GetObject(0)->GetRot();
 
-		delete a;
+	Net.SendData(a);
 
-		time = 0.0f;
-	}
+	delete a;
+
 
 	if(Net.PI.size != 0)
 	{
@@ -338,15 +334,9 @@ void CGameFramework::FrameAdvance()
 
 		if(m_pScene->GetObject(3) != NULL)
 		{
-			//D3DXVECTOR3 v;
-			//v.x = Net.PI.PI.m_Pos.x;
-			//v.y = Net.PI.PI.m_Pos.y;
-			//v.z = Net.PI.PI.m_Pos.z;
-			//m_pScene->GetObject(3)->SetPosition(v);
 			m_pScene->GetObject(3)->SetPos(Net.PI.PI.m_Pos);
 			m_pScene->GetObject(3)->SetRot(Net.PI.PI.m_Rot);
 			m_pScene->GetObject(3)->SetScale(Net.PI.PI.m_Scale);
-
 		}
 	}
 	
