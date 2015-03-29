@@ -26,6 +26,8 @@ private:
 
 	float		m_fWalkSpeed;
 
+	float BoundsizeX, BoundsizeY, BoundsizeZ;
+
 public:
 	void AddRef();
 	void Release();
@@ -58,4 +60,9 @@ public:
 	void SetTag(int _tag) { m_iTag = _tag;}
 
 	D3DXVECTOR3 GetPosition() { return m_Pos; }
+
+	void SetBoundSize(float x, float y, float z);
+	float GetBoundSizeX() {return BoundsizeX;}
+	float GetBoundSizeY() {return BoundsizeY;}
+	float GetBoundSizeZ() {return BoundsizeZ;}
 };

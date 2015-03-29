@@ -18,6 +18,10 @@ CGameObject::CGameObject(void)
 
 	m_Visible = TRUE;
 	m_fWalkSpeed= 0.1f;
+
+	BoundsizeX = 0.0f;
+	BoundsizeY = 0.0f;
+	BoundsizeZ = 0.0f;
 }
 
 
@@ -203,4 +207,11 @@ void CGameObject::SetScale(Vector3 v)
 void CGameObject::SetRot(float f)
 {
 	m_Rot = f;
+}
+
+void CGameObject::SetBoundSize(float x, float y, float z)
+{
+	BoundsizeX = x;
+	BoundsizeY = y;
+	BoundsizeZ = z;
 }

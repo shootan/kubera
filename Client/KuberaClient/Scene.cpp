@@ -31,10 +31,10 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_ppShaders = new CObjectShader*[m_nShaders];
 	//CObjectShader 클래스 객체를 생성한다.
 	m_ppShaders[0] = new CObjectShader();
-	m_ppShaders[0]->CreateShader(pd3dDevice, 4);
+	m_ppShaders[0]->CreateShader(pd3dDevice, 5);
 
 	//게임 객체에 대한 포인터들의 배열을 정의한다.
-	m_nObjects = 4;
+	m_nObjects = 5;
 	m_ppObjects = new CGameObject*[m_nObjects]; 
 
 	//정육면체 메쉬를 생성하고 객체에 연결한다.
@@ -42,39 +42,62 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	pHeroMesh = new CFBXMesh(pd3dDevice, L"Wizard101310.FBX");
 	pHeroMesh->LoadTexture(pd3dDevice, L"micro_wizard_col.tif");
 
-	CFBXMesh *pPlane = new CFBXMesh(pd3dDevice, L"Plane4.FBX");
-	pPlane->LoadTexture(pd3dDevice, L"floor.png");
+	CFBXMesh *pPlaneMesh = new CFBXMesh(pd3dDevice, L"Plane4.FBX");
+	pPlaneMesh->LoadTexture(pd3dDevice, L"floor.png");
 
-	CFBXMesh *pFBXMesh1 = new CFBXMesh(pd3dDevice, L"20Box.FBX");
-	pFBXMesh1->LoadTexture(pd3dDevice, L"micro_wizard_col.tif");
+	CFBXMesh *pObstacleMesh = new CFBXMesh(pd3dDevice, L"20Box.FBX");
+	pObstacleMesh->LoadTexture(pd3dDevice, L"micro_wizard_col.tif");
 
 	//삼각형 객체(CTriangleObject)를 생성하고 삼각형 메쉬를 연결한다.
-	CGameObject *pObject = new CGameObject();
-	pObject->SetMesh(pHeroMesh);
-	m_Control.m_Player = pObject;
+	CGameObject *pHero = new CGameObject();
+	pHero->SetMesh(pHeroMesh);
+	m_Control.m_Player = pHero;
+	pHero->SetBoundSize(10, 13, 10);
 
-	CGameObject *pObject2 = new CGameObject();
-	pObject2->SetMesh(pPlane);
+	CGameObject *pPlane = new CGameObject();
+	pPlane->SetMesh(pPlaneMesh);
 	
-	CGameObject *pObject3 = new CGameObject();
-	pObject3->SetMesh(pFBXMesh1);
+	CGameObject *pObstacle = new CGameObject();
+	pObstacle->SetMesh(pObstacleMesh);
+	pObstacle->SetBoundSize(20, 20, 20);
+	pObstacle->SetPosition(D3DXVECTOR3(25,0,0));
+
+	//충돌박스
+	int iObjectNum = 2;
+	CCubeMesh *pBox[2];
+	CGameObject *pBoundBox[2];
+	pBox[0] = new CCubeMesh(pd3dDevice,pHero->GetBoundSizeX(),pHero->GetBoundSizeY(),pHero->GetBoundSizeZ());
+	pBox[1] = new CCubeMesh(pd3dDevice,pObstacle->GetBoundSizeX(),pObstacle->GetBoundSizeY(),pObstacle->GetBoundSizeZ());
 	
-	pObject3->SetPosition(D3DXVECTOR3(25,0,0));
+	for(int i=0; i<iObjectNum; i++)
+	{
+		pBoundBox[i] = new CGameObject;
+		pBoundBox[i]->SetMesh(pBox[i]);
+	}
+	pBoundBox[1]->SetPosition(pObstacle->GetPosition());
+
 
 	//pFBXMesh->Release();
 
  	//삼각형 객체를 쉐이더 객체에 연결한다.
- 	m_ppShaders[0]->AddObject(pObject);
-	m_ppShaders[0]->AddObject(pObject2);
-	m_ppShaders[0]->AddObject(pObject3);
- 	m_ppObjects[0] = pObject;
-	m_ppObjects[0]->SetTag(HERO);
-	m_ppObjects[1] = pObject2;
-	m_ppObjects[1]->SetTag(PLANE);
-	m_ppObjects[2] = pObject3;
-	m_ppObjects[2]->SetTag(OBSTACLE);
+ 	m_ppShaders[0]->AddObject(pHero);
+	m_ppShaders[0]->AddObject(pPlane);
+	m_ppShaders[0]->AddObject(pObstacle);
+	for(int i=0; i<iObjectNum; i++)
+	{
+		m_ppShaders[0]->AddObject(pBoundBox[i]);
+	}
 
-	m_ppObjects[3] = NULL;
+ 	m_ppObjects[0] = pHero;
+	m_ppObjects[0]->SetTag(HERO);
+	m_ppObjects[1] = pPlane;
+	m_ppObjects[1]->SetTag(PLANE);
+	m_ppObjects[2] = pObstacle;
+	m_ppObjects[2]->SetTag(OBSTACLE);
+	m_ppObjects[3] = pBoundBox[0];
+	m_ppObjects[3]->SetTag(HERO_BOUND);
+	m_ppObjects[4] = pBoundBox[1];
+	m_ppObjects[4]->SetTag(OBSTACLE_BOUND);
 }
 
 void CScene::ReleaseObjects()
@@ -162,7 +185,14 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 
 		m_ppObjects[j]->Animate(fTimeElapsed);
 		m_ppObjects[j]->Update(fTimeElapsed);
+
+		if(m_ppObjects[j]->GetTag() == HERO_BOUND)
+		{
+			m_ppObjects[j]->SetPosition(m_ppObjects[0]->GetPosition());
+		}
 	}
+
+	GameCollision();
 
 }
 
@@ -198,4 +228,99 @@ void CScene::AddOtherPlayer(ID3D11Device *pd3dDevice)
 CGameObject* CScene::GetObject(int num)
 {
 	return m_ppObjects[num];
+}
+
+//박스대박스 충돌체크
+// box vs box
+BOOL CScene::CheckCollisionAABBAxis( float c1, float w1, float c2, float w2)
+{
+	if ( abs(c1-c2) < (w1+w2)/2)
+		return TRUE;
+	return FALSE;
+}
+// box vs box
+BOOL CScene::CheckCollision(D3DXVECTOR3 c1, float w1, float h1, float d1, 
+	D3DXVECTOR3 c2, float w2, float h2, float d2)
+{
+	if (CheckCollisionAABBAxis( c1.x, w1, c2.x, w2)
+		&& CheckCollisionAABBAxis( c1.y, h1, c2.y, h2)
+		&& CheckCollisionAABBAxis( c1.z, d1, c2.z, d2)) {
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
+void CScene::GameCollision()
+{
+	for(int i = 1; i < m_nObjects; i++)
+	{
+		if(m_ppObjects[i] == NULL) continue;
+
+		
+		if(CheckCollision(m_ppObjects[0]->GetPosition(), m_ppObjects[0]->GetBoundSizeX(), m_ppObjects[0]->GetBoundSizeY(), 
+			m_ppObjects[0]->GetBoundSizeZ(), m_ppObjects[2]->GetPosition(),m_ppObjects[2]->GetBoundSizeX(), m_ppObjects[2]->GetBoundSizeY(), 
+			m_ppObjects[2]->GetBoundSizeZ()))
+		{
+
+			//캐릭터 왼쪽방향
+			if(m_ppObjects[0]->GetPosition().x > m_ppObjects[2]->GetPosition().x && 
+				abs(m_ppObjects[2]->GetPosition().x - m_ppObjects[0]->GetPosition().x) > 
+				abs(m_ppObjects[2]->GetPosition().z - m_ppObjects[0]->GetPosition().z))
+			{
+				if(m_ppObjects[0]->GetPosition().x - m_ppObjects[0]->GetBoundSizeX()/2 < 
+					m_ppObjects[2]->GetPosition().x + m_ppObjects[2]->GetBoundSizeX()/2)
+				{
+					D3DXVECTOR3 v = D3DXVECTOR3(m_ppObjects[2]->GetPosition().x + m_ppObjects[2]->GetBoundSizeX()/2 +
+						m_ppObjects[0]->GetBoundSizeX()/2, m_ppObjects[0]->GetPosition().y, m_ppObjects[0]->GetPosition().z);
+					m_ppObjects[0]->SetPosition(v);
+				}
+			}
+
+			//캐릭터 오른쪽 방향
+			else if(m_ppObjects[0]->GetPosition().x < m_ppObjects[2]->GetPosition().x &&
+				abs(m_ppObjects[2]->GetPosition().x - m_ppObjects[0]->GetPosition().x) > 
+				abs(m_ppObjects[2]->GetPosition().z - m_ppObjects[0]->GetPosition().z))
+			{
+				if(m_ppObjects[0]->GetPosition().x + m_ppObjects[0]->GetBoundSizeX()/2 > 
+					m_ppObjects[2]->GetPosition().x - m_ppObjects[2]->GetBoundSizeX()/2)
+				{
+					D3DXVECTOR3 v = D3DXVECTOR3(m_ppObjects[2]->GetPosition().x - m_ppObjects[2]->GetBoundSizeX()/2 - 
+						m_ppObjects[0]->GetBoundSizeX()/2, m_ppObjects[0]->GetPosition().y, m_ppObjects[0]->GetPosition().z);
+					m_ppObjects[0]->SetPosition(v);
+				}
+			}
+			//캐릭터 위쪽 방향
+			else if(m_ppObjects[0]->GetPosition().z < m_ppObjects[2]->GetPosition().z &&
+				abs(m_ppObjects[2]->GetPosition().x - m_ppObjects[0]->GetPosition().x) < 
+				abs(m_ppObjects[2]->GetPosition().z - m_ppObjects[0]->GetPosition().z))
+			{
+				if(m_ppObjects[0]->GetPosition().z + m_ppObjects[0]->GetBoundSizeZ()/2 > 
+					m_ppObjects[2]->GetPosition().z - m_ppObjects[2]->GetBoundSizeZ()/2)
+				{
+					D3DXVECTOR3 v = D3DXVECTOR3(m_ppObjects[0]->GetPosition().x, m_ppObjects[0]->GetPosition().y,
+						m_ppObjects[2]->GetPosition().z - m_ppObjects[2]->GetBoundSizeZ()/2 - m_ppObjects[0]->GetBoundSizeZ()/2);
+					m_ppObjects[0]->SetPosition(v);
+				}
+			}
+	
+			//캐릭터 아래쪽 방향
+			else if(m_ppObjects[0]->GetPosition().z > m_ppObjects[2]->GetPosition().z &&
+				abs(m_ppObjects[2]->GetPosition().x - m_ppObjects[0]->GetPosition().x) < 
+				abs(m_ppObjects[2]->GetPosition().z - m_ppObjects[0]->GetPosition().z))
+			{
+				if(m_ppObjects[0]->GetPosition().z + m_ppObjects[0]->GetBoundSizeZ()/2 > 
+					m_ppObjects[2]->GetPosition().z - m_ppObjects[2]->GetBoundSizeZ()/2)
+				{
+					D3DXVECTOR3 v = D3DXVECTOR3(m_ppObjects[0]->GetPosition().x, m_ppObjects[0]->GetPosition().y, 
+						m_ppObjects[2]->GetPosition().z + m_ppObjects[2]->GetBoundSizeZ()/2 + m_ppObjects[0]->GetBoundSizeZ()/2);
+					m_ppObjects[0]->SetPosition(v);
+				}
+			}
+
+			break;
+		}
+		
+
+	}
 }
