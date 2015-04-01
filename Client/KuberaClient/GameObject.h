@@ -1,6 +1,7 @@
 #pragma once
 #include "Mesh.h"
 #include "header.h"
+#include "astarclass.h"
 
 class CGameObject
 {
@@ -34,6 +35,8 @@ public:
 
 	D3DXMATRIX m_d3dxmtxWorld;         
 	CMesh *m_pMesh;
+	Astar* astar;
+	node_t* best;
 
 	virtual void SetMesh(CMesh *pMesh);
 	virtual void Animate(float fTimeElapsed);

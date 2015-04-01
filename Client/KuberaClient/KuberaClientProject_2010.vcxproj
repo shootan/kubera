@@ -369,6 +369,7 @@
     <None Include="Effect.fx" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="astarclass.cpp" />
     <ClCompile Include="ControlManager.cpp" />
     <ClCompile Include="DXUT\Core\DXUT.cpp" />
     <ClCompile Include="DXUT\Core\DXUTDevice11.cpp" />
@@ -393,6 +394,7 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="astarclass.h" />
     <ClInclude Include="ControlManager.h" />
     <ClInclude Include="DXUT\Core\DXUT.h" />
     <ClInclude Include="DXUT\Core\DXUTDevice11.h" />

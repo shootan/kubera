@@ -31,10 +31,10 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_ppShaders = new CObjectShader*[m_nShaders];
 	//CObjectShader 클래스 객체를 생성한다.
 	m_ppShaders[0] = new CObjectShader();
-	m_ppShaders[0]->CreateShader(pd3dDevice, 5);
+	m_ppShaders[0]->CreateShader(pd3dDevice, 6);
 
 	//게임 객체에 대한 포인터들의 배열을 정의한다.
-	m_nObjects = 5;
+	m_nObjects = 6;
 	m_ppObjects = new CGameObject*[m_nObjects]; 
 
 	//정육면체 메쉬를 생성하고 객체에 연결한다.
@@ -98,6 +98,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_ppObjects[3]->SetTag(HERO_BOUND);
 	m_ppObjects[4] = pBoundBox[1];
 	m_ppObjects[4]->SetTag(OBSTACLE_BOUND);
+	m_ppObjects[5] = NULL;
 }
 
 void CScene::ReleaseObjects()
@@ -221,7 +222,7 @@ void CScene::AddOtherPlayer(ID3D11Device *pd3dDevice)
 	OtherPlayer->SetMesh(pHeroMesh);
 
 	m_ppShaders[0]->AddObject(OtherPlayer);  //세팅시 배열 숫자 조정
-	m_ppObjects[3] = OtherPlayer;  //세팅시 배열 숫자 조정
+	m_ppObjects[5] = OtherPlayer;  //세팅시 배열 숫자 조정
 }
 
 

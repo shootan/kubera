@@ -78,13 +78,11 @@
     <ClCompile Include="Network.cpp">
       <Filter>Network</Filter>
     </ClCompile>
+    <ClCompile Include="astarclass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
       <Filter>소스코드</Filter>
-    </ClInclude>
-    <ClInclude Include="header.h">
-      <Filter>헤더</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>소스코드</Filter>
@@ -137,6 +135,10 @@
     </ClInclude>
     <ClInclude Include="Network.h">
       <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="astarclass.h" />
+    <ClInclude Include="header.h">
+      <Filter>헤더</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -22,6 +22,9 @@ CGameObject::CGameObject(void)
 	BoundsizeX = 0.0f;
 	BoundsizeY = 0.0f;
 	BoundsizeZ = 0.0f;
+
+	astar = NULL;
+	best = NULL;
 }
 
 
@@ -118,6 +121,11 @@ void CGameObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
 	m_vDestination.z = _pos.z;       
 	m_vWalkIncrement = m_vDestination - m_Pos;
 	D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
+	best = NULL;
+
+	astar = new Astar();
+	best = astar->find_path(m_Pos.x, m_Pos.z, m_vDestination.x, m_vDestination.z);
+
 
 	//// Calculate the rotation angle before. Next, change the walk direction into 
 	//// an increment by multiplying by speed.
@@ -136,20 +144,44 @@ void CGameObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
 }
 
 bool CGameObject::InMotion()
-{
-	if ( m_Pos.x == m_vDestination.x && m_Pos.y == m_vDestination.y ) return false;
+{	
+	if(best == NULL)
+		return false;
+
+	if ( m_Pos.x == best->x && m_Pos.z == best->y ) return false;
 	else return true;
 }
 
 void CGameObject::Update(float fTimeElapsed)
 {
+	if(astar == NULL)
+		astar = new Astar();
+
+
 	if ( InMotion() && m_iTag == HERO ) {
+
 		D3DXVECTOR3 update_delta = m_vWalkIncrement * 5.0f;
-		D3DXVECTOR3 location_vector = m_vDestination - m_Pos;
-		m_Pos += update_delta;
+		D3DXVECTOR3 location_vector = D3DXVECTOR3(best->x - m_Pos.x, m_Pos.y, best->y - m_Pos.z);
+
+		//D3DXVECTOR3 location_vector = m_vDestination - m_Pos;
+
+
+		m_Pos += location_vector;
+
+
 		//determine  if we've moved past our target ( so we can stop ).
 		float finished = D3DXVec3Dot( &m_vWalkIncrement, &location_vector );
-		if ( finished < 0.0f ) m_Pos = m_vDestination;
+		//if ( finished < 0.0f ) m_Pos = m_vDestination;
+		if ( finished < 0.0f ) m_Pos = D3DXVECTOR3(best->x, m_Pos.y, best->y);
+
+
+		
+	}
+	else
+	{
+		if(best == NULL)
+			return;
+		best = best->prev_node;
 	}
 }
 

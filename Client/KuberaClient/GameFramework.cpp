@@ -35,7 +35,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	//렌더링할 객체(게임 월드 객체)를 생성한다. 
 	BuildObjects();
 
-	Net.InitClient("192.168.0.3", 9000);
+	Net.InitClient("10.254.0.40", 9000);
 	time = 0.0f;
 
 	return(true);
