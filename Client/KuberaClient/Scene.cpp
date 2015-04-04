@@ -187,9 +187,29 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 		m_ppObjects[j]->Animate(fTimeElapsed);
 		m_ppObjects[j]->Update(fTimeElapsed);
 
-		if(m_ppObjects[j]->GetTag() == HERO_BOUND)
-		{
+		if(m_ppObjects[j]->GetTag() == HERO_BOUND) //플레이어 충돌박스 보이기
 			m_ppObjects[j]->SetPosition(m_ppObjects[0]->GetPosition());
+
+		if(m_ppObjects[j]->GetTag() == HERO)
+		{
+			for(int i=0; i< m_nObjects; i++)
+			{
+				if(m_ppObjects[i] == NULL)
+					continue;
+
+				if(m_ppObjects[i]->GetTag() == OBSTACLE)
+				{
+					if(m_ppObjects[i]->GetBoundSizeX() + m_ppObjects[j]->GetBoundSizeX()>
+						sqrt(double((m_ppObjects[i]->GetPosition().x - m_ppObjects[j]->GetPosition().x)*
+						(m_ppObjects[i]->GetPosition().x - m_ppObjects[j]->GetPosition().x)) + 
+						double((m_ppObjects[i]->GetPosition().z - m_ppObjects[j]->GetPosition().z)*
+						(m_ppObjects[i]->GetPosition().z - m_ppObjects[j]->GetPosition().z))))
+						m_ppObjects[j]->SetAstar(TRUE);
+					else
+						if(m_ppObjects[j]->GetAstar() == TRUE)
+							m_ppObjects[j]->SetAstar(FALSE);
+				}
+			}
 		}
 	}
 

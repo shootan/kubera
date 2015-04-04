@@ -28,6 +28,8 @@ private:
 	float		m_fWalkSpeed;
 
 	float BoundsizeX, BoundsizeY, BoundsizeZ;
+	BOOL m_bAstar;
+	BOOL m_bFindPath;
 
 public:
 	void AddRef();
@@ -68,4 +70,6 @@ public:
 	float GetBoundSizeX() {return BoundsizeX;}
 	float GetBoundSizeY() {return BoundsizeY;}
 	float GetBoundSizeZ() {return BoundsizeZ;}
+	void SetAstar(BOOL _astar) {m_bAstar = _astar;}
+	BOOL GetAstar() { return m_bAstar; }
 };
