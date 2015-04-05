@@ -303,12 +303,12 @@ void CGameFramework::ReleaseObjects()
 
 void CGameFramework::ProcessInput()
 {
-	if (m_pScene) m_pScene->AnimateObjects(m_GameTimer.GetTimeElapsed(), m_pd3dDevice);
 
 }
 
 void CGameFramework::AnimateObjects()
 {
+	if (m_pScene) m_pScene->AnimateObjects(m_GameTimer.GetTimeElapsed(), m_pd3dDevice);
 }
 
 void CGameFramework::FrameAdvance()

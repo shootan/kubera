@@ -9,7 +9,7 @@ public:
 	CGameObject(void);
 	~CGameObject(void);
 
-private:
+protected:
 	//
 	int			m_ID;
 	BOOL		m_Visible;
@@ -32,22 +32,24 @@ private:
 	BOOL m_bFindPath;
 
 public:
-	void AddRef();
-	void Release();
+	virtual void AddRef();
+	virtual void Release();
 
 	D3DXMATRIX m_d3dxmtxWorld;         
 	CMesh *m_pMesh;
 	Astar* astar;
 	node_t* best;
 
-	virtual void SetMesh(CMesh *pMesh);
+	void SetMesh(CMesh *pMesh);
 	virtual void Animate(float fTimeElapsed);
 	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext);
-	virtual void SetScale(D3DXVECTOR3 _size);
-	virtual void SetRotation(int xyz, float _rot);  // x =1 y = 2 z =3
-	virtual void SetPosition(D3DXVECTOR3 _pos);
 	virtual void SetNewDestination ( D3DXVECTOR3 _pos );
-	void Update(float _fMoveIncrement);
+	virtual void Update(float _fMoveIncrement);
+	virtual bool InMotion();
+
+	void SetScale(D3DXVECTOR3 _size);
+	void SetRotation(int xyz, float _rot);  // x =1 y = 2 z =3
+	void SetPosition(D3DXVECTOR3 _pos);
 	Vector3 GetPos();
 	Vector3 GetScale();
 	float GetRot();
@@ -55,7 +57,6 @@ public:
 	void SetScale(Vector3 v);
 	void SetRot(float f);
 
-	bool InMotion();
 
 	int	GetID() { return m_ID; }
 	void SetID(int _id) { m_ID= _id;}

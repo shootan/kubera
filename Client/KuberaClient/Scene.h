@@ -1,6 +1,7 @@
 #pragma once
 #include "header.h"
 #include "GameObject.h"
+#include "MinionObject.h"
 #include "Shader.h"
 #include "ControlManager.h"
 
@@ -19,8 +20,10 @@ private:
 	BOOL m_bRbutton;
 
 	CFBXMesh *pHeroMesh;
+	CFBXMesh *pMinionDragonMesh;
 
-
+	float m_fMinionRespawnTime;
+	int m_nMinionObjects;
 
 public:
 	CScene(void);
@@ -43,6 +46,7 @@ public:
 	int GetMousePosY();
 
 	void AddOtherPlayer(ID3D11Device *pd3dDevice);
+	void AddMinion(ID3D11Device *pd3dDevice);
 
 	//충돌체크
 	BOOL CheckCollisionAABBAxis( float c1, float w1, float c2, float w2);

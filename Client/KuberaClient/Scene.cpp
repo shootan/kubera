@@ -15,6 +15,10 @@ CScene::CScene(void)
 	m_bRbutton = FALSE;
 	m_bJoinOtherPlayer = FALSE;
 	m_bJoin = FALSE;
+
+	m_fMinionRespawnTime = 0.f;
+	m_nMinionObjects = 0;
+
 }
 
 
@@ -31,10 +35,10 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_ppShaders = new CObjectShader*[m_nShaders];
 	//CObjectShader 클래스 객체를 생성한다.
 	m_ppShaders[0] = new CObjectShader();
-	m_ppShaders[0]->CreateShader(pd3dDevice, 6);
+	m_ppShaders[0]->CreateShader(pd3dDevice, 100);
 
 	//게임 객체에 대한 포인터들의 배열을 정의한다.
-	m_nObjects = 6;
+	m_nObjects = 100;
 	m_ppObjects = new CGameObject*[m_nObjects]; 
 
 	//정육면체 메쉬를 생성하고 객체에 연결한다.
@@ -47,6 +51,12 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 
 	CFBXMesh *pObstacleMesh = new CFBXMesh(pd3dDevice, L"20Box.FBX");
 	pObstacleMesh->LoadTexture(pd3dDevice, L"micro_wizard_col.tif");
+
+	pMinionDragonMesh = new CFBXMesh(pd3dDevice, L"Dragon7107.FBX");
+	pMinionDragonMesh->LoadTexture(pd3dDevice, L"micro_dragon_col.tif");
+
+	//CFBXMesh *pObstacleBushMesh = new CFBXMesh(pd3dDevice, L"Bush1.fbx");
+	//pObstacleBushMesh->LoadTexture(pd3dDevice, L"Bush1.tif");
 
 	//삼각형 객체(CTriangleObject)를 생성하고 삼각형 메쉬를 연결한다.
 	CGameObject *pHero = new CGameObject();
@@ -61,6 +71,21 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	pObstacle->SetMesh(pObstacleMesh);
 	pObstacle->SetBoundSize(20, 20, 20);
 	pObstacle->SetPosition(D3DXVECTOR3(25,0,0));
+
+	MinionObject* pMinion[50];
+	for(int i=0; i<50; i++)
+	{
+		pMinion[i] = new MinionObject();
+		pMinion[i]->SetMesh(pMinionDragonMesh);
+		pMinion[i]->SetBoundSize(7, 10 ,7);
+		pMinion[i]->SetPosition(D3DXVECTOR3(1000, 0, 0));
+		m_ppShaders[0]->AddObject(pMinion[i]);
+	}
+
+	//CGameObject *pObstacleBush = new CGameObject();
+	//pObstacleBush->SetMesh(pObstacleBushMesh);
+	//pObstacleBush->SetBoundSize(30, 30, 30);
+	//pObstacleBush->SetPosition(D3DXVECTOR3(300, 0, 0));
 
 	//충돌박스
 	int iObjectNum = 2;
@@ -83,6 +108,8 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
  	m_ppShaders[0]->AddObject(pHero);
 	m_ppShaders[0]->AddObject(pPlane);
 	m_ppShaders[0]->AddObject(pObstacle);
+	//m_ppShaders[0]->AddObject(pObstacleBush);
+
 	for(int i=0; i<iObjectNum; i++)
 	{
 		m_ppShaders[0]->AddObject(pBoundBox[i]);
@@ -98,7 +125,19 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_ppObjects[3]->SetTag(HERO_BOUND);
 	m_ppObjects[4] = pBoundBox[1];
 	m_ppObjects[4]->SetTag(OBSTACLE_BOUND);
-	m_ppObjects[5] = NULL;
+	//m_ppObjects[5] = pObstacleBush;
+	//m_ppObjects[5]->SetTag(OBSTACLE);
+
+	for(int i=5; i<55; i++)
+	{
+		m_ppObjects[i] = pMinion[i-5];
+		m_ppObjects[i]->SetTag(MINION);
+	}
+
+	for(int i=55; i<100; i++)
+	{
+		m_ppObjects[i] = NULL;
+	}
 }
 
 void CScene::ReleaseObjects()
@@ -173,12 +212,28 @@ bool CScene::ProcessInput()
 
 void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 {
+	m_fMinionRespawnTime += fTimeElapsed;
+
+	if(m_fMinionRespawnTime >= 0.5f && m_nMinionObjects < 10)
+	{
+		AddMinion(pd3dDevice);
+		m_fMinionRespawnTime = 0.f;
+	}
+
+	if(m_nMinionObjects == 10)
+	{
+		if(m_fMinionRespawnTime > 20.0f)
+			m_nMinionObjects = 0;
+	}
+
+
 	if(m_bJoinOtherPlayer == TRUE && m_bJoin == FALSE)
 	{
 		AddOtherPlayer(pd3dDevice);
 		m_bJoinOtherPlayer = FALSE;
 		m_bJoin  = TRUE;
 	}
+
 
 	for (int j = 0; j < m_nObjects; j++)
 	{
@@ -242,9 +297,40 @@ void CScene::AddOtherPlayer(ID3D11Device *pd3dDevice)
 	OtherPlayer->SetMesh(pHeroMesh);
 
 	m_ppShaders[0]->AddObject(OtherPlayer);  //세팅시 배열 숫자 조정
-	m_ppObjects[5] = OtherPlayer;  //세팅시 배열 숫자 조정
+											 //세팅시 배열 숫자 조정
+	for(int i=0; i<m_nObjects; i++)
+	{
+		if(m_ppObjects[i] == NULL)
+		{
+			m_ppObjects[i] = OtherPlayer;
+			m_ppObjects[i]->SetTag(OTHERPLAYER);
+			return;
+		}
+	}
 }
 
+void CScene::AddMinion(ID3D11Device *pd3dDevice)
+{
+
+	for(int i=0; i<m_nObjects; i++)
+	{
+		if(m_ppObjects[i] == NULL)
+			continue;
+
+		if(m_ppObjects[i]->GetTag() == MINION && m_ppObjects[i]->GetVisible() == FALSE)
+		{
+			m_ppObjects[i]->SetVisible(TRUE);
+			m_ppObjects[i]->SetPosition(D3DXVECTOR3(500,0,0));
+			if(m_nMinionObjects % 2 == 0)
+				m_ppObjects[i]->SetNewDestination(D3DXVECTOR3(0, 0, 300));
+			else
+				m_ppObjects[i]->SetNewDestination(D3DXVECTOR3(0, 0, -300));
+
+			m_nMinionObjects++;
+			return;
+		}
+	}
+}
 
 CGameObject* CScene::GetObject(int num)
 {
