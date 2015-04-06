@@ -1,11 +1,11 @@
 #pragma once
 #include "GameObject.h"
 
-class MinionObject : public CGameObject
+class HeroObject : public CGameObject
 {
 public:
-	MinionObject();
-	~MinionObject();
+	HeroObject();
+	~HeroObject();
 
 	virtual void Animate(float fTimeElapsed);
 	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext);

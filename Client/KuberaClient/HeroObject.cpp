@@ -1,29 +1,24 @@
-#include "MinionObject.h"
+#include "HeroObject.h"
 
-MinionObject::MinionObject(void)
+HeroObject::HeroObject(void)
 {
 	CGameObject::CGameObject();
-	m_Visible		 = FALSE;
-	m_Pos			 = D3DXVECTOR3(1000, 0, 0);
-	m_vDestination	 = D3DXVECTOR3(1000, 0, 0);
-	m_iTag = MINION;
 
+	m_iTag = HERO;
 }
 
-MinionObject::~MinionObject(void)
+HeroObject::~HeroObject(void)
 {
 	CGameObject::~CGameObject();
 }
 
 
-void MinionObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
+void HeroObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
 {
 	CGameObject::Render(pd3dDeviceContext);
 }
 
-
-
-void MinionObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
+void HeroObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
 
 	m_vDestination.x = _pos.x;
 	m_vDestination.y = _pos.y;
@@ -53,7 +48,7 @@ void MinionObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
 
 }
 
-bool MinionObject::InMotion()
+bool HeroObject::InMotion()
 {	
 	if(!m_bAstar)
 	{
@@ -72,15 +67,15 @@ bool MinionObject::InMotion()
 		return false;
 }
 
-void MinionObject::Update(float fTimeElapsed)
+void HeroObject::Update(float fTimeElapsed)
 {
 	if(m_Visible == FALSE) return;
 
 	if(!m_bAstar)
 	{
-		if ( InMotion() && m_iTag == MINION )
+		if ( InMotion() && m_iTag == HERO )
 		{
-			D3DXVECTOR3 update_delta = m_vWalkIncrement *2.0f;
+			D3DXVECTOR3 update_delta = m_vWalkIncrement *5.0f;
 			D3DXVECTOR3 location_vector = m_vDestination - m_Pos;
 
 			m_Pos += update_delta;
@@ -100,9 +95,9 @@ void MinionObject::Update(float fTimeElapsed)
 			m_bFindPath = TRUE;
 		}
 
-		if ( InMotion() && m_iTag == MINION ) {
+		if ( InMotion() && m_iTag == HERO ) {
 
-			D3DXVECTOR3 update_delta = m_vWalkIncrement * 2.0f;
+			D3DXVECTOR3 update_delta = m_vWalkIncrement * 5.0f;
 			D3DXVECTOR3 location_vector = D3DXVECTOR3(m_pBestWay->x - m_Pos.x, 0, m_pBestWay->y - m_Pos.z);
 
 			//D3DXVECTOR3 location_vector = m_vDestination - m_Pos;
@@ -124,6 +119,6 @@ void MinionObject::Update(float fTimeElapsed)
 
 }
 
-void MinionObject::Animate(float fTimeElapsed)
+void HeroObject::Animate(float fTimeElapsed)
 {
 }

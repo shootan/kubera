@@ -32,24 +32,25 @@ protected:
 	BOOL m_bFindPath;
 
 public:
-	virtual void AddRef();
-	virtual void Release();
+	void AddRef();
+	void Release();
 
 	D3DXMATRIX m_d3dxmtxWorld;         
 	CMesh *m_pMesh;
-	Astar* astar;
-	node_t* best;
+	Astar* m_pAstar;
+	node_t* m_pBestWay;
 
 	void SetMesh(CMesh *pMesh);
-	virtual void Animate(float fTimeElapsed);
+	virtual void Animate(float fTimeElapsed){}
 	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext);
-	virtual void SetNewDestination ( D3DXVECTOR3 _pos );
-	virtual void Update(float _fMoveIncrement);
-	virtual bool InMotion();
+	virtual void SetNewDestination ( D3DXVECTOR3 _pos ){}
+	virtual void Update(float _fMoveIncrement){}
 
 	void SetScale(D3DXVECTOR3 _size);
 	void SetRotation(int xyz, float _rot);  // x =1 y = 2 z =3
 	void SetPosition(D3DXVECTOR3 _pos);
+	D3DXVECTOR3 GetPosition() { return m_Pos; }
+
 	Vector3 GetPos();
 	Vector3 GetScale();
 	float GetRot();
@@ -64,8 +65,6 @@ public:
 	BOOL GetVisible() { return m_Visible; }
 	int GetTag() { return m_iTag; }
 	void SetTag(int _tag) { m_iTag = _tag;}
-
-	D3DXVECTOR3 GetPosition() { return m_Pos; }
 
 	void SetBoundSize(float x, float y, float z);
 	float GetBoundSizeX() {return BoundsizeX;}

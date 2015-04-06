@@ -1,11 +1,11 @@
 #pragma once
 #include "header.h"
-#include "GameObject.h"
+#include "HeroObject.h"
 
 class ControlManager 
 {
 public:
-	CGameObject*			m_Player;
+	HeroObject*				m_Player;
 	CModelViewerCamera*		m_Camera;
 
 	//

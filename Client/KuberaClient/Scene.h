@@ -2,6 +2,7 @@
 #include "header.h"
 #include "GameObject.h"
 #include "MinionObject.h"
+#include "HeroObject.h"
 #include "Shader.h"
 #include "ControlManager.h"
 

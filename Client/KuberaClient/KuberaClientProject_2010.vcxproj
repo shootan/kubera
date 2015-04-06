@@ -383,6 +383,7 @@
     <ClCompile Include="DXUT\Optional\SDKmisc.cpp" />
     <ClCompile Include="GameFramework.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="HeroObject.cpp" />
     <ClCompile Include="KuberaClientProject.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MinionObject.cpp" />
@@ -410,6 +411,7 @@
     <ClInclude Include="GameFramework.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="header.h" />
+    <ClInclude Include="HeroObject.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MinionObject.h" />
     <ClInclude Include="Network.h" />

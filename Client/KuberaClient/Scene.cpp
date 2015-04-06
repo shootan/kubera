@@ -59,7 +59,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	//pObstacleBushMesh->LoadTexture(pd3dDevice, L"Bush1.tif");
 
 	//삼각형 객체(CTriangleObject)를 생성하고 삼각형 메쉬를 연결한다.
-	CGameObject *pHero = new CGameObject();
+	HeroObject *pHero = new HeroObject();
 	pHero->SetMesh(pHeroMesh);
 	m_Control.m_Player = pHero;
 	pHero->SetBoundSize(10, 13, 10);
@@ -78,7 +78,6 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 		pMinion[i] = new MinionObject();
 		pMinion[i]->SetMesh(pMinionDragonMesh);
 		pMinion[i]->SetBoundSize(7, 10 ,7);
-		pMinion[i]->SetPosition(D3DXVECTOR3(1000, 0, 0));
 		m_ppShaders[0]->AddObject(pMinion[i]);
 	}
 
@@ -116,7 +115,6 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	}
 
  	m_ppObjects[0] = pHero;
-	m_ppObjects[0]->SetTag(HERO);
 	m_ppObjects[1] = pPlane;
 	m_ppObjects[1]->SetTag(PLANE);
 	m_ppObjects[2] = pObstacle;
@@ -129,15 +127,11 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	//m_ppObjects[5]->SetTag(OBSTACLE);
 
 	for(int i=5; i<55; i++)
-	{
 		m_ppObjects[i] = pMinion[i-5];
-		m_ppObjects[i]->SetTag(MINION);
-	}
 
 	for(int i=55; i<100; i++)
-	{
 		m_ppObjects[i] = NULL;
-	}
+
 }
 
 void CScene::ReleaseObjects()
