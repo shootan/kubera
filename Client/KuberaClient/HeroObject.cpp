@@ -5,6 +5,14 @@ HeroObject::HeroObject(void)
 	CGameObject::CGameObject();
 
 	m_iTag = HERO;
+	m_bMove = FALSE;
+	node_t* temp;
+
+	while(m_pBestWay) {
+		m_pBestWay = m_pBestWay->next_node;
+		free(m_pBestWay);
+		m_pBestWay = temp;
+	}
 }
 
 HeroObject::~HeroObject(void)
@@ -81,41 +89,70 @@ void HeroObject::Update(float fTimeElapsed)
 			m_Pos += update_delta;
 
 			float finished = D3DXVec3Dot( &m_vWalkIncrement, &location_vector );
-			if ( finished < 0.0f ) m_Pos = m_vDestination;
+			if ( finished < 0.0f ) 
+				m_Pos = m_vDestination;
 		}
 	}
-	else if(m_bAstar)
-	{
-		if(m_pAstar == NULL)
-			return;
-
-		if(m_bFindPath == FALSE)
-		{
-			m_pBestWay = m_pAstar->find_path(m_Pos.x, m_Pos.z, m_vDestination.x, m_vDestination.z);
-			m_bFindPath = TRUE;
-		}
-
-		if ( InMotion() && m_iTag == HERO ) {
-
-			D3DXVECTOR3 update_delta = m_vWalkIncrement * 5.0f;
-			D3DXVECTOR3 location_vector = D3DXVECTOR3(m_pBestWay->x - m_Pos.x, 0, m_pBestWay->y - m_Pos.z);
-
-			//D3DXVECTOR3 location_vector = m_vDestination - m_Pos;
-
-			m_Pos += location_vector;
-
-			//determine  if we've moved past our target ( so we can stop ).
-			float finished = D3DXVec3Dot( &m_vWalkIncrement, &location_vector );
-			//if ( finished < 0.0f ) m_Pos = m_vDestination;
-			if ( finished < 0.0f ) m_Pos = D3DXVECTOR3(m_pBestWay->x, 0, m_pBestWay->y);
-		}
-		else
-		{
-			if(m_pBestWay == NULL)
-				return;
-			m_pBestWay = m_pBestWay->prev_node;
-		}
-	}
+//	else if(m_bAstar)
+//	{
+//		if(m_pAstar == NULL)
+//			return;
+//
+//		if(m_bFindPath == FALSE)
+//		{
+//			node_t* temp;
+//
+//			while(m_pBestWay) {
+//				m_pBestWay = m_pBestWay->next_node;
+//				free(m_pBestWay);
+//				m_pBestWay = temp;
+//			}
+//
+//			m_pBestWay = m_pAstar->find_path(m_Pos.x, m_Pos.z, m_vDestination.x, m_vDestination.z);
+//			m_pBestWay = m_pBestWay->prev_node;
+//			m_bFindPath = TRUE; 
+//		}
+//
+//		if ( InMotion() && m_iTag == HERO ) {
+//			if(m_pBestWay == NULL)
+//				return;
+//
+//			if(m_bMove == FALSE)
+//			{
+//				D3DXVECTOR3 m_vAstarIncrement = D3DXVECTOR3(m_pBestWay->x - m_Pos.x, 0, m_pBestWay->y - m_Pos.z);
+//				D3DXVec3Normalize ( &m_vAstarIncrement, &m_vAstarIncrement );
+//				//m_vAstarIncrement *= m_fWalkSpeed; 
+//				m_bMove = TRUE;
+//			}
+//			D3DXVECTOR3 update_delta = m_vAstarIncrement;
+//			D3DXVECTOR3 location_vector = D3DXVECTOR3(m_pBestWay->x - m_Pos.x, 0, m_pBestWay->y - m_Pos.z);
+//			//D3DXVECTOR3 location_vector = m_vDestination - m_Pos;
+//
+//			m_Pos += update_delta;
+//
+//			////determine  if we've moved past our target ( so we can stop ).
+//			float finished = D3DXVec3Dot( &update_delta, &location_vector );
+//			//if ( finished < 0.0f ) m_Pos = m_vDestination;
+//			if ( finished < 0.0f ) 
+//			{
+//				m_Pos = D3DXVECTOR3(m_pBestWay->x, 0, m_pBestWay->y);
+//				m_pBestWay = m_pBestWay->prev_node;
+//				m_bMove = FALSE;
+//			}
+//		}
+//		else
+//		{
+//			if(m_pBestWay == NULL)
+//				return;
+//
+//			m_pBestWay = m_pBestWay->prev_node;
+//			m_bMove = FALSE;
+//
+///*			m_vAstarIncrement = D3DXVECTOR3(m_pBestWay->x - m_Pos.x, 0, m_pBestWay->y - m_Pos.z);
+//			D3DXVec3Normalize ( &m_vAstarIncrement, &m_vAstarIncrement );
+//			m_vAstarIncrement *= m_fWalkSpeed;  */ 
+//		}
+//	}
 
 }
 

@@ -3,6 +3,10 @@
 
 class HeroObject : public CGameObject
 {
+private:
+	D3DXVECTOR3 m_vAstarIncrement;
+	BOOL m_bMove;
+
 public:
 	HeroObject();
 	~HeroObject();

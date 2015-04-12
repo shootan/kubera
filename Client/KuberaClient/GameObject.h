@@ -51,6 +51,9 @@ public:
 	void SetPosition(D3DXVECTOR3 _pos);
 	D3DXVECTOR3 GetPosition() { return m_Pos; }
 
+	void SetP(float x, float y, float z);
+
+
 	Vector3 GetPos();
 	Vector3 GetScale();
 	float GetRot();

@@ -7,6 +7,10 @@ CShader::CShader(void)
 	m_pd3dPixelShader = NULL;
 	m_pd3dVertexLayout = NULL;
 	m_pSamLinear = NULL;
+
+	m_ppObjects = NULL;       
+	m_nObjects = 0;
+	m_nIndexToAdd = 0;
 }
 
 
@@ -89,11 +93,9 @@ void CShader::UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceContext)
 
 CObjectShader::CObjectShader()
 {
-	m_pd3dcbWorldMatrix = NULL;
+	CShader::CShader();
 
-	m_ppObjects = NULL;       
-	m_nObjects = 0;
-	m_nIndexToAdd = 0;
+	m_pd3dcbWorldMatrix = NULL;
 }
 
 CObjectShader::~CObjectShader()
@@ -209,3 +211,296 @@ void CObjectShader::UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceContext
 	pd3dDeviceContext->VSSetConstantBuffers(VS_SLOT_WORLD_MATRIX, 1, &m_pd3dcbWorldMatrix);
 }
 
+
+CInstancingShader::CInstancingShader()
+{
+	CShader::CShader();
+
+	m_pd3dcbWorldMatrix = NULL;
+
+	m_pBush3Mesh = NULL;
+	m_pRock2Mesh = NULL;
+	m_pRock3Mesh = NULL;
+
+	m_pd3dcbBush3InstanceMatrices = NULL;
+	m_pd3dcbRock2InstanceMatrices = NULL;
+	m_pd3dcbRock3InstanceMatrices = NULL;
+	
+	m_nBush3Objects = 0;
+	m_nRock2Objects = 0;
+	m_nRock3Objects = 0;
+}
+
+CInstancingShader::~CInstancingShader()
+{
+}
+
+void CInstancingShader::AnimateObjects(float fTimeElapsed)
+{
+}
+
+void CInstancingShader::ReleaseObjects()
+{
+	if (m_pBush3Mesh) m_pBush3Mesh->Release();
+	if (m_pRock2Mesh) m_pRock2Mesh->Release();
+	if (m_pRock2Mesh) m_pRock3Mesh->Release();
+	if (m_pd3dcbWorldMatrix) m_pd3dcbWorldMatrix->Release();
+	if (m_ppObjects)
+	{
+		for (int j = 0; j < m_nObjects; j++) delete m_ppObjects[j];
+		delete [] m_ppObjects;
+	}
+
+	if (m_pd3dcbBush3InstanceMatrices) m_pd3dcbBush3InstanceMatrices->Release();
+	if (m_pd3dcbRock2InstanceMatrices) m_pd3dcbRock2InstanceMatrices->Release();
+	if (m_pd3dcbRock2InstanceMatrices) m_pd3dcbRock3InstanceMatrices->Release();
+}
+
+
+void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
+{
+	//m_pMesh = new CCubeMesh(pd3dDevice, 10.0f, 13.0f, 10.0f);
+	//m_pMesh->AddRef();
+	
+	m_pBush3Mesh = new CFBXMesh(pd3dDevice, L"obstacle/bush3.FBX");
+	m_pBush3Mesh->LoadTexture(pd3dDevice, L"obstacle/bush3.tif");
+
+	m_pRock2Mesh = new CFBXMesh(pd3dDevice, L"obstacle/Rock2.FBX");
+	m_pRock2Mesh->LoadTexture(pd3dDevice, L"obstacle/Rock2.tif");
+
+	m_pRock3Mesh = new CFBXMesh(pd3dDevice, L"obstacle/Rock3.FBX");
+	m_pRock3Mesh->LoadTexture(pd3dDevice, L"obstacle/Rock3.tif");
+
+	int bush3x = 24, bush3z = 4, i = 0;  //위아래 100 픽셀
+	int bush3x1 = 4, bush3z1 = 10; //좌우 100픽셀
+
+	int Rock2x = 4, Rock2z = 4;
+
+	int Rock3x = 4, Rock3z = 12;
+
+	m_nBush3Objects = (bush3x*bush3z*4) + (bush3x1*bush3z1*4);
+	m_nRock2Objects = (Rock2x*Rock2z*4);
+	m_nRock3Objects = (Rock3x*Rock3z*2);
+
+	m_nObjects = m_nBush3Objects + m_nRock2Objects + m_nRock3Objects;
+	//인스턴싱을 할 객체들의 배열이다.
+	m_ppObjects = new CGameObject*[m_nObjects]; 
+
+	ObstacleObject *pgameObject[4] = {NULL};
+
+	for(int x = 0; x < bush3x; x++)
+	{
+		for(int z = 0; z < bush3z; z++)
+		{
+			pgameObject[0] = new ObstacleObject();
+			pgameObject[0]->SetMesh(m_pBush3Mesh);
+			pgameObject[0]->SetP(x*25 + 12.5f, 0,(400.f-12.5f) - z*25);
+			m_ppObjects[i++] = pgameObject[0];
+
+			pgameObject[1] = new ObstacleObject();
+			pgameObject[1]->SetMesh(m_pBush3Mesh);
+			pgameObject[1]->SetP(-(x*25) - 12.5f, 0,(400.f-12.5f) - z*25);
+			m_ppObjects[i++] = pgameObject[1];
+
+			pgameObject[2] = new ObstacleObject();
+			pgameObject[2]->SetMesh(m_pBush3Mesh);
+			pgameObject[2]->SetP((x*25) + 12.5f, 0,(-300.f-12.5f) - z*25);
+			m_ppObjects[i++] = pgameObject[2];
+
+			pgameObject[3] = new ObstacleObject();
+			pgameObject[3]->SetMesh(m_pBush3Mesh);
+			pgameObject[3]->SetP(-(x*25) - 12.5f, 0,(-300.f-12.5f) - z*25);
+			m_ppObjects[i++] = pgameObject[3];
+		}
+	}
+
+	ObstacleObject *pBush3Object[4] = {NULL};
+
+	for(int x=0; x<bush3x1; x++)
+	{
+		for(int z=0; z<bush3z1; z++)
+		{
+			pBush3Object[0] = new ObstacleObject();
+			pBush3Object[0]->SetMesh(m_pBush3Mesh);
+			pBush3Object[0]->SetP((-600.f + 12.5f) + x*25, 0,(300.f-12.5f) - z*25);
+			m_ppObjects[i++] = pBush3Object[0];
+
+			pBush3Object[1] = new ObstacleObject();
+			pBush3Object[1]->SetMesh(m_pBush3Mesh);
+			pBush3Object[1]->SetP((-600.f + 12.5f) + x*25, 0,(-50.f-12.5f) - z*25);
+			m_ppObjects[i++] = pBush3Object[1];
+
+			pBush3Object[2] = new ObstacleObject();
+			pBush3Object[2]->SetMesh(m_pBush3Mesh);
+			pBush3Object[2]->SetP((500.f + 12.5f) + x*25, 0,(300.f-12.5f) - z*25);
+			m_ppObjects[i++] = pBush3Object[2];
+
+			pBush3Object[3] = new ObstacleObject();
+			pBush3Object[3]->SetMesh(m_pBush3Mesh);
+			pBush3Object[3]->SetP((500.f + 12.5f) + x*25, 0,(-50.f-12.5f) - z*25);
+			m_ppObjects[i++] = pBush3Object[3];
+		}
+	}
+	D3D11_BUFFER_DESC d3dBufferDesc;
+	ZeroMemory(&d3dBufferDesc, sizeof(D3D11_BUFFER_DESC));
+	d3dBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dBufferDesc.ByteWidth = sizeof(D3DXMATRIX) * m_nBush3Objects;
+	d3dBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	d3dBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	pd3dDevice->CreateBuffer(&d3dBufferDesc, NULL, &m_pd3dcbBush3InstanceMatrices);
+
+	m_pBush3Mesh->AppendVertexBuffer(m_pd3dcbBush3InstanceMatrices, sizeof(D3DXMATRIX), 0);
+
+
+	ObstacleObject *pRock2Object[4] = {NULL};
+
+	for(int x = 0; x < Rock2x; x++)
+	{
+		for(int z = 0; z < Rock2z; z++)
+		{
+			pRock2Object[0] = new ObstacleObject();
+			pRock2Object[0]->SetMesh(m_pRock2Mesh);
+			pRock2Object[0]->SetP((-400.f + 12.5f) + x*25, 0,(150.f-12.5f) - z*25);
+			m_ppObjects[i++] = pRock2Object[0];
+
+			pRock2Object[1] = new ObstacleObject();
+			pRock2Object[1]->SetMesh(m_pRock2Mesh);
+			pRock2Object[1]->SetP((-400.f + 12.5f) + x*25, 0,(-50.f-12.5f) - z*25);
+			m_ppObjects[i++] = pRock2Object[1];
+
+			pRock2Object[2] = new ObstacleObject();
+			pRock2Object[2]->SetMesh(m_pRock2Mesh);
+			pRock2Object[2]->SetP((300.f + 12.5f) + x*25, 0,(150.f-12.5f) - z*25);
+			m_ppObjects[i++] = pRock2Object[2];
+
+			pRock2Object[3] = new ObstacleObject();
+			pRock2Object[3]->SetMesh(m_pRock2Mesh);
+			pRock2Object[3]->SetP((300.f + 12.5f) + x*25, 0,(-50.f-12.5f) - z*25);
+			m_ppObjects[i++] = pRock2Object[3];
+		}
+	}
+	ZeroMemory(&d3dBufferDesc, sizeof(D3D11_BUFFER_DESC));
+	d3dBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dBufferDesc.ByteWidth = sizeof(D3DXMATRIX) * m_nRock2Objects;
+	d3dBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	d3dBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	pd3dDevice->CreateBuffer(&d3dBufferDesc, NULL, &m_pd3dcbRock2InstanceMatrices);
+
+	m_pRock2Mesh->AppendVertexBuffer(m_pd3dcbRock2InstanceMatrices, sizeof(D3DXMATRIX), 0);
+
+
+	ObstacleObject *pRock3Object[2] = {NULL};
+
+	for(int x = 0; x < Rock3x; x++)
+	{
+		for(int z = 0; z < Rock3z; z++)
+		{
+			pRock3Object[0] = new ObstacleObject();
+			pRock3Object[0]->SetMesh(m_pRock3Mesh);
+			pRock3Object[0]->SetP((-200.f + 12.5f) + x*25, 0,(150.f-12.5f) - z*25);
+			m_ppObjects[i++] = pRock3Object[0];
+
+			pRock3Object[1] = new ObstacleObject();
+			pRock3Object[1]->SetMesh(m_pRock3Mesh);
+			pRock3Object[1]->SetP((100.f + 12.5f) + x*25, 0,(150.f-12.5f) - z*25);
+			m_ppObjects[i++] = pRock3Object[1];
+		}
+	}
+	ZeroMemory(&d3dBufferDesc, sizeof(D3D11_BUFFER_DESC));
+	d3dBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dBufferDesc.ByteWidth = sizeof(D3DXMATRIX) * m_nRock3Objects;
+	d3dBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	d3dBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	pd3dDevice->CreateBuffer(&d3dBufferDesc, NULL, &m_pd3dcbRock3InstanceMatrices);
+
+	m_pRock3Mesh->AppendVertexBuffer(m_pd3dcbRock3InstanceMatrices, sizeof(D3DXMATRIX), 0);
+}
+
+void CInstancingShader::CreateShader(ID3D11Device *pd3dDevice, int nObjects)
+{
+	D3D11_INPUT_ELEMENT_DESC d3dInputLayout[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		//{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT,    0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		//인스턴스 데이터는 위치 벡터(32비트 실수 3개)이고 인스턴스마다 정점 쉐이더에 전달된다.
+		{ "POSINSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "POSINSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "POSINSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+		{ "POSINSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1 }
+	};
+	UINT nElements = ARRAYSIZE(d3dInputLayout);
+	CreateVertexShaderFromFile(pd3dDevice, L"instance.fx", "VSInstancedDiffusedColor", "vs_4_0", &m_pd3dVertexShader, d3dInputLayout, nElements, &m_pd3dVertexLayout);
+	CreatePixelShaderFromFile(pd3dDevice, L"instance.fx", "PSInstancedDiffusedColor", "ps_4_0", &m_pd3dPixelShader);
+
+	// Create a sampler state
+	D3D11_SAMPLER_DESC SamDesc;
+	SamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	SamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamDesc.MipLODBias = 0.0f;
+	SamDesc.MaxAnisotropy = 1;
+	SamDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	SamDesc.BorderColor[0] = SamDesc.BorderColor[1] = SamDesc.BorderColor[2] = SamDesc.BorderColor[3] = 0;
+	SamDesc.MinLOD = 0;
+	SamDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	pd3dDevice->CreateSamplerState( &SamDesc, &m_pSamLinear );
+	DXUT_SetDebugName( m_pSamLinear, "Primary" );
+
+}
+
+void CInstancingShader::CreateShaderVariables(ID3D11Device *pd3dDevice)
+{
+	CShader::CreateShaderVariables(pd3dDevice);
+
+	//월드 변환 행렬을 위한 상수 버퍼를 생성한다.
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+	bd.Usage = D3D11_USAGE_DYNAMIC;
+	bd.ByteWidth = sizeof(VS_CB_WORLD_MATRIX);
+	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	//pd3dDevice->CreateBuffer(&bd, NULL, &m_pd3dcbWorldMatrix);
+}         
+
+void CInstancingShader::UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceContext)
+{
+	D3D11_MAPPED_SUBRESOURCE d3dMappedResource;
+	pd3dDeviceContext->Map(m_pd3dcbBush3InstanceMatrices, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
+	D3DXMATRIX *pcbWorldMatrix = (D3DXMATRIX *)d3dMappedResource.pData;
+	//인스턴싱 객체들의 월드 변환 행렬을 정점 버퍼에 쓴다.
+	for (int j = 0; j < m_nBush3Objects; j++) pcbWorldMatrix[j] = m_ppObjects[j]->m_d3dxmtxWorld;
+	pd3dDeviceContext->Unmap(m_pd3dcbBush3InstanceMatrices, 0);
+
+	pd3dDeviceContext->Map(m_pd3dcbRock2InstanceMatrices, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
+	pcbWorldMatrix = (D3DXMATRIX *)d3dMappedResource.pData;
+	//인스턴싱 객체들의 월드 변환 행렬을 정점 버퍼에 쓴다.
+	for (int j = 0; j < m_nRock2Objects; j++) pcbWorldMatrix[j] = m_ppObjects[m_nBush3Objects + j]->m_d3dxmtxWorld;
+	pd3dDeviceContext->Unmap(m_pd3dcbRock2InstanceMatrices, 0);
+
+	pd3dDeviceContext->Map(m_pd3dcbRock3InstanceMatrices, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
+	pcbWorldMatrix = (D3DXMATRIX *)d3dMappedResource.pData;
+	//인스턴싱 객체들의 월드 변환 행렬을 정점 버퍼에 쓴다.
+	for (int j = 0; j < m_nRock3Objects; j++) pcbWorldMatrix[j] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + j]->m_d3dxmtxWorld;
+	pd3dDeviceContext->Unmap(m_pd3dcbRock3InstanceMatrices, 0);
+}
+
+void CInstancingShader::Render(ID3D11DeviceContext *pd3dDeviceContext)
+{
+	CShader::Render(pd3dDeviceContext);
+
+	UpdateShaderVariables(pd3dDeviceContext);
+	//메쉬의 인스턴스들을 렌더링한다.
+	if (m_pBush3Mesh) m_pBush3Mesh->RenderInstanced(pd3dDeviceContext, m_nBush3Objects, 0);
+	if (m_pRock2Mesh) m_pRock2Mesh->RenderInstanced(pd3dDeviceContext, m_nRock2Objects, 0);
+	if (m_pRock3Mesh) m_pRock3Mesh->RenderInstanced(pd3dDeviceContext, m_nRock3Objects, 0);
+}
+
+void CInstancingShader::AddObject(CGameObject *pObject) 
+{ 
+	//쉐이더에 객체를 연결(설정)하고 참조 카운터를 1만큼 증가시킨다. 
+	if (m_ppObjects) m_ppObjects[m_nIndexToAdd++] = pObject; 
+	if (pObject) pObject->AddRef();
+}

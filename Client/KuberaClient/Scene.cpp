@@ -31,12 +31,16 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 {
 	m_Control.m_Camera = m_Camera;
 	//이 쉐이더 객체에 대한 포인터들의 배열을 정의한다.
-	m_nShaders = 1;
-	m_ppShaders = new CObjectShader*[m_nShaders];
+	m_nShaders = 2;
+	m_ppShaders = new CShader*[m_nShaders];
 	//CObjectShader 클래스 객체를 생성한다.
 	m_ppShaders[0] = new CObjectShader();
 	m_ppShaders[0]->CreateShader(pd3dDevice, 100);
 
+	m_ppShaders[1] = new CInstancingShader();
+	m_ppShaders[1]->CreateShader(pd3dDevice, 10);
+	m_ppShaders[1]->BuildObjects(pd3dDevice);
+	
 	//게임 객체에 대한 포인터들의 배열을 정의한다.
 	m_nObjects = 100;
 	m_ppObjects = new CGameObject*[m_nObjects]; 
@@ -62,16 +66,12 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	HeroObject *pHero = new HeroObject();
 	pHero->SetMesh(pHeroMesh);
 	m_Control.m_Player = pHero;
+	pHero->SetPosition(D3DXVECTOR3(550, 0, 0));
 	pHero->SetBoundSize(10, 13, 10);
 
 	CGameObject *pPlane = new CGameObject();
 	pPlane->SetMesh(pPlaneMesh);
 	
-	CGameObject *pObstacle = new CGameObject();
-	pObstacle->SetMesh(pObstacleMesh);
-	pObstacle->SetBoundSize(20, 20, 20);
-	pObstacle->SetPosition(D3DXVECTOR3(25,0,0));
-
 	MinionObject* pMinion[50];
 	for(int i=0; i<50; i++)
 	{
@@ -81,24 +81,19 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 		m_ppShaders[0]->AddObject(pMinion[i]);
 	}
 
-	//CGameObject *pObstacleBush = new CGameObject();
-	//pObstacleBush->SetMesh(pObstacleBushMesh);
-	//pObstacleBush->SetBoundSize(30, 30, 30);
-	//pObstacleBush->SetPosition(D3DXVECTOR3(300, 0, 0));
-
 	//충돌박스
 	int iObjectNum = 2;
 	CCubeMesh *pBox[2];
 	CGameObject *pBoundBox[2];
 	pBox[0] = new CCubeMesh(pd3dDevice,pHero->GetBoundSizeX(),pHero->GetBoundSizeY(),pHero->GetBoundSizeZ());
-	pBox[1] = new CCubeMesh(pd3dDevice,pObstacle->GetBoundSizeX(),pObstacle->GetBoundSizeY(),pObstacle->GetBoundSizeZ());
+	pBox[1] = new CCubeMesh(pd3dDevice,20,20,20);
 	
 	for(int i=0; i<iObjectNum; i++)
 	{
 		pBoundBox[i] = new CGameObject;
 		pBoundBox[i]->SetMesh(pBox[i]);
 	}
-	pBoundBox[1]->SetPosition(pObstacle->GetPosition());
+	pBoundBox[1]->SetPosition(D3DXVECTOR3(25,0,0));
 
 
 	//pFBXMesh->Release();
@@ -106,25 +101,22 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
  	//삼각형 객체를 쉐이더 객체에 연결한다.
  	m_ppShaders[0]->AddObject(pHero);
 	m_ppShaders[0]->AddObject(pPlane);
-	m_ppShaders[0]->AddObject(pObstacle);
-	//m_ppShaders[0]->AddObject(pObstacleBush);
 
 	for(int i=0; i<iObjectNum; i++)
 	{
 		m_ppShaders[0]->AddObject(pBoundBox[i]);
 	}
 
+
  	m_ppObjects[0] = pHero;
 	m_ppObjects[1] = pPlane;
 	m_ppObjects[1]->SetTag(PLANE);
-	m_ppObjects[2] = pObstacle;
-	m_ppObjects[2]->SetTag(OBSTACLE);
+	m_ppObjects[2] = NULL;
 	m_ppObjects[3] = pBoundBox[0];
 	m_ppObjects[3]->SetTag(HERO_BOUND);
 	m_ppObjects[4] = pBoundBox[1];
 	m_ppObjects[4]->SetTag(OBSTACLE_BOUND);
-	//m_ppObjects[5] = pObstacleBush;
-	//m_ppObjects[5]->SetTag(OBSTACLE);
+
 
 	for(int i=5; i<55; i++)
 		m_ppObjects[i] = pMinion[i-5];
@@ -239,7 +231,7 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 		if(m_ppObjects[j]->GetTag() == HERO_BOUND) //플레이어 충돌박스 보이기
 			m_ppObjects[j]->SetPosition(m_ppObjects[0]->GetPosition());
 
-		if(m_ppObjects[j]->GetTag() == HERO)
+		/*if(m_ppObjects[j]->GetTag() == HERO)
 		{
 			for(int i=0; i< m_nObjects; i++)
 			{
@@ -248,7 +240,7 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 
 				if(m_ppObjects[i]->GetTag() == OBSTACLE)
 				{
-					if(m_ppObjects[i]->GetBoundSizeX() + m_ppObjects[j]->GetBoundSizeX()>
+					if(m_ppObjects[i]->GetBoundSizeX()*2 + m_ppObjects[j]->GetBoundSizeX()>
 						sqrt(double((m_ppObjects[i]->GetPosition().x - m_ppObjects[j]->GetPosition().x)*
 						(m_ppObjects[i]->GetPosition().x - m_ppObjects[j]->GetPosition().x)) + 
 						double((m_ppObjects[i]->GetPosition().z - m_ppObjects[j]->GetPosition().z)*
@@ -259,10 +251,10 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 							m_ppObjects[j]->SetAstar(FALSE);
 				}
 			}
-		}
+		}*/
 	}
 
-	GameCollision();
+	//GameCollision();
 
 }
 

@@ -24,31 +24,48 @@ public:
 	CMesh(ID3D11Device *pd3dDevice);
 	virtual ~CMesh(void);
 
-private:
+
 	int m_nReferences;
 public:
 	void AddRef();
 	void Release();
 
 protected:
-	ID3D11Buffer *m_pd3dVertexBuffer; //정점데이터를 저장하기 위한 정점 버퍼 인터페이스 포인터 설정
-	ID3D11Buffer *m_pd3dIndexBuffer;
-	/*정점 버퍼의 정점 개수, 정점의 바이트 수, 정점 데이터가 정점 버퍼의 어디에서부터 시작하는 가를 나타내는 변수를 선언한다.*/
+	ID3D11Buffer **m_ppd3dVertexBuffers;
+	UINT m_nVertexBuffers;  //정점 버퍼의 갯수
+	UINT m_nVertexSlot;     //정점 버퍼를 연결할 슬롯 인덱스
+	UINT *m_pnVertexStrides;
+	UINT *m_pnVertexOffsets;
 	UINT m_nVertices;
-	UINT m_nStride;
-	UINT m_nOffset;
+	UINT m_nStartVertex;
+
+	ID3D11Buffer *m_pd3dIndexBuffer;
+
+	UINT m_nIndices;
+	DXGI_FORMAT m_dxgiIndexFormat;
+	UINT m_nIndexOffset;
+	UINT m_nStartIndex;
+	int m_nBaseVertex;
+
+	//ID3D11Buffer *m_pd3dVertexBuffer; //정점데이터를 저장하기 위한 정점 버퍼 인터페이스 포인터 설정
+	//ID3D11Buffer *m_pd3dIndexBuffer;
+	///*정점 버퍼의 정점 개수, 정점의 바이트 수, 정점 데이터가 정점 버퍼의 어디에서부터 시작하는 가를 나타내는 변수를 선언한다.*/
+	//UINT m_nVertices;
+	//UINT m_nStride;
+	//UINT m_nOffset;
 
 	ID3D11RasterizerState *m_pd3dRasterizerState;
-
-
-
 	D3D11_PRIMITIVE_TOPOLOGY m_d3dPrimitiveTopology;
 
 public:
 	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext);
 	virtual void CreateRasterizerState(ID3D11Device *pd3dDevice);
 
-
+	//정점 버퍼 배열에 인스턴스 데이터를 나타내는 정점 버퍼를 추가한다.
+	void AppendVertexBuffer(ID3D11Buffer *pd3dBuffer, UINT nStride=0, UINT nOffset=0);
+	virtual void RenderInstanced(ID3D11DeviceContext *pd3dDeviceContext, int nInstances=0, int nStartInstance=0);
+	virtual bool LoadTexture(ID3D11Device* pd3dDevice, WCHAR* filename){return 0;}
+	virtual void ReleaseTexture(){}
 };
 
 
@@ -108,9 +125,10 @@ public:
 	HRESULT LoadFBX(const char* filename, std::vector<FBXVertex>* pOutVertexVector, ID3D11Device* pd3dDevice);
 	virtual void CreateRasterizerState(ID3D11Device *pd3dDevice);
 	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext);
+	virtual void RenderInstanced(ID3D11DeviceContext *pd3dDeviceContext, int nInstances=0, int nStartInstance=0);
 
-	bool LoadTexture(ID3D11Device* pd3dDevice, WCHAR* filename);
-	void ReleaseTexture();
+	virtual bool LoadTexture(ID3D11Device* pd3dDevice, WCHAR* filename);
+	virtual void ReleaseTexture();
 
 	CTextureclass* m_pTexture;
 };

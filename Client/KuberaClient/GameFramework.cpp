@@ -15,8 +15,8 @@ CGameFramework::CGameFramework()
 	m_pScene = NULL;
 	_tcscpy_s(m_pszBuffer, _T("Kubera ("));
 
-	m_CameraPosX = 0.f;
-	m_CameraPosZ = -200.f;
+	m_CameraPosX = 500.f;
+	m_CameraPosZ = -10.f;
 }
 
 CGameFramework::~CGameFramework()
@@ -396,9 +396,9 @@ void CGameFramework::SetCameraPos()
 		m_CameraPosX = -500;
 		if(m_pScene->GetMousePosX() > m_nWndClientWidth - 10) m_CameraPosX += 400 * m_GameTimer.GetTimeElapsed();
 
-		if(m_CameraPosZ <= -300)
+		if(m_CameraPosZ <= -350)
 		{
-			m_CameraPosZ = -300;
+			m_CameraPosZ = -350;
 			if(m_pScene->GetMousePosY() < 10) m_CameraPosZ += 400 * m_GameTimer.GetTimeElapsed();
 			return;
 		}
@@ -421,9 +421,9 @@ void CGameFramework::SetCameraPos()
 		m_CameraPosX = 500;
 		if(m_pScene->GetMousePosX() < 10) m_CameraPosX -= 400 * m_GameTimer.GetTimeElapsed();
 
-		if(m_CameraPosZ <= -300)
+		if(m_CameraPosZ <= -350)
 		{
-			m_CameraPosZ = -300;
+			m_CameraPosZ = -350;
 			if(m_pScene->GetMousePosY() < 10) m_CameraPosZ += 400 * m_GameTimer.GetTimeElapsed();
 			return;
 		}
@@ -465,9 +465,9 @@ void CGameFramework::SetCameraPos()
 		return;
 	}
 
-	if(m_CameraPosZ <= -300)
+	if(m_CameraPosZ <= -350)
 	{
-		m_CameraPosZ <= -300;
+		m_CameraPosZ <= -350;
 		if(m_pScene->GetMousePosY() < 10) m_CameraPosZ += 400 * m_GameTimer.GetTimeElapsed();
 
 		if(m_CameraPosX <= -500)

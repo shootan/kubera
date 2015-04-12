@@ -367,6 +367,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="Effect.fx" />
+    <None Include="instance.fx" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="astarclass.cpp" />
@@ -388,6 +389,7 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MinionObject.cpp" />
     <ClCompile Include="Network.cpp" />
+    <ClCompile Include="ObstacleObject.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Textureclass.cpp" />
@@ -415,6 +417,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MinionObject.h" />
     <ClInclude Include="Network.h" />
+    <ClInclude Include="ObstacleObject.h" />
     <CLInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />

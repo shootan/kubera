@@ -80,7 +80,7 @@ void CGameObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
 	else if(m_axis == 3)
 		D3DXMatrixRotationZ(&mtxRotate, D3DX_PI / m_Rot);
 
-	//mWorld *= mtxRotate;
+	mWorld *= mtxRotate;
 
 	//T
 	D3DXMATRIX mtxTrans;
@@ -176,4 +176,11 @@ void CGameObject::SetBoundSize(float x, float y, float z)
 	BoundsizeX = x;
 	BoundsizeY = y;
 	BoundsizeZ = z;
+}
+
+void CGameObject::SetP(float x, float y, float z)
+{
+	m_d3dxmtxWorld._41 = x; 
+	m_d3dxmtxWorld._42 = y; 
+	m_d3dxmtxWorld._43 = z; 
 }

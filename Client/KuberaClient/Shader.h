@@ -1,6 +1,8 @@
 #pragma once
 #include "header.h"
 #include "GameObject.h"
+#include "ObstacleObject.h"
+#include "Mesh.h"
 
 struct VS_CB_WORLD_MATRIX
 {
@@ -31,6 +33,10 @@ public:
 	virtual void ReleaseShaderVariables();
 	//쉐이더 클래스의 상수 버퍼를 갱신하는 멤버 함수를 선언한다.
 	virtual void UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceContext);
+	virtual void BuildObjects(ID3D11Device *pd3dDevice){}
+
+	virtual void AddObject(CGameObject *pObject){}
+	CGameObject* GetObject(int nObjectsNum){return m_ppObjects[nObjectsNum];}
 
 public:
 	//정점-쉐이더 인터페이스 포인터와 입력-레이아웃 인터페이스 포인터를 선언한다.
@@ -40,6 +46,13 @@ public:
 	//픽셀-쉐이더 인터페이스 포인터를 선언한다.
 	ID3D11PixelShader *m_pd3dPixelShader;
 	ID3D11SamplerState *m_pSamLinear;
+
+protected:
+	//쉐이더에서 렌더링할 게임 객체에 대한 포인터들의 리스트를 선언한다. 
+	CGameObject **m_ppObjects;       
+	int m_nObjects;
+	//쉐이더에서 렌더링할 게임 객체를 추가할 위치를 나타내는 인덱스를 선언한다. 
+	int m_nIndexToAdd;
 };
 
 
@@ -59,16 +72,45 @@ public:
 
 
 private:
-	//쉐이더에서 렌더링할 게임 객체에 대한 포인터들의 리스트를 선언한다. 
-	CGameObject **m_ppObjects;       
-	int m_nObjects;
-
-	//쉐이더에서 렌더링할 게임 객체를 추가할 위치를 나타내는 인덱스를 선언한다. 
-	int m_nIndexToAdd;
 	ID3D11Buffer *m_pd3dcbWorldMatrix;
 
 public:
 	//쉐이더에서 렌더링할 게임 객체를 추가한다. 
-	void AddObject(CGameObject *pObject); 
+	virtual void AddObject(CGameObject *pObject); 
 };
 
+
+class CInstancingShader : public CShader
+{
+public:
+	CInstancingShader();
+	~CInstancingShader();
+
+	virtual void CreateShader(ID3D11Device *pd3dDevice, int nObjects);
+	virtual void CreateShaderVariables(ID3D11Device *pd3dDevice);
+	virtual void UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceContext);
+
+	virtual void ReleaseObjects();
+	virtual void AnimateObjects(float fTimeElapsed);
+	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext);
+	virtual void BuildObjects(ID3D11Device *pd3dDevice);
+
+	virtual void AddObject(CGameObject *pObject); 
+	//쉐이더에서 렌더링할 메쉬이다.
+	CMesh *m_pBush3Mesh;
+	CMesh *m_pRock2Mesh;
+	CMesh *m_pRock3Mesh;
+
+	int m_nBush3Objects;
+	int m_nRock2Objects;
+	int m_nRock3Objects;
+
+	//월드 변환 행렬과 월드 변환 행렬을 위한 상수 버퍼이다.
+	D3DXMATRIX m_d3dxmtxWorld;         
+	ID3D11Buffer *m_pd3dcbWorldMatrix;
+
+	//인스턴싱 데이터(월드 변환 행렬의 배열)이다.
+	ID3D11Buffer *m_pd3dcbBush3InstanceMatrices;
+	ID3D11Buffer *m_pd3dcbRock2InstanceMatrices;
+	ID3D11Buffer *m_pd3dcbRock3InstanceMatrices;
+};

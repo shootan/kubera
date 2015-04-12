@@ -88,6 +88,9 @@
     <ClCompile Include="HeroObject.cpp">
       <Filter>소스코드\Object</Filter>
     </ClCompile>
+    <ClCompile Include="ObstacleObject.cpp">
+      <Filter>소스코드\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
@@ -155,6 +158,9 @@
     <ClInclude Include="HeroObject.h">
       <Filter>소스코드\Object</Filter>
     </ClInclude>
+    <ClInclude Include="ObstacleObject.h">
+      <Filter>소스코드\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h">
@@ -166,6 +172,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Effect.fx">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="instance.fx">
       <Filter>shader</Filter>
     </None>
   </ItemGroup>

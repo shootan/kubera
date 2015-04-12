@@ -3,13 +3,14 @@
 #include "GameObject.h"
 #include "MinionObject.h"
 #include "HeroObject.h"
+#include "ObstacleObject.h"
 #include "Shader.h"
 #include "ControlManager.h"
 
 class CScene
 {
 private:
-	CObjectShader **m_ppShaders;
+	CShader **m_ppShaders;
 	int m_nShaders;
 
 	CGameObject **m_ppObjects;       
