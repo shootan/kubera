@@ -117,12 +117,13 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_ppObjects[4] = pBoundBox[1];
 	m_ppObjects[4]->SetTag(OBSTACLE_BOUND);
 
-
 	for(int i=5; i<55; i++)
 		m_ppObjects[i] = pMinion[i-5];
 
 	for(int i=55; i<100; i++)
 		m_ppObjects[i] = NULL;
+
+	this->AddOtherPlayer(pd3dDevice);
 
 }
 
@@ -212,15 +213,6 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 			m_nMinionObjects = 0;
 	}
 
-
-	if(m_bJoinOtherPlayer == TRUE && m_bJoin == FALSE)
-	{
-		AddOtherPlayer(pd3dDevice);
-		m_bJoinOtherPlayer = FALSE;
-		m_bJoin  = TRUE;
-	}
-
-
 	for (int j = 0; j < m_nObjects; j++)
 	{
 		if(m_ppObjects[j] == NULL) continue;
@@ -279,18 +271,63 @@ int CScene::GetMousePosY()
 
 void CScene::AddOtherPlayer(ID3D11Device *pd3dDevice)
 {
-	CGameObject* OtherPlayer = new CGameObject();
-	OtherPlayer->SetMesh(pHeroMesh);
-
-	m_ppShaders[0]->AddObject(OtherPlayer);  //세팅시 배열 숫자 조정
-											 //세팅시 배열 숫자 조정
+	int CheckCount = 0;
 	for(int i=0; i<m_nObjects; i++)
 	{
-		if(m_ppObjects[i] == NULL)
+		if ( m_ppObjects[i] != NULL) continue;
+		CGameObject* OtherPlayer = new CGameObject();
+		OtherPlayer->SetMesh(pHeroMesh);
+		m_ppShaders[0]->AddObject(OtherPlayer);  //세팅시 배열 숫자 조정
+		m_ppObjects[i] = OtherPlayer;  //세팅시 배열 숫자 조정
+		m_ppObjects[i]->SetTag(OTHERPLAYER);
+		m_ppObjects[i]->SetVisible(FALSE);
+		CheckCount++;
+		if(CheckCount > 9) break;
+	}
+}
+
+void CScene::SetOtherClient(PlayerStruct* _PI, int _Count)
+{
+	_Count -= 1;
+
+	for(int i=0; i<_Count; i++)
+	{
+		if(_PI[i].Use == TRUE) continue;
+		if(_PI[i].PI.m_ID == 0) continue;
+		for(int j=0; j<m_nObjects; j++)
 		{
-			m_ppObjects[i] = OtherPlayer;
-			m_ppObjects[i]->SetTag(OTHERPLAYER);
-			return;
+			if(m_ppObjects[j] == NULL) continue;
+			if(m_ppObjects[j]->GetTag() == HERO) continue;
+			if(m_ppObjects[j]->GetTag() != OTHERPLAYER || m_ppObjects[j]->GetID() != 0) continue;
+
+			m_ppObjects[j]->SetID(_PI[i].PI.m_ID);
+			m_ppObjects[j]->SetPos(_PI[i].PI.m_Pos);
+			m_ppObjects[j]->SetRot(_PI[i].PI.m_Rot);
+			m_ppObjects[j]->SetScale(_PI[i].PI.m_Scale);
+			m_ppObjects[j]->SetVisible(TRUE);
+			_PI[i].Use = TRUE;
+
+			break;
+		}
+	}
+}
+
+void CScene::UpdateOtherClient(PlayerStruct* _PI, int _Count)
+{
+	_Count -= 1;
+
+	for(int i=0; i<_Count; i++)
+	{
+		if(_PI[i].Use != TRUE) continue;
+		if(_PI[i].PI.m_ID == 0) continue;
+		for(int j=0; j<m_nObjects; j++)
+		{
+			if(m_ppObjects[j] == NULL) continue;
+			if(m_ppObjects[j]->GetTag() != OTHERPLAYER || m_ppObjects[j]->GetID() != _PI[i].PI.m_ID) continue;
+			m_ppObjects[j]->SetPos(_PI[i].PI.m_Pos);
+			m_ppObjects[j]->SetRot(_PI[i].PI.m_Rot);
+			m_ppObjects[j]->SetScale(_PI[i].PI.m_Scale);
+			break;
 		}
 	}
 }

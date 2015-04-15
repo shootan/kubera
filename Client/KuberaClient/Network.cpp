@@ -2,8 +2,10 @@
 
 Network::Network()
 {
-	ZeroMemory(&PI, sizeof(PlayerPacket));
+	ZeroMemory(&PI, sizeof(PlayerStruct) * 10);
 	m_bJoinPlayer = FALSE;
+	m_ClientCount = 0;
+	m_ID = 0;
 }
 
 Network::~Network()
@@ -82,16 +84,64 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 	LPOVERLAPPED over;
 	Network* server = (Network*)arg;
 	int size = 0;
+	PlayerPacket p;
 	char Buf[BUFSIZE];
-	
+	int Count = 0;
+	int Header = 0;
 	while(TRUE)
 	{
-		retval = recv(server->m_ConnectSock, (char*)&server->PI, sizeof(PlayerPacket), 0);
+		/////////////////////////////// 헤더 받아서 ㅇㅋ?
 
+		retval = recv(server->m_ConnectSock, (char*)&Header, sizeof(int), 0);
 		if(retval == SOCKET_ERROR)
 			break;
 
-		//printf("x: %d y: %d z : %d \n ", server->PI.PI.m_Pos.x, server->PI.PI.m_Pos.y, server->PI.PI.m_Pos.z);
+		switch(Header)
+		{
+		case INITCLIENT:
+			{
+				retval = recv(server->m_ConnectSock, (char*)&server->m_ID, sizeof(int), 0);
+				break;
+			}
+		case HERODATA:
+			{
+				retval = recv(server->m_ConnectSock, (char*)&p, sizeof(PlayerPacket), 0);
+				if(retval == SOCKET_ERROR)
+					break;
+
+				for(int i=0; i<10; i++)
+				{
+					if(server->PI[i].PI.m_ID == p.PI.m_ID)
+					{
+						server->PI[i].PI = p.PI;
+						break;
+					}
+
+					if(i == 9)
+					{
+						for(int j=0; j<10; j++)
+						{
+							if(server->PI[j].PI.m_ID == 0)
+							{
+								server->PI[j].PI = p.PI;
+								break;
+							}
+						}
+					}
+				}
+				break;
+			}
+		case HEROCOUNT:
+			{
+				retval = recv(server->m_ConnectSock, (char*)&server->m_ClientCount, sizeof(int), 0);
+				if(retval == SOCKET_ERROR)
+					break;
+
+				break;
+			}
+		}
+
+
 	}
 	return 0;
 }
@@ -105,5 +155,4 @@ BOOL Network::SendData(PlayerPacket* _pi)
 		return FALSE;
 
 	return TRUE;
-
 }

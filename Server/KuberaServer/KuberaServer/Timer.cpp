@@ -96,7 +96,7 @@ unsigned long CTimer::GetFrameRate(LPTSTR lpszString, int nCharacters)
 		wcscat_s(lpszString, nCharacters, _T(" FPS)"));
 	} 
 
-	printf("%d", m_nCurrentFrameRate);
+	printf("%d \n", m_nCurrentFrameRate);
 	return(m_nCurrentFrameRate);
 }
 

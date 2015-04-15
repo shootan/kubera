@@ -1,3 +1,4 @@
+#define _CRT_SERCURE_NO_WARNINGS
 #include "IOCP.h"
 
 IOCPServer::IOCPServer()
@@ -113,11 +114,17 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 			buffer->m_Opcode			= OP_INIT;
 			buffer->m_Disconnect		= FALSE;
 
+			int header = INITCLIENT;
+			send(client_sock, (char*)&header, sizeof(int), 0);
+			send(client_sock, (char*)&buffer->m_Id, sizeof(int), 0);
+
 			Player* pl = new Player;
 			ZeroMemory(pl, sizeof(Player));
 			pl->m_Id = buffer->m_Id;
+			
 			pl->m_PI = new PlayerPacket;
 			ZeroMemory(pl->m_PI, sizeof(PlayerPacket));
+			pl->m_PI->PI.m_ID = buffer->m_Id;
 			pl->m_PI->size = 32;
 			pl->m_pNext = pThis->m_pPlayerList;
 			pThis->m_pPlayerList = pl;
@@ -260,7 +267,6 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 		if(_buff->m_Id == play->m_Id)
 		{
 			play->m_PI = (PlayerPacket*)_buff->m_RecvBuf;
-
 			break;
 		}
 		play = play->m_pNext;
@@ -321,7 +327,12 @@ BOOL IOCPServer::SendData()
 
 	while(Buffer != NULL)
 	{
-		EnterCriticalSection(&m_BufferListLock);
+		//EnterCriticalSection(&m_BufferListLock);
+
+		int* Count = new int;
+		*Count = m_iClientCount;
+		this->SendPacket(Buffer, HEROCOUNT, Count, sizeof(int));
+		this->SetOpCode(Buffer, OP_SEND_FINISH);
 
 		play = m_pPlayerList;
 		while(play != NULL)
@@ -331,33 +342,40 @@ BOOL IOCPServer::SendData()
 				play = play->m_pNext;
 				continue;
 			}
-			printf("ID : %d,   x: %3f, y: %3f, z : %3f, size : %d \n ", play->m_Id, play->m_PI->PI.m_Pos.x, play->m_PI->PI.m_Pos.y, play->m_PI->PI.m_Pos.z, play->m_PI->size);
+			
 			if(!Buffer->m_Disconnect)
 			{
-				this->SendPacket(Buffer, play->m_PI);
+				printf("ID : %d, x: %3f, y: %3f, z : %3f, size : %d \n", play->m_PI->PI.m_ID, play->m_PI->PI.m_Pos.x, play->m_PI->PI.m_Pos.y, play->m_PI->PI.m_Pos.z, play->m_PI->size);
+				this->SendPacket(Buffer, HERODATA, play->m_PI, sizeof(PlayerPacket));
 				this->SetOpCode(Buffer, OP_SEND_FINISH);
 			}
 			play = play->m_pNext;
 		}
 
 		Buffer = Buffer->m_pNext;
-		LeaveCriticalSection(&m_BufferListLock);
+		//LeaveCriticalSection(&m_BufferListLock);
 	}
 	return TRUE;
 }
 
-void IOCPServer::SendPacket(IOBuffer* _buffer, void *_packet)
+void IOCPServer::SendPacket(IOBuffer* _buffer, int NetworkCode, void *_packet, int _size)
 {
+	int adq = reinterpret_cast<unsigned char *>(_packet)[0];
 
-	int packet_size = reinterpret_cast<unsigned char *>(_packet)[0];
+	int Size = HEADERSIZE + _size;
+	char* Buffer = new char[HEADERSIZE + Size];
+	*(int*)Buffer = NetworkCode;
+	
+	memcpy(Buffer+HEADERSIZE, _packet, Size);
+	
 
 	_buffer->m_SendWsabuf.buf = _buffer->m_SendBuf;
-	_buffer->m_SendWsabuf.len = packet_size;
-	_buffer->m_iSendbytes = packet_size;
+	_buffer->m_SendWsabuf.len = Size;
+	_buffer->m_iSendbytes = Size;
 
 	unsigned long io_size;
 
-	memcpy(_buffer->m_SendBuf, _packet, packet_size);
+	memcpy(_buffer->m_SendBuf, Buffer, Size);
 	
 	if(_buffer->m_Disconnect) return;
 	WSASend(_buffer->m_ClientSock, &_buffer->m_SendWsabuf, 1, &io_size, NULL, &_buffer->m_Overlapped, NULL);

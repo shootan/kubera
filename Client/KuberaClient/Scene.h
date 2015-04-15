@@ -59,5 +59,9 @@ public:
 	BOOL m_bJoinOtherPlayer;
 	BOOL m_bJoin;
 
+	// net
+
+	void SetOtherClient(PlayerStruct* _PI, int _Count);
+	void UpdateOtherClient(PlayerStruct* _PI, int _Count);
 };
 

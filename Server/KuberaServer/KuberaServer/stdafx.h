@@ -3,6 +3,7 @@
 #include "targetver.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <tchar.h>
 #include <WinSock2.h>
 #include <process.h>
@@ -12,7 +13,7 @@
 // BUFSIZE
 #define BUFSIZE 1024*2
 #define MAXPLAYER 30
-
+#define HEADERSIZE sizeof(int)
 struct Vector3
 {
 	float x, y, z;
@@ -29,4 +30,9 @@ struct PlayerPacket
 {
 	int			size;
 	PlayerInfo	PI;
+};
+
+enum NETWORKCODE
+{
+	 NETNONE, HERODATA, HEROCOUNT, INITCLIENT
 };

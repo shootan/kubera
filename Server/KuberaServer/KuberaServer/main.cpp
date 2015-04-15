@@ -13,8 +13,8 @@ int main()
 	while(1)
 	{
 		Timer.Tick(60);
-		system("cls");
-		Timer.GetFrameRate();
+		//system("cls");
+		//Timer.GetFrameRate();
 		Server.SendData();
 	}
 	return 0;

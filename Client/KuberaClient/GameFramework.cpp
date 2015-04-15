@@ -316,29 +316,27 @@ void CGameFramework::FrameAdvance()
 	m_GameTimer.Tick(60);
 
 
-	PlayerPacket* a = new PlayerPacket;
-	ZeroMemory(a, sizeof(PlayerPacket));
-	a->size= sizeof(PlayerPacket);
-	a->PI.m_Pos = m_pScene->GetObject(0)->GetPos();
-	a->PI.m_Scale = m_pScene->GetObject(0)->GetScale();
-	a->PI.m_Rot = m_pScene->GetObject(0)->GetRot();
+	if(Net.m_ID != 0)
+	{
+		PlayerPacket* a = new PlayerPacket;
+		ZeroMemory(a, sizeof(PlayerPacket));
+		a->size= sizeof(PlayerPacket);
+		a->PI.m_Pos = m_pScene->GetObject(0)->GetPos();
+		a->PI.m_Scale = m_pScene->GetObject(0)->GetScale();
+		a->PI.m_Rot = m_pScene->GetObject(0)->GetRot();
+		a->PI.m_ID = Net.m_ID;
+		Net.SendData(a);
 
-	Net.SendData(a);
+		delete a;
+	}
 
-	delete a;
-
-
-	if(Net.PI.size != 0)
+	if(Net.m_ClientCount != 0)
 	{
 		m_pScene->m_bJoinOtherPlayer = TRUE;
 
-		if(m_pScene->GetObject(3) != NULL)
-		{
-			m_pScene->GetObject(3)->SetPos(Net.PI.PI.m_Pos);
-			m_pScene->GetObject(3)->SetRot(Net.PI.PI.m_Rot);
-			m_pScene->GetObject(3)->SetScale(Net.PI.PI.m_Scale);
-		}
-	}
+		m_pScene->SetOtherClient(Net.PI, Net.m_ClientCount);
+		m_pScene->UpdateOtherClient(Net.PI, Net.m_ClientCount);
+	}	
 	
 
 	ProcessInput();
@@ -383,13 +381,9 @@ void CGameFramework::FrameAdvance()
 
 void CGameFramework::SetCameraPos()
 {
-
-
-	D3DXVECTOR3 d3dxvEyePosition = D3DXVECTOR3(m_CameraPosX, 50.0f, m_CameraPosZ);
+	D3DXVECTOR3 d3dxvEyePosition = D3DXVECTOR3(m_CameraPosX, 350.0f, m_CameraPosZ);
 	D3DXVECTOR3 d3dxvLookAt = D3DXVECTOR3(m_CameraPosX, 0.0f, m_CameraPosZ+17.0f);
 	m_vCamera.SetViewParams( &d3dxvEyePosition, &d3dxvLookAt );
-
-
 
 	if(m_CameraPosX <= -500)
 	{

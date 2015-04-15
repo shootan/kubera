@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Network.h"
 
 
@@ -79,7 +80,7 @@ public:
 
 	// Send
 	BOOL SendData();
-	void SendPacket(IOBuffer* _buffer, void *_packet);
+	void SendPacket(IOBuffer* _buffer, int NetworkCode, void *_packet, int _size);
 
 	//½º·¹µå
 	static UINT WINAPI ListenThread(LPVOID arg);
