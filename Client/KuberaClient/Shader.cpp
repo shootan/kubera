@@ -271,12 +271,12 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pRock3Mesh = new CFBXMesh(pd3dDevice, L"obstacle/Rock3.FBX");
 	m_pRock3Mesh->LoadTexture(pd3dDevice, L"obstacle/Rock3.tif");
 
-	int bush3x = 24, bush3z = 4, i = 0;  //À§¾Æ·¡ 100 ÇÈ¼¿
-	int bush3x1 = 4, bush3z1 = 10; //ÁÂ¿ì 100ÇÈ¼¿
+	int bush3x = 24, bush3z = 7, i = 0;  //À§¾Æ·¡ 100 ÇÈ¼¿
+	int bush3x1 = 5, bush3z1 = 10; //ÁÂ¿ì 100ÇÈ¼¿
 
-	int Rock2x = 4, Rock2z = 4;
+	int Rock2x = 5, Rock2z = 5;
 
-	int Rock3x = 4, Rock3z = 12;
+	int Rock3x = 6, Rock3z = 12;
 
 	m_nBush3Objects = (bush3x*bush3z*4) + (bush3x1*bush3z1*4);
 	m_nRock2Objects = (Rock2x*Rock2z*4);
@@ -304,12 +304,12 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 
 			pgameObject[2] = new ObstacleObject();
 			pgameObject[2]->SetMesh(m_pBush3Mesh);
-			pgameObject[2]->SetP((x*25) + 12.5f, 0,(-300.f-12.5f) - z*25);
+			pgameObject[2]->SetP((x*25) + 12.5f, 0,(-225.f-12.5f) - z*25);
 			m_ppObjects[i++] = pgameObject[2];
 
 			pgameObject[3] = new ObstacleObject();
 			pgameObject[3]->SetMesh(m_pBush3Mesh);
-			pgameObject[3]->SetP(-(x*25) - 12.5f, 0,(-300.f-12.5f) - z*25);
+			pgameObject[3]->SetP(-(x*25) - 12.5f, 0,(-225.f-12.5f) - z*25);
 			m_ppObjects[i++] = pgameObject[3];
 		}
 	}
@@ -332,12 +332,12 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 
 			pBush3Object[2] = new ObstacleObject();
 			pBush3Object[2]->SetMesh(m_pBush3Mesh);
-			pBush3Object[2]->SetP((500.f + 12.5f) + x*25, 0,(300.f-12.5f) - z*25);
+			pBush3Object[2]->SetP((475.f + 12.5f) + x*25, 0,(300.f-12.5f) - z*25);
 			m_ppObjects[i++] = pBush3Object[2];
 
 			pBush3Object[3] = new ObstacleObject();
 			pBush3Object[3]->SetMesh(m_pBush3Mesh);
-			pBush3Object[3]->SetP((500.f + 12.5f) + x*25, 0,(-50.f-12.5f) - z*25);
+			pBush3Object[3]->SetP((475.f + 12.5f) + x*25, 0,(-50.f-12.5f) - z*25);
 			m_ppObjects[i++] = pBush3Object[3];
 		}
 	}
@@ -365,17 +365,17 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 
 			pRock2Object[1] = new ObstacleObject();
 			pRock2Object[1]->SetMesh(m_pRock2Mesh);
-			pRock2Object[1]->SetP((-400.f + 12.5f) + x*25, 0,(-50.f-12.5f) - z*25);
+			pRock2Object[1]->SetP((-400.f + 12.5f) + x*25, 0,(-25.f-12.5f) - z*25);
 			m_ppObjects[i++] = pRock2Object[1];
 
 			pRock2Object[2] = new ObstacleObject();
 			pRock2Object[2]->SetMesh(m_pRock2Mesh);
-			pRock2Object[2]->SetP((300.f + 12.5f) + x*25, 0,(150.f-12.5f) - z*25);
+			pRock2Object[2]->SetP((275.f + 12.5f) + x*25, 0,(150.f-12.5f) - z*25);
 			m_ppObjects[i++] = pRock2Object[2];
 
 			pRock2Object[3] = new ObstacleObject();
 			pRock2Object[3]->SetMesh(m_pRock2Mesh);
-			pRock2Object[3]->SetP((300.f + 12.5f) + x*25, 0,(-50.f-12.5f) - z*25);
+			pRock2Object[3]->SetP((275.f + 12.5f) + x*25, 0,(-25.f-12.5f) - z*25);
 			m_ppObjects[i++] = pRock2Object[3];
 		}
 	}
@@ -402,7 +402,7 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 
 			pRock3Object[1] = new ObstacleObject();
 			pRock3Object[1]->SetMesh(m_pRock3Mesh);
-			pRock3Object[1]->SetP((100.f + 12.5f) + x*25, 0,(150.f-12.5f) - z*25);
+			pRock3Object[1]->SetP((50.f + 12.5f) + x*25, 0,(150.f-12.5f) - z*25);
 			m_ppObjects[i++] = pRock3Object[1];
 		}
 	}
