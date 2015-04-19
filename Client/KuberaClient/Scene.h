@@ -6,6 +6,8 @@
 #include "ObstacleObject.h"
 #include "Shader.h"
 #include "ControlManager.h"
+#include "TowerObject.h"
+#include "ST.h"
 
 class CScene
 {

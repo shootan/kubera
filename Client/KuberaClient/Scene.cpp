@@ -42,7 +42,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_ppShaders[1]->BuildObjects(pd3dDevice);
 	
 	//게임 객체에 대한 포인터들의 배열을 정의한다.
-	m_nObjects = 100;
+	m_nObjects = 20;
 	m_ppObjects = new CGameObject*[m_nObjects]; 
 
 	//정육면체 메쉬를 생성하고 객체에 연결한다.
@@ -72,14 +72,19 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	CGameObject *pPlane = new CGameObject();
 	pPlane->SetMesh(pPlaneMesh);
 	
-	MinionObject* pMinion[50];
-	for(int i=0; i<50; i++)
-	{
-		pMinion[i] = new MinionObject();
-		pMinion[i]->SetMesh(pMinionDragonMesh);
-		pMinion[i]->SetBoundSize(7, 10 ,7);
-		m_ppShaders[0]->AddObject(pMinion[i]);
-	}
+// 	MinionObject* pMinion[50];
+// 	for(int i=0; i<50; i++)
+// 	{
+// 		pMinion[i] = new MinionObject();
+// 		pMinion[i]->SetMesh(pMinionDragonMesh);
+// 		pMinion[i]->SetBoundSize(7, 10 ,7);
+// 		m_ppShaders[0]->AddObject(pMinion[i]);
+// 	}
+
+	TowerObject* pTower = new TowerObject();
+	pTower->SetMesh(pObstacleMesh);
+	pTower->SetPosition(D3DXVECTOR3(450,0,0));
+
 
 	//충돌박스
 	int iObjectNum = 2;
@@ -101,6 +106,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
  	//삼각형 객체를 쉐이더 객체에 연결한다.
  	m_ppShaders[0]->AddObject(pHero);
 	m_ppShaders[0]->AddObject(pPlane);
+	m_ppShaders[0]->AddObject(pTower);
 
 	for(int i=0; i<iObjectNum; i++)
 	{
@@ -117,10 +123,13 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_ppObjects[4] = pBoundBox[1];
 	m_ppObjects[4]->SetTag(OBSTACLE_BOUND);
 
-	for(int i=5; i<55; i++)
-		m_ppObjects[i] = pMinion[i-5];
+	m_ppObjects[5] = pTower;
+	m_ppObjects[5]->SetTag(TOWER);
+// 
+// 	for(int i=6; i<56; i++)
+// 		m_ppObjects[i] = pMinion[i-5];
 
-	for(int i=55; i<100; i++)
+	for(int i=6; i<m_nObjects; i++)
 		m_ppObjects[i] = NULL;
 
 	this->AddOtherPlayer(pd3dDevice);
@@ -219,6 +228,23 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 
 		m_ppObjects[j]->Animate(fTimeElapsed);
 		m_ppObjects[j]->Update(fTimeElapsed);
+
+		if(m_ppObjects[j]->GetTag() == TOWER)
+		{
+			for(int i = 0; i<m_nObjects; i++)
+			{
+				if(m_ppObjects[i] == NULL) continue;
+				if(m_ppObjects[i]->GetTag() == HERO)
+				{
+					float distance = ST::sharedManager()->GetDistance(m_ppObjects[j]->GetPos(), m_ppObjects[i]->GetPos());
+					
+					if(distance < 50.0f)
+						m_ppObjects[j]->SetPos(m_ppObjects[i]->GetPos());
+					//	TowerObject* tt = m_ppObjects[j];
+
+				}
+			}
+		}
 
 		if(m_ppObjects[j]->GetTag() == HERO_BOUND) //플레이어 충돌박스 보이기
 			m_ppObjects[j]->SetPosition(m_ppObjects[0]->GetPosition());

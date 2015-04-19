@@ -57,7 +57,7 @@ void CGameObject::SetMesh(CMesh *pMesh)
 
 void CGameObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
 {
-	//if(m_Visible != TRUE) return;
+	if(m_Visible != TRUE) return;
 
 	D3DXMATRIX mWorld;
 	D3DXMatrixIdentity(&mWorld);

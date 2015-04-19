@@ -169,6 +169,7 @@ void CObjectShader::Render(ID3D11DeviceContext *pd3dDeviceContext)
 	{
 		if (m_ppObjects[j]) 
 		{
+			if(m_ppObjects[j]->GetVisible() != TRUE) continue;
 			UpdateShaderVariables(pd3dDeviceContext, &m_ppObjects[j]->m_d3dxmtxWorld);
 			m_ppObjects[j]->Render(pd3dDeviceContext);
 		}

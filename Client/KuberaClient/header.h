@@ -31,6 +31,7 @@
 #include "SDKMesh.h"
 #include <process.h>
 
+
 struct Vector3
 {
 	float x, y, z;
@@ -57,10 +58,12 @@ struct PlayerStruct
 
 enum TAG
 {
-	NONE, HERO, OTHERPLAYER, MINION, OBSTACLE, PLANE, HERO_BOUND, OBSTACLE_BOUND
+	NONE, HERO, OTHERPLAYER, MINION, OBSTACLE, PLANE, HERO_BOUND, OBSTACLE_BOUND, TOWER
 };
 
 enum NETWORKCODE
 {
 	NETNONE, HERODATA, HEROCOUNT, INITCLIENT
 };
+
+

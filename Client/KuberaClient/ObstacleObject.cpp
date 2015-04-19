@@ -6,6 +6,7 @@ ObstacleObject::ObstacleObject(void)
 
 	m_iTag = OBSTACLE;
 	m_vFacingDirection= D3DXVECTOR3(0,0,-1);
+	m_Visible = TRUE;
 }
 
 ObstacleObject::~ObstacleObject(void)

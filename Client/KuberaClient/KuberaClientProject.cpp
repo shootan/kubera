@@ -8,6 +8,9 @@
 #include "header.h"
 #include "resource.h"
 #include "GameFramework.h"
+#include "ST.h"
+
+ST* ST::instance = NULL;
 
 //--------------------------------------------------------------------------------------
 // Global Variables

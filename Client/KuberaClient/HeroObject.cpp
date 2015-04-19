@@ -6,6 +6,7 @@ HeroObject::HeroObject(void)
 
 	m_iTag = HERO;
 	m_bMove = FALSE;
+	m_Visible = TRUE;
 	node_t* temp;
 
 	while(m_pBestWay) {
