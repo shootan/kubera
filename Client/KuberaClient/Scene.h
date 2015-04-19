@@ -17,6 +17,7 @@ private:
 
 	CGameObject **m_ppObjects;       
 	int m_nObjects;
+	int m_nIntanceObjects;
 
 	int m_MousePosX;
 	int m_MousePosY;

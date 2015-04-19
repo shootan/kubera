@@ -2,6 +2,7 @@
 #include "header.h"
 #include "GameObject.h"
 #include "ObstacleObject.h"
+#include "TowerObject.h"
 #include "Mesh.h"
 
 struct VS_CB_WORLD_MATRIX
@@ -37,6 +38,7 @@ public:
 
 	virtual void AddObject(CGameObject *pObject){}
 	CGameObject* GetObject(int nObjectsNum){return m_ppObjects[nObjectsNum];}
+	int GetObjectsNumber() {return m_nObjects;}
 
 public:
 	//정점-쉐이더 인터페이스 포인터와 입력-레이아웃 인터페이스 포인터를 선언한다.
@@ -96,14 +98,17 @@ public:
 	virtual void BuildObjects(ID3D11Device *pd3dDevice);
 
 	virtual void AddObject(CGameObject *pObject); 
+	
 	//쉐이더에서 렌더링할 메쉬이다.
 	CMesh *m_pBush3Mesh;
 	CMesh *m_pRock2Mesh;
 	CMesh *m_pRock3Mesh;
+	CMesh *m_pTowerMesh;
 
 	int m_nBush3Objects;
 	int m_nRock2Objects;
 	int m_nRock3Objects;
+	int m_nTowerObjects;
 
 	//월드 변환 행렬과 월드 변환 행렬을 위한 상수 버퍼이다.
 	D3DXMATRIX m_d3dxmtxWorld;         
@@ -113,4 +118,5 @@ public:
 	ID3D11Buffer *m_pd3dcbBush3InstanceMatrices;
 	ID3D11Buffer *m_pd3dcbRock2InstanceMatrices;
 	ID3D11Buffer *m_pd3dcbRock3InstanceMatrices;
+	ID3D11Buffer *m_pd3dcbTowerInstanceMatrices;
 };

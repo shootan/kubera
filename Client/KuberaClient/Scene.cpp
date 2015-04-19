@@ -8,6 +8,7 @@ CScene::CScene(void)
 
 	m_ppObjects = NULL;       
 	m_nObjects = 0;
+	m_nIntanceObjects = 0;
 
 	m_MousePosX = 0;
 	m_MousePosY = 0;
@@ -40,9 +41,10 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_ppShaders[1] = new CInstancingShader();
 	m_ppShaders[1]->CreateShader(pd3dDevice, 10);
 	m_ppShaders[1]->BuildObjects(pd3dDevice);
-	
+		
 	//게임 객체에 대한 포인터들의 배열을 정의한다.
-	m_nObjects = 20;
+	m_nIntanceObjects = m_ppShaders[1]->GetObjectsNumber();
+	m_nObjects = 20 + m_nIntanceObjects;
 	m_ppObjects = new CGameObject*[m_nObjects]; 
 
 	//정육면체 메쉬를 생성하고 객체에 연결한다.
@@ -51,9 +53,9 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	pHeroMesh->LoadTexture(pd3dDevice, L"micro_wizard_col.tif");
 
 	CFBXMesh *pPlaneMesh = new CFBXMesh(pd3dDevice, L"Plane4.FBX");
-	pPlaneMesh->LoadTexture(pd3dDevice, L"floor.png");
+	pPlaneMesh->LoadTexture(pd3dDevice, L"floor_v5.png");
 
-	CFBXMesh *pObstacleMesh = new CFBXMesh(pd3dDevice, L"20Box.FBX");
+	CFBXMesh *pObstacleMesh = new CFBXMesh(pd3dDevice, L"tower/Tower1_303030.FBX");
 	pObstacleMesh->LoadTexture(pd3dDevice, L"micro_wizard_col.tif");
 
 	pMinionDragonMesh = new CFBXMesh(pd3dDevice, L"Dragon7107.FBX");
@@ -113,23 +115,25 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 		m_ppShaders[0]->AddObject(pBoundBox[i]);
 	}
 
+	for(int i=0; i<m_nIntanceObjects; i++)
+		m_ppObjects[i] = m_ppShaders[1]->GetObject(i);
 
- 	m_ppObjects[0] = pHero;
-	m_ppObjects[1] = pPlane;
-	m_ppObjects[1]->SetTag(PLANE);
-	m_ppObjects[2] = NULL;
-	m_ppObjects[3] = pBoundBox[0];
-	m_ppObjects[3]->SetTag(HERO_BOUND);
-	m_ppObjects[4] = pBoundBox[1];
-	m_ppObjects[4]->SetTag(OBSTACLE_BOUND);
+	m_ppObjects[m_nIntanceObjects] = pHero;
+	m_ppObjects[m_nIntanceObjects + 1] = pPlane;
+	m_ppObjects[m_nIntanceObjects + 1]->SetTag(PLANE);
+	m_ppObjects[m_nIntanceObjects + 2] = NULL;
+	m_ppObjects[m_nIntanceObjects + 3] = pBoundBox[0];
+	m_ppObjects[m_nIntanceObjects + 3]->SetTag(HERO_BOUND);
+	m_ppObjects[m_nIntanceObjects + 4] = pBoundBox[1];
+	m_ppObjects[m_nIntanceObjects + 4]->SetTag(OBSTACLE_BOUND);
 
-	m_ppObjects[5] = pTower;
-	m_ppObjects[5]->SetTag(TOWER);
+	m_ppObjects[m_nIntanceObjects + 5] = pTower;
+	//m_ppObjects[m_nIntanceObjects + 5]->SetTag(TOWER);
 // 
 // 	for(int i=6; i<56; i++)
 // 		m_ppObjects[i] = pMinion[i-5];
 
-	for(int i=6; i<m_nObjects; i++)
+	for(int i= m_nIntanceObjects + 6; i<m_nObjects; i++)
 		m_ppObjects[i] = NULL;
 
 	this->AddOtherPlayer(pd3dDevice);

@@ -91,6 +91,9 @@
     <ClCompile Include="ObstacleObject.cpp">
       <Filter>소스코드\Object</Filter>
     </ClCompile>
+    <ClCompile Include="TowerObject.cpp">
+      <Filter>소스코드\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
@@ -161,6 +164,10 @@
     <ClInclude Include="ObstacleObject.h">
       <Filter>소스코드\Object</Filter>
     </ClInclude>
+    <ClInclude Include="TowerObject.h">
+      <Filter>소스코드\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ST.h" />
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h">
