@@ -165,15 +165,15 @@ void CObjectShader::Render(ID3D11DeviceContext *pd3dDeviceContext)
 {
 	CShader::Render(pd3dDeviceContext);
 
-	for (int j = 0; j < m_nObjects; j++)
-	{
-		if (m_ppObjects[j]) 
-		{
-			if(m_ppObjects[j]->GetVisible() != TRUE) continue;
-			UpdateShaderVariables(pd3dDeviceContext, &m_ppObjects[j]->m_d3dxmtxWorld);
-			m_ppObjects[j]->Render(pd3dDeviceContext);
-		}
-	}
+	//for (int j = 0; j < m_nObjects; j++)
+	//{
+	//	if (m_ppObjects[j]) 
+	//	{
+	//		if(m_ppObjects[j]->GetVisible() != TRUE) continue;
+	//		UpdateShaderVariables(pd3dDeviceContext, &m_ppObjects[j]->m_d3dxmtxWorld);
+	//		m_ppObjects[j]->Render(pd3dDeviceContext);
+	//	}
+	//}
 }
 
 
@@ -277,7 +277,7 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pRock3Mesh = new CFBXMesh(pd3dDevice, L"obstacle/Rock3.FBX");
 	m_pRock3Mesh->LoadTexture(pd3dDevice, L"obstacle/Rock3.tif");
 
-	m_pTowerMesh = new CFBXMesh(pd3dDevice, L"tower/Tower1_303030.FBX");
+	m_pTowerMesh = new CFBXMesh(pd3dDevice, L"tower/Tower2_303030.FBX");
 	m_pTowerMesh->LoadTexture(pd3dDevice, L"tower/tower.png");
 
 	int bush3x = 24, bush3z = 7, i = 0;  //À§¾Æ·¡ 100 ÇÈ¼¿
@@ -426,24 +426,25 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pRock3Mesh->AppendVertexBuffer(m_pd3dcbRock3InstanceMatrices, sizeof(D3DXMATRIX), 0);
 
 
-	TowerObject *pTowerObject[10] = {NULL};
+	for(int i=0; i< m_nTowerObjects; i++)
+		m_pTowerObject[i] = NULL;
 
 	for(int j = 0; j < 10; j++)
 	{
-		pTowerObject[j] = new TowerObject();
-		pTowerObject[j]->SetMesh(m_pTowerMesh);
-		m_ppObjects[i++] = pTowerObject[j];
+		m_pTowerObject[j] = new TowerObject();
+		m_pTowerObject[j]->SetMesh(m_pTowerMesh);
+		m_ppObjects[i++] = m_pTowerObject[j];
 	}
-	pTowerObject[0]->SetP(-400.f + 15.f , 0, 165.f);
-	pTowerObject[1]->SetP(-50.f - 15.f, 0, 165.f);
-	pTowerObject[2]->SetP(50.f + 15.f, 0, 165.f);
-	pTowerObject[3]->SetP(400.f - 15.f, 0, 165.f);
-	pTowerObject[4]->SetP(-400.f + 15.f, 0, -165.f);
-	pTowerObject[5]->SetP(-50.f - 15.f, 0, -165.f);
-	pTowerObject[6]->SetP(50.f + 15.f, 0, -165.f);
-	pTowerObject[7]->SetP(400.f - 15.f, 0, -165.f);
-	pTowerObject[8]->SetP(-275.f, 0, -10.f);
-	pTowerObject[9]->SetP(275.f, 0, 10.f);
+	m_pTowerObject[0]->SetP(-400.f + 15.f , 0, 165.f);
+	m_pTowerObject[1]->SetP(-50.f - 15.f, 0, 165.f);
+	m_pTowerObject[2]->SetP(50.f + 15.f, 0, 165.f);
+	m_pTowerObject[3]->SetP(400.f - 15.f, 0, 165.f);
+	m_pTowerObject[4]->SetP(-400.f + 15.f, 0, -165.f);
+	m_pTowerObject[5]->SetP(-50.f - 15.f, 0, -165.f);
+	m_pTowerObject[6]->SetP(50.f + 15.f, 0, -165.f);
+	m_pTowerObject[7]->SetP(400.f - 15.f, 0, -165.f);
+	m_pTowerObject[8]->SetP(-275.f, 0, -10.f);
+	m_pTowerObject[9]->SetP(275.f, 0, 10.f);
 
 	ZeroMemory(&d3dBufferDesc, sizeof(D3D11_BUFFER_DESC));
 	d3dBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
