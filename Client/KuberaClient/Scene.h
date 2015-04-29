@@ -8,6 +8,7 @@
 #include "ControlManager.h"
 #include "TowerObject.h"
 #include "ST.h"
+#include "EnemyObject.h"
 
 class CScene
 {
@@ -33,6 +34,7 @@ private:
 	HeroObject *m_pHero;
 	CGameObject *m_pPlane;
 	TowerObject *m_pTower[10];
+	EnemyObject	*m_pOtherPlayer[10];
 
 	float distance;
 
@@ -68,6 +70,10 @@ public:
 	BOOL m_bJoinOtherPlayer;
 	BOOL m_bJoin;
 
+	CGameObject* GetHero()
+	{
+		return m_pHero;
+	}
 	// net
 
 	void SetOtherClient(PlayerStruct* _PI, int _Count);

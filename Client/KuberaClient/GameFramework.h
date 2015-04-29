@@ -20,6 +20,8 @@ private:
 	int m_nWndClientWidth;
 	int m_nWndClientHeight;
 
+	PlayerPacket HeroInfo;
+
 	CTimer m_GameTimer;
 	CScene *m_pScene;
 	_TCHAR m_pszBuffer[50];
@@ -44,6 +46,7 @@ private:
 	// Network
 	Network Net;
 	float time;
+	void ExchangeInfo();
 	
 public:
 	CGameFramework();

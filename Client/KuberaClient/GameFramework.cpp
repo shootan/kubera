@@ -17,6 +17,9 @@ CGameFramework::CGameFramework()
 
 	m_CameraPosX = 500.f;
 	m_CameraPosZ = -10.f;
+
+	ZeroMemory(&HeroInfo, sizeof(PlayerPacket));
+	HeroInfo.size = sizeof(PlayerPacket);
 }
 
 CGameFramework::~CGameFramework()
@@ -311,34 +314,13 @@ void CGameFramework::AnimateObjects()
 	if (m_pScene) m_pScene->AnimateObjects(m_GameTimer.GetTimeElapsed(), m_pd3dDevice);
 }
 
+
 void CGameFramework::FrameAdvance()
 {    
 	m_GameTimer.Tick(60);
 
-
-	if(Net.m_ID != 0)
-	{
-		PlayerPacket* a = new PlayerPacket;
-		ZeroMemory(a, sizeof(PlayerPacket));
-		a->size= sizeof(PlayerPacket);
-		a->PI.m_Pos = m_pScene->GetObject(1126)->GetPos();
-		a->PI.m_Scale = m_pScene->GetObject(1126)->GetScale();
-		a->PI.m_Rot = m_pScene->GetObject(1126)->GetRot();
-		a->PI.m_ID = Net.m_ID;
-		Net.SendData(a);
-
-		delete a;
-	}
-
-	if(Net.m_ClientCount != 0)
-	{
-		m_pScene->m_bJoinOtherPlayer = TRUE;
-
-		m_pScene->SetOtherClient(Net.PI, Net.m_ClientCount);
-		m_pScene->UpdateOtherClient(Net.PI, Net.m_ClientCount);
-	}	
+	this->ExchangeInfo();
 	
-
 	ProcessInput();
 	AnimateObjects();
 
@@ -487,4 +469,22 @@ void CGameFramework::SetCameraPos()
 	if(m_pScene->GetMousePosY() < 10) m_CameraPosZ += 400 * m_GameTimer.GetTimeElapsed();
 	if(m_pScene->GetMousePosX() > m_nWndClientWidth - 10) m_CameraPosX += 400 * m_GameTimer.GetTimeElapsed();
 	if(m_pScene->GetMousePosY() > m_nWndClientHeight - 10) m_CameraPosZ -= 400 * m_GameTimer.GetTimeElapsed();
+}
+
+void CGameFramework::ExchangeInfo()
+{
+	if(Net.m_ID != 0)
+	{
+		HeroInfo.PI.m_Pos = m_pScene->GetHero()->GetPos();
+		HeroInfo.PI.m_Scale = m_pScene->GetHero()->GetScale();
+		HeroInfo.PI.m_Rot = m_pScene->GetHero()->GetRot();
+		HeroInfo.PI.m_ID = Net.m_ID;
+		Net.SendData(&HeroInfo);
+	}
+
+	if(Net.m_ClientCount != 0)
+	{
+		m_pScene->SetOtherClient(Net.PI, Net.m_ClientCount);
+		m_pScene->UpdateOtherClient(Net.PI, Net.m_ClientCount);
+	}	
 }

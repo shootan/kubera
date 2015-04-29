@@ -65,7 +65,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 
 
 	//삼각형 객체(CTriangleObject)를 생성하고 삼각형 메쉬를 연결한다.
-	m_pHero = new HeroObject();
+	m_pHero = new HeroObject;
 	m_pHero->SetMesh(pHeroMesh);
 	m_Control.m_Player = m_pHero;
 	m_pHero->SetPosition(D3DXVECTOR3(550, 0, 0));
@@ -73,6 +73,8 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 
 	m_pPlane = new CGameObject();
 	m_pPlane->SetMesh(pPlaneMesh);
+
+	
 	
 // 	MinionObject* pMinion[50];
 // 	for(int i=0; i<50; i++)
@@ -114,6 +116,12 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	for(int i=0; i<iObjectNum; i++)
 		m_pObjectShaders->AddObject(pBoundBox[i]);
 
+	for(int i=0; i<10;i++)
+	{
+		m_pOtherPlayer[i] = new EnemyObject;
+		m_pOtherPlayer[i]->SetMesh(pHeroMesh);
+		m_pObjectShaders->AddObject(m_pOtherPlayer[i]);
+	}
 
 
 	for(int i=0; i < 10; i++)
@@ -302,6 +310,13 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext)
 	m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pHero->m_d3dxmtxWorld);
 	m_pHero->Render(pd3dDeviceContext);
 
+	for(int i=0; i<10; i++)
+	{
+		if(m_pOtherPlayer[i]->GetVisible() != TRUE) continue;
+
+		m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pOtherPlayer[i]->m_d3dxmtxWorld);
+		m_pOtherPlayer[i]->Render(pd3dDeviceContext);
+	}
 	m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pPlane->m_d3dxmtxWorld);
 	m_pPlane->Render(pd3dDeviceContext);
 
@@ -345,19 +360,17 @@ void CScene::SetOtherClient(PlayerStruct* _PI, int _Count)
 	{
 		if(_PI[i].Use == TRUE) continue;
 		if(_PI[i].PI.m_ID == 0) continue;
-		/*for(int j=0; j<m_nObjects; j++)
+		for(int j=0; j<10; j++)
 		{
-			if(m_ppObjects[j] == NULL) continue;
-			if(m_ppObjects[j]->GetTag() == HERO) continue;
-			if(m_ppObjects[j]->GetTag() != OTHERPLAYER || m_ppObjects[j]->GetID() != 0) continue;
-			m_ppObjects[j]->SetID(_PI[i].PI.m_ID);
-			m_ppObjects[j]->SetPos(_PI[i].PI.m_Pos);
-			m_ppObjects[j]->SetRot(_PI[i].PI.m_Rot);
-			m_ppObjects[j]->SetScale(_PI[i].PI.m_Scale);
-			m_ppObjects[j]->SetVisible(TRUE);
+			if(m_pOtherPlayer[j]->GetID() != 0) continue;
+			m_pOtherPlayer[j]->SetID(_PI[i].PI.m_ID);
+			m_pOtherPlayer[j]->SetPos(_PI[i].PI.m_Pos);
+			m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Rot);
+			m_pOtherPlayer[j]->SetScale(_PI[i].PI.m_Scale);
+			m_pOtherPlayer[j]->SetVisible(TRUE);
 			_PI[i].Use = TRUE;
 			break;
-		}*/
+		}
 	}
 }
 
@@ -369,15 +382,15 @@ void CScene::UpdateOtherClient(PlayerStruct* _PI, int _Count)
 	{
 		if(_PI[i].Use != TRUE) continue;
 		if(_PI[i].PI.m_ID == 0) continue;
-		/*for(int j=0; j<m_nObjects; j++)
+		for(int j=0; j<10; j++)
 		{
-			if(m_ppObjects[j] == NULL) continue;
-			if(m_ppObjects[j]->GetTag() != OTHERPLAYER || m_ppObjects[j]->GetID() != _PI[i].PI.m_ID) continue;
-			m_ppObjects[j]->SetPos(_PI[i].PI.m_Pos);
-			m_ppObjects[j]->SetRot(_PI[i].PI.m_Rot);
-			m_ppObjects[j]->SetScale(_PI[i].PI.m_Scale);
+			if(m_pOtherPlayer[j]->GetID() != _PI[i].PI.m_ID) continue;
+
+			m_pOtherPlayer[j]->SetPos(_PI[i].PI.m_Pos);
+			m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Rot);
+			m_pOtherPlayer[j]->SetScale(_PI[i].PI.m_Scale);
 			break;
-		}*/
+		}
 	}
 }
 
