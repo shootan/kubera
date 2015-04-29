@@ -11,6 +11,7 @@ CGameObject::CGameObject(void)
 	m_Scale = D3DXVECTOR3(1,1,1);
 	m_Rot = 1.0f;
 	m_axis = 2;
+	m_vWalkIncrement = D3DXVECTOR3(0,0,0);
 
 	m_vFacingDirection= D3DXVECTOR3(0,0,1);
 
@@ -59,6 +60,11 @@ void CGameObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
 {
 	if(m_Visible != TRUE) return;
 
+	if(m_iTag == OTHERPLAYER)
+	{
+		int asdfdf;
+		asdfdf = 0;
+	}
 	D3DXMATRIX mWorld;
 	D3DXMatrixIdentity(&mWorld);
 

@@ -287,6 +287,8 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext)
 	{
 		m_ppShaders[i]->Render(pd3dDeviceContext);
 	}
+
+	
 }
 
 int CScene::GetMousePosX()
@@ -305,11 +307,11 @@ void CScene::AddOtherPlayer(ID3D11Device *pd3dDevice)
 	for(int i=0; i<m_nObjects; i++)
 	{
 		if ( m_ppObjects[i] != NULL) continue;
-		CGameObject* OtherPlayer = new CGameObject();
+		EnemyObject* OtherPlayer = new EnemyObject();
 		OtherPlayer->SetMesh(pHeroMesh);
 		m_ppShaders[0]->AddObject(OtherPlayer);  //세팅시 배열 숫자 조정
 		m_ppObjects[i] = OtherPlayer;  //세팅시 배열 숫자 조정
-		m_ppObjects[i]->SetTag(OTHERPLAYER);
+		//m_ppObjects[i]->SetTag(OTHERPLAYER);
 		m_ppObjects[i]->SetVisible(FALSE);
 		CheckCount++;
 		if(CheckCount > 9) break;
@@ -354,9 +356,13 @@ void CScene::UpdateOtherClient(PlayerStruct* _PI, int _Count)
 		{
 			if(m_ppObjects[j] == NULL) continue;
 			if(m_ppObjects[j]->GetTag() != OTHERPLAYER || m_ppObjects[j]->GetID() != _PI[i].PI.m_ID) continue;
-			m_ppObjects[j]->SetPos(_PI[i].PI.m_Pos);
-			m_ppObjects[j]->SetRot(_PI[i].PI.m_Rot);
-			m_ppObjects[j]->SetScale(_PI[i].PI.m_Scale);
+			D3DXVECTOR3 pos;
+			pos.x = _PI[i].PI.m_Pos.x;
+			pos.y = _PI[i].PI.m_Pos.y;
+			pos.z = _PI[i].PI.m_Pos.z;
+			m_ppObjects[j]->SetNewDestination(pos);
+ 			m_ppObjects[j]->SetRot(_PI[i].PI.m_Rot);
+// 			m_ppObjects[j]->SetScale(_PI[i].PI.m_Scale);
 			break;
 		}
 	}

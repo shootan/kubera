@@ -8,6 +8,7 @@
 #include "ControlManager.h"
 #include "TowerObject.h"
 #include "ST.h"
+#include "EnemyObject.h"
 
 class CScene
 {
