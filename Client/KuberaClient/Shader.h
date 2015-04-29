@@ -37,7 +37,7 @@ public:
 	virtual void BuildObjects(ID3D11Device *pd3dDevice){}
 
 	virtual void AddObject(CGameObject *pObject){}
-	CGameObject* GetObject(int nObjectsNum){return m_ppObjects[nObjectsNum];}
+	virtual CGameObject* GetObject(int nObjectsNum){return m_ppObjects[nObjectsNum];}
 	int GetObjectsNumber() {return m_nObjects;}
 
 public:
@@ -72,7 +72,6 @@ public:
 
 	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext);
 
-
 private:
 	ID3D11Buffer *m_pd3dcbWorldMatrix;
 
@@ -98,7 +97,8 @@ public:
 	virtual void BuildObjects(ID3D11Device *pd3dDevice);
 
 	virtual void AddObject(CGameObject *pObject); 
-	
+	TowerObject* GetTowerObject(int Num) {return m_pTowerObject[Num];}
+
 	//쉐이더에서 렌더링할 메쉬이다.
 	CMesh *m_pBush3Mesh;
 	CMesh *m_pRock2Mesh;
@@ -110,6 +110,7 @@ public:
 	int m_nRock3Objects;
 	int m_nTowerObjects;
 
+	TowerObject *m_pTowerObject[10];
 	//월드 변환 행렬과 월드 변환 행렬을 위한 상수 버퍼이다.
 	D3DXMATRIX m_d3dxmtxWorld;         
 	ID3D11Buffer *m_pd3dcbWorldMatrix;

@@ -13,10 +13,10 @@
 class CScene
 {
 private:
-	CShader **m_ppShaders;
+	CObjectShader *m_pObjectShaders;
+	CInstancingShader *m_pInstancingShaders;
 	int m_nShaders;
-
-	CGameObject **m_ppObjects;       
+    
 	int m_nObjects;
 	int m_nIntanceObjects;
 
@@ -30,6 +30,12 @@ private:
 
 	float m_fMinionRespawnTime;
 	int m_nMinionObjects;
+
+	HeroObject *m_pHero;
+	CGameObject *m_pPlane;
+	TowerObject *m_pTower[10];
+
+	float distance;
 
 public:
 	CScene(void);
