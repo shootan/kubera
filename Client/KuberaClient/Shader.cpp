@@ -228,7 +228,7 @@ CInstancingShader::CInstancingShader()
 	m_pd3dcbRock2InstanceMatrices = NULL;
 	m_pd3dcbRock3InstanceMatrices = NULL;
 	m_pd3dcbTowerInstanceMatrices = NULL;
-	
+
 	m_nBush3Objects = 0;
 	m_nRock2Objects = 0;
 	m_nRock3Objects = 0;
@@ -267,7 +267,7 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 {
 	//m_pMesh = new CCubeMesh(pd3dDevice, 10.0f, 13.0f, 10.0f);
 	//m_pMesh->AddRef();
-	
+
 	m_pBush3Mesh = new CFBXMesh(pd3dDevice, L"obstacle/bush3.FBX");
 	m_pBush3Mesh->LoadTexture(pd3dDevice, L"obstacle/bush3.tif");
 
