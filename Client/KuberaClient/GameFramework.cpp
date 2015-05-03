@@ -319,6 +319,12 @@ void CGameFramework::FrameAdvance()
 {    
 	m_GameTimer.Tick(60);
 
+	HeroInfo.PI.m_Pos = m_pScene->GetHero()->GetPos();
+	HeroInfo.PI.m_Scale = m_pScene->GetHero()->GetScale();
+	HeroInfo.PI.m_Rot = m_pScene->GetHero()->GetRot();
+	HeroInfo.PI.m_ID = Net.m_ID;
+
+	printf(" X: %.3f,    Z: %.3f \n", HeroInfo.PI.m_Pos.x,HeroInfo.PI.m_Pos.z);
 	this->ExchangeInfo();
 	
 	ProcessInput();
@@ -479,6 +485,8 @@ void CGameFramework::ExchangeInfo()
 		HeroInfo.PI.m_Scale = m_pScene->GetHero()->GetScale();
 		HeroInfo.PI.m_Rot = m_pScene->GetHero()->GetRot();
 		HeroInfo.PI.m_ID = Net.m_ID;
+
+		printf(" X: %.3f,    Z: %.3f", HeroInfo.PI.m_Pos.x,HeroInfo.PI.m_Pos.z);
 		Net.SendData(&HeroInfo);
 	}
 
