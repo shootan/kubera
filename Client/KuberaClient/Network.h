@@ -12,6 +12,7 @@ public:
 	SOCKET m_ConnectSock;
 	WSADATA m_Wsa;
 	PlayerStruct PI[10];
+	MinionInfo	MI[40];
 	bool	m_bJoinPlayer;
 	int		m_ClientCount;
 	int		m_ID;

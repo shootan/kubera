@@ -345,8 +345,11 @@ BOOL IOCPServer::SendData()
 			
 			if(!Buffer->m_Disconnect)
 			{
-				printf("ID : %d, x: %3f, y: %3f, z : %3f, size : %d \n", play->m_PI->PI.m_ID, play->m_PI->PI.m_Pos.x, play->m_PI->PI.m_Pos.y, play->m_PI->PI.m_Pos.z, play->m_PI->size);
+				//printf("ID : %d, x: %3f, y: %3f, z : %3f, size : %d \n", play->m_PI->PI.m_ID, play->m_PI->PI.m_Pos.x, play->m_PI->PI.m_Pos.y, play->m_PI->PI.m_Pos.z, play->m_PI->size);
 				this->SendPacket(Buffer, HERODATA, play->m_PI, sizeof(PlayerPacket));
+				this->SetOpCode(Buffer, OP_SEND_FINISH);
+
+				this->SendPacket(Buffer, MINIONDATA, Arrange.MI1, sizeof(MinionInfo)*40);
 				this->SetOpCode(Buffer, OP_SEND_FINISH);
 			}
 			play = play->m_pNext;
@@ -367,7 +370,6 @@ void IOCPServer::SendPacket(IOBuffer* _buffer, int NetworkCode, void *_packet, i
 	*(int*)Buffer = NetworkCode;
 	
 	memcpy(Buffer+HEADERSIZE, _packet, Size);
-	
 
 	_buffer->m_SendWsabuf.buf = _buffer->m_SendBuf;
 	_buffer->m_SendWsabuf.len = Size;
@@ -379,4 +381,13 @@ void IOCPServer::SendPacket(IOBuffer* _buffer, int NetworkCode, void *_packet, i
 	
 	if(_buffer->m_Disconnect) return;
 	WSASend(_buffer->m_ClientSock, &_buffer->m_SendWsabuf, 1, &io_size, NULL, &_buffer->m_Overlapped, NULL);
+}
+
+void IOCPServer::ArrangeDataInfo(float _dt)
+{
+	if(m_iClientCount < 1) return;
+
+	Arrange.SetTime(_dt);
+	Arrange.RegenMinion();
+	Arrange.SetMinionPosition(_dt);
 }

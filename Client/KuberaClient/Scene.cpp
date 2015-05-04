@@ -366,7 +366,6 @@ void CScene::SetOtherClient(PlayerStruct* _PI, int _Count)
 			m_pOtherPlayer[j]->SetID(_PI[i].PI.m_ID);
 			m_pOtherPlayer[j]->SetPos(_PI[i].PI.m_Pos);
 			m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Rot);
-			m_pOtherPlayer[j]->SetScale(_PI[i].PI.m_Scale);
 			m_pOtherPlayer[j]->SetVisible(TRUE);
 			_PI[i].Use = TRUE;
 			break;
@@ -388,7 +387,6 @@ void CScene::UpdateOtherClient(PlayerStruct* _PI, int _Count)
 
 			m_pOtherPlayer[j]->SetPos(_PI[i].PI.m_Pos);
 			m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Rot);
-			m_pOtherPlayer[j]->SetScale(_PI[i].PI.m_Scale);
 			break;
 		}
 	}

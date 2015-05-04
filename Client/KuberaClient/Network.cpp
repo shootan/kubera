@@ -2,7 +2,8 @@
 
 Network::Network()
 {
-	ZeroMemory(&PI, sizeof(PlayerStruct) * 10);
+	ZeroMemory(PI, sizeof(PlayerStruct) * 10);
+	ZeroMemory(MI, sizeof(MinionInfo)*40);
 	m_bJoinPlayer = FALSE;
 	m_ClientCount = 0;
 	m_ID = 0;
@@ -138,6 +139,25 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 					break;
 
 				break;
+			}
+		case MINIONDATA:
+			{
+// 				MinionInfo* miif = new MinionInfo[sizeof(MinionInfo)*40];
+// 				ZeroMemory(miif, sizeof(MinionInfo)*40);
+				retval = recv(server->m_ConnectSock, (char*)server->MI, sizeof(MinionInfo)*40, 0);
+
+// 				for(int i=0; i<40; i++)
+// 				{
+// 					if(server->MI[i].m_Live == TRUE)
+// 					{
+// 						printf("¹Ì´Ï¾ð : %d , X: %.2f, Y: %.2f, Z:%.2f \n", i, server->MI[i].m_Pos.x,server->MI[i].m_Pos.y,server->MI[i].m_Pos.z);
+// 					}
+// 				}
+// 				for(int i=0; i<40; i++)
+// 				{
+// 					MI[i] = miif[i];
+// 				}
+// 				delete []miif;
 			}
 		}
 

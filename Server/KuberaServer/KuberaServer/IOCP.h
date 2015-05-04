@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Network.h"
-
+#include "ArrangeData.h"
 
 typedef enum OPCODE
 {
@@ -39,6 +39,8 @@ struct Player{
 class IOCPServer : public Network
 {
 public:
+	ArrangeData Arrange;
+
 	//리스트로 관리해줄 포인터
 	IOBuffer*	m_pNextBufferList;
 	Player*		m_pPlayerList;
@@ -69,6 +71,8 @@ public:
 	void CreateBuffer(IOBuffer* buffer);
 
 	int GetNewId();
+
+	void ArrangeDataInfo(float _dt);
 
 	//OpCode
 	void OnInit(IOBuffer* _buff);
