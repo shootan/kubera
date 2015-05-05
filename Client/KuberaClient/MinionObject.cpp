@@ -15,7 +15,6 @@ MinionObject::~MinionObject(void)
 	CGameObject::~CGameObject();
 }
 
-
 void MinionObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
 {
 	CGameObject::Render(pd3dDeviceContext);

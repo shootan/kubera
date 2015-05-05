@@ -17,6 +17,7 @@ CScene::CScene(void)
 	m_bJoin = FALSE;
 
 	m_fMinionRespawnTime = 0.f;
+	m_fMissileAttackTime = 0.f;
 	m_nMinionObjects = 0;
 
 	m_pHero = NULL;
@@ -55,7 +56,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	pHeroMesh->LoadTexture(pd3dDevice, L"micro_wizard_col.tif");
 
 	CFBXMesh *pPlaneMesh = new CFBXMesh(pd3dDevice, L"Plane4.FBX");
-	pPlaneMesh->LoadTexture(pd3dDevice, L"map2.png");
+	pPlaneMesh->LoadTexture(pd3dDevice, L"floor.png");
 
 	CFBXMesh *pObstacleMesh = new CFBXMesh(pd3dDevice, L"tower/Tower1_303030.FBX");
 	pObstacleMesh->LoadTexture(pd3dDevice, L"micro_wizard_col.tif");
@@ -63,6 +64,8 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	pMinionDragonMesh = new CFBXMesh(pd3dDevice, L"Dragon7107.FBX");
 	pMinionDragonMesh->LoadTexture(pd3dDevice, L"micro_dragon_col.tif");
 
+	m_pTowerMesh = new CFBXMesh(pd3dDevice, L"tower/Tower2_303030.FBX");
+	m_pTowerMesh->LoadTexture(pd3dDevice, L"tower/tower.png");
 
 	//»ï°¢Çü °´Ã¼(CTriangleObject)¸¦ »ý¼ºÇÏ°í »ï°¢Çü ¸Þ½¬¸¦ ¿¬°áÇÑ´Ù.
 	m_pHero = new HeroObject;
@@ -74,7 +77,22 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pPlane = new CGameObject();
 	m_pPlane->SetMesh(pPlaneMesh);
 
-	
+	for(int j = 0; j < 10; j++)
+	{
+		m_pTower[j] = new TowerObject();
+		m_pTower[j]->SetMesh(m_pTowerMesh);
+		m_pObjectShaders->AddObject(m_pTower[j]);
+	}
+	m_pTower[0]->SetPosition(D3DXVECTOR3(-400.f + 15.f , 0, 165.f));
+	m_pTower[1]->SetPosition(D3DXVECTOR3(-50.f - 15.f, 0, 165.f));
+	m_pTower[2]->SetPosition(D3DXVECTOR3(50.f + 15.f, 0, 165.f));
+	m_pTower[3]->SetPosition(D3DXVECTOR3(400.f - 15.f, 0, 165.f));
+	m_pTower[4]->SetPosition(D3DXVECTOR3(-400.f + 15.f, 0, -165.f));
+	m_pTower[5]->SetPosition(D3DXVECTOR3(-50.f - 15.f, 0, -165.f));
+	m_pTower[6]->SetPosition(D3DXVECTOR3(50.f + 15.f, 0, -165.f));
+	m_pTower[7]->SetPosition(D3DXVECTOR3(400.f - 15.f, 0, -165.f));
+	m_pTower[8]->SetPosition(D3DXVECTOR3(-275.f, 0, -10.f));
+	m_pTower[9]->SetPosition(D3DXVECTOR3(275.f, 0, 10.f));
 	
 // 	MinionObject* pMinion[50];
 // 	for(int i=0; i<50; i++)
@@ -110,8 +128,6 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
  	//»ï°¢Çü °´Ã¼¸¦ ½¦ÀÌ´õ °´Ã¼¿¡ ¿¬°áÇÑ´Ù.
  	m_pObjectShaders->AddObject(m_pHero);
 	m_pObjectShaders->AddObject(m_pPlane);
-	for(int i=0; i<10; i++)
-		m_pObjectShaders->AddObject(m_pTower[i]);
 
 	for(int i=0; i<iObjectNum; i++)
 		m_pObjectShaders->AddObject(pBoundBox[i]);
@@ -122,13 +138,6 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 		m_pOtherPlayer[i]->SetMesh(pHeroMesh);
 		m_pObjectShaders->AddObject(m_pOtherPlayer[i]);
 	}
-
-
-	for(int i=0; i < 10; i++)
-	{
-		m_pTower[i] = m_pInstancingShaders->GetTowerObject(i);
-	}
-
 
 	
 	//for(int i=0; i<m_nIntanceObjects; i++)
@@ -167,7 +176,8 @@ void CScene::ReleaseObjects()
 
 	if(m_pHero)	m_pHero->Release();
 	if(m_pPlane) m_pPlane->Release();
-
+	for(int i=0; i<10; i++)
+		if(m_pTower[i]) m_pTower[i]->Release();
 }
 
 bool CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
@@ -238,14 +248,22 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 	m_pHero->Animate(fTimeElapsed);
 	m_pHero->Update(fTimeElapsed);
 
-	
+	for(int i=0; i<MAX_MISSILE; i++)
+		MissileManager::sharedManager()->m_pMissile[i]->Update(fTimeElapsed);
+
+
+
 	for(int i=0;i<10; i++)
 	{
 		m_pTower[i]->Update(fTimeElapsed);
 
 		distance = ST::sharedManager()->GetDistance(m_pHero->GetPos(), m_pTower[i]->GetPos());
 		if(distance < 50.0f)
-			m_pTower[i]->SetPos(m_pHero->GetPos());
+		{
+			m_pTower[i]->SetTarget(m_pHero);
+		}
+		else
+			m_pTower[i]->SetTarget(NULL);
 	}
 	
 	//for (int j = 0; j < m_nObjects; j++)
@@ -320,9 +338,17 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext)
 	m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pPlane->m_d3dxmtxWorld);
 	m_pPlane->Render(pd3dDeviceContext);
 
+	for(int i=0; i<10; i++)
+	{
+		m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pTower[i]->m_d3dxmtxWorld);
+		m_pTower[i]->Render(pd3dDeviceContext);
+	}
+
 	m_pInstancingShaders->Render(pd3dDeviceContext);
-	/*for(int i=0; i<10; i++)
-		m_pTower[i]->Render(pd3dDeviceContext);*/
+
+	for(int i=0; i<MAX_MISSILE; i++)
+		MissileManager::sharedManager()->m_pMissile[i]->Render(pd3dDeviceContext);
+
 }
 
 int CScene::GetMousePosX()

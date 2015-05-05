@@ -2,8 +2,9 @@
 #include "header.h"
 #include "GameObject.h"
 #include "ObstacleObject.h"
-#include "TowerObject.h"
+#include "MissileObject.h"
 #include "Mesh.h"
+#include "MissileManager.h"
 
 struct VS_CB_WORLD_MATRIX
 {
@@ -97,20 +98,18 @@ public:
 	virtual void BuildObjects(ID3D11Device *pd3dDevice);
 
 	virtual void AddObject(CGameObject *pObject); 
-	TowerObject* GetTowerObject(int Num) {return m_pTowerObject[Num];}
 
 	//쉐이더에서 렌더링할 메쉬이다.
 	CMesh *m_pBush3Mesh;
 	CMesh *m_pRock2Mesh;
 	CMesh *m_pRock3Mesh;
-	CMesh *m_pTowerMesh;
+	CMesh *m_pMissileMesh;
 
 	int m_nBush3Objects;
 	int m_nRock2Objects;
 	int m_nRock3Objects;
-	int m_nTowerObjects;
+	int m_nMissileObjects;
 
-	TowerObject *m_pTowerObject[10];
 	//월드 변환 행렬과 월드 변환 행렬을 위한 상수 버퍼이다.
 	D3DXMATRIX m_d3dxmtxWorld;         
 	ID3D11Buffer *m_pd3dcbWorldMatrix;
@@ -119,5 +118,5 @@ public:
 	ID3D11Buffer *m_pd3dcbBush3InstanceMatrices;
 	ID3D11Buffer *m_pd3dcbRock2InstanceMatrices;
 	ID3D11Buffer *m_pd3dcbRock3InstanceMatrices;
-	ID3D11Buffer *m_pd3dcbTowerInstanceMatrices;
+	ID3D11Buffer *m_pd3dcbMissileInstanceMatrices;
 };

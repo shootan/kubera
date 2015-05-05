@@ -9,9 +9,10 @@
 #include "resource.h"
 #include "GameFramework.h"
 #include "ST.h"
+#include "MissileManager.h"
 
 ST* ST::instance = NULL;
-
+MissileManager* MissileManager::instance = NULL;
 //--------------------------------------------------------------------------------------
 // Global Variables
 //--------------------------------------------------------------------------------------

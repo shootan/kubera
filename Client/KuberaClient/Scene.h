@@ -27,8 +27,10 @@ private:
 
 	CFBXMesh *pHeroMesh;
 	CFBXMesh *pMinionDragonMesh;
+	CFBXMesh *m_pTowerMesh;
 
 	float m_fMinionRespawnTime;
+	float m_fMissileAttackTime;
 	int m_nMinionObjects;
 
 	HeroObject *m_pHero;

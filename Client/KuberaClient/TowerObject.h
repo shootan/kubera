@@ -1,11 +1,13 @@
 #pragma once
 #include "GameObject.h"
+#include "ST.h"
+#include "MissileManager.h"
 
 class TowerObject : public CGameObject
 {
 private:
-	CGameObject* Target;
-
+	CGameObject* m_pTarget;
+	CGameObject* m_pPrevTarget;
 public:
 	TowerObject();
 	~TowerObject();
@@ -15,5 +17,6 @@ public:
 	virtual void SetNewDestination ( D3DXVECTOR3 _pos ){}
 	virtual void Update(float _fMoveIncrement);
 
-	void SetTaget(CGameObject* _target) { Target = _target; }
+	void SetTarget(CGameObject* _target) { m_pTarget = _target; }
+	CGameObject* GetTarget() { return m_pTarget; }
 };
