@@ -8,7 +8,7 @@
 #include <WinSock2.h>
 #include <process.h>
 #include <math.h>
-
+#include <d3dx9math.h>
 
 // BUFSIZE
 #define BUFSIZE 1024*2
@@ -22,7 +22,6 @@ struct Vector3
 struct PlayerInfo{
 	int		m_ID;
 	Vector3 m_Pos;
-	Vector3 m_Scale;
 	float	m_Rot;
 };
 
@@ -32,7 +31,30 @@ struct PlayerPacket
 	PlayerInfo	PI;
 };
 
+struct Minion
+{
+	int		m_ID;
+	BOOL	m_Live;
+	Vector3 m_TargetPos;
+	Vector3 m_Pos;
+	float	m_Rot;
+};
+
+struct MinionInfo
+{
+	int		m_ID;
+	bool    m_Live;
+	Vector3 m_Pos;
+	float	m_Rot;
+};
+
+struct MinionPacket
+{
+	int size;
+	MinionInfo MI;
+};
+
 enum NETWORKCODE
 {
-	 NETNONE, HERODATA, HEROCOUNT, INITCLIENT
+	NETNONE, HERODATA, HEROCOUNT, INITCLIENT, MINIONDATA
 };

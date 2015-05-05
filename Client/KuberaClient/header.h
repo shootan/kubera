@@ -40,7 +40,6 @@ struct Vector3
 struct PlayerInfo{
 	int		m_ID;
 	Vector3 m_Pos;
-	Vector3 m_Scale;
 	float	m_Rot;
 };
 
@@ -61,9 +60,21 @@ enum TAG
 	NONE, HERO, OTHERPLAYER, MINION, OBSTACLE, PLANE, HERO_BOUND, OBSTACLE_BOUND, TOWER, MISSILE
 };
 
-enum NETWORKCODE
+struct MinionInfo
 {
-	NETNONE, HERODATA, HEROCOUNT, INITCLIENT
+	int		m_ID;
+	bool    m_Live;
+	Vector3 m_Pos;
+	float	m_Rot;
 };
 
+struct MinionPacket
+{
+	int size;
+	MinionInfo MI;
+};
 
+enum NETWORKCODE
+{
+	NETNONE, HERODATA, HEROCOUNT, INITCLIENT, MINIONDATA
+};

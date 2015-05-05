@@ -38,7 +38,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	//렌더링할 객체(게임 월드 객체)를 생성한다. 
 	BuildObjects();
 
-	Net.InitClient("192.168.0.2", 9000);
+	Net.InitClient("172.16.3.32", 9000);
 	time = 0.0f;
 
 	return(true);
@@ -476,9 +476,9 @@ void CGameFramework::ExchangeInfo()
 	if(Net.m_ID != 0)
 	{
 		HeroInfo.PI.m_Pos = m_pScene->GetHero()->GetPos();
-		HeroInfo.PI.m_Scale = m_pScene->GetHero()->GetScale();
 		HeroInfo.PI.m_Rot = m_pScene->GetHero()->GetRot();
 		HeroInfo.PI.m_ID = Net.m_ID;
+
 		Net.SendData(&HeroInfo);
 	}
 

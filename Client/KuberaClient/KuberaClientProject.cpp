@@ -94,6 +94,12 @@ HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
     if( !RegisterClassEx( &wcex ) )
         return E_FAIL;
 
+	AllocConsole();
+
+	freopen("CONIN$", "r", stdin); 
+	freopen("CONOUT$", "w", stdout); 
+	freopen("CONOUT$", "w", stderr); 
+
     // Create window
     g_hInst = hInstance;
     RECT rc = { 0, 0, 800, 600 };
