@@ -18,10 +18,13 @@ private:
 public:
 	~MissileManager()
 	{
+		for(int i=0; i<MAX_MISSILE; i++)
+			m_pMissile[i]->Release();
+
 		delete instance;
 		//DeleteObject(m_pResource);
-		delete[] m_pMissile;
-		memset(&m_pMissile, NULL, sizeof(m_pMissile));
+		/*delete[] m_pMissile;
+		memset(&m_pMissile, NULL, sizeof(m_pMissile));*/
 	}
 public:
 	static MissileManager* instance;

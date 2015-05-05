@@ -419,10 +419,12 @@
     <ClInclude Include="header.h" />
     <ClInclude Include="HeroObject.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MinionManager.h" />
     <ClInclude Include="MinionObject.h" />
     <ClInclude Include="MissileManager.h" />
     <ClInclude Include="MissileObject.h" />
     <ClInclude Include="Network.h" />
+    <ClInclude Include="ObstacleManager.h" />
     <ClInclude Include="ObstacleObject.h" />
     <CLInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
@@ -430,6 +432,7 @@
     <ClInclude Include="ST.h" />
     <ClInclude Include="Textureclass.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="TowerManager.h" />
     <ClInclude Include="TowerObject.h" />
     <ResourceCompile Include="KuberaClientProject.rc" />
   </ItemGroup>

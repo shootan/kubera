@@ -23,6 +23,9 @@
     <Filter Include="소스코드\Object">
       <UniqueIdentifier>{a062ca0d-70cf-49eb-a50c-30243ca3f72f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스코드\Manager">
+      <UniqueIdentifier>{afcd09e3-1b3f-45f4-af34-be74c299ff90}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="KuberaClientProject.cpp" />
@@ -75,9 +78,6 @@
       <Filter>소스코드</Filter>
     </ClCompile>
     <ClCompile Include="Textureclass.cpp" />
-    <ClCompile Include="ControlManager.cpp">
-      <Filter>소스코드</Filter>
-    </ClCompile>
     <ClCompile Include="Network.cpp">
       <Filter>Network</Filter>
     </ClCompile>
@@ -99,6 +99,9 @@
     </ClCompile>
     <ClCompile Include="MissileObject.cpp">
       <Filter>소스코드\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ControlManager.cpp">
+      <Filter>소스코드\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -151,9 +154,6 @@
       <Filter>소스코드</Filter>
     </ClInclude>
     <ClInclude Include="Textureclass.h" />
-    <ClInclude Include="ControlManager.h">
-      <Filter>소스코드</Filter>
-    </ClInclude>
     <ClInclude Include="Network.h">
       <Filter>Network</Filter>
     </ClInclude>
@@ -180,7 +180,21 @@
     <ClInclude Include="MissileObject.h">
       <Filter>소스코드\Object</Filter>
     </ClInclude>
-    <ClInclude Include="MissileManager.h" />
+    <ClInclude Include="ControlManager.h">
+      <Filter>소스코드\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="MissileManager.h">
+      <Filter>소스코드\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="MinionManager.h">
+      <Filter>소스코드\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="ObstacleManager.h">
+      <Filter>소스코드\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="TowerManager.h">
+      <Filter>소스코드\Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h">

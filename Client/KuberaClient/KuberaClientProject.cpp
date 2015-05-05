@@ -10,9 +10,15 @@
 #include "GameFramework.h"
 #include "ST.h"
 #include "MissileManager.h"
+#include "MinionManager.h"
+#include "ObstacleManager.h"
+#include "TowerManager.h"
 
 ST* ST::instance = NULL;
 MissileManager* MissileManager::instance = NULL;
+MinionManager*  MinionManager::instance = NULL;
+ObstacleManager*  ObstacleManager::instance = NULL;
+TowerManager*  TowerManager::instance = NULL;
 //--------------------------------------------------------------------------------------
 // Global Variables
 //--------------------------------------------------------------------------------------

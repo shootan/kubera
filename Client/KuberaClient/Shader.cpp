@@ -223,16 +223,19 @@ CInstancingShader::CInstancingShader()
 	m_pRock2Mesh = NULL;
 	m_pRock3Mesh = NULL;
 	m_pMissileMesh = NULL;
+	m_pTowerMesh = NULL;
 
 	m_pd3dcbBush3InstanceMatrices = NULL;
 	m_pd3dcbRock2InstanceMatrices = NULL;
 	m_pd3dcbRock3InstanceMatrices = NULL;
 	m_pd3dcbMissileInstanceMatrices = NULL;
+	m_pd3dcbTowerInstanceMatrices = NULL;
 
 	m_nBush3Objects = 0;
 	m_nRock2Objects = 0;
 	m_nRock3Objects = 0;
 	m_nMissileObjects = 0;
+	m_nTowerObjects = 0;
 }
 
 CInstancingShader::~CInstancingShader()
@@ -249,6 +252,7 @@ void CInstancingShader::ReleaseObjects()
 	if (m_pRock2Mesh) m_pRock2Mesh->Release();
 	if (m_pRock2Mesh) m_pRock3Mesh->Release();
 	if (m_pMissileMesh) m_pMissileMesh->Release();
+	if (m_pTowerMesh) m_pTowerMesh->Release();
 
 	if (m_pd3dcbWorldMatrix) m_pd3dcbWorldMatrix->Release();
 	if (m_ppObjects)
@@ -261,7 +265,7 @@ void CInstancingShader::ReleaseObjects()
 	if (m_pd3dcbRock2InstanceMatrices) m_pd3dcbRock2InstanceMatrices->Release();
 	if (m_pd3dcbRock3InstanceMatrices) m_pd3dcbRock3InstanceMatrices->Release();
 	if (m_pd3dcbMissileInstanceMatrices) m_pd3dcbMissileInstanceMatrices->Release();
-
+	if (m_pd3dcbTowerInstanceMatrices) m_pd3dcbTowerInstanceMatrices->Release();
 }
 
 
@@ -282,6 +286,9 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pMissileMesh = new CFBXMesh(pd3dDevice, L"obstacle/Rock3.FBX");
 	m_pMissileMesh->LoadTexture(pd3dDevice, L"obstacle/Rock3.tif");
 
+	m_pTowerMesh = new CFBXMesh(pd3dDevice, L"tower/Tower2_303030.FBX");
+	m_pTowerMesh->LoadTexture(pd3dDevice, L"tower/tower.png");
+
 	int bush3x = 24, bush3z = 7, i = 0;  //위아래 100 픽셀
 	int bush3x1 = 5, bush3z1 = 10; //좌우 100픽셀
 
@@ -293,66 +300,36 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	m_nRock2Objects = (Rock2x*Rock2z*4);
 	m_nRock3Objects = (Rock3x*Rock3z*2);
 	m_nMissileObjects = MAX_MISSILE;
+	m_nTowerObjects = MAX_TOWER;
 
-	m_nObjects = m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects;
+	m_nObjects = m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nTowerObjects;
 	//인스턴싱을 할 객체들의 배열이다.
 	m_ppObjects = new CGameObject*[m_nObjects]; 
-
-	ObstacleObject *pgameObject[4] = {NULL};
 
 	for(int x = 0; x < bush3x; x++)
 	{
 		for(int z = 0; z < bush3z; z++)
 		{
-			pgameObject[0] = new ObstacleObject();
-			pgameObject[0]->SetMesh(m_pBush3Mesh);
-			pgameObject[0]->SetP(x*25 + 12.5f, 0,(400.f-12.5f) - z*25);
-			m_ppObjects[i++] = pgameObject[0];
-
-			pgameObject[1] = new ObstacleObject();
-			pgameObject[1]->SetMesh(m_pBush3Mesh);
-			pgameObject[1]->SetP(-(x*25) - 12.5f, 0,(400.f-12.5f) - z*25);
-			m_ppObjects[i++] = pgameObject[1];
-
-			pgameObject[2] = new ObstacleObject();
-			pgameObject[2]->SetMesh(m_pBush3Mesh);
-			pgameObject[2]->SetP((x*25) + 12.5f, 0,(-225.f-12.5f) - z*25);
-			m_ppObjects[i++] = pgameObject[2];
-
-			pgameObject[3] = new ObstacleObject();
-			pgameObject[3]->SetMesh(m_pBush3Mesh);
-			pgameObject[3]->SetP(-(x*25) - 12.5f, 0,(-225.f-12.5f) - z*25);
-			m_ppObjects[i++] = pgameObject[3];
+			ObstacleManager::sharedManager()->CreateObstacle(D3DXVECTOR3(x*25 + 12.5f, 0,(400.f-12.5f) - z*25), m_pBush3Mesh, 25, 25, 25);
+			ObstacleManager::sharedManager()->CreateObstacle(D3DXVECTOR3(-(x*25) - 12.5f, 0,(400.f-12.5f) - z*25), m_pBush3Mesh, 25, 25, 25);
+			ObstacleManager::sharedManager()->CreateObstacle(D3DXVECTOR3((x*25) + 12.5f, 0,(-225.f-12.5f) - z*25), m_pBush3Mesh, 25, 25, 25);
+			ObstacleManager::sharedManager()->CreateObstacle(D3DXVECTOR3(-(x*25) - 12.5f, 0,(-225.f-12.5f) - z*25), m_pBush3Mesh, 25, 25, 25);
 		}
 	}
-
-	ObstacleObject *pBush3Object[4] = {NULL};
 
 	for(int x=0; x<bush3x1; x++)
 	{
 		for(int z=0; z<bush3z1; z++)
 		{
-			pBush3Object[0] = new ObstacleObject();
-			pBush3Object[0]->SetMesh(m_pBush3Mesh);
-			pBush3Object[0]->SetP((-600.f + 12.5f) + x*25, 0,(300.f-12.5f) - z*25);
-			m_ppObjects[i++] = pBush3Object[0];
-
-			pBush3Object[1] = new ObstacleObject();
-			pBush3Object[1]->SetMesh(m_pBush3Mesh);
-			pBush3Object[1]->SetP((-600.f + 12.5f) + x*25, 0,(-50.f-12.5f) - z*25);
-			m_ppObjects[i++] = pBush3Object[1];
-
-			pBush3Object[2] = new ObstacleObject();
-			pBush3Object[2]->SetMesh(m_pBush3Mesh);
-			pBush3Object[2]->SetP((475.f + 12.5f) + x*25, 0,(300.f-12.5f) - z*25);
-			m_ppObjects[i++] = pBush3Object[2];
-
-			pBush3Object[3] = new ObstacleObject();
-			pBush3Object[3]->SetMesh(m_pBush3Mesh);
-			pBush3Object[3]->SetP((475.f + 12.5f) + x*25, 0,(-50.f-12.5f) - z*25);
-			m_ppObjects[i++] = pBush3Object[3];
+			ObstacleManager::sharedManager()->CreateObstacle(D3DXVECTOR3((-600.f + 12.5f) + x*25, 0,(300.f-12.5f) - z*25), m_pBush3Mesh, 25, 25, 25);
+			ObstacleManager::sharedManager()->CreateObstacle(D3DXVECTOR3((-600.f + 12.5f) + x*25, 0,(-50.f-12.5f) - z*25), m_pBush3Mesh, 25, 25, 25);
+			ObstacleManager::sharedManager()->CreateObstacle(D3DXVECTOR3((475.f + 12.5f) + x*25, 0,(300.f-12.5f) - z*25), m_pBush3Mesh, 25, 25, 25);
+			ObstacleManager::sharedManager()->CreateObstacle(D3DXVECTOR3((475.f + 12.5f) + x*25, 0,(-50.f-12.5f) - z*25), m_pBush3Mesh, 25, 25, 25);
 		}
 	}
+	for(int j=0; j< m_nBush3Objects; j++)
+		m_ppObjects[i++] = ObstacleManager::sharedManager()->m_pObstacle[j];
+
 	D3D11_BUFFER_DESC d3dBufferDesc;
 	ZeroMemory(&d3dBufferDesc, sizeof(D3D11_BUFFER_DESC));
 	d3dBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -370,27 +347,15 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	{
 		for(int z = 0; z < Rock2z; z++)
 		{
-			pRock2Object[0] = new ObstacleObject();
-			pRock2Object[0]->SetMesh(m_pRock2Mesh);
-			pRock2Object[0]->SetP((-400.f + 12.5f) + x*25, 0,(150.f-12.5f) - z*25);
-			m_ppObjects[i++] = pRock2Object[0];
-
-			pRock2Object[1] = new ObstacleObject();
-			pRock2Object[1]->SetMesh(m_pRock2Mesh);
-			pRock2Object[1]->SetP((-400.f + 12.5f) + x*25, 0,(-25.f-12.5f) - z*25);
-			m_ppObjects[i++] = pRock2Object[1];
-
-			pRock2Object[2] = new ObstacleObject();
-			pRock2Object[2]->SetMesh(m_pRock2Mesh);
-			pRock2Object[2]->SetP((275.f + 12.5f) + x*25, 0,(150.f-12.5f) - z*25);
-			m_ppObjects[i++] = pRock2Object[2];
-
-			pRock2Object[3] = new ObstacleObject();
-			pRock2Object[3]->SetMesh(m_pRock2Mesh);
-			pRock2Object[3]->SetP((275.f + 12.5f) + x*25, 0,(-25.f-12.5f) - z*25);
-			m_ppObjects[i++] = pRock2Object[3];
+			ObstacleManager::sharedManager()->CreateObstacle(D3DXVECTOR3((-400.f + 12.5f) + x*25, 0,(150.f-12.5f) - z*25), m_pRock2Mesh, 25, 25, 25);
+			ObstacleManager::sharedManager()->CreateObstacle(D3DXVECTOR3((-400.f + 12.5f) + x*25, 0,(-25.f-12.5f) - z*25), m_pRock2Mesh, 25, 25, 25);
+			ObstacleManager::sharedManager()->CreateObstacle(D3DXVECTOR3((275.f + 12.5f) + x*25, 0,(150.f-12.5f) - z*25), m_pRock2Mesh, 25, 25, 25);
+			ObstacleManager::sharedManager()->CreateObstacle(D3DXVECTOR3((275.f + 12.5f) + x*25, 0,(-25.f-12.5f) - z*25), m_pRock2Mesh, 25, 25, 25);
 		}
 	}
+	for(int j=m_nBush3Objects; j< m_nBush3Objects + m_nRock2Objects; j++)
+		m_ppObjects[i++] = ObstacleManager::sharedManager()->m_pObstacle[j];
+
 	ZeroMemory(&d3dBufferDesc, sizeof(D3D11_BUFFER_DESC));
 	d3dBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	d3dBufferDesc.ByteWidth = sizeof(D3DXMATRIX) * m_nRock2Objects;
@@ -407,17 +372,13 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	{
 		for(int z = 0; z < Rock3z; z++)
 		{
-			pRock3Object[0] = new ObstacleObject();
-			pRock3Object[0]->SetMesh(m_pRock3Mesh);
-			pRock3Object[0]->SetP((-200.f + 12.5f) + x*25, 0,(150.f-12.5f) - z*25);
-			m_ppObjects[i++] = pRock3Object[0];
-
-			pRock3Object[1] = new ObstacleObject();
-			pRock3Object[1]->SetMesh(m_pRock3Mesh);
-			pRock3Object[1]->SetP((50.f + 12.5f) + x*25, 0,(150.f-12.5f) - z*25);
-			m_ppObjects[i++] = pRock3Object[1];
+			ObstacleManager::sharedManager()->CreateObstacle(D3DXVECTOR3((-200.f + 12.5f) + x*25, 0,(150.f-12.5f) - z*25), m_pRock3Mesh, 25, 25, 25);
+			ObstacleManager::sharedManager()->CreateObstacle(D3DXVECTOR3((50.f + 12.5f) + x*25, 0,(150.f-12.5f) - z*25), m_pRock3Mesh, 25, 25, 25);
 		}
 	}
+	for(int j= m_nBush3Objects + m_nRock2Objects; j< m_nBush3Objects + m_nRock2Objects + m_nRock3Objects; j++)
+		m_ppObjects[i++] = ObstacleManager::sharedManager()->m_pObstacle[j];
+
 	ZeroMemory(&d3dBufferDesc, sizeof(D3D11_BUFFER_DESC));
 	d3dBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	d3dBufferDesc.ByteWidth = sizeof(D3DXMATRIX) * m_nRock3Objects;
@@ -441,6 +402,30 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	pd3dDevice->CreateBuffer(&d3dBufferDesc, NULL, &m_pd3dcbMissileInstanceMatrices);
 
 	m_pMissileMesh->AppendVertexBuffer(m_pd3dcbMissileInstanceMatrices, sizeof(D3DXMATRIX), 0);
+
+
+	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(-400.f + 15.f , 0, 165.f), m_pTowerMesh, 30, 30, 30);
+	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(-50.f - 15.f, 0, 165.f), m_pTowerMesh, 30, 30, 30);
+	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(50.f + 15.f, 0, 165.f), m_pTowerMesh, 30, 30, 30);
+	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(400.f - 15.f, 0, 165.f), m_pTowerMesh, 30, 30, 30);
+	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(-400.f + 15.f, 0, -165.f), m_pTowerMesh, 30, 30, 30);
+	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(-50.f - 15.f, 0, -165.f), m_pTowerMesh, 30, 30, 30);
+	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(50.f + 15.f, 0, -165.f), m_pTowerMesh, 30, 30, 30);
+	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(400.f - 15.f, 0, -165.f), m_pTowerMesh, 30, 30, 30);
+	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(-275.f, 0, -10.f), m_pTowerMesh, 30, 30, 30);
+	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(275.f, 0, 10.f), m_pTowerMesh, 30, 30, 30);
+	for(int j=0; j<m_nTowerObjects; j++)
+		m_ppObjects[i++] = TowerManager::sharedManager()->m_pTower[j];
+
+
+	ZeroMemory(&d3dBufferDesc, sizeof(D3D11_BUFFER_DESC));
+	d3dBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dBufferDesc.ByteWidth = sizeof(D3DXMATRIX) * m_nTowerObjects;
+	d3dBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	d3dBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	pd3dDevice->CreateBuffer(&d3dBufferDesc, NULL, &m_pd3dcbTowerInstanceMatrices);
+
+	m_pTowerMesh->AppendVertexBuffer(m_pd3dcbTowerInstanceMatrices, sizeof(D3DXMATRIX), 0);
 
 }
 
@@ -520,6 +505,13 @@ void CInstancingShader::UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceCon
  	for (int j = 0; j < m_nMissileObjects; j++)
  		pcbWorldMatrix[j] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + j]->m_d3dxmtxWorld;
  	pd3dDeviceContext->Unmap(m_pd3dcbMissileInstanceMatrices, 0);
+
+	pd3dDeviceContext->Map(m_pd3dcbTowerInstanceMatrices, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
+	pcbWorldMatrix = (D3DXMATRIX *)d3dMappedResource.pData;
+	//인스턴싱 객체들의 월드 변환 행렬을 정점 버퍼에 쓴다.
+	for (int j = 0; j < m_nTowerObjects; j++)
+		pcbWorldMatrix[j] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + j]->m_d3dxmtxWorld;
+	pd3dDeviceContext->Unmap(m_pd3dcbTowerInstanceMatrices, 0);
 }
 
 void CInstancingShader::Render(ID3D11DeviceContext *pd3dDeviceContext)
@@ -533,6 +525,7 @@ void CInstancingShader::Render(ID3D11DeviceContext *pd3dDeviceContext)
 	if (m_pRock2Mesh) m_pRock2Mesh->RenderInstanced(pd3dDeviceContext, m_nRock2Objects, 0);
 	if (m_pRock3Mesh) m_pRock3Mesh->RenderInstanced(pd3dDeviceContext, m_nRock3Objects, 0);
 	if (m_pMissileMesh) m_pMissileMesh->RenderInstanced(pd3dDeviceContext, m_nMissileObjects, 0);
+	if (m_pTowerMesh) m_pTowerMesh->RenderInstanced(pd3dDeviceContext, m_nTowerObjects, 0);
 }
 
 void CInstancingShader::AddObject(CGameObject *pObject) 

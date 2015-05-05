@@ -9,6 +9,7 @@
 #include "TowerObject.h"
 #include "ST.h"
 #include "EnemyObject.h"
+#include "TowerManager.h"
 
 class CScene
 {
@@ -27,7 +28,6 @@ private:
 
 	CFBXMesh *pHeroMesh;
 	CFBXMesh *pMinionDragonMesh;
-	CFBXMesh *m_pTowerMesh;
 
 	float m_fMinionRespawnTime;
 	float m_fMissileAttackTime;
@@ -35,7 +35,6 @@ private:
 
 	HeroObject *m_pHero;
 	CGameObject *m_pPlane;
-	TowerObject *m_pTower[10];
 	EnemyObject	*m_pOtherPlayer[10];
 
 	float distance;

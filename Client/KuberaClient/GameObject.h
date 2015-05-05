@@ -44,7 +44,7 @@ public:
 	virtual void Animate(float fTimeElapsed){}
 	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext);
 	virtual void SetNewDestination ( D3DXVECTOR3 _pos ){}
-	virtual void Update(float _fMoveIncrement){}
+	virtual void Update(float fTimeElapsed){}
 
 	void SetScale(D3DXVECTOR3 _size);
 	void SetRotation(int xyz, float _rot);  // x =1 y = 2 z =3
