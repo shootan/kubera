@@ -126,7 +126,6 @@ public:
 	virtual void CreateRasterizerState(ID3D11Device *pd3dDevice);
 	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext);
 	virtual void RenderInstanced(ID3D11DeviceContext *pd3dDeviceContext, int nInstances=0, int nStartInstance=0);
-
 	virtual bool LoadTexture(ID3D11Device* pd3dDevice, WCHAR* filename);
 	virtual void ReleaseTexture();
 

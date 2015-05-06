@@ -38,7 +38,7 @@ private:
 	EnemyObject	*m_pOtherPlayer[10];
 
 	float distance;
-
+	CGameObject *pBoundBox[2];
 public:
 	CScene(void);
 	~CScene(void);
@@ -65,7 +65,7 @@ public:
 	//
 	BOOL CheckCollisionAABBAxis( float c1, float w1, float c2, float w2);
 	BOOL CheckCollision(D3DXVECTOR3 c1, float w1, float h1, float d1, D3DXVECTOR3 c2, float w2, float h2, float d2);
-	void GameCollision();
+	void GameCollision(CGameObject* obj1, CGameObject* obj2);
 
 	CGameObject* GetObject(int num);
 	BOOL m_bJoinOtherPlayer;

@@ -80,15 +80,11 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 // 		m_ppShaders[0]->AddObject(pMinion[i]);
 // 	}
 
-	/*m_pTower = new TowerObject();
-	m_pTower->SetMesh(pObstacleMesh);
-	m_pTower->SetPosition(D3DXVECTOR3(450,0,0));
-*/
 
 	//충돌박스
 	int iObjectNum = 2;
 	CCubeMesh *pBox[2];
-	CGameObject *pBoundBox[2];
+	pBoundBox[2];
 	pBox[0] = new CCubeMesh(pd3dDevice,m_pHero->GetBoundSizeX(),m_pHero->GetBoundSizeY(),m_pHero->GetBoundSizeZ());
 	pBox[1] = new CCubeMesh(pd3dDevice,20,20,20);
 	
@@ -116,27 +112,10 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 		m_pObjectShaders->AddObject(m_pOtherPlayer[i]);
 	}
 
-	
-	//for(int i=0; i<m_nIntanceObjects; i++)
-	//	m_pTower[i] = m_ppShaders[1]->GetObject(i);
 
-	//m_ppObjects[m_nIntanceObjects] = m_pHero;
-	//m_ppObjects[m_nIntanceObjects + 1] = pPlane;
-	//m_ppObjects[m_nIntanceObjects + 1]->SetTag(PLANE);
-	//m_ppObjects[m_nIntanceObjects + 2] = NULL;
-	//m_ppObjects[m_nIntanceObjects + 3] = pBoundBox[0];
-	//m_ppObjects[m_nIntanceObjects + 3]->SetTag(HERO_BOUND);
-	//m_ppObjects[m_nIntanceObjects + 4] = pBoundBox[1];
-	//m_ppObjects[m_nIntanceObjects + 4]->SetTag(OBSTACLE_BOUND);
-
-	//m_ppObjects[m_nIntanceObjects + 5] = pTower;
-	//m_ppObjects[m_nIntanceObjects + 5]->SetTag(TOWER);
-// 
 // 	for(int i=6; i<56; i++)
 // 		m_ppObjects[i] = pMinion[i-5];
 
-	//for(int i= m_nIntanceObjects + 6; i<m_nObjects; i++)
-	//	m_ppObjects[i] = NULL;
 
 	this->AddOtherPlayer(pd3dDevice);
 
@@ -244,33 +223,10 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 		}
 	}
 	
-	//for (int j = 0; j < m_nObjects; j++)
-	//{
-	//	if(m_ppObjects[j] == NULL) continue;
+	//플레이어 충돌박스 보이기
+	pBoundBox[0]->SetPosition(m_pHero->GetPosition());
 
-	//	m_ppObjects[j]->Animate(fTimeElapsed);
-	//	m_ppObjects[j]->Update(fTimeElapsed);
-
-	//	if(m_ppObjects[j]->GetTag() == TOWER)
-	//	{
-	//		for(int i = 0; i<m_nObjects; i++)
-	//		{
-	//			if(m_ppObjects[i] == NULL) continue;
-	//			if(m_ppObjects[i]->GetTag() == HERO)
-	//			{
-	//				float distance = ST::sharedManager()->GetDistance(m_ppObjects[j]->GetPos(), m_ppObjects[i]->GetPos());
-	//				
-	//				if(distance < 50.0f)
-	//					m_ppObjects[j]->SetPos(m_ppObjects[i]->GetPos());
-	//				//	TowerObject* tt = m_ppObjects[j];
-
-	//			}
-	//		}
-	//	}
-
-	//	if(m_ppObjects[j]->GetTag() == HERO_BOUND) //플레이어 충돌박스 보이기
-	//		m_ppObjects[j]->SetPosition(m_ppObjects[0]->GetPosition());
-
+	//m_pHero->SetAstar(TRUE);
 		/*if(m_ppObjects[j]->GetTag() == HERO)
 		{
 			for(int i=0; i< m_nObjects; i++)
@@ -293,8 +249,17 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 		}*/
 	//}
 
-	//GameCollision();
+	for(int i=0; i<MAX_OBSTACLE; i++) //캐릭터와 장애물 충돌체크
+	{
+		if(ObstacleManager::sharedManager()->m_pObstacle[i] == NULL) continue;
+		GameCollision(m_pHero, ObstacleManager::sharedManager()->m_pObstacle[i]);
+	}
 
+	for(int i=0; i<MAX_TOWER; i++) //캐릭터와 타워 충돌체크
+	{
+		if(TowerManager::sharedManager()->m_pTower[i] == NULL) continue;
+		GameCollision(m_pHero, TowerManager::sharedManager()->m_pTower[i]);
+	}
 }
 
 void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext)
@@ -315,6 +280,9 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext)
 	}
 	m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pPlane->m_d3dxmtxWorld);
 	m_pPlane->Render(pd3dDeviceContext);
+
+	m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &pBoundBox[0]->m_d3dxmtxWorld);
+	pBoundBox[0]->Render(pd3dDeviceContext);
 
 	m_pInstancingShaders->Render(pd3dDeviceContext);
 
@@ -440,76 +408,69 @@ BOOL CScene::CheckCollision(D3DXVECTOR3 c1, float w1, float h1, float d1,
 	return FALSE;
 }
 
-void CScene::GameCollision()
+void CScene::GameCollision(CGameObject* obj1, CGameObject* obj2)
 {
-	//for(int i = 1; i < m_nObjects; i++)
-	//{
-	//	if(m_ppObjects[i] == NULL) continue;
 
-	//	
-	//	if(CheckCollision(m_ppObjects[0]->GetPosition(), m_ppObjects[0]->GetBoundSizeX(), m_ppObjects[0]->GetBoundSizeY(), 
-	//		m_ppObjects[0]->GetBoundSizeZ(), m_ppObjects[2]->GetPosition(),m_ppObjects[2]->GetBoundSizeX(), m_ppObjects[2]->GetBoundSizeY(), 
-	//		m_ppObjects[2]->GetBoundSizeZ()))
-	//	{
+	if(CheckCollision(obj1->GetPosition(), obj1->GetBoundSizeX(), obj1->GetBoundSizeY(), 
+		obj1->GetBoundSizeZ(), obj2->GetPosition(),obj2->GetBoundSizeX(), obj2->GetBoundSizeY(), 
+		obj2->GetBoundSizeZ()))
+	{
 
-	//		//캐릭터 왼쪽방향
-	//		if(m_ppObjects[0]->GetPosition().x > m_ppObjects[2]->GetPosition().x && 
-	//			abs(m_ppObjects[2]->GetPosition().x - m_ppObjects[0]->GetPosition().x) > 
-	//			abs(m_ppObjects[2]->GetPosition().z - m_ppObjects[0]->GetPosition().z))
-	//		{
-	//			if(m_ppObjects[0]->GetPosition().x - m_ppObjects[0]->GetBoundSizeX()/2 < 
-	//				m_ppObjects[2]->GetPosition().x + m_ppObjects[2]->GetBoundSizeX()/2)
-	//			{
-	//				D3DXVECTOR3 v = D3DXVECTOR3(m_ppObjects[2]->GetPosition().x + m_ppObjects[2]->GetBoundSizeX()/2 +
-	//					m_ppObjects[0]->GetBoundSizeX()/2, m_ppObjects[0]->GetPosition().y, m_ppObjects[0]->GetPosition().z);
-	//				m_ppObjects[0]->SetPosition(v);
-	//			}
-	//		}
+		//캐릭터 왼쪽방향
+		if(obj1->GetPosition().x > obj2->GetPosition().x && 
+			abs(obj2->GetPosition().x - obj1->GetPosition().x) > 
+			abs(obj2->GetPosition().z - obj1->GetPosition().z))
+		{
+			if(obj1->GetPosition().x - obj1->GetBoundSizeX()/2 < 
+				obj2->GetPosition().x + obj2->GetBoundSizeX()/2)
+			{
+				D3DXVECTOR3 v = D3DXVECTOR3(obj2->GetPosition().x + obj2->GetBoundSizeX()/2 +
+					obj1->GetBoundSizeX()/2, obj1->GetPosition().y, obj1->GetPosition().z);
+				obj1->SetPosition(v);
+			}
+		}
 
-	//		//캐릭터 오른쪽 방향
-	//		else if(m_ppObjects[0]->GetPosition().x < m_ppObjects[2]->GetPosition().x &&
-	//			abs(m_ppObjects[2]->GetPosition().x - m_ppObjects[0]->GetPosition().x) > 
-	//			abs(m_ppObjects[2]->GetPosition().z - m_ppObjects[0]->GetPosition().z))
-	//		{
-	//			if(m_ppObjects[0]->GetPosition().x + m_ppObjects[0]->GetBoundSizeX()/2 > 
-	//				m_ppObjects[2]->GetPosition().x - m_ppObjects[2]->GetBoundSizeX()/2)
-	//			{
-	//				D3DXVECTOR3 v = D3DXVECTOR3(m_ppObjects[2]->GetPosition().x - m_ppObjects[2]->GetBoundSizeX()/2 - 
-	//					m_ppObjects[0]->GetBoundSizeX()/2, m_ppObjects[0]->GetPosition().y, m_ppObjects[0]->GetPosition().z);
-	//				m_ppObjects[0]->SetPosition(v);
-	//			}
-	//		}
-	//		//캐릭터 위쪽 방향
-	//		else if(m_ppObjects[0]->GetPosition().z < m_ppObjects[2]->GetPosition().z &&
-	//			abs(m_ppObjects[2]->GetPosition().x - m_ppObjects[0]->GetPosition().x) < 
-	//			abs(m_ppObjects[2]->GetPosition().z - m_ppObjects[0]->GetPosition().z))
-	//		{
-	//			if(m_ppObjects[0]->GetPosition().z + m_ppObjects[0]->GetBoundSizeZ()/2 > 
-	//				m_ppObjects[2]->GetPosition().z - m_ppObjects[2]->GetBoundSizeZ()/2)
-	//			{
-	//				D3DXVECTOR3 v = D3DXVECTOR3(m_ppObjects[0]->GetPosition().x, m_ppObjects[0]->GetPosition().y,
-	//					m_ppObjects[2]->GetPosition().z - m_ppObjects[2]->GetBoundSizeZ()/2 - m_ppObjects[0]->GetBoundSizeZ()/2);
-	//				m_ppObjects[0]->SetPosition(v);
-	//			}
-	//		}
-	//
-	//		//캐릭터 아래쪽 방향
-	//		else if(m_ppObjects[0]->GetPosition().z > m_ppObjects[2]->GetPosition().z &&
-	//			abs(m_ppObjects[2]->GetPosition().x - m_ppObjects[0]->GetPosition().x) < 
-	//			abs(m_ppObjects[2]->GetPosition().z - m_ppObjects[0]->GetPosition().z))
-	//		{
-	//			if(m_ppObjects[0]->GetPosition().z + m_ppObjects[0]->GetBoundSizeZ()/2 > 
-	//				m_ppObjects[2]->GetPosition().z - m_ppObjects[2]->GetBoundSizeZ()/2)
-	//			{
-	//				D3DXVECTOR3 v = D3DXVECTOR3(m_ppObjects[0]->GetPosition().x, m_ppObjects[0]->GetPosition().y, 
-	//					m_ppObjects[2]->GetPosition().z + m_ppObjects[2]->GetBoundSizeZ()/2 + m_ppObjects[0]->GetBoundSizeZ()/2);
-	//				m_ppObjects[0]->SetPosition(v);
-	//			}
-	//		}
+		//캐릭터 오른쪽 방향
+		else if(obj1->GetPosition().x < obj2->GetPosition().x &&
+			abs(obj2->GetPosition().x - obj1->GetPosition().x) > 
+			abs(obj2->GetPosition().z - obj1->GetPosition().z))
+		{
+			if(obj1->GetPosition().x + obj1->GetBoundSizeX()/2 > 
+				obj2->GetPosition().x - obj2->GetBoundSizeX()/2)
+			{
+				D3DXVECTOR3 v = D3DXVECTOR3(obj2->GetPosition().x - obj2->GetBoundSizeX()/2 - 
+					obj1->GetBoundSizeX()/2, obj1->GetPosition().y, obj1->GetPosition().z);
+				obj1->SetPosition(v);
+			}
+		}
+		//캐릭터 위쪽 방향
+		else if(obj1->GetPosition().z < obj2->GetPosition().z &&
+			abs(obj2->GetPosition().x - obj1->GetPosition().x) < 
+			abs(obj2->GetPosition().z - obj1->GetPosition().z))
+		{
+			if(obj1->GetPosition().z + obj1->GetBoundSizeZ()/2 > 
+				obj2->GetPosition().z - obj2->GetBoundSizeZ()/2)
+			{
+				D3DXVECTOR3 v = D3DXVECTOR3(obj1->GetPosition().x, obj1->GetPosition().y,
+					obj2->GetPosition().z - obj2->GetBoundSizeZ()/2 - obj1->GetBoundSizeZ()/2);
+				obj1->SetPosition(v);
+			}
+		}
 
-	//		break;
-	//	}
-	//	
-
-	//}
+		//캐릭터 아래쪽 방향
+		else if(obj1->GetPosition().z > obj2->GetPosition().z &&
+			abs(obj2->GetPosition().x - obj1->GetPosition().x) < 
+			abs(obj2->GetPosition().z - obj1->GetPosition().z))
+		{
+			if(obj1->GetPosition().z + obj1->GetBoundSizeZ()/2 > 
+				obj2->GetPosition().z - obj2->GetBoundSizeZ()/2)
+			{
+				D3DXVECTOR3 v = D3DXVECTOR3(obj1->GetPosition().x, obj1->GetPosition().y, 
+					obj2->GetPosition().z + obj2->GetBoundSizeZ()/2 + obj1->GetBoundSizeZ()/2);
+				obj1->SetPosition(v);
+			}
+		}
+	}
+	
+	
 }

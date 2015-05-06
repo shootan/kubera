@@ -1,7 +1,7 @@
 #pragma once
 #include "Mesh.h"
 #include "header.h"
-#include "astarclass.h"
+//#include "astarclass.h"
 
 class CGameObject
 {
@@ -28,8 +28,8 @@ protected:
 	float		m_fWalkSpeed;
 
 	float BoundsizeX, BoundsizeY, BoundsizeZ;
-	BOOL m_bAstar;
-	BOOL m_bFindPath;
+	//BOOL m_bAstar;
+	//BOOL m_bFindPath;
 
 public:
 	void AddRef();
@@ -37,8 +37,8 @@ public:
 
 	D3DXMATRIX m_d3dxmtxWorld;         
 	CMesh *m_pMesh;
-	Astar* m_pAstar;
-	node_t* m_pBestWay;
+	//Astar* m_pAstar;
+	//node_t* m_pBestWay;
 
 	void SetMesh(CMesh *pMesh);
 	virtual void Animate(float fTimeElapsed){}
@@ -73,6 +73,6 @@ public:
 	float GetBoundSizeX() {return BoundsizeX;}
 	float GetBoundSizeY() {return BoundsizeY;}
 	float GetBoundSizeZ() {return BoundsizeZ;}
-	void SetAstar(BOOL _astar) {m_bAstar = _astar;}
-	BOOL GetAstar() { return m_bAstar; }
+//	void SetAstar(BOOL _astar) {m_bAstar = _astar;}
+//	BOOL GetAstar() { return m_bAstar; }
 };

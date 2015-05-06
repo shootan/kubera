@@ -28,7 +28,7 @@ void EnemyObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
 	m_vDestination.z = _pos.z;       
 	m_vWalkIncrement = m_vDestination - m_Pos;
 	D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
-	m_bFindPath = FALSE;
+	//m_bFindPath = FALSE;
 
 
 	//// Calculate the rotation angle before. Next, change the walk direction into 

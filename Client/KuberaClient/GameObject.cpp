@@ -26,10 +26,10 @@ CGameObject::CGameObject(void)
 	BoundsizeY = 0.0f;
 	BoundsizeZ = 0.0f;
 
-	m_pAstar = NULL;
-	m_pBestWay = NULL;
-	m_bAstar = FALSE;
-	m_bFindPath = FALSE;
+	//m_pAstar = NULL;
+	//m_pBestWay = NULL;
+	//m_bAstar = FALSE;
+	//m_bFindPath = FALSE;
 }
 
 

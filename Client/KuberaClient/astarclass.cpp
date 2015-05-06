@@ -38,9 +38,19 @@ Astar::~Astar(void)
 
 bool Astar::is_available_grid( int x, int y )  {  //나중에 못가는 구역 설정만 바꿔주면 됨
 
+	for(int i=0; i<MAX_OBSTACLE; i++)
+	{
+		if(ObstacleManager::sharedManager()->m_pObstacle[i] == NULL) continue;
 
-	if( x >= 10 && x <= 40 && y >= -15 && y <= 15)
-		return 0;
+		if( x >= ObstacleManager::sharedManager()->m_pObstacle[i]->GetPos().x + ObstacleManager::sharedManager()->m_pObstacle[i]->GetBoundSizeX()/2 + 10
+			&& x <= ObstacleManager::sharedManager()->m_pObstacle[i]->GetPos().x - ObstacleManager::sharedManager()->m_pObstacle[i]->GetBoundSizeX()/2 - 10
+			&& y >= ObstacleManager::sharedManager()->m_pObstacle[i]->GetPos().y + ObstacleManager::sharedManager()->m_pObstacle[i]->GetBoundSizeY()/2 + 10
+			&& y <= ObstacleManager::sharedManager()->m_pObstacle[i]->GetPos().y - ObstacleManager::sharedManager()->m_pObstacle[i]->GetBoundSizeY()/2 - 10)
+			return 0;
+	}
+
+	//if( x >= 10 && x <= 40 && y >= -15 && y <= 15)
+	//	return 0;
 	//if( x == 5 && y == 1 )
 	//	return 0;
 	//if( x == 5 && y == 2 )

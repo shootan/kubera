@@ -341,8 +341,6 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pBush3Mesh->AppendVertexBuffer(m_pd3dcbBush3InstanceMatrices, sizeof(D3DXMATRIX), 0);
 
 
-	ObstacleObject *pRock2Object[4] = {NULL};
-
 	for(int x = 0; x < Rock2x; x++)
 	{
 		for(int z = 0; z < Rock2z; z++)
@@ -366,8 +364,6 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pRock2Mesh->AppendVertexBuffer(m_pd3dcbRock2InstanceMatrices, sizeof(D3DXMATRIX), 0);
 
 
-	ObstacleObject *pRock3Object[2] = {NULL};
-
 	for(int x = 0; x < Rock3x; x++)
 	{
 		for(int z = 0; z < Rock3z; z++)
@@ -389,7 +385,7 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pRock3Mesh->AppendVertexBuffer(m_pd3dcbRock3InstanceMatrices, sizeof(D3DXMATRIX), 0);
 
 
-	MissileManager::sharedManager()->CreateMissile(D3DXVECTOR3(0, 0, 0), m_pMissileMesh);
+	MissileManager::sharedManager()->CreateMissile(D3DXVECTOR3(1200, 0, 0), m_pMissileMesh);
 	for(int j=0; j<m_nMissileObjects; j++)
 		m_ppObjects[i++] = MissileManager::sharedManager()->m_pMissile[j];
 	
