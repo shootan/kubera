@@ -25,6 +25,7 @@ private:
 	int m_MousePosY;
 
 	BOOL m_bRbutton;
+	BOOL m_bLbutton;
 
 	CFBXMesh *pHeroMesh;
 	CFBXMesh *pMinionDragonMesh;

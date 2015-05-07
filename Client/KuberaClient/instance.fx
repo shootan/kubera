@@ -11,6 +11,11 @@ cbuffer cbWorldMatrix : register(b1)
 	matrix gmtxWorld : packoffset(c0);
 };
 
+cbuffer cbClickTarget : register (b2)
+{
+    float4 m_vSelected ;
+};
+
 Texture2D	g_txDiffuse : register( t0 );
 SamplerState g_samLinear : register( s0 );
 

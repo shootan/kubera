@@ -11,6 +11,8 @@ CShader::CShader(void)
 	m_ppObjects = NULL;       
 	m_nObjects = 0;
 	m_nIndexToAdd = 0;
+
+	m_pCBClickTarget = NULL;
 }
 
 
@@ -64,6 +66,7 @@ void CShader::CreatePixelShaderFromFile(ID3D11Device *pd3dDevice, WCHAR *pszFile
 
 void CShader::CreateShader(ID3D11Device *pd3dDevice, int nObjects)
 {
+
 }
 
 void CShader::Render(ID3D11DeviceContext *pd3dDeviceContext)
@@ -80,6 +83,15 @@ void CShader::Render(ID3D11DeviceContext *pd3dDeviceContext)
 
 void CShader::CreateShaderVariables(ID3D11Device *pd3dDevice)
 {
+	D3D11_BUFFER_DESC Desc;
+	Desc.Usage = D3D11_USAGE_DYNAMIC;
+	Desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	Desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	Desc.MiscFlags = 0;
+
+	Desc.ByteWidth = sizeof( CBClickTarget );
+	pd3dDevice->CreateBuffer( &Desc, NULL, &m_pCBClickTarget );
+	DXUT_SetDebugName( m_pCBClickTarget, "CBClickTarget" );
 }
 
 void CShader::ReleaseShaderVariables()
@@ -88,6 +100,15 @@ void CShader::ReleaseShaderVariables()
 
 void CShader::UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceContext)
 {
+	D3DXVECTOR4 color = D3DXVECTOR4(0.0f,1.0f,0.0f,1.0f);
+	m_CBClickTarget.m_vSelected = color;
+
+	D3D11_MAPPED_SUBRESOURCE MappedResource;
+	pd3dDeviceContext->Map( m_pCBClickTarget, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource ); 
+	memcpy(MappedResource.pData, &m_pCBClickTarget, sizeof (m_pCBClickTarget));
+	pd3dDeviceContext->Unmap( m_pCBClickTarget, 0 );
+
+	pd3dDeviceContext->PSSetConstantBuffers(2, 1, &m_pCBClickTarget); 
 }
 
 
@@ -461,6 +482,7 @@ void CInstancingShader::CreateShader(ID3D11Device *pd3dDevice, int nObjects)
 	pd3dDevice->CreateSamplerState( &SamDesc, &m_pSamLinear );
 	DXUT_SetDebugName( m_pSamLinear, "Primary" );
 
+	CShader::CreateShaderVariables(pd3dDevice);
 }
 
 void CInstancingShader::CreateShaderVariables(ID3D11Device *pd3dDevice)
@@ -479,6 +501,8 @@ void CInstancingShader::CreateShaderVariables(ID3D11Device *pd3dDevice)
 
 void CInstancingShader::UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceContext)
 {
+	CShader::UpdateShaderVariables(pd3dDeviceContext);
+
 	D3D11_MAPPED_SUBRESOURCE d3dMappedResource;
 	pd3dDeviceContext->Map(m_pd3dcbBush3InstanceMatrices, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
 	D3DXMATRIX *pcbWorldMatrix = (D3DXMATRIX *)d3dMappedResource.pData;

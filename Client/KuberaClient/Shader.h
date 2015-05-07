@@ -13,6 +13,10 @@ struct VS_CB_WORLD_MATRIX
 	D3DXMATRIX m_d3dxmtxWorld;         
 };
 
+struct CBClickTarget
+{
+	D3DXVECTOR4 m_vSelected;
+};
 
 class CShader
 {
@@ -52,6 +56,8 @@ public:
 	ID3D11PixelShader *m_pd3dPixelShader;
 	ID3D11SamplerState *m_pSamLinear;
 
+	ID3D11Buffer*     m_pCBClickTarget;
+	CBClickTarget     m_CBClickTarget;
 protected:
 	//쉐이더에서 렌더링할 게임 객체에 대한 포인터들의 리스트를 선언한다. 
 	CGameObject **m_ppObjects;       
