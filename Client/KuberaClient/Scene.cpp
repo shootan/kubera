@@ -290,6 +290,8 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext)
 		MissileManager::sharedManager()->m_pMissile[i]->Render(pd3dDeviceContext);
 	for(int i=0; i<MAX_TOWER; i++)
 		TowerManager::sharedManager()->m_pTower[i]->Render(pd3dDeviceContext);
+	for(int i=0; i<872; i++)
+		ObstacleManager::sharedManager()->m_pObstacle[i]->Render(pd3dDeviceContext);
 
 }
 

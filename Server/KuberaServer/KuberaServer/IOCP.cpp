@@ -324,6 +324,7 @@ BOOL IOCPServer::SendData()
 	IOBuffer* Buffer;
 	Player*   play;
 	Buffer = m_pNextBufferList;
+	int Number = 0;
 
 	while(Buffer != NULL)
 	{
@@ -349,7 +350,31 @@ BOOL IOCPServer::SendData()
 				this->SendPacket(Buffer, HERODATA, play->m_PI, sizeof(PlayerPacket));
 				this->SetOpCode(Buffer, OP_SEND_FINISH);
 
+				
+// 				Number = 1;
+// 				int size = sizeof(int) + sizeof(MinionInfo)*40;
+// 				char* buffer = new char[size];
+// 				*(int*)buffer = Number;
+// 				memcpy(buffer+sizeof(int), Arrange.MI1, size);
 				this->SendPacket(Buffer, MINIONDATA, Arrange.MI1, sizeof(MinionInfo)*40);
+				this->SetOpCode(Buffer, OP_SEND_FINISH);
+
+// 				Number = 2;
+// 				*(int*)buffer = Number;
+// 				memcpy(buffer+sizeof(int), Arrange.MI1, size);
+				this->SendPacket(Buffer, MINIONDATA, Arrange.MI2, sizeof(MinionInfo)*40);
+				this->SetOpCode(Buffer, OP_SEND_FINISH);
+
+// 				Number = 3;
+// 				*(int*)buffer = Number;
+// 				memcpy(buffer+sizeof(int), Arrange.MI1, size);
+				this->SendPacket(Buffer, MINIONDATA, Arrange.MI3, sizeof(MinionInfo)*40);
+				this->SetOpCode(Buffer, OP_SEND_FINISH);
+
+// 				Number = 4;
+// 				*(int*)buffer = Number;
+// 				memcpy(buffer+sizeof(int), Arrange.MI1, size);
+				this->SendPacket(Buffer, MINIONDATA, Arrange.MI4, sizeof(MinionInfo)*40);
 				this->SetOpCode(Buffer, OP_SEND_FINISH);
 			}
 			play = play->m_pNext;
@@ -366,7 +391,7 @@ void IOCPServer::SendPacket(IOBuffer* _buffer, int NetworkCode, void *_packet, i
 	int adq = reinterpret_cast<unsigned char *>(_packet)[0];
 
 	int Size = HEADERSIZE + _size;
-	char* Buffer = new char[HEADERSIZE + Size];
+	char* Buffer = new char[Size];
 	*(int*)Buffer = NetworkCode;
 	
 	memcpy(Buffer+HEADERSIZE, _packet, Size);

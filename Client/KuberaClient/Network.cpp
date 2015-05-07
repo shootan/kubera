@@ -3,7 +3,10 @@
 Network::Network()
 {
 	ZeroMemory(PI, sizeof(PlayerStruct) * 10);
-	ZeroMemory(MI, sizeof(MinionInfo)*40);
+	ZeroMemory(MI1, sizeof(MinionInfo)*40);
+	ZeroMemory(MI2, sizeof(MinionInfo)*40);
+	ZeroMemory(MI3, sizeof(MinionInfo)*40);
+	ZeroMemory(MI4, sizeof(MinionInfo)*40);
 	m_bJoinPlayer = FALSE;
 	m_ClientCount = 0;
 	m_ID = 0;
@@ -86,6 +89,7 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 	Network* server = (Network*)arg;
 	int size = 0;
 	PlayerPacket p;
+	int Number = 0;
 	char Buf[BUFSIZE];
 	int Count = 0;
 	int Header = 0;
@@ -142,22 +146,30 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 			}
 		case MINIONDATA:
 			{
-// 				MinionInfo* miif = new MinionInfo[sizeof(MinionInfo)*40];
-// 				ZeroMemory(miif, sizeof(MinionInfo)*40);
-				retval = recv(server->m_ConnectSock, (char*)server->MI, sizeof(MinionInfo)*40, 0);
+				retval = recv(server->m_ConnectSock, (char*)server->MI1, sizeof(MinionInfo)*40, 0);
+				retval = recv(server->m_ConnectSock, (char*)server->MI2, sizeof(MinionInfo)*40, 0);
+				retval = recv(server->m_ConnectSock, (char*)server->MI3, sizeof(MinionInfo)*40, 0);
+				retval = recv(server->m_ConnectSock, (char*)server->MI4, sizeof(MinionInfo)*40, 0);
 
-// 				for(int i=0; i<40; i++)
-// 				{
-// 					if(server->MI[i].m_Live == TRUE)
-// 					{
-// 						printf("¹Ì´Ï¾ð : %d , X: %.2f, Y: %.2f, Z:%.2f \n", i, server->MI[i].m_Pos.x,server->MI[i].m_Pos.y,server->MI[i].m_Pos.z);
-// 					}
-// 				}
-// 				for(int i=0; i<40; i++)
-// 				{
-// 					MI[i] = miif[i];
-// 				}
-// 				delete []miif;
+				/*retval = recv(server->m_ConnectSock, (char*)&Number, sizeof(int));
+
+				switch(Number)
+				{
+				case 1:
+					retval = recv(server->m_ConnectSock, (char*)server->MI1, sizeof(MinionInfo)*40, 0);
+					break;
+				case 2:
+					retval = recv(server->m_ConnectSock, (char*)server->MI2, sizeof(MinionInfo)*40, 0);
+					break;
+				case 3:
+					retval = recv(server->m_ConnectSock, (char*)server->MI3, sizeof(MinionInfo)*40, 0);
+					break;
+				case 4:
+					retval = recv(server->m_ConnectSock, (char*)server->MI4, sizeof(MinionInfo)*40, 0);
+					break;
+				}*/
+				
+
 			}
 		}
 

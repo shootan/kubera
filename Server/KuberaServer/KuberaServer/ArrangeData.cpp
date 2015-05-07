@@ -12,10 +12,10 @@ ArrangeData::ArrangeData()
 	ZeroMemory(&MI3, sizeof(MinionInfo) * 40);
 	ZeroMemory(&MI4, sizeof(MinionInfo) * 40);
 
-	ZeroMemory(Root1, sizeof(Vector3)*13);
-	ZeroMemory(Root2, sizeof(Vector3)*13);
-	ZeroMemory(Root3, sizeof(Vector3)*13);
-	ZeroMemory(Root4, sizeof(Vector3)*13);
+	ZeroMemory(Root1, sizeof(Vector3)*ROOTCOUNT);
+	ZeroMemory(Root2, sizeof(Vector3)*ROOTCOUNT);
+	ZeroMemory(Root3, sizeof(Vector3)*ROOTCOUNT);
+	ZeroMemory(Root4, sizeof(Vector3)*ROOTCOUNT);
 
 	int size = sizeof(MinionInfo);
 
@@ -43,46 +43,16 @@ ArrangeData::~ArrangeData()
 
 void ArrangeData::SetRoot()
 {
-	for(int i=0; i<14; i++)
-	{
-		Root1[i].y = 0;
-		Root2[i].y = 0;
-		Root3[i].y = 0;
-		Root4[i].y = 0;
-	}
-
-	Root1[0].x = 546;
-	Root1[1].x = 446;
-	Root1[2].x = 446;
-	Root1[3].x = 436;
-	Root1[4].x = 326;
-	Root1[5].x = 245;
-	Root1[6].x = 158;
-	Root1[7].x = 0;
-	Root1[8].x = -31;
-	Root1[9].x = -230;
-	Root1[10].x = -350;
-	Root1[11].x = -437;
-	Root1[12].x = -446;
-
-	Root1[0].z = -14;
-	Root1[1].z = 7;
-	Root1[2].z = 88;
-	Root1[3].z = 196;
-	Root1[4].z = 193;
-	Root1[5].z = 188;
-	Root1[6].z = 188;
-	Root1[7].z = 188;
-	Root1[8].z = 188;
-	Root1[9].z = 188;
-	Root1[10].z = 188;
-	Root1[11].z = 188;
-	Root1[12].z = 188;
+	this->SetRoot1();
+	this->SetRoot2();
+	this->SetRoot3();
+	this->SetRoot4();
 }
 
 void ArrangeData::RegenMinion()
 {
-	if(m_fRegenTime < 30.0f) return;
+	printf("%.1f \n", m_fRegenTime);
+	if(m_fRegenTime < 40.0f) return;
 
 	for(int i=0; i<40; i++)
 	{
@@ -100,6 +70,66 @@ void ArrangeData::RegenMinion()
 		if(MinionCount1 > 3) 
 		{
 			MinionCount1 = 0;
+			break;
+		}
+	}
+
+	for(int i=0; i<40; i++)
+	{
+		if(Minion2[i].m_Live != FALSE) continue;
+		Minion2[i].m_Live = TRUE;
+		Minion2[i].m_Pos = Root2[RootTurn2[i]];
+
+		RootTurn2[i] += 1;
+		Minion2[i].m_TargetPos = Root2[RootTurn2[i]];
+		MinionCount2++;
+
+		MI2[i].m_Live = TRUE;
+		MI2[i].m_ID = i;
+
+		if(MinionCount2 > 3) 
+		{
+			MinionCount2 = 0;
+			break;
+		}
+	}
+
+	for(int i=0; i<40; i++)
+	{
+		if(Minion3[i].m_Live != FALSE) continue;
+		Minion3[i].m_Live = TRUE;
+		Minion3[i].m_Pos = Root3[RootTurn3[i]];
+
+		RootTurn3[i] += 1;
+		Minion3[i].m_TargetPos = Root3[RootTurn3[i]];
+		MinionCount3++;
+
+		MI3[i].m_Live = TRUE;
+		MI3[i].m_ID = i;
+
+		if(MinionCount3 > 3) 
+		{
+			MinionCount3 = 0;
+			break;
+		}
+	}
+
+	for(int i=0; i<40; i++)
+	{
+		if(Minion4[i].m_Live != FALSE) continue;
+		Minion4[i].m_Live = TRUE;
+		Minion4[i].m_Pos = Root4[RootTurn4[i]];
+
+		RootTurn4[i] += 1;
+		Minion4[i].m_TargetPos = Root4[RootTurn4[i]];
+		MinionCount4++;
+
+		MI4[i].m_Live = TRUE;
+		MI4[i].m_ID = i;
+
+		if(MinionCount4 > 3) 
+		{
+			MinionCount4 = 0;
 			break;
 		}
 	}
@@ -150,10 +180,241 @@ void ArrangeData::SetMinionPosition(float _dt)
 			Minion1[i].m_TargetPos = Root1[RootTurn1[i]];
 		}
 	}
+
+	for(int i=0; i<40; i++)
+	{
+		if(Minion2[i].m_Live != TRUE) continue;
+		float distance = ST::sharedManager()->GetDistance(Minion2[i].m_TargetPos, Minion2[i].m_Pos);
+		if (distance > 1.0f)
+		{ 
+			D3DXVECTOR3 m_vWalkIncrement;
+			m_vWalkIncrement.x = Minion2[i].m_TargetPos.x - Minion2[i].m_Pos.x;
+			m_vWalkIncrement.y = Minion2[i].m_TargetPos.y - Minion2[i].m_Pos.y;
+			m_vWalkIncrement.z = Minion2[i].m_TargetPos.z - Minion2[i].m_Pos.z;
+			D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
+
+			//float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
+			// 			D3DXVECTOR3 cross;
+			// 			D3DXVec3Cross( &cross, &m_vWalkIncrement, &m_vFacingDirection );
+			// 			fAngle = acosf( fAngle );
+			// 			if ( cross.y >  0.0f ) {
+			// 				fAngle *=-1.0f;
+			// 			}
+			// 			fAngle /= D3DX_PI;
+			// 			this->SetRotation(2, 1/fAngle);
+
+			m_vWalkIncrement.x *= m_fWalkSpeed; 
+			m_vWalkIncrement.y *= m_fWalkSpeed; 
+			m_vWalkIncrement.z *= m_fWalkSpeed; 
+
+			m_vWalkIncrement*= _dt;
+			Minion2[i].m_Pos.x += m_vWalkIncrement.x;
+			Minion2[i].m_Pos.y += m_vWalkIncrement.y;
+			Minion2[i].m_Pos.z += m_vWalkIncrement.z;
+
+			MI2[i].m_Pos = Minion2[i].m_Pos;
+
+			//printf("미니언 : %d , X: %.2f, Z:%.2f \n", i, Minion2[i].m_Pos.x,Minion2[i].m_Pos.z);
+		}
+		else
+		{
+			RootTurn2[i]++;
+			Minion2[i].m_TargetPos = Root2[RootTurn2[i]];
+		}
+	}
+
+	for(int i=0; i<40; i++)
+	{
+		if(Minion3[i].m_Live != TRUE) continue;
+		float distance = ST::sharedManager()->GetDistance(Minion3[i].m_TargetPos, Minion3[i].m_Pos);
+		if (distance > 1.0f)
+		{ 
+			D3DXVECTOR3 m_vWalkIncrement;
+			m_vWalkIncrement.x = Minion3[i].m_TargetPos.x - Minion3[i].m_Pos.x;
+			m_vWalkIncrement.y = Minion3[i].m_TargetPos.y - Minion3[i].m_Pos.y;
+			m_vWalkIncrement.z = Minion3[i].m_TargetPos.z - Minion3[i].m_Pos.z;
+			D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
+
+			//float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
+			// 			D3DXVECTOR3 cross;
+			// 			D3DXVec3Cross( &cross, &m_vWalkIncrement, &m_vFacingDirection );
+			// 			fAngle = acosf( fAngle );
+			// 			if ( cross.y >  0.0f ) {
+			// 				fAngle *=-1.0f;
+			// 			}
+			// 			fAngle /= D3DX_PI;
+			// 			this->SetRotation(2, 1/fAngle);
+
+			m_vWalkIncrement.x *= m_fWalkSpeed; 
+			m_vWalkIncrement.y *= m_fWalkSpeed; 
+			m_vWalkIncrement.z *= m_fWalkSpeed; 
+
+			m_vWalkIncrement*= _dt;
+			Minion3[i].m_Pos.x += m_vWalkIncrement.x;
+			Minion3[i].m_Pos.y += m_vWalkIncrement.y;
+			Minion3[i].m_Pos.z += m_vWalkIncrement.z;
+
+			MI3[i].m_Pos = Minion3[i].m_Pos;
+
+			//printf("미니언 : %d , X: %.2f, Z:%.2f \n", i, Minion3[i].m_Pos.x,Minion3[i].m_Pos.z);
+		}
+		else
+		{
+			RootTurn3[i]++;
+			Minion3[i].m_TargetPos = Root3[RootTurn3[i]];
+		}
+	}
+
+	for(int i=0; i<40; i++)
+	{
+		if(Minion4[i].m_Live != TRUE) continue;
+		float distance = ST::sharedManager()->GetDistance(Minion4[i].m_TargetPos, Minion4[i].m_Pos);
+		if (distance > 1.0f)
+		{ 
+			D3DXVECTOR3 m_vWalkIncrement;
+			m_vWalkIncrement.x = Minion4[i].m_TargetPos.x - Minion4[i].m_Pos.x;
+			m_vWalkIncrement.y = Minion4[i].m_TargetPos.y - Minion4[i].m_Pos.y;
+			m_vWalkIncrement.z = Minion4[i].m_TargetPos.z - Minion4[i].m_Pos.z;
+			D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
+
+			//float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
+			// 			D3DXVECTOR3 cross;
+			// 			D3DXVec3Cross( &cross, &m_vWalkIncrement, &m_vFacingDirection );
+			// 			fAngle = acosf( fAngle );
+			// 			if ( cross.y >  0.0f ) {
+			// 				fAngle *=-1.0f;
+			// 			}
+			// 			fAngle /= D3DX_PI;
+			// 			this->SetRotation(2, 1/fAngle);
+
+			m_vWalkIncrement.x *= m_fWalkSpeed; 
+			m_vWalkIncrement.y *= m_fWalkSpeed; 
+			m_vWalkIncrement.z *= m_fWalkSpeed; 
+
+			m_vWalkIncrement*= _dt;
+			Minion4[i].m_Pos.x += m_vWalkIncrement.x;
+			Minion4[i].m_Pos.y += m_vWalkIncrement.y;
+			Minion4[i].m_Pos.z += m_vWalkIncrement.z;
+
+			MI4[i].m_Pos = Minion4[i].m_Pos;
+
+			//printf("미니언 : %d , X: %.2f, Z:%.2f \n", i, Minion4[i].m_Pos.x,Minion4[i].m_Pos.z);
+		}
+		else
+		{
+			RootTurn4[i]++;
+			Minion4[i].m_TargetPos = Root4[RootTurn4[i]];
+		}
+	}
 }
 
 void ArrangeData::SetTime(float _time)
 {
 	m_fRegenTime += _time;
 	//printf("%.4f \n", m_fRegenTime);
+}
+
+void ArrangeData::SetRoot1()
+{
+	Root1[0].x = 485;
+	Root1[0].z = 20;
+	for(int i=1; i<7; i++)
+	{
+		Root1[i].x = 440;
+		Root1[i].z = 20 + (i-1)*34;
+	}
+
+	for(int i=7; i<51; i++)
+	{
+		Root1[i].x = 440 - (i-6)*20;
+		Root1[i].z = 190;
+	}
+
+	for(int i=51; i<56; i++)
+	{	
+		Root1[i].x = -440;
+		Root1[i].z = 190 - (i-50) * 34;
+	}
+
+	Root1[56].x = -485;
+	Root1[56].z = 20;
+}
+void ArrangeData::SetRoot2()
+{
+	Root2[0].x = -485;
+	Root2[0].z = 20;
+	
+	for(int i=1; i<7; i++)
+	{
+		Root2[i].x = -440;
+		Root2[i].z = 20 + (i-1)*34;
+	}
+
+	for(int i=7; i<51; i++)
+	{
+		Root2[i].x = -440 + (i-6)*20;
+		Root2[i].z = 190;
+	}
+
+	for(int i=51; i<56; i++)
+	{	
+		Root2[i].x = 440;
+		Root2[i].z = 190 - (i-50) * 34;
+	}
+
+	Root2[56].x = 485;
+	Root2[56].z = 20;
+}
+void ArrangeData::SetRoot3()
+{
+	Root3[0].x = 485;
+	Root3[0].z = -20;
+
+	for(int i=1; i<7; i++)
+	{
+		Root3[i].x = 440;
+		Root3[i].z = -20 - (i-1)*34;
+	}
+
+	for(int i=7; i<51; i++)
+	{
+		Root3[i].x = 440 - (i-6)*20;
+		Root3[i].z = -190;
+	}
+
+	for(int i=51; i<56; i++)
+	{	
+		Root3[i].x = -440;
+		Root3[i].z = -190 + (i-50) * 34;
+	}
+
+	Root3[56].x = -485;
+	Root3[56].z = -20;
+	
+}
+void ArrangeData::SetRoot4()
+{
+	Root4[0].x = -485;
+	Root4[0].z = -20;
+
+	for(int i=1; i<7; i++)
+	{
+		Root4[i].x = -440;
+		Root4[i].z = -20 - (i-1)*34;
+	}
+
+	for(int i=7; i<51; i++)
+	{
+		Root4[i].x = -440 + (i-6)*20;
+		Root4[i].z = -190;
+	}
+
+	for(int i=51; i<56; i++)
+	{	
+		Root4[i].x = 440;
+		Root4[i].z = -190 + (i-50) * 34;
+	}
+
+	Root4[56].x = 485;
+	Root4[56].z = -20;
 }

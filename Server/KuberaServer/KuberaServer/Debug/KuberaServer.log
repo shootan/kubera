@@ -1,11 +1,23 @@
-﻿빌드 시작: 2015-05-04 오후 6:07:11
+﻿빌드 시작: 2015-05-07 오후 4:39:40
      1>2 노드의 "C:\Users\Cho\Desktop\졸업작품\kubera\Server\KuberaServer\KuberaServer\KuberaServer.vcxproj" 프로젝트(build 대상)입니다.
      1>InitializeBuildStatus:
          "AlwaysCreate"이(가) 지정되었기 때문에 "Debug\KuberaServer.unsuccessfulbuild"을(를) 만들고 있습니다.
        ClCompile:
-         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt ArrangeData.cpp main.cpp
-         main.cpp
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt ArrangeData.cpp IOCP.cpp
+         IOCP.cpp
          ArrangeData.cpp
+     1>c:\users\cho\desktop\졸업작품\kubera\server\kuberaserver\kuberaserver\arrangedata.cpp(324): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\server\kuberaserver\kuberaserver\arrangedata.cpp(329): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\server\kuberaserver\kuberaserver\arrangedata.cpp(336): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\server\kuberaserver\kuberaserver\arrangedata.cpp(350): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\server\kuberaserver\kuberaserver\arrangedata.cpp(355): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\server\kuberaserver\kuberaserver\arrangedata.cpp(362): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\server\kuberaserver\kuberaserver\arrangedata.cpp(376): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\server\kuberaserver\kuberaserver\arrangedata.cpp(381): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\server\kuberaserver\kuberaserver\arrangedata.cpp(388): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\server\kuberaserver\kuberaserver\arrangedata.cpp(403): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\server\kuberaserver\kuberaserver\arrangedata.cpp(408): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\server\kuberaserver\kuberaserver\arrangedata.cpp(415): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
          코드를 생성하고 있습니다...
        ManifestResourceCompile:
          모든 출력이 최신 상태입니다.
@@ -30,4 +42,4 @@
 
 빌드했습니다.
 
-경과 시간: 00:00:01.93
+경과 시간: 00:00:01.95

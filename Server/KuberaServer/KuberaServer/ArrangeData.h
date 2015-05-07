@@ -1,13 +1,14 @@
 #include "stdafx.h"
 #include "ST.h"
 
+#define ROOTCOUNT 57
 class ArrangeData
 {
 private:
-	Vector3 Root1[13];
-	Vector3 Root2[13];
-	Vector3 Root3[13];
-	Vector3 Root4[13];
+	Vector3 Root1[ROOTCOUNT];
+	Vector3 Root2[ROOTCOUNT];
+	Vector3 Root3[ROOTCOUNT];
+	Vector3 Root4[ROOTCOUNT];
 
 	Minion Minion1[40];
 	Minion Minion2[40];
@@ -46,9 +47,11 @@ public:
 	void RegenMinion();
 	void SetTime(float _time);
 
-	int SetID();
+	void SetRoot1();
+	void SetRoot2();
+	void SetRoot3();
+	void SetRoot4();
 	
-	
-	
+	int SetID();	
 	
 };

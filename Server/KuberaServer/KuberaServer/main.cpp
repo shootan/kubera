@@ -13,19 +13,18 @@ CTimer Timer;
 int main()
 {
 	Server.StartServer(9000);
-	
+	Server.Arrange.SetRoot();
+
 	float time = 0.0f;
 	
-	Server.Arrange.SetRoot();
+	
 	//unsigned int d;
 	//HANDLE y  = (HANDLE)_beginthreadex(NULL, 0, Th, NULL, 0, &d);
 	while(1)
 	{
 		Timer.Tick(60);
-		//system("cls");
-		Timer.GetFrameRate();
-		//time += Timer.GetTimeElapsed();
-		//printf("%.2f \n", time);
+		system("cls");
+		//Timer.GetFrameRate();
 		
 		Server.ArrangeDataInfo(Timer.GetTimeElapsed());
 		Server.SendData();

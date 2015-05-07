@@ -328,7 +328,10 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 		}
 	}
 	for(int j=0; j< m_nBush3Objects; j++)
+	{
 		m_ppObjects[i++] = ObstacleManager::sharedManager()->m_pObstacle[j];
+		ObstacleManager::sharedManager()->m_pObstacle[j]->SetRotation(1, 3.5);
+	}
 
 	D3D11_BUFFER_DESC d3dBufferDesc;
 	ZeroMemory(&d3dBufferDesc, sizeof(D3D11_BUFFER_DESC));
