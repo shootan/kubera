@@ -7,6 +7,7 @@
 #include "MissileManager.h"
 #include "ObstacleManager.h"
 #include "TowerManager.h"
+#include "MinionManager.h"
 
 struct VS_CB_WORLD_MATRIX
 {
@@ -113,12 +114,14 @@ public:
 	CMesh *m_pRock3Mesh;
 	CMesh *m_pMissileMesh;
 	CMesh *m_pTowerMesh;
+	CMesh *m_pMinionMesh;
 
 	int m_nBush3Objects;
 	int m_nRock2Objects;
 	int m_nRock3Objects;
 	int m_nMissileObjects;
 	int m_nTowerObjects;
+	int m_nMinionObjects;
 
 	//월드 변환 행렬과 월드 변환 행렬을 위한 상수 버퍼이다.
 	D3DXMATRIX m_d3dxmtxWorld;         
@@ -130,4 +133,5 @@ public:
 	ID3D11Buffer *m_pd3dcbRock3InstanceMatrices;
 	ID3D11Buffer *m_pd3dcbMissileInstanceMatrices;
 	ID3D11Buffer *m_pd3dcbTowerInstanceMatrices;
+	ID3D11Buffer *m_pd3dcbMinionInstanceMatrices;
 };

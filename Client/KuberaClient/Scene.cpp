@@ -206,6 +206,13 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 
 	m_pHero->Animate(fTimeElapsed);
 	m_pHero->Update(fTimeElapsed);
+	for(int i=0; i<MAX_MINION; i++)
+	{
+		MinionManager::sharedManager()->m_pMinion1[i]->Update(fTimeElapsed);
+		MinionManager::sharedManager()->m_pMinion2[i]->Update(fTimeElapsed);
+		MinionManager::sharedManager()->m_pMinion3[i]->Update(fTimeElapsed);
+		MinionManager::sharedManager()->m_pMinion4[i]->Update(fTimeElapsed);
+	}
 
 	for(int i=0; i<MAX_MISSILE; i++)
 		MissileManager::sharedManager()->m_pMissile[i]->Update(fTimeElapsed);
@@ -297,6 +304,13 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext)
 		TowerManager::sharedManager()->m_pTower[i]->Render(pd3dDeviceContext);
 	for(int i=0; i<872; i++)
 		ObstacleManager::sharedManager()->m_pObstacle[i]->Render(pd3dDeviceContext);
+	for(int i=0; i<MAX_MINION; i++)
+	{
+		MinionManager::sharedManager()->m_pMinion1[i]->Render(pd3dDeviceContext);
+		MinionManager::sharedManager()->m_pMinion2[i]->Render(pd3dDeviceContext);
+		MinionManager::sharedManager()->m_pMinion3[i]->Render(pd3dDeviceContext);
+		MinionManager::sharedManager()->m_pMinion4[i]->Render(pd3dDeviceContext);
+	}
 
 }
 

@@ -3,24 +3,34 @@
 #include "MinionObject.h"
 #include "Mesh.h"
 
-#define MAX_MINION 256
+#define MAX_MINION 40
 
 class MinionManager
 {
 public:
-	MinionObject* m_pMinion[MAX_MINION];
+	MinionObject* m_pMinion1[MAX_MINION];
+	MinionObject* m_pMinion2[MAX_MINION];
+	MinionObject* m_pMinion3[MAX_MINION];
+	MinionObject* m_pMinion4[MAX_MINION];
 
 private:
 	MinionManager()
 	{
-		memset(&m_pMinion,NULL,sizeof(m_pMinion));
+		memset(&m_pMinion1,NULL,sizeof(m_pMinion1));
+		memset(&m_pMinion2,NULL,sizeof(m_pMinion2));
+		memset(&m_pMinion3,NULL,sizeof(m_pMinion3));
+		memset(&m_pMinion4,NULL,sizeof(m_pMinion4));
 	}
 public:
 	~MinionManager()
 	{
 		for(int i=0; i<MAX_MINION; i++)
-			m_pMinion[i]->Release();
-
+		{
+			m_pMinion1[i]->Release();
+			m_pMinion2[i]->Release();
+			m_pMinion3[i]->Release();
+			m_pMinion4[i]->Release();
+		}
 		delete instance;
 		//DeleteObject(m_pResource);
 		/*delete[] m_pMissile;
@@ -35,14 +45,44 @@ public:
 		return instance;
 	}
 public:
-	void CreateMinion(D3DXVECTOR3 pos, CMesh* mesh)
+	void CreateMinion1(D3DXVECTOR3 pos, CMesh* mesh)
 	{
 		for(int i=0; i<MAX_MINION; i++)
 		{
-			if(m_pMinion[i] != NULL) continue;
-			m_pMinion[i] = new MinionObject();
-			m_pMinion[i]->SetMesh(mesh);
-			m_pMinion[i]->SetPosition(pos);
+			if(m_pMinion1[i] != NULL) continue;
+			m_pMinion1[i] = new MinionObject();
+			m_pMinion1[i]->SetMesh(mesh);
+			m_pMinion1[i]->SetPosition(pos);
+		}
+	}
+	void CreateMinion2(D3DXVECTOR3 pos, CMesh* mesh)
+	{
+		for(int i=0; i<MAX_MINION; i++)
+		{
+			if(m_pMinion2[i] != NULL) continue;
+			m_pMinion2[i] = new MinionObject();
+			m_pMinion2[i]->SetMesh(mesh);
+			m_pMinion2[i]->SetPosition(pos);
+		}
+	}
+	void CreateMinion3(D3DXVECTOR3 pos, CMesh* mesh)
+	{
+		for(int i=0; i<MAX_MINION; i++)
+		{
+			if(m_pMinion3[i] != NULL) continue;
+			m_pMinion3[i] = new MinionObject();
+			m_pMinion3[i]->SetMesh(mesh);
+			m_pMinion3[i]->SetPosition(pos);
+		}
+	}
+	void CreateMinion4(D3DXVECTOR3 pos, CMesh* mesh)
+	{
+		for(int i=0; i<MAX_MINION; i++)
+		{
+			if(m_pMinion4[i] != NULL) continue;
+			m_pMinion4[i] = new MinionObject();
+			m_pMinion4[i]->SetMesh(mesh);
+			m_pMinion4[i]->SetPosition(pos);
 		}
 	}
 	//void AddMissile(CGPoint _pos, Object_Enemy* _target, int _damage)

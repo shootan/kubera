@@ -17,7 +17,45 @@ MinionObject::~MinionObject(void)
 
 void MinionObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
 {
-	CGameObject::Render(pd3dDeviceContext);
+	if(m_Visible != TRUE) return;
+
+	if(m_iTag == OTHERPLAYER)
+	{
+		int asdfdf;
+		asdfdf = 0;
+	}
+	D3DXMATRIX mWorld;
+	D3DXMatrixIdentity(&mWorld);
+
+	//S
+	D3DXMATRIX mtxScale;
+	D3DXMatrixIdentity(&mtxScale);
+
+	D3DXMatrixScaling(&mtxScale, m_Scale.x, m_Scale.y, m_Scale.z);
+	//mWorld *= mtxScale;
+
+	//R
+	D3DXMATRIX mtxRotate;
+	D3DXMatrixIdentity(&mtxRotate);
+
+	if(m_axis == 1)
+		D3DXMatrixRotationX(&mtxRotate, D3DX_PI / m_Rot);
+	else if(m_axis == 2)
+		D3DXMatrixRotationY(&mtxRotate, D3DX_PI / m_Rot);
+	else if(m_axis == 3)
+		D3DXMatrixRotationZ(&mtxRotate, D3DX_PI / m_Rot);
+
+	mWorld *= mtxRotate;
+
+	//T
+	D3DXMATRIX mtxTrans;
+	D3DXMatrixIdentity(&mtxTrans);
+
+	D3DXMatrixTranslation(&mtxTrans, m_Pos.x, m_Pos.y, m_Pos.z);
+	//mWorld *= mtxTrans;
+
+	mWorld = mtxScale * mtxRotate * mtxTrans;
+	m_d3dxmtxWorld = mWorld;
 }
 
 
@@ -56,8 +94,8 @@ bool MinionObject::InMotion()
 {	
 	//if(!m_bAstar)
 	//{
-	//	if ( m_Pos.x == m_vDestination.x && m_Pos.z == m_vDestination.z ) return false;
-	//	else return true;
+		if ( m_Pos.x == m_vDestination.x && m_Pos.z == m_vDestination.z ) return false;
+		else return true;
 	//}
 	//else if(m_bAstar)
 	//{
@@ -77,16 +115,16 @@ void MinionObject::Update(float fTimeElapsed)
 
 	//if(!m_bAstar)
 	//{
-	//	if ( InMotion() && m_iTag == MINION )
-	//	{
-	//		D3DXVECTOR3 update_delta = m_vWalkIncrement *2.0f;
-	//		D3DXVECTOR3 location_vector = m_vDestination - m_Pos;
+		if ( InMotion() && m_iTag == MINION )
+		{
+			D3DXVECTOR3 update_delta = m_vWalkIncrement *2.0f;
+			D3DXVECTOR3 location_vector = m_vDestination - m_Pos;
 
-	//		m_Pos += update_delta;
+			m_Pos += update_delta;
 
-	//		float finished = D3DXVec3Dot( &m_vWalkIncrement, &location_vector );
-	//		if ( finished < 0.0f ) m_Pos = m_vDestination;
-	//	}
+			float finished = D3DXVec3Dot( &m_vWalkIncrement, &location_vector );
+			if ( finished < 0.0f ) m_Pos = m_vDestination;
+		}
 	//}
 	//else if(m_bAstar)
 	//{

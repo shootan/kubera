@@ -245,18 +245,21 @@ CInstancingShader::CInstancingShader()
 	m_pRock3Mesh = NULL;
 	m_pMissileMesh = NULL;
 	m_pTowerMesh = NULL;
+	m_pMinionMesh = NULL;
 
 	m_pd3dcbBush3InstanceMatrices = NULL;
 	m_pd3dcbRock2InstanceMatrices = NULL;
 	m_pd3dcbRock3InstanceMatrices = NULL;
 	m_pd3dcbMissileInstanceMatrices = NULL;
 	m_pd3dcbTowerInstanceMatrices = NULL;
+	m_pd3dcbMinionInstanceMatrices = NULL;
 
 	m_nBush3Objects = 0;
 	m_nRock2Objects = 0;
 	m_nRock3Objects = 0;
 	m_nMissileObjects = 0;
 	m_nTowerObjects = 0;
+	m_nMinionObjects = 0;
 }
 
 CInstancingShader::~CInstancingShader()
@@ -274,6 +277,7 @@ void CInstancingShader::ReleaseObjects()
 	if (m_pRock2Mesh) m_pRock3Mesh->Release();
 	if (m_pMissileMesh) m_pMissileMesh->Release();
 	if (m_pTowerMesh) m_pTowerMesh->Release();
+	if (m_pMinionMesh) m_pMinionMesh->Release();
 
 	if (m_pd3dcbWorldMatrix) m_pd3dcbWorldMatrix->Release();
 	if (m_ppObjects)
@@ -287,6 +291,7 @@ void CInstancingShader::ReleaseObjects()
 	if (m_pd3dcbRock3InstanceMatrices) m_pd3dcbRock3InstanceMatrices->Release();
 	if (m_pd3dcbMissileInstanceMatrices) m_pd3dcbMissileInstanceMatrices->Release();
 	if (m_pd3dcbTowerInstanceMatrices) m_pd3dcbTowerInstanceMatrices->Release();
+	if (m_pd3dcbMinionInstanceMatrices) m_pd3dcbMinionInstanceMatrices->Release();
 }
 
 
@@ -310,6 +315,9 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pTowerMesh = new CFBXMesh(pd3dDevice, L"tower/Tower2_303030.FBX");
 	m_pTowerMesh->LoadTexture(pd3dDevice, L"tower/tower.png");
 
+	m_pMinionMesh = new CFBXMesh(pd3dDevice, L"minion/Dragon7107.FBX");
+	m_pMinionMesh->LoadTexture(pd3dDevice, L"minion/micro_dragon_col.tif");
+
 	int bush3x = 24, bush3z = 7, i = 0;  //위아래 100 픽셀
 	int bush3x1 = 5, bush3z1 = 10; //좌우 100픽셀
 
@@ -322,8 +330,9 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	m_nRock3Objects = (Rock3x*Rock3z*2);
 	m_nMissileObjects = MAX_MISSILE;
 	m_nTowerObjects = MAX_TOWER;
+	m_nMinionObjects = MAX_MINION * 4;
 
-	m_nObjects = m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nTowerObjects;
+	m_nObjects = m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nTowerObjects + m_nMinionObjects;
 	//인스턴싱을 할 객체들의 배열이다.
 	m_ppObjects = new CGameObject*[m_nObjects]; 
 
@@ -447,6 +456,28 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 
 	m_pTowerMesh->AppendVertexBuffer(m_pd3dcbTowerInstanceMatrices, sizeof(D3DXMATRIX), 0);
 
+
+	MinionManager::sharedManager()->CreateMinion1(D3DXVECTOR3(1200, 0, 0), m_pMinionMesh);
+	MinionManager::sharedManager()->CreateMinion2(D3DXVECTOR3(1200, 0, 0), m_pMinionMesh);
+	MinionManager::sharedManager()->CreateMinion3(D3DXVECTOR3(1200, 0, 0), m_pMinionMesh);
+	MinionManager::sharedManager()->CreateMinion4(D3DXVECTOR3(1200, 0, 0), m_pMinionMesh);
+	for(int j=0; j<MAX_MINION; j++)
+	{
+		m_ppObjects[i++] = MinionManager::sharedManager()->m_pMinion1[j];
+		m_ppObjects[i++] = MinionManager::sharedManager()->m_pMinion2[j];
+		m_ppObjects[i++] = MinionManager::sharedManager()->m_pMinion3[j];
+		m_ppObjects[i++] = MinionManager::sharedManager()->m_pMinion4[j];
+	}
+
+	ZeroMemory(&d3dBufferDesc, sizeof(D3D11_BUFFER_DESC));
+	d3dBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dBufferDesc.ByteWidth = sizeof(D3DXMATRIX) * m_nMinionObjects*4;
+	d3dBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	d3dBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	pd3dDevice->CreateBuffer(&d3dBufferDesc, NULL, &m_pd3dcbMinionInstanceMatrices);
+
+	m_pMinionMesh->AppendVertexBuffer(m_pd3dcbMinionInstanceMatrices, sizeof(D3DXMATRIX), 0);
+
 }
 
 void CInstancingShader::CreateShader(ID3D11Device *pd3dDevice, int nObjects)
@@ -535,6 +566,13 @@ void CInstancingShader::UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceCon
 	for (int j = 0; j < m_nTowerObjects; j++)
 		pcbWorldMatrix[j] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + j]->m_d3dxmtxWorld;
 	pd3dDeviceContext->Unmap(m_pd3dcbTowerInstanceMatrices, 0);
+
+	pd3dDeviceContext->Map(m_pd3dcbMinionInstanceMatrices, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
+	pcbWorldMatrix = (D3DXMATRIX *)d3dMappedResource.pData;
+	//인스턴싱 객체들의 월드 변환 행렬을 정점 버퍼에 쓴다.
+	for (int j = 0; j < m_nMinionObjects; j++)
+		pcbWorldMatrix[j] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nTowerObjects + j]->m_d3dxmtxWorld;
+	pd3dDeviceContext->Unmap(m_pd3dcbMinionInstanceMatrices, 0);
 }
 
 void CInstancingShader::Render(ID3D11DeviceContext *pd3dDeviceContext)
@@ -549,6 +587,7 @@ void CInstancingShader::Render(ID3D11DeviceContext *pd3dDeviceContext)
 	if (m_pRock3Mesh) m_pRock3Mesh->RenderInstanced(pd3dDeviceContext, m_nRock3Objects, 0);
 	if (m_pMissileMesh) m_pMissileMesh->RenderInstanced(pd3dDeviceContext, m_nMissileObjects, 0);
 	if (m_pTowerMesh) m_pTowerMesh->RenderInstanced(pd3dDeviceContext, m_nTowerObjects, 0);
+	if (m_pMinionMesh) m_pMinionMesh->RenderInstanced(pd3dDeviceContext, m_nMinionObjects, 0);
 }
 
 void CInstancingShader::AddObject(CGameObject *pObject) 
