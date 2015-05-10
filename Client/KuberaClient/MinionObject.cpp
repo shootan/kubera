@@ -94,7 +94,7 @@ void MinionObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
 
 	//// Calculate the rotation angle before. Next, change the walk direction into 
 	//// an increment by multiplying by speed.
-	/*float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
+	float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
 	D3DXVECTOR3 cross;
 	D3DXVec3Cross( &cross, &m_vWalkIncrement, &m_vFacingDirection );
 	fAngle = acosf( fAngle );
@@ -103,7 +103,7 @@ void MinionObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
 	}
 	fAngle /= D3DX_PI;
 	this->SetRotation(2, 1/fAngle);
-*/
+
 	m_vWalkIncrement *= m_fWalkSpeed;
 	m_bSetDestination = TRUE;
 
