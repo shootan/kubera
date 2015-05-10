@@ -45,6 +45,10 @@ private:
 
 	float distance;
 	CGameObject *pBoundBox[2];
+
+
+	//CDXUTTextHelper* m_pTxtHelper;
+	//CDXUTDialogResourceManager m_DialogResourceManager;
 public:
 	CScene(void);
 	~CScene(void);
@@ -87,4 +91,5 @@ public:
 	void UpdateOtherClient(PlayerStruct* _PI, int _Count);
 
 	void SetMinionInfo(MinionInfo* _MI1, MinionInfo* _MI2, MinionInfo* _MI3, MinionInfo* _MI4);
+	//void RenderText();
 };

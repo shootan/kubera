@@ -25,7 +25,8 @@ struct VS_INSTANCED_COLOR_INPUT
     float4 position : POSITION;
 	float3 normal		: NORMAL;
 	float2 texcoord		: TEXCOORD0;
-    //float4 color : COLOR0;
+    float4 color : COLOR0;
+	//float4 color1 : COLOR1;
 //정점 쉐이더에 전달되는 객체 인스턴스의 위치 벡터이다.
     //float4 instancePos : POSINSTANCE;
 	row_major float4x4 mtxTransform : POSINSTANCE;
@@ -36,7 +37,7 @@ struct VS_INSTANCED_COLOR_OUTPUT
     float4 position : SV_POSITION;
 	float3 normal		: NORMAL;
 	float2 texcoord		: TEXCOORD0;
-   // float4 color : COLOR0;
+    float4 color : COLOR0;
 //시스템 생성 변수로 정점 쉐이더에 전달되는 객체 인스턴스의 ID를 픽셀 쉐이더로 전달한다.
 //    float4 instanceID : INDEX;
 };
@@ -50,6 +51,7 @@ VS_INSTANCED_COLOR_OUTPUT VSInstancedDiffusedColor(VS_INSTANCED_COLOR_INPUT inpu
 	
 //정점의 위치 벡터에 인스턴스의 위치 벡터(월드 좌표)를 더한다.
     //output.position = output.position + input.instancePos;
+
     output.position = mul(input.position, input.mtxTransform);
     output.position = mul(output.position, gmtxView);
     output.position = mul(output.position, gmtxProjection);
@@ -57,7 +59,7 @@ VS_INSTANCED_COLOR_OUTPUT VSInstancedDiffusedColor(VS_INSTANCED_COLOR_INPUT inpu
 	output.normal = mul(input.normal, (float3x3)input.mtxTransform);
 	output.texcoord = input.texcoord;
 
-    //output.color = input.color;
+    output.color = input.color;
 //인스턴스 ID를 픽셀 쉐이더로 전달한다.
    // output.instanceID = instanceID;
     return output;
@@ -69,7 +71,7 @@ float4 PSInstancedDiffusedColor(VS_INSTANCED_COLOR_OUTPUT input) : SV_Target
 {
 	 float4 vDiffuse = g_txDiffuse.Sample( g_samLinear, input.texcoord );
 
-	 return vDiffuse;
+	 return vDiffuse + input.color;
 
 	// return input.color;
 }

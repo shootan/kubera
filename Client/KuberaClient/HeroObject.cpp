@@ -6,7 +6,10 @@ HeroObject::HeroObject(void)
 
 	m_iTag = HERO;
 	m_bMove = FALSE;
+	m_pTarget = NULL;
 	m_Visible = TRUE;
+	m_iState = IDLE;
+	m_fAttackTime = 0.f;
 
 	m_pAstar = NULL;
 	m_pBestWay = NULL;
@@ -86,6 +89,8 @@ bool HeroObject::InMotion()
 void HeroObject::Update(float fTimeElapsed)
 {
 	if(m_Visible == FALSE) return;
+	
+	if(m_iState != MOVE) return;
 
 	if(!m_bAstar)
 	{
@@ -98,7 +103,10 @@ void HeroObject::Update(float fTimeElapsed)
 
 			float finished = D3DXVec3Dot( &m_vWalkIncrement, &location_vector );
 			if ( finished < 0.0f ) 
+			{
 				m_Pos = m_vDestination;
+				m_iState = IDLE;
+			}
 		}
 	}
 	else if(m_bAstar)
@@ -161,9 +169,39 @@ void HeroObject::Update(float fTimeElapsed)
 			m_vAstarIncrement *= m_fWalkSpeed;  */ 
 		}
 	}
-
 }
 
 void HeroObject::Animate(float fTimeElapsed)
 {
+	if(m_iState == IDLE)
+	{
+		int a = 1;
+	}
+	else if(m_iState == ATTACK)
+	{
+		m_fAttackTime += fTimeElapsed;
+
+		for(int i=0; i<MAX_MISSILE; i++)
+		{
+			if(MissileManager::sharedManager()->m_pMissile[i]->GetUsed() == TRUE) continue;
+
+			if(m_fAttackTime >= 1.5f)
+			{
+				MissileManager::sharedManager()->m_pMissile[i]->SetPosition(m_Pos);
+				MissileManager::sharedManager()->m_pMissile[i]->SetUsed(TRUE);
+				MissileManager::sharedManager()->m_pMissile[i]->SetTarget(m_pTarget);
+
+				m_fAttackTime = 0.f;
+			}
+		}
+	}
+	else if(m_iState == MOVE)
+	{
+		m_fAttackTime = 0.f;
+
+		if(m_pTarget == NULL) return;
+
+		if(ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 50.f)
+			m_iState = ATTACK;
+	}
 }

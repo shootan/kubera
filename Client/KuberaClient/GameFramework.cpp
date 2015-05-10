@@ -21,6 +21,8 @@ CGameFramework::CGameFramework()
 
 	ZeroMemory(&HeroInfo, sizeof(PlayerPacket));
 	HeroInfo.size = sizeof(PlayerPacket);
+
+	m_pTxtHelper = NULL;
 }
 
 CGameFramework::~CGameFramework()
@@ -219,6 +221,11 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 
 			CreateRenderTargetDepthStencilView();
 
+			
+			backbuffer->Width = m_nWndClientWidth;
+			backbuffer->Height = m_nWndClientHeight;
+
+			m_DialogResourceManager.OnD3D11ResizedSwapChain( m_pd3dDevice, backbuffer );
 			break;
 		}
 	case WM_LBUTTONDOWN:
@@ -291,6 +298,8 @@ void CGameFramework::BuildObjects()
 
 	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice);
 
+	//m_DialogResourceManager.OnD3D11CreateDevice( m_pd3dDevice, m_pd3dDeviceContext )
+	//m_pTxtHelper = new CDXUTTextHelper( m_pd3dDevice, m_pd3dDeviceContext, &m_DialogResourceManager, 15 );
 }
 
 void CGameFramework::ReleaseObjects()
@@ -356,6 +365,10 @@ void CGameFramework::FrameAdvance()
 
 	//////////////////
 	m_pScene->Render(m_pd3dDeviceContext);
+
+	//DXUT_BeginPerfEvent( DXUT_PERFEVENTCOLOR, L"HUD / Stats" );
+	//RenderText();
+	//DXUT_EndPerfEvent();
 
 	m_pDXGISwapChain->Present(0, 0);
 
@@ -494,4 +507,20 @@ void CGameFramework::ExchangeInfo()
 
 
 	}	
+}
+
+
+void CGameFramework::RenderText()
+{
+	m_pTxtHelper->Begin();
+	m_pTxtHelper->SetInsertionPos(5, 50);
+	m_pTxtHelper->SetForegroundColor( D3DXCOLOR( 0.0f, 0.0f, 0.0f, 1.0f ) );
+	//m_pTxtHelper->DrawTextLine( DXUTGetFrameStats( DXUTIsVsyncEnabled() ) );
+	//m_pTxtHelper->DrawTextLine( DXUTGetDeviceStats() );
+	m_pTxtHelper->DrawTextLine(L"Target : ");
+	m_pTxtHelper->DrawTextLine( L"Touch a unit to select." );
+	m_pTxtHelper->DrawTextLine( L"Touch a spot on the ground plane to issue commands." );
+	m_pTxtHelper->DrawTextLine( L"Rotate the camera by placing 3 fingers on the screen and dragging." );
+	m_pTxtHelper->DrawTextLine( L"Pinch the screen to zoom in." );
+	m_pTxtHelper->End();
 }

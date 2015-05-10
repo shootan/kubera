@@ -9,7 +9,6 @@ private:
 	CGameObject* m_pTarget;
 	CGameObject* m_pPrevTarget;
 	float		 m_fAttackTime;
-	BOOL		 m_bSelected;
 public:
 	TowerObject();
 	~TowerObject();
@@ -23,5 +22,4 @@ public:
 	CGameObject* GetTarget() { return m_pTarget; }
 
 	void SetAttackTime(float _attacktime) { m_fAttackTime = _attacktime; }
-	void SetSelected(BOOL _selected) { m_bSelected = _selected; }
 };

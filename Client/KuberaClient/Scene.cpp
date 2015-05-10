@@ -23,6 +23,8 @@ CScene::CScene(void)
 
 	m_pHero = NULL;
 	m_pPlane = NULL;
+
+	//m_pTxtHelper = NULL;
 }
 
 
@@ -358,6 +360,9 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext)
 		MinionManager::sharedManager()->m_pMinion4[i]->Render(pd3dDeviceContext);
 	}*/
 
+	//DXUT_BeginPerfEvent( DXUT_PERFEVENTCOLOR, L"HUD / Stats" );
+	//RenderText();
+	//DXUT_EndPerfEvent();
 }
 
 int CScene::GetMousePosX()
@@ -577,3 +582,16 @@ void CScene::SetMinionInfo(MinionInfo* _MI1, MinionInfo* _MI2, MinionInfo* _MI3,
 	printf("%.2f, %.2f, %.2f \n", m_pMinion1[1]->GetPos().x, m_pMinion1[1]->GetPos().y, m_pMinion1[1]->GetPos().z);
 	printf("%.2f, %.2f, %.2f \n", m_pMinion4[1]->GetPos().x, m_pMinion4[1]->GetPos().y, m_pMinion4[1]->GetPos().z);
 }
+
+//void CScene::RenderText()
+//{
+//	m_pTxtHelper->Begin();
+//	m_pTxtHelper->SetInsertionPos(5, 50);
+//	m_pTxtHelper->SetForegroundColor( D3DXCOLOR( 0.0f, 0.0f, 0.0f, 1.0f ) );
+//	m_pTxtHelper->DrawTextLine( DXUTGetFrameStats( DXUTIsVsyncEnabled() ) );
+//	m_pTxtHelper->DrawTextLine( DXUTGetDeviceStats() );
+//	m_pTxtHelper->DrawTextLine(L"Target : ");
+//
+//	m_pTxtHelper->End();
+//}
+

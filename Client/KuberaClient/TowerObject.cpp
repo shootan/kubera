@@ -8,7 +8,6 @@ TowerObject::TowerObject(void)
 	m_iTag = TOWER;
 	m_Visible = TRUE;
 	m_fAttackTime = 0.f;
-	m_bSelected = FALSE;
 }
 
 TowerObject::~TowerObject(void)
@@ -77,10 +76,5 @@ void TowerObject::Update(float fTimeElapsed)
 
 			m_fAttackTime = 0.f;
 		}
-	}
-
-	if(m_bSelected == TRUE)
-	{
-		int a = 1;
 	}
 }
