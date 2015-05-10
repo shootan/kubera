@@ -87,7 +87,7 @@ void MissileObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
 void MissileObject::Update(float fTimeElapsed)
 {
 	if(m_bUsed == FALSE) return;
-	if(m_pTarget != NULL) SetNewDestination(m_pTarget->GetPosition());
+	if(m_pTarget != NULL) SetNewDestination(m_pTarget->GetPosition() + D3DXVECTOR3(0 , m_pTarget->GetBoundSizeY()/2, 0));
 
 
 	D3DXVECTOR3 update_delta = m_vWalkIncrement *5.0f;

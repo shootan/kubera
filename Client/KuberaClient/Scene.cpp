@@ -56,7 +56,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	pHeroMesh->LoadTexture(pd3dDevice, L"micro_wizard_col.tif");
 
 	CFBXMesh *pPlaneMesh = new CFBXMesh(pd3dDevice, L"Plane4.FBX");
-	pPlaneMesh->LoadTexture(pd3dDevice, L"floor.png");
+	pPlaneMesh->LoadTexture(pd3dDevice, L"map2.png");
 
 	CFBXMesh *pObstacleMesh = new CFBXMesh(pd3dDevice, L"tower/Tower1_303030.FBX");
 	pObstacleMesh->LoadTexture(pd3dDevice, L"micro_wizard_col.tif");
@@ -221,7 +221,7 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 		TowerManager::sharedManager()->m_pTower[i]->Update(fTimeElapsed);
 
 		m_DistanceToHero = ST::sharedManager()->GetDistance(m_pHero->GetPos(), TowerManager::sharedManager()->m_pTower[i]->GetPos());
-		if(m_DistanceToHero < 50.0f)
+		if(m_DistanceToHero < 50.0f && TowerManager::sharedManager()->m_pTower[i]->GetTarget() == NULL)
 		{
 			TowerManager::sharedManager()->m_pTower[i]->SetTarget(m_pHero);
 		}
@@ -233,20 +233,20 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 
 		for(int j=0; j<MAX_OTHER_PLAYER; j++)
 		{
-			if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetVisible() == TRUE)
+			if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetVisible() != TRUE) continue;
+			
+			m_DistanceToOtherPlayer = ST::sharedManager()->GetDistance(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetPos(), 
+				TowerManager::sharedManager()->m_pTower[i]->GetPos()); 
+			if(m_DistanceToOtherPlayer < 50.f && TowerManager::sharedManager()->m_pTower[i]->GetTarget() == NULL)
 			{
-				m_DistanceToOtherPlayer = ST::sharedManager()->GetDistance(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetPos(), 
-					TowerManager::sharedManager()->m_pTower[i]->GetPos()); 
-				if(m_DistanceToOtherPlayer < 50.f)
-				{
-					TowerManager::sharedManager()->m_pTower[i]->SetTarget(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]);
-				}
-				else
-				{
-					TowerManager::sharedManager()->m_pTower[i]->SetTarget(NULL);
-					TowerManager::sharedManager()->m_pTower[i]->SetAttackTime(0.f);
-				}
+				TowerManager::sharedManager()->m_pTower[i]->SetTarget(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]);
 			}
+			else
+			{
+				TowerManager::sharedManager()->m_pTower[i]->SetTarget(NULL);
+				TowerManager::sharedManager()->m_pTower[i]->SetAttackTime(0.f);
+			}
+			
 		}
 	}
 	

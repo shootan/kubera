@@ -70,7 +70,7 @@ void TowerObject::Update(float fTimeElapsed)
 
 		if(m_fAttackTime >= 1.5f)
 		{
-			MissileManager::sharedManager()->m_pMissile[i]->SetPosition(m_Pos);
+			MissileManager::sharedManager()->m_pMissile[i]->SetPosition(m_Pos + D3DXVECTOR3(0, BoundsizeY * 2/3, 0));
 			MissileManager::sharedManager()->m_pMissile[i]->SetUsed(TRUE);
 			MissileManager::sharedManager()->m_pMissile[i]->SetTarget(m_pTarget);
 
