@@ -47,7 +47,8 @@ private:
 	CGameObject *m_pPlane;
 	//OtherPlayerObject	*m_pOtherPlayer[10];
 
-	float distance;
+	float m_DistanceToHero;
+	float m_DistanceToOtherPlayer;
 	CGameObject *pBoundBox[2];
 
 

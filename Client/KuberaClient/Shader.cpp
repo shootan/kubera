@@ -298,8 +298,8 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pMissileMesh = new CFBXMesh(pd3dDevice, L"obstacle/Rock3.FBX");
 	m_pMissileMesh->LoadTexture(pd3dDevice, L"obstacle/Rock3.tif");
 
-	m_pTowerMesh = new CFBXMesh(pd3dDevice, L"tower/Tower2_303030.FBX");
-	m_pTowerMesh->LoadTexture(pd3dDevice, L"tower/tower.png");
+	m_pTowerMesh = new CFBXMesh(pd3dDevice, L"tower/BlueHqTower.FBX");
+	m_pTowerMesh->LoadTexture(pd3dDevice, L"tower/BlueHqTower.png");
 
 	m_pMinionMesh = new CFBXMesh(pd3dDevice, L"minion/Dragon7107.FBX");
 	m_pMinionMesh->LoadTexture(pd3dDevice, L"minion/micro_dragon_col.tif");

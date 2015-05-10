@@ -20,8 +20,7 @@ void ControlManager::TouchRightDown(float _x, float _y, HWND hWnd)
 		}
 	}     
 
-	SetTargetTower(vRayDirection, vRayOrigin);
-	SetTargetOtherPlayer(vRayDirection, vRayOrigin);
+	SetTarget(vRayDirection, vRayOrigin);
 }
 
 void ControlManager::TouchLeftDown(float _x, float _y , HWND hWnd)
@@ -30,8 +29,7 @@ void ControlManager::TouchLeftDown(float _x, float _y , HWND hWnd)
 	D3DXVECTOR3 vRayOrigin = *m_Camera->GetEyePt();
 	this->CalculateScreenRayFromCoordinates( _x, _y, vRayDirection , hWnd );
 
-	SetTargetTower(vRayDirection, vRayOrigin);
-	SetTargetOtherPlayer(vRayDirection, vRayOrigin);
+	SetTarget(vRayDirection, vRayOrigin);
 }
 
 void ControlManager::AssignSelectedUnitsToNewDestination ( const D3DXVECTOR3 &vec )
@@ -76,9 +74,9 @@ float ControlManager::INTersectRaySphere(const D3DXVECTOR3 vRayDirection, D3DXVE
 	return fpD > 0 ? sqrt(fpB) : -2e32f;
 }
 
-void ControlManager::SetTargetTower(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRayOrigin)
+void ControlManager::SetTarget(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRayOrigin)
 {
-	for(int i=0; i<MAX_TOWER; i++)
+	for(int i=0; i<MAX_TOWER; i++)  //타워 타겟 잡기
 	{
 		//if(TowerManager::sharedManager()->m_pTower[i]->GetSelected() == TRUE) continue;
 
@@ -94,12 +92,7 @@ void ControlManager::SetTargetTower(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3
 		//TowerManager::sharedManager()->m_pTower[i]->SetSelected(FALSE);
 	}
 
-	m_Player->SetTarget(NULL);
-}
-
-void ControlManager::SetTargetOtherPlayer(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRayOrigin)
-{
-	for(int i=0; i<MAX_OTHER_PLAYER; i++)
+	for(int i=0; i<MAX_OTHER_PLAYER; i++)  //다른 플레이어 타겟 잡기
 	{
 		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetVisible() != TRUE) continue;
 
