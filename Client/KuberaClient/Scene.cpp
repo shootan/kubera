@@ -216,13 +216,12 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 
 	for(int i=0;i<MAX_TOWER; i++)  //타워의 캐릭터 공격
 	{
-		if(TowerManager::sharedManager()->m_pTower[i]->GetTarget() == NULL) continue;
+		//if(TowerManager::sharedManager()->m_pTower[i]->GetTarget() != NULL) continue;
 
 		TowerManager::sharedManager()->m_pTower[i]->Update(fTimeElapsed);
 
-		float distancetohero;
-		distancetohero = ST::sharedManager()->GetDistance(m_pHero->GetPos(), TowerManager::sharedManager()->m_pTower[i]->GetPos());
-		if(distancetohero < 50.0f)
+		m_DistanceToHero = ST::sharedManager()->GetDistance(m_pHero->GetPos(), TowerManager::sharedManager()->m_pTower[i]->GetPos());
+		if(m_DistanceToHero < 50.0f)
 		{
 			TowerManager::sharedManager()->m_pTower[i]->SetTarget(m_pHero);
 		}
@@ -236,10 +235,9 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 		{
 			if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetVisible() == TRUE)
 			{
-				float distancetoenemy;
-				distancetoenemy = ST::sharedManager()->GetDistance(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetPos(), 
+				m_DistanceToOtherPlayer = ST::sharedManager()->GetDistance(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetPos(), 
 					TowerManager::sharedManager()->m_pTower[i]->GetPos()); 
-				if(distancetoenemy < 50.f)
+				if(m_DistanceToOtherPlayer < 50.f)
 				{
 					TowerManager::sharedManager()->m_pTower[i]->SetTarget(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]);
 				}
