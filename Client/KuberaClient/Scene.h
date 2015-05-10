@@ -40,6 +40,10 @@ private:
 
 	float distance;
 	CGameObject *pBoundBox[2];
+
+
+	//CDXUTTextHelper* m_pTxtHelper;
+	//CDXUTDialogResourceManager m_DialogResourceManager;
 public:
 	CScene(void);
 	~CScene(void);
@@ -80,4 +84,6 @@ public:
 
 	void SetOtherClient(PlayerStruct* _PI, int _Count);
 	void UpdateOtherClient(PlayerStruct* _PI, int _Count);
+
+	//void RenderText();
 };

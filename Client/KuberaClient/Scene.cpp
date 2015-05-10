@@ -23,6 +23,8 @@ CScene::CScene(void)
 
 	m_pHero = NULL;
 	m_pPlane = NULL;
+
+	//m_pTxtHelper = NULL;
 }
 
 
@@ -59,8 +61,8 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	CFBXMesh *pObstacleMesh = new CFBXMesh(pd3dDevice, L"tower/Tower1_303030.FBX");
 	pObstacleMesh->LoadTexture(pd3dDevice, L"micro_wizard_col.tif");
 
-	pMinionDragonMesh = new CFBXMesh(pd3dDevice, L"Dragon7107.FBX");
-	pMinionDragonMesh->LoadTexture(pd3dDevice, L"micro_dragon_col.tif");
+	//pMinionDragonMesh = new CFBXMesh(pd3dDevice, L"Dragon7107.FBX");
+	//pMinionDragonMesh->LoadTexture(pd3dDevice, L"micro_dragon_col.tif");
 
 	//»ï°¢Çü °´Ã¼(CTriangleObject)¸¦ »ı¼ºÇÏ°í »ï°¢Çü ¸Ş½¬¸¦ ¿¬°áÇÑ´Ù.
 	m_pHero = new HeroObject;
@@ -312,6 +314,9 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext)
 		MinionManager::sharedManager()->m_pMinion4[i]->Render(pd3dDeviceContext);
 	}
 
+	//DXUT_BeginPerfEvent( DXUT_PERFEVENTCOLOR, L"HUD / Stats" );
+	//RenderText();
+	//DXUT_EndPerfEvent();
 }
 
 int CScene::GetMousePosX()
@@ -495,3 +500,15 @@ void CScene::GameCollision(CGameObject* obj1, CGameObject* obj2)
 	
 	
 }
+
+//void CScene::RenderText()
+//{
+//	m_pTxtHelper->Begin();
+//	m_pTxtHelper->SetInsertionPos(5, 50);
+//	m_pTxtHelper->SetForegroundColor( D3DXCOLOR( 0.0f, 0.0f, 0.0f, 1.0f ) );
+//	m_pTxtHelper->DrawTextLine( DXUTGetFrameStats( DXUTIsVsyncEnabled() ) );
+//	m_pTxtHelper->DrawTextLine( DXUTGetDeviceStats() );
+//	m_pTxtHelper->DrawTextLine(L"Target : ");
+//
+//	m_pTxtHelper->End();
+//}

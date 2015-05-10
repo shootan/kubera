@@ -16,8 +16,12 @@ void ControlManager::TouchRightDown(float _x, float _y, HWND hWnd)
 			vGroundPlaneHit = vRayOrigin;
 			vGroundPlaneHit += ( vRayDirection * fpINTersectionTime );
 			m_Player->SetNewDestination(vGroundPlaneHit);
+			m_Player->SetState(MOVE);
 		}
 	}     
+
+	SetTargetTower(vRayDirection, vRayOrigin);
+
 }
 
 void ControlManager::TouchLeftDown(float _x, float _y , HWND hWnd)
@@ -26,18 +30,7 @@ void ControlManager::TouchLeftDown(float _x, float _y , HWND hWnd)
 	D3DXVECTOR3 vRayOrigin = *m_Camera->GetEyePt();
 	this->CalculateScreenRayFromCoordinates( _x, _y, vRayDirection , hWnd );
 
-	for(int i=0; i<MAX_TOWER; i++)
-	{
-		float dist = INTersectRaySphere(vRayDirection, vRayOrigin, TowerManager::sharedManager()->m_pTower[i]->GetPosition(), 
-			TowerManager::sharedManager()->m_pTower[i]->GetBoundSizeX());
-
-		if( dist > 0 )
-		{
-			TowerManager::sharedManager()->m_pTower[i]->SetSelected(TRUE);
-			break;
-		}
-	}
-
+	SetTargetTower(vRayDirection, vRayOrigin);
 }
 
 void ControlManager::AssignSelectedUnitsToNewDestination ( const D3DXVECTOR3 &vec )
@@ -80,4 +73,25 @@ float ControlManager::INTersectRaySphere(const D3DXVECTOR3 vRayDirection, D3DXVE
 	float fpC = D3DXVec3Dot( &vRayToSphere, &vRayToSphere );
 	float fpD = fpB * fpB - fpC + fpRadiusSquared; 
 	return fpD > 0 ? sqrt(fpB) : -2e32f;
+}
+
+void ControlManager::SetTargetTower(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRayOrigin)
+{
+	for(int i=0; i<MAX_TOWER; i++)
+	{
+		//if(TowerManager::sharedManager()->m_pTower[i]->GetSelected() == TRUE) continue;
+
+		float dist = INTersectRaySphere(vRayDirection, vRayOrigin, TowerManager::sharedManager()->m_pTower[i]->GetPosition(), 
+			TowerManager::sharedManager()->m_pTower[i]->GetBoundSizeX()*2);
+
+		if( dist > 0 )
+		{
+			//TowerManager::sharedManager()->m_pTower[i]->SetSelected(TRUE);
+			m_Player->SetTarget(TowerManager::sharedManager()->m_pTower[i]);
+			return;
+		}
+		//TowerManager::sharedManager()->m_pTower[i]->SetSelected(FALSE);
+	}
+
+	m_Player->SetTarget(NULL);
 }

@@ -12,7 +12,6 @@ CShader::CShader(void)
 	m_nObjects = 0;
 	m_nIndexToAdd = 0;
 
-	m_pCBClickTarget = NULL;
 }
 
 
@@ -83,15 +82,6 @@ void CShader::Render(ID3D11DeviceContext *pd3dDeviceContext)
 
 void CShader::CreateShaderVariables(ID3D11Device *pd3dDevice)
 {
-	D3D11_BUFFER_DESC Desc;
-	Desc.Usage = D3D11_USAGE_DYNAMIC;
-	Desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	Desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	Desc.MiscFlags = 0;
-
-	Desc.ByteWidth = sizeof( CBClickTarget );
-	pd3dDevice->CreateBuffer( &Desc, NULL, &m_pCBClickTarget );
-	DXUT_SetDebugName( m_pCBClickTarget, "CBClickTarget" );
 }
 
 void CShader::ReleaseShaderVariables()
@@ -100,15 +90,6 @@ void CShader::ReleaseShaderVariables()
 
 void CShader::UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceContext)
 {
-	D3DXVECTOR4 color = D3DXVECTOR4(0.0f,1.0f,0.0f,1.0f);
-	m_CBClickTarget.m_vSelected = color;
-
-	D3D11_MAPPED_SUBRESOURCE MappedResource;
-	pd3dDeviceContext->Map( m_pCBClickTarget, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource ); 
-	memcpy(MappedResource.pData, &m_pCBClickTarget, sizeof (m_pCBClickTarget));
-	pd3dDeviceContext->Unmap( m_pCBClickTarget, 0 );
-
-	pd3dDeviceContext->PSSetConstantBuffers(2, 1, &m_pCBClickTarget); 
 }
 
 
@@ -260,6 +241,10 @@ CInstancingShader::CInstancingShader()
 	m_nMissileObjects = 0;
 	m_nTowerObjects = 0;
 	m_nMinionObjects = 0;
+
+	m_pd3dcbInstanceColors = NULL;
+	m_nColorBufferStride = 0;
+	m_nColorBufferOffset = 0;
 }
 
 CInstancingShader::~CInstancingShader()
@@ -292,6 +277,7 @@ void CInstancingShader::ReleaseObjects()
 	if (m_pd3dcbMissileInstanceMatrices) m_pd3dcbMissileInstanceMatrices->Release();
 	if (m_pd3dcbTowerInstanceMatrices) m_pd3dcbTowerInstanceMatrices->Release();
 	if (m_pd3dcbMinionInstanceMatrices) m_pd3dcbMinionInstanceMatrices->Release();
+	if (m_pd3dcbInstanceColors) m_pd3dcbInstanceColors->Release();
 }
 
 
@@ -478,6 +464,15 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 
 	m_pMinionMesh->AppendVertexBuffer(m_pd3dcbMinionInstanceMatrices, sizeof(D3DXMATRIX), 0);
 
+
+	ZeroMemory(&d3dBufferDesc, sizeof(D3D11_BUFFER_DESC));
+	d3dBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	m_nColorBufferStride = sizeof(D3DXCOLOR);
+	d3dBufferDesc.ByteWidth = m_nColorBufferStride * m_nObjects;
+	d3dBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	d3dBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	pd3dDevice->CreateBuffer(&d3dBufferDesc, NULL, &m_pd3dcbInstanceColors);
+
 }
 
 void CInstancingShader::CreateShader(ID3D11Device *pd3dDevice, int nObjects)
@@ -488,6 +483,8 @@ void CInstancingShader::CreateShader(ID3D11Device *pd3dDevice, int nObjects)
 		//{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT,    0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		//객체들의 색상 데이터는 입력조립 단계의 슬롯 1에 연결한다.
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 2, 0 , D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 		//인스턴스 데이터는 위치 벡터(32비트 실수 3개)이고 인스턴스마다 정점 쉐이더에 전달된다.
 		{ "POSINSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
 		{ "POSINSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
@@ -513,7 +510,6 @@ void CInstancingShader::CreateShader(ID3D11Device *pd3dDevice, int nObjects)
 	pd3dDevice->CreateSamplerState( &SamDesc, &m_pSamLinear );
 	DXUT_SetDebugName( m_pSamLinear, "Primary" );
 
-	CShader::CreateShaderVariables(pd3dDevice);
 }
 
 void CInstancingShader::CreateShaderVariables(ID3D11Device *pd3dDevice)
@@ -573,6 +569,21 @@ void CInstancingShader::UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceCon
 	for (int j = 0; j < m_nMinionObjects; j++)
 		pcbWorldMatrix[j] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nTowerObjects + j]->m_d3dxmtxWorld;
 	pd3dDeviceContext->Unmap(m_pd3dcbMinionInstanceMatrices, 0);
+
+
+	//객체들의 색상 데이터를 상수 버퍼에 쓴다.
+	pd3dDeviceContext->Map(m_pd3dcbInstanceColors, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
+	D3DXCOLOR *pcbColors = (D3DXCOLOR *)d3dMappedResource.pData;
+	for (int j = 0; j < m_nObjects; j++) 
+	{
+		if(m_ppObjects[j]->GetSelected() == TRUE)
+			pcbColors[j] = D3DXCOLOR(0.5f, 0.0f, 0.0f, 0.0f);
+		else
+			pcbColors[j] = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f);
+			//pcbColors[j] = (j % 4) ? D3DXCOLOR(0.5f, 0.0f, 0.0f, 0.0f) : D3DXCOLOR(0.0f, 0.0f, 0.5f, 0.0f);
+	}
+	pd3dDeviceContext->Unmap(m_pd3dcbInstanceColors, 0);
+	pd3dDeviceContext->IASetVertexBuffers(2, 1, &m_pd3dcbInstanceColors, &m_nColorBufferStride, &m_nColorBufferOffset);
 }
 
 void CInstancingShader::Render(ID3D11DeviceContext *pd3dDeviceContext)

@@ -28,6 +28,8 @@ protected:
 	float		m_fWalkSpeed;
 
 	float BoundsizeX, BoundsizeY, BoundsizeZ;
+
+	BOOL		 m_bSelected;
 	//BOOL m_bAstar;
 	//BOOL m_bFindPath;
 
@@ -75,4 +77,7 @@ public:
 	float GetBoundSizeZ() {return BoundsizeZ;}
 //	void SetAstar(BOOL _astar) {m_bAstar = _astar;}
 //	BOOL GetAstar() { return m_bAstar; }
+
+	void SetSelected(BOOL _selected) { m_bSelected = _selected; }
+	BOOL GetSelected() { return m_bSelected; }
 };
