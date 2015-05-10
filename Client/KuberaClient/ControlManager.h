@@ -3,6 +3,7 @@
 #include "HeroObject.h"
 #include "TowerManager.h"
 #include "ST.h"
+#include "OtherPlayerManager.h"
 
 class ControlManager 
 {
@@ -18,5 +19,5 @@ public:
 	float INTersectRaySphere(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRayOrigin, D3DXVECTOR3 vSphereOrigin,  float fpRadiusSquared);
 
 	void SetTargetTower(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRayOrigin);
-
+	void SetTargetOtherPlayer(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRayOrigin);
 };

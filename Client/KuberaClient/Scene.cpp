@@ -134,11 +134,12 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	for(int i=0; i<iObjectNum; i++)
 		m_pObjectShaders->AddObject(pBoundBox[i]);
 
-	for(int i=0; i<10;i++)
+	OtherPlayerManager::sharedManager()->CreateOtherPlayer(D3DXVECTOR3(1500, 0, 0), pHeroMesh, 10, 13, 10);
+	for(int i=0; i<MAX_OTHER_PLAYER;i++)
 	{
-		m_pOtherPlayer[i] = new EnemyObject;
-		m_pOtherPlayer[i]->SetMesh(pHeroMesh);
-		m_pObjectShaders->AddObject(m_pOtherPlayer[i]);
+		/*m_pOtherPlayer[i] = new OtherPlayerObject;
+		m_pOtherPlayer[i]->SetMesh(pHeroMesh);*/
+		m_pObjectShaders->AddObject(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]);
 	}
 
 
@@ -254,12 +255,15 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 
 
 
-	for(int i=0;i<MAX_TOWER; i++)
+	for(int i=0;i<MAX_TOWER; i++)  //타워의 캐릭터 공격
 	{
+		if(TowerManager::sharedManager()->m_pTower[i]->GetTarget() == NULL) continue;
+
 		TowerManager::sharedManager()->m_pTower[i]->Update(fTimeElapsed);
 
-		distance = ST::sharedManager()->GetDistance(m_pHero->GetPos(), TowerManager::sharedManager()->m_pTower[i]->GetPos());
-		if(distance < 50.0f)
+		float distancetohero;
+		distancetohero = ST::sharedManager()->GetDistance(m_pHero->GetPos(), TowerManager::sharedManager()->m_pTower[i]->GetPos());
+		if(distancetohero < 50.0f)
 		{
 			TowerManager::sharedManager()->m_pTower[i]->SetTarget(m_pHero);
 		}
@@ -267,6 +271,25 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 		{
 			TowerManager::sharedManager()->m_pTower[i]->SetTarget(NULL);
 			TowerManager::sharedManager()->m_pTower[i]->SetAttackTime(0.f);
+		}
+
+		for(int j=0; j<MAX_OTHER_PLAYER; j++)
+		{
+			if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetVisible() == TRUE)
+			{
+				float distancetoenemy;
+				distancetoenemy = ST::sharedManager()->GetDistance(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetPos(), 
+					TowerManager::sharedManager()->m_pTower[i]->GetPos()); 
+				if(distancetoenemy < 50.f)
+				{
+					TowerManager::sharedManager()->m_pTower[i]->SetTarget(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]);
+				}
+				else
+				{
+					TowerManager::sharedManager()->m_pTower[i]->SetTarget(NULL);
+					TowerManager::sharedManager()->m_pTower[i]->SetAttackTime(0.f);
+				}
+			}
 		}
 	}
 	
@@ -319,12 +342,12 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext)
 	m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pHero->m_d3dxmtxWorld);
 	m_pHero->Render(pd3dDeviceContext);
 	
-	for(int i=0; i<10; i++)
+	for(int i=0; i<MAX_OTHER_PLAYER; i++)
 	{
-		if(m_pOtherPlayer[i]->GetVisible() != TRUE) continue;
+		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetVisible() != TRUE) continue;
 
-		m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pOtherPlayer[i]->m_d3dxmtxWorld);
-		m_pOtherPlayer[i]->Render(pd3dDeviceContext);
+		m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->m_d3dxmtxWorld);
+		OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->Render(pd3dDeviceContext);
 	}
 	m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pPlane->m_d3dxmtxWorld);
 	m_pPlane->Render(pd3dDeviceContext);
@@ -402,11 +425,11 @@ void CScene::SetOtherClient(PlayerStruct* _PI, int _Count)
 		if(_PI[i].PI.m_ID == 0) continue;
 		for(int j=0; j<10; j++)
 		{
-			if(m_pOtherPlayer[j]->GetID() != 0) continue;
-			m_pOtherPlayer[j]->SetID(_PI[i].PI.m_ID);
-			m_pOtherPlayer[j]->SetPos(_PI[i].PI.m_Pos);
-			m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Rot);
-			m_pOtherPlayer[j]->SetVisible(TRUE);
+			if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetID() != 0) continue;
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetID(_PI[i].PI.m_ID);
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetPos(_PI[i].PI.m_Pos);
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Rot);
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetVisible(TRUE);
 			_PI[i].Use = TRUE;
 			break;
 		}
@@ -423,10 +446,10 @@ void CScene::UpdateOtherClient(PlayerStruct* _PI, int _Count)
 		if(_PI[i].PI.m_ID == 0) continue;
 		for(int j=0; j<10; j++)
 		{
-			if(m_pOtherPlayer[j]->GetID() != _PI[i].PI.m_ID) continue;
+			if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetID() != _PI[i].PI.m_ID) continue;
 
-			m_pOtherPlayer[j]->SetPos(_PI[i].PI.m_Pos);
-			m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Rot);
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetPos(_PI[i].PI.m_Pos);
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Rot);
 			break;
 		}
 	}

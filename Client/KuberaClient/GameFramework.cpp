@@ -41,7 +41,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	//렌더링할 객체(게임 월드 객체)를 생성한다. 
 	BuildObjects();
 
-	Net.InitClient("192.168.0.2", 9000);
+	Net.InitClient("192.168.0.4", 9000);
 	time = 0.0f;
 
 	return(true);
@@ -222,10 +222,10 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			CreateRenderTargetDepthStencilView();
 
 			
-			backbuffer->Width = m_nWndClientWidth;
-			backbuffer->Height = m_nWndClientHeight;
+			//backbuffer->Width = m_nWndClientWidth;
+			//backbuffer->Height = m_nWndClientHeight;
 
-			m_DialogResourceManager.OnD3D11ResizedSwapChain( m_pd3dDevice, backbuffer );
+			//m_DialogResourceManager.OnD3D11ResizedSwapChain( m_pd3dDevice, backbuffer );
 			break;
 		}
 	case WM_LBUTTONDOWN:
