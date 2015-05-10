@@ -18,6 +18,8 @@ public:
 	MinionInfo	MI3[40];
 	MinionInfo	MI4[40];
 
+	MinionInfo	MI[160];
+
 	bool	m_bJoinPlayer;
 	int		m_ClientCount;
 	int		m_ID;

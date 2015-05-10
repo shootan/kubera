@@ -117,7 +117,13 @@ bool MinionObject::InMotion()
 
 void MinionObject::Update(float fTimeElapsed)
 {
-	if(m_Visible == FALSE) return;
+	if(m_Visible == FALSE)
+	{
+		m_Pos.x = -1200;
+		m_Pos.y = 0;
+		m_Pos.z = -1200;
+		return;
+	}
 	if ( InMotion() && m_bSetDestination == TRUE)
 	{
 		D3DXVECTOR3 update_delta = m_vWalkIncrement *7.0f;

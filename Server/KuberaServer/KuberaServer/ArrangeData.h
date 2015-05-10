@@ -15,6 +15,8 @@ private:
 	Minion Minion3[40];
 	Minion Minion4[40];
 
+	Minion m_bMinion[160];
+
 	
 
 	float m_fRegenTime;
@@ -42,6 +44,8 @@ public:
 	MinionInfo MI2[40];
 	MinionInfo MI3[40];
 	MinionInfo MI4[40];
+
+	MinionInfo MI[160];
 
 	bool m_bMinionLive1;
 	bool m_bMinionLive2;

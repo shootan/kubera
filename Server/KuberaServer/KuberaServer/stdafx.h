@@ -11,7 +11,7 @@
 #include <d3dx9math.h>
 
 // BUFSIZE
-#define BUFSIZE 1024*2
+#define BUFSIZE 1024*4
 #define MAXPLAYER 30
 #define HEADERSIZE sizeof(int)
 struct Vector3
@@ -34,6 +34,7 @@ struct PlayerPacket
 struct Minion
 {
 	int		m_ID;
+	int		m_Root;
 	BOOL	m_Live;
 	Vector3 m_TargetPos;
 	Vector3 m_Pos;

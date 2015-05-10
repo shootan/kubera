@@ -15,10 +15,13 @@ class CScene
 {
 private:
 
-	MinionObject* m_pMinion1[MAX_MINION];
-	MinionObject* m_pMinion2[MAX_MINION];
-	MinionObject* m_pMinion3[MAX_MINION];
-	MinionObject* m_pMinion4[MAX_MINION];
+// 	MinionObject* m_pMinion1[MAX_MINION];
+// 	MinionObject* m_pMinion2[MAX_MINION];
+// 	MinionObject* m_pMinion3[MAX_MINION];
+// 	MinionObject* m_pMinion4[MAX_MINION];
+
+	MinionObject* m_pMinion[MAX_MINION*4];
+
 	CObjectShader *m_pObjectShaders;
 	CInstancingShader *m_pInstancingShaders;
 	int m_nShaders;
@@ -90,6 +93,6 @@ public:
 	void SetOtherClient(PlayerStruct* _PI, int _Count);
 	void UpdateOtherClient(PlayerStruct* _PI, int _Count);
 
-	void SetMinionInfo(MinionInfo* _MI1, MinionInfo* _MI2, MinionInfo* _MI3, MinionInfo* _MI4);
+	void SetMinionInfo(MinionInfo* _MI);
 	//void RenderText();
 };

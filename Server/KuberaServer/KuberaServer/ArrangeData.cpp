@@ -19,8 +19,6 @@ ArrangeData::ArrangeData()
 
 	int size = sizeof(MinionInfo);
 
-	m_fRegenTime = 0.0f;
-
 	ZeroMemory(&RootTurn1, sizeof(int)*40);
 	ZeroMemory(&RootTurn2, sizeof(int)*40);
 	ZeroMemory(&RootTurn3, sizeof(int)*40);
@@ -29,6 +27,9 @@ ArrangeData::ArrangeData()
 	ZeroMemory(MinionID, sizeof(int)*160);
 
 	MinionCount = 0;
+
+	ZeroMemory(&m_bMinion, sizeof(Minion)*160);
+	ZeroMemory(&MI, sizeof(MinionInfo)*160);
 	
 
 	m_bMinionLive1 = false;
@@ -37,6 +38,8 @@ ArrangeData::ArrangeData()
 	m_bMinionLive4 =false;
 
 	m_fWalkSpeed = 10.0f;
+
+	m_fRegenTime = 20.0f;
 	m_fUnitTime = 0.0f;
 }
 
@@ -58,7 +61,72 @@ void ArrangeData::RegenMinion()
 	//printf("%.1f \n", m_fRegenTime);
 	if(m_fUnitTime < 1.0f) return;
 
-	for(int i=0; i<40; i++)
+	for(int i=0; i<160; i++)
+	{
+		if(m_bMinion[i].m_Live != FALSE) continue;
+		m_bMinion[i].m_Live = TRUE;
+		m_bMinion[i].m_Root = 1;
+		m_bMinion[i].m_Pos = Root1[RootTurn1[i]];
+
+		RootTurn1[i] += 1;
+		m_bMinion[i].m_TargetPos = Root1[RootTurn1[i]];
+
+		MI[i].m_Live = TRUE;
+		MI[i].m_ID = i;
+
+		break;
+	}
+
+	for(int i=0; i<160; i++)
+	{
+		if(m_bMinion[i].m_Live != FALSE) continue;
+		m_bMinion[i].m_Live = TRUE;
+		m_bMinion[i].m_Root = 2;
+		m_bMinion[i].m_Pos = Root2[RootTurn2[i]];
+
+		RootTurn2[i] += 1;
+		m_bMinion[i].m_TargetPos = Root2[RootTurn2[i]];
+
+		MI[i].m_Live = TRUE;
+		MI[i].m_ID = i;
+
+		break;
+	}
+
+	for(int i=0; i<160; i++)
+	{
+		if(m_bMinion[i].m_Live != FALSE) continue;
+		m_bMinion[i].m_Live = TRUE;
+		m_bMinion[i].m_Root = 3;
+		m_bMinion[i].m_Pos = Root3[RootTurn3[i]];
+
+		RootTurn3[i] += 1;
+		m_bMinion[i].m_TargetPos = Root3[RootTurn3[i]];
+
+		MI[i].m_Live = TRUE;
+		MI[i].m_ID = i;
+
+		break;
+	}
+
+	for(int i=0; i<160; i++)
+	{
+		if(m_bMinion[i].m_Live != FALSE) continue;
+		m_bMinion[i].m_Live = TRUE;
+		m_bMinion[i].m_Root = 4;
+		m_bMinion[i].m_Pos = Root4[RootTurn4[i]];
+
+		RootTurn4[i] += 1;
+		m_bMinion[i].m_TargetPos = Root4[RootTurn4[i]];
+
+		MI[i].m_Live = TRUE;
+		MI[i].m_ID = i;
+
+		break;
+	}
+
+
+	/*for(int i=0; i<40; i++)
 	{
 		if(Minion1[i].m_Live != FALSE) continue;
 		Minion1[i].m_Live = TRUE;
@@ -116,7 +184,7 @@ void ArrangeData::RegenMinion()
 		MI4[i].m_ID = i;
 
 		break;
-	}
+	}*/
 
 	MinionCount++;
 	m_fUnitTime = 0.0f;
@@ -129,173 +197,338 @@ void ArrangeData::RegenMinion()
 
 void ArrangeData::SetMinionPosition(float _dt)
 {
-	for(int i=0; i<40; i++)
+
+	for(int i=0; i<160; i++)
 	{
-		if(Minion1[i].m_Live != TRUE) continue;
-		float distance = ST::sharedManager()->GetDistance(Minion1[i].m_TargetPos, Minion1[i].m_Pos);
-		if (distance > 1.0f)
-		{ 
-			D3DXVECTOR3 m_vWalkIncrement;
-			m_vWalkIncrement.x = Minion1[i].m_TargetPos.x - Minion1[i].m_Pos.x;
-			m_vWalkIncrement.y = Minion1[i].m_TargetPos.y - Minion1[i].m_Pos.y;
-			m_vWalkIncrement.z = Minion1[i].m_TargetPos.z - Minion1[i].m_Pos.z;
-			D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
-			
-			//float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
-// 			D3DXVECTOR3 cross;
-// 			D3DXVec3Cross( &cross, &m_vWalkIncrement, &m_vFacingDirection );
-// 			fAngle = acosf( fAngle );
-// 			if ( cross.y >  0.0f ) {
-// 				fAngle *=-1.0f;
-// 			}
-// 			fAngle /= D3DX_PI;
-// 			this->SetRotation(2, 1/fAngle);
-
-			m_vWalkIncrement.x *= m_fWalkSpeed; 
-			m_vWalkIncrement.y *= m_fWalkSpeed; 
-			m_vWalkIncrement.z *= m_fWalkSpeed; 
-
-			m_vWalkIncrement*= _dt;
-			Minion1[i].m_Pos.x += m_vWalkIncrement.x;
-			Minion1[i].m_Pos.y += m_vWalkIncrement.y;
-			Minion1[i].m_Pos.z += m_vWalkIncrement.z;
-
-			MI1[i].m_Pos = Minion1[i].m_Pos;
-
-			//printf("미니언 : %d , X: %.2f, Y: %.2f, Z:%.2f \n", i, Minion1[i].m_Pos.x,Minion1[i].m_Pos.y,Minion1[i].m_Pos.z);
-		}
-		else
+		if(m_bMinion[i].m_Live != TRUE) continue;
+		float distance = ST::sharedManager()->GetDistance(m_bMinion[i].m_TargetPos, m_bMinion[i].m_Pos);
+		switch(m_bMinion[i].m_Root)
 		{
-			RootTurn1[i]++;
-			Minion1[i].m_TargetPos = Root1[RootTurn1[i]];
+		case 1:
+			if (distance > 1.0f)
+			{ 
+				D3DXVECTOR3 m_vWalkIncrement;
+				m_vWalkIncrement.x = m_bMinion[i].m_TargetPos.x - m_bMinion[i].m_Pos.x;
+				m_vWalkIncrement.y = m_bMinion[i].m_TargetPos.y - m_bMinion[i].m_Pos.y;
+				m_vWalkIncrement.z = m_bMinion[i].m_TargetPos.z - m_bMinion[i].m_Pos.z;
+				D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
+
+				//float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
+				// 			D3DXVECTOR3 cross;
+				// 			D3DXVec3Cross( &cross, &m_vWalkIncrement, &m_vFacingDirection );
+				// 			fAngle = acosf( fAngle );
+				// 			if ( cross.y >  0.0f ) {
+				// 				fAngle *=-1.0f;
+				// 			}
+				// 			fAngle /= D3DX_PI;
+				// 			this->SetRotation(2, 1/fAngle);
+
+				m_vWalkIncrement.x *= m_fWalkSpeed; 
+				m_vWalkIncrement.y *= m_fWalkSpeed; 
+				m_vWalkIncrement.z *= m_fWalkSpeed; 
+
+				m_vWalkIncrement*= _dt;
+				m_bMinion[i].m_Pos.x += m_vWalkIncrement.x;
+				m_bMinion[i].m_Pos.y += m_vWalkIncrement.y;
+				m_bMinion[i].m_Pos.z += m_vWalkIncrement.z;
+
+				MI[i].m_Pos = m_bMinion[i].m_Pos;
+
+				//printf("미니언 : %d , X: %.2f, Y: %.2f, Z:%.2f \n", i, m_bMinion[i].m_Pos.x,m_bMinion[i].m_Pos.y,m_bMinion[i].m_Pos.z);
+			}
+			else
+			{
+				RootTurn1[i]++;
+				m_bMinion[i].m_TargetPos = Root1[RootTurn1[i]];
+			}
+			break;
+
+		case 2:
+			if (distance > 1.0f)
+			{ 
+				D3DXVECTOR3 m_vWalkIncrement;
+				m_vWalkIncrement.x = m_bMinion[i].m_TargetPos.x - m_bMinion[i].m_Pos.x;
+				m_vWalkIncrement.y = m_bMinion[i].m_TargetPos.y - m_bMinion[i].m_Pos.y;
+				m_vWalkIncrement.z = m_bMinion[i].m_TargetPos.z - m_bMinion[i].m_Pos.z;
+				D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
+
+				//float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
+				// 			D3DXVECTOR3 cross;
+				// 			D3DXVec3Cross( &cross, &m_vWalkIncrement, &m_vFacingDirection );
+				// 			fAngle = acosf( fAngle );
+				// 			if ( cross.y >  0.0f ) {
+				// 				fAngle *=-1.0f;
+				// 			}
+				// 			fAngle /= D3DX_PI;
+				// 			this->SetRotation(2, 1/fAngle);
+
+				m_vWalkIncrement.x *= m_fWalkSpeed; 
+				m_vWalkIncrement.y *= m_fWalkSpeed; 
+				m_vWalkIncrement.z *= m_fWalkSpeed; 
+
+				m_vWalkIncrement*= _dt;
+				m_bMinion[i].m_Pos.x += m_vWalkIncrement.x;
+				m_bMinion[i].m_Pos.y += m_vWalkIncrement.y;
+				m_bMinion[i].m_Pos.z += m_vWalkIncrement.z;
+
+				MI[i].m_Pos = m_bMinion[i].m_Pos;
+
+				//printf("미니언 : %d , X: %.2f, Y: %.2f, Z:%.2f \n", i, m_bMinion[i].m_Pos.x,m_bMinion[i].m_Pos.y,m_bMinion[i].m_Pos.z);
+			}
+			else
+			{
+				RootTurn2[i]++;
+				m_bMinion[i].m_TargetPos = Root2[RootTurn2[i]];
+			}
+			break;
+		case 3:
+			if (distance > 1.0f)
+			{ 
+				D3DXVECTOR3 m_vWalkIncrement;
+				m_vWalkIncrement.x = m_bMinion[i].m_TargetPos.x - m_bMinion[i].m_Pos.x;
+				m_vWalkIncrement.y = m_bMinion[i].m_TargetPos.y - m_bMinion[i].m_Pos.y;
+				m_vWalkIncrement.z = m_bMinion[i].m_TargetPos.z - m_bMinion[i].m_Pos.z;
+				D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
+
+				//float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
+				// 			D3DXVECTOR3 cross;
+				// 			D3DXVec3Cross( &cross, &m_vWalkIncrement, &m_vFacingDirection );
+				// 			fAngle = acosf( fAngle );
+				// 			if ( cross.y >  0.0f ) {
+				// 				fAngle *=-1.0f;
+				// 			}
+				// 			fAngle /= D3DX_PI;
+				// 			this->SetRotation(2, 1/fAngle);
+
+				m_vWalkIncrement.x *= m_fWalkSpeed; 
+				m_vWalkIncrement.y *= m_fWalkSpeed; 
+				m_vWalkIncrement.z *= m_fWalkSpeed; 
+
+				m_vWalkIncrement*= _dt;
+				m_bMinion[i].m_Pos.x += m_vWalkIncrement.x;
+				m_bMinion[i].m_Pos.y += m_vWalkIncrement.y;
+				m_bMinion[i].m_Pos.z += m_vWalkIncrement.z;
+
+				MI[i].m_Pos = m_bMinion[i].m_Pos;
+
+				//printf("미니언 : %d , X: %.2f, Y: %.2f, Z:%.2f \n", i, m_bMinion[i].m_Pos.x,m_bMinion[i].m_Pos.y,m_bMinion[i].m_Pos.z);
+			}
+			else
+			{
+				RootTurn3[i]++;
+				m_bMinion[i].m_TargetPos = Root3[RootTurn3[i]];
+			}
+			break;
+		case 4:
+			if (distance > 1.0f)
+			{ 
+				D3DXVECTOR3 m_vWalkIncrement;
+				m_vWalkIncrement.x = m_bMinion[i].m_TargetPos.x - m_bMinion[i].m_Pos.x;
+				m_vWalkIncrement.y = m_bMinion[i].m_TargetPos.y - m_bMinion[i].m_Pos.y;
+				m_vWalkIncrement.z = m_bMinion[i].m_TargetPos.z - m_bMinion[i].m_Pos.z;
+				D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
+
+				//float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
+				// 			D3DXVECTOR3 cross;
+				// 			D3DXVec3Cross( &cross, &m_vWalkIncrement, &m_vFacingDirection );
+				// 			fAngle = acosf( fAngle );
+				// 			if ( cross.y >  0.0f ) {
+				// 				fAngle *=-1.0f;
+				// 			}
+				// 			fAngle /= D3DX_PI;
+				// 			this->SetRotation(2, 1/fAngle);
+
+				m_vWalkIncrement.x *= m_fWalkSpeed; 
+				m_vWalkIncrement.y *= m_fWalkSpeed; 
+				m_vWalkIncrement.z *= m_fWalkSpeed; 
+
+				m_vWalkIncrement*= _dt;
+				m_bMinion[i].m_Pos.x += m_vWalkIncrement.x;
+				m_bMinion[i].m_Pos.y += m_vWalkIncrement.y;
+				m_bMinion[i].m_Pos.z += m_vWalkIncrement.z;
+
+				MI[i].m_Pos = m_bMinion[i].m_Pos;
+
+				//printf("미니언 : %d , X: %.2f, Y: %.2f, Z:%.2f \n", i, m_bMinion[i].m_Pos.x,m_bMinion[i].m_Pos.y,m_bMinion[i].m_Pos.z);
+			}
+			else
+			{
+				RootTurn4[i]++;
+				m_bMinion[i].m_TargetPos = Root4[RootTurn4[i]];
+			}
+			break;
 		}
+		
 	}
 
-	for(int i=0; i<40; i++)
-	{
-		if(Minion2[i].m_Live != TRUE) continue;
-		float distance = ST::sharedManager()->GetDistance(Minion2[i].m_TargetPos, Minion2[i].m_Pos);
-		if (distance > 1.0f)
-		{ 
-			D3DXVECTOR3 m_vWalkIncrement;
-			m_vWalkIncrement.x = Minion2[i].m_TargetPos.x - Minion2[i].m_Pos.x;
-			m_vWalkIncrement.y = Minion2[i].m_TargetPos.y - Minion2[i].m_Pos.y;
-			m_vWalkIncrement.z = Minion2[i].m_TargetPos.z - Minion2[i].m_Pos.z;
-			D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
-
-			//float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
-			// 			D3DXVECTOR3 cross;
-			// 			D3DXVec3Cross( &cross, &m_vWalkIncrement, &m_vFacingDirection );
-			// 			fAngle = acosf( fAngle );
-			// 			if ( cross.y >  0.0f ) {
-			// 				fAngle *=-1.0f;
-			// 			}
-			// 			fAngle /= D3DX_PI;
-			// 			this->SetRotation(2, 1/fAngle);
-
-			m_vWalkIncrement.x *= m_fWalkSpeed; 
-			m_vWalkIncrement.y *= m_fWalkSpeed; 
-			m_vWalkIncrement.z *= m_fWalkSpeed; 
-
-			m_vWalkIncrement*= _dt;
-			Minion2[i].m_Pos.x += m_vWalkIncrement.x;
-			Minion2[i].m_Pos.y += m_vWalkIncrement.y;
-			Minion2[i].m_Pos.z += m_vWalkIncrement.z;
-
-			MI2[i].m_Pos = Minion2[i].m_Pos;
-
-			//printf("미니언 : %d , X: %.2f, Z:%.2f \n", i, Minion2[i].m_Pos.x,Minion2[i].m_Pos.z);
-		}
-		else
-		{
-			RootTurn2[i]++;
-			Minion2[i].m_TargetPos = Root2[RootTurn2[i]];
-		}
-	}
-
-	for(int i=0; i<40; i++)
-	{
-		if(Minion3[i].m_Live != TRUE) continue;
-		float distance = ST::sharedManager()->GetDistance(Minion3[i].m_TargetPos, Minion3[i].m_Pos);
-		if (distance > 1.0f)
-		{ 
-			D3DXVECTOR3 m_vWalkIncrement;
-			m_vWalkIncrement.x = Minion3[i].m_TargetPos.x - Minion3[i].m_Pos.x;
-			m_vWalkIncrement.y = Minion3[i].m_TargetPos.y - Minion3[i].m_Pos.y;
-			m_vWalkIncrement.z = Minion3[i].m_TargetPos.z - Minion3[i].m_Pos.z;
-			D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
-
-			//float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
-			// 			D3DXVECTOR3 cross;
-			// 			D3DXVec3Cross( &cross, &m_vWalkIncrement, &m_vFacingDirection );
-			// 			fAngle = acosf( fAngle );
-			// 			if ( cross.y >  0.0f ) {
-			// 				fAngle *=-1.0f;
-			// 			}
-			// 			fAngle /= D3DX_PI;
-			// 			this->SetRotation(2, 1/fAngle);
-
-			m_vWalkIncrement.x *= m_fWalkSpeed; 
-			m_vWalkIncrement.y *= m_fWalkSpeed; 
-			m_vWalkIncrement.z *= m_fWalkSpeed; 
-
-			m_vWalkIncrement*= _dt;
-			Minion3[i].m_Pos.x += m_vWalkIncrement.x;
-			Minion3[i].m_Pos.y += m_vWalkIncrement.y;
-			Minion3[i].m_Pos.z += m_vWalkIncrement.z;
-
-			MI3[i].m_Pos = Minion3[i].m_Pos;
-
-			//printf("미니언 : %d , X: %.2f, Z:%.2f \n", i, Minion3[i].m_Pos.x,Minion3[i].m_Pos.z);
-		}
-		else
-		{
-			RootTurn3[i]++;
-			Minion3[i].m_TargetPos = Root3[RootTurn3[i]];
-		}
-	}
-
-	for(int i=0; i<40; i++)
-	{
-		if(Minion4[i].m_Live != TRUE) continue;
-		float distance = ST::sharedManager()->GetDistance(Minion4[i].m_TargetPos, Minion4[i].m_Pos);
-		if (distance > 1.0f)
-		{ 
-			D3DXVECTOR3 m_vWalkIncrement;
-			m_vWalkIncrement.x = Minion4[i].m_TargetPos.x - Minion4[i].m_Pos.x;
-			m_vWalkIncrement.y = Minion4[i].m_TargetPos.y - Minion4[i].m_Pos.y;
-			m_vWalkIncrement.z = Minion4[i].m_TargetPos.z - Minion4[i].m_Pos.z;
-			D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
-
-			//float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
-			// 			D3DXVECTOR3 cross;
-			// 			D3DXVec3Cross( &cross, &m_vWalkIncrement, &m_vFacingDirection );
-			// 			fAngle = acosf( fAngle );
-			// 			if ( cross.y >  0.0f ) {
-			// 				fAngle *=-1.0f;
-			// 			}
-			// 			fAngle /= D3DX_PI;
-			// 			this->SetRotation(2, 1/fAngle);
-
-			m_vWalkIncrement.x *= m_fWalkSpeed; 
-			m_vWalkIncrement.y *= m_fWalkSpeed; 
-			m_vWalkIncrement.z *= m_fWalkSpeed; 
-
-			m_vWalkIncrement*= _dt;
-			Minion4[i].m_Pos.x += m_vWalkIncrement.x;
-			Minion4[i].m_Pos.y += m_vWalkIncrement.y;
-			Minion4[i].m_Pos.z += m_vWalkIncrement.z;
-
-			MI4[i].m_Pos = Minion4[i].m_Pos;
-
-			//printf("미니언 : %d , X: %.2f, Z:%.2f \n", i, Minion4[i].m_Pos.x,Minion4[i].m_Pos.z);
-		}
-		else
-		{
-			RootTurn4[i]++;
-			Minion4[i].m_TargetPos = Root4[RootTurn4[i]];
-		}
-	}
+	/////////40마리
+//	for(int i=0; i<40; i++)
+//	{
+//		if(Minion1[i].m_Live != TRUE) continue;
+//		float distance = ST::sharedManager()->GetDistance(Minion1[i].m_TargetPos, Minion1[i].m_Pos);
+//		if (distance > 1.0f)
+//		{ 
+//			D3DXVECTOR3 m_vWalkIncrement;
+//			m_vWalkIncrement.x = Minion1[i].m_TargetPos.x - Minion1[i].m_Pos.x;
+//			m_vWalkIncrement.y = Minion1[i].m_TargetPos.y - Minion1[i].m_Pos.y;
+//			m_vWalkIncrement.z = Minion1[i].m_TargetPos.z - Minion1[i].m_Pos.z;
+//			D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
+//			
+//			//float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
+//// 			D3DXVECTOR3 cross;
+//// 			D3DXVec3Cross( &cross, &m_vWalkIncrement, &m_vFacingDirection );
+//// 			fAngle = acosf( fAngle );
+//// 			if ( cross.y >  0.0f ) {
+//// 				fAngle *=-1.0f;
+//// 			}
+//// 			fAngle /= D3DX_PI;
+//// 			this->SetRotation(2, 1/fAngle);
+//
+//			m_vWalkIncrement.x *= m_fWalkSpeed; 
+//			m_vWalkIncrement.y *= m_fWalkSpeed; 
+//			m_vWalkIncrement.z *= m_fWalkSpeed; 
+//
+//			m_vWalkIncrement*= _dt;
+//			Minion1[i].m_Pos.x += m_vWalkIncrement.x;
+//			Minion1[i].m_Pos.y += m_vWalkIncrement.y;
+//			Minion1[i].m_Pos.z += m_vWalkIncrement.z;
+//
+//			MI1[i].m_Pos = Minion1[i].m_Pos;
+//
+//			//printf("미니언 : %d , X: %.2f, Y: %.2f, Z:%.2f \n", i, Minion1[i].m_Pos.x,Minion1[i].m_Pos.y,Minion1[i].m_Pos.z);
+//		}
+//		else
+//		{
+//			RootTurn1[i]++;
+//			Minion1[i].m_TargetPos = Root1[RootTurn1[i]];
+//		}
+//	}
+//
+//	for(int i=0; i<40; i++)
+//	{
+//		if(Minion2[i].m_Live != TRUE) continue;
+//		float distance = ST::sharedManager()->GetDistance(Minion2[i].m_TargetPos, Minion2[i].m_Pos);
+//		if (distance > 1.0f)
+//		{ 
+//			D3DXVECTOR3 m_vWalkIncrement;
+//			m_vWalkIncrement.x = Minion2[i].m_TargetPos.x - Minion2[i].m_Pos.x;
+//			m_vWalkIncrement.y = Minion2[i].m_TargetPos.y - Minion2[i].m_Pos.y;
+//			m_vWalkIncrement.z = Minion2[i].m_TargetPos.z - Minion2[i].m_Pos.z;
+//			D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
+//
+//			//float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
+//			// 			D3DXVECTOR3 cross;
+//			// 			D3DXVec3Cross( &cross, &m_vWalkIncrement, &m_vFacingDirection );
+//			// 			fAngle = acosf( fAngle );
+//			// 			if ( cross.y >  0.0f ) {
+//			// 				fAngle *=-1.0f;
+//			// 			}
+//			// 			fAngle /= D3DX_PI;
+//			// 			this->SetRotation(2, 1/fAngle);
+//
+//			m_vWalkIncrement.x *= m_fWalkSpeed; 
+//			m_vWalkIncrement.y *= m_fWalkSpeed; 
+//			m_vWalkIncrement.z *= m_fWalkSpeed; 
+//
+//			m_vWalkIncrement*= _dt;
+//			Minion2[i].m_Pos.x += m_vWalkIncrement.x;
+//			Minion2[i].m_Pos.y += m_vWalkIncrement.y;
+//			Minion2[i].m_Pos.z += m_vWalkIncrement.z;
+//
+//			MI2[i].m_Pos = Minion2[i].m_Pos;
+//
+//			//printf("미니언 : %d , X: %.2f, Z:%.2f \n", i, Minion2[i].m_Pos.x,Minion2[i].m_Pos.z);
+//		}
+//		else
+//		{
+//			RootTurn2[i]++;
+//			Minion2[i].m_TargetPos = Root2[RootTurn2[i]];
+//		}
+//	}
+//
+//	for(int i=0; i<40; i++)
+//	{
+//		if(Minion3[i].m_Live != TRUE) continue;
+//		float distance = ST::sharedManager()->GetDistance(Minion3[i].m_TargetPos, Minion3[i].m_Pos);
+//		if (distance > 1.0f)
+//		{ 
+//			D3DXVECTOR3 m_vWalkIncrement;
+//			m_vWalkIncrement.x = Minion3[i].m_TargetPos.x - Minion3[i].m_Pos.x;
+//			m_vWalkIncrement.y = Minion3[i].m_TargetPos.y - Minion3[i].m_Pos.y;
+//			m_vWalkIncrement.z = Minion3[i].m_TargetPos.z - Minion3[i].m_Pos.z;
+//			D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
+//
+//			//float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
+//			// 			D3DXVECTOR3 cross;
+//			// 			D3DXVec3Cross( &cross, &m_vWalkIncrement, &m_vFacingDirection );
+//			// 			fAngle = acosf( fAngle );
+//			// 			if ( cross.y >  0.0f ) {
+//			// 				fAngle *=-1.0f;
+//			// 			}
+//			// 			fAngle /= D3DX_PI;
+//			// 			this->SetRotation(2, 1/fAngle);
+//
+//			m_vWalkIncrement.x *= m_fWalkSpeed; 
+//			m_vWalkIncrement.y *= m_fWalkSpeed; 
+//			m_vWalkIncrement.z *= m_fWalkSpeed; 
+//
+//			m_vWalkIncrement*= _dt;
+//			Minion3[i].m_Pos.x += m_vWalkIncrement.x;
+//			Minion3[i].m_Pos.y += m_vWalkIncrement.y;
+//			Minion3[i].m_Pos.z += m_vWalkIncrement.z;
+//
+//			MI3[i].m_Pos = Minion3[i].m_Pos;
+//
+//			//printf("미니언 : %d , X: %.2f, Z:%.2f \n", i, Minion3[i].m_Pos.x,Minion3[i].m_Pos.z);
+//		}
+//		else
+//		{
+//			RootTurn3[i]++;
+//			Minion3[i].m_TargetPos = Root3[RootTurn3[i]];
+//		}
+//	}
+//
+//	for(int i=0; i<40; i++)
+//	{
+//		if(Minion4[i].m_Live != TRUE) continue;
+//		float distance = ST::sharedManager()->GetDistance(Minion4[i].m_TargetPos, Minion4[i].m_Pos);
+//		if (distance > 1.0f)
+//		{ 
+//			D3DXVECTOR3 m_vWalkIncrement;
+//			m_vWalkIncrement.x = Minion4[i].m_TargetPos.x - Minion4[i].m_Pos.x;
+//			m_vWalkIncrement.y = Minion4[i].m_TargetPos.y - Minion4[i].m_Pos.y;
+//			m_vWalkIncrement.z = Minion4[i].m_TargetPos.z - Minion4[i].m_Pos.z;
+//			D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
+//
+//			//float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
+//			// 			D3DXVECTOR3 cross;
+//			// 			D3DXVec3Cross( &cross, &m_vWalkIncrement, &m_vFacingDirection );
+//			// 			fAngle = acosf( fAngle );
+//			// 			if ( cross.y >  0.0f ) {
+//			// 				fAngle *=-1.0f;
+//			// 			}
+//			// 			fAngle /= D3DX_PI;
+//			// 			this->SetRotation(2, 1/fAngle);
+//
+//			m_vWalkIncrement.x *= m_fWalkSpeed; 
+//			m_vWalkIncrement.y *= m_fWalkSpeed; 
+//			m_vWalkIncrement.z *= m_fWalkSpeed; 
+//
+//			m_vWalkIncrement*= _dt;
+//			Minion4[i].m_Pos.x += m_vWalkIncrement.x;
+//			Minion4[i].m_Pos.y += m_vWalkIncrement.y;
+//			Minion4[i].m_Pos.z += m_vWalkIncrement.z;
+//
+//			MI4[i].m_Pos = Minion4[i].m_Pos;
+//
+//			//printf("미니언 : %d , X: %.2f, Z:%.2f \n", i, Minion4[i].m_Pos.x,Minion4[i].m_Pos.z);
+//		}
+//		else
+//		{
+//			RootTurn4[i]++;
+//			Minion4[i].m_TargetPos = Root4[RootTurn4[i]];
+//		}
+//	}
 }
 
 void ArrangeData::SetTime(float _time)

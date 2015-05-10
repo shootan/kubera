@@ -327,8 +327,6 @@ BOOL IOCPServer::SendData(float _dt)
 	Buffer = m_pNextBufferList;
 	int Number = 0;
 
-
-
 	while(Buffer != NULL)
 	{
 		//EnterCriticalSection(&m_BufferListLock);
@@ -346,7 +344,7 @@ BOOL IOCPServer::SendData(float _dt)
 				play = play->m_pNext;
 				continue;
 			}
-			
+
 			if(!Buffer->m_Disconnect)
 			{
 				//printf("ID : %d, x: %3f, y: %3f, z : %3f, size : %d \n", play->m_PI->PI.m_ID, play->m_PI->PI.m_Pos.x, play->m_PI->PI.m_Pos.y, play->m_PI->PI.m_Pos.z, play->m_PI->size);
@@ -361,65 +359,67 @@ BOOL IOCPServer::SendData(float _dt)
 		//LeaveCriticalSection(&m_BufferListLock);
 	}
 
-	m_MinionTimer += _dt;
+ 	m_MinionTimer += _dt;
+ 
+ 	if(m_MinionTimer > 0.05f)
+ 	{
+ 		Buffer = m_pNextBufferList;
+ 
+ 		while(Buffer != NULL)
+ 		{
+ 			if(!Buffer->m_Disconnect)
+ 			{
+ 
+ 				this->SendPacket(Buffer, MINIONDATA, Arrange.MI, sizeof(MinionInfo)*160);
+ 				this->SetOpCode(Buffer, OP_SEND_FINISH);
+ 
+ 
+ 				////4개 나눠서 보내기
+ 				/*int size = sizeof(int) + sizeof(MinionInfo)*40;
+ 				char* buff = new char[size];
+ 
+ 
+ 				Number = 1;
+ 				*(int*)buff = Number;
+ 				memcpy(buff+sizeof(int), Arrange.MI1, size);
+ 				this->SendPacket(Buffer, MINIONDATA, buff, sizeof(MinionInfo)*40);
+ 				this->SetOpCode(Buffer, OP_SEND_FINISH);
+ 
+ 
+ 
+ 				Number = 2;
+ 				*(int*)buff = Number;
+ 				memcpy(buff+sizeof(int), Arrange.MI2, size);
+ 				this->SendPacket(Buffer, MINIONDATA, buff, sizeof(MinionInfo)*40);
+ 				this->SetOpCode(Buffer, OP_SEND_FINISH);
+ 
+ 
+ 
+ 				Number = 3;
+ 				*(int*)buff = Number;
+ 				memcpy(buff+sizeof(int), Arrange.MI3, size);
+ 				this->SendPacket(Buffer, MINIONDATA, buff, sizeof(MinionInfo)*40);
+ 				this->SetOpCode(Buffer, OP_SEND_FINISH);
+ 
+ 
+ 
+ 				Number = 4;
+ 				*(int*)buff = Number;
+ 				memcpy(buff+sizeof(int), Arrange.MI4, size);
+ 				this->SendPacket(Buffer, MINIONDATA, buff, sizeof(MinionInfo)*40);
+ 				this->SetOpCode(Buffer, OP_SEND_FINISH);*/
+ 
+ 
+ 				//delete[] buff;
+ 			}
+ 			Buffer = Buffer->m_pNext;
+ 			//LeaveCriticalSection(&m_BufferListLock);
+ 		}
+ 
+ 		m_MinionTimer = 0.0f;
+ 	}
 
-	if(m_MinionTimer > 0.03f)
-	{
-		Buffer = m_pNextBufferList;
 
-		while(Buffer != NULL)
-		{
-			if(!Buffer->m_Disconnect)
-			{
-				int size = sizeof(int) + sizeof(MinionInfo)*40;
-				char* buff = new char[size];
-
-				if(Arrange.m_bMinionLive1== true)
-				{
-					Number = 1;
-					*(int*)buff = Number;
-					memcpy(buff+sizeof(int), Arrange.MI1, size);
-					this->SendPacket(Buffer, MINIONDATA, buff, sizeof(MinionInfo)*40);
-					this->SetOpCode(Buffer, OP_SEND_FINISH);
-				}
-				
-				if(Arrange.m_bMinionLive2== true)
-				{
-					Number = 2;
-					*(int*)buff = Number;
-					memcpy(buff+sizeof(int), Arrange.MI2, size);
-					this->SendPacket(Buffer, MINIONDATA, buff, sizeof(MinionInfo)*40);
-					this->SetOpCode(Buffer, OP_SEND_FINISH);
-				}
-				
-				if(Arrange.m_bMinionLive3== true)
-				{
-					Number = 3;
-					*(int*)buff = Number;
-					memcpy(buff+sizeof(int), Arrange.MI3, size);
-					this->SendPacket(Buffer, MINIONDATA, buff, sizeof(MinionInfo)*40);
-					this->SetOpCode(Buffer, OP_SEND_FINISH);
-				}
-		
-				if(Arrange.m_bMinionLive4== true)
-				{
-					Number = 4;
-					*(int*)buff = Number;
-					memcpy(buff+sizeof(int), Arrange.MI4, size);
-					this->SendPacket(Buffer, MINIONDATA, buff, sizeof(MinionInfo)*40);
-					this->SetOpCode(Buffer, OP_SEND_FINISH);
-				}
-				
-				//delete[] buff;
-			}
-			Buffer = Buffer->m_pNext;
-			//LeaveCriticalSection(&m_BufferListLock);
-		}
-
-		m_MinionTimer = 0.0f;
-	}
-
-	
 	return TRUE;
 }
 
@@ -428,7 +428,7 @@ void IOCPServer::SendPacket(IOBuffer* _buffer, int NetworkCode, void *_packet, i
 	int adq = reinterpret_cast<unsigned char *>(_packet)[0];
 
 	int Size = HEADERSIZE + _size;
-	char* Buffer = new char[Size];
+ 	char* Buffer = new char[Size];
 	*(int*)Buffer = NetworkCode;
 	
 	memcpy(Buffer+HEADERSIZE, _packet, Size);
