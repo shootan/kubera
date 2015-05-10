@@ -8,7 +8,6 @@ HeroObject::HeroObject(void)
 	m_bMove = FALSE;
 	m_pTarget = NULL;
 	m_Visible = TRUE;
-	m_iState = IDLE;
 	m_fAttackTime = 0.f;
 
 	m_pAstar = NULL;

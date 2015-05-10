@@ -6,7 +6,9 @@ class OtherPlayerObject : public CGameObject
 {
 private:
 	
-	BOOL m_bSetDestination;
+	BOOL m_bSetDestination;	
+
+	float m_fAttackTime;
 
 public:
 	OtherPlayerObject();

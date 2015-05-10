@@ -11,7 +11,7 @@ class Network
 public:
 	SOCKET m_ConnectSock;
 	WSADATA m_Wsa;
-	PlayerStruct PI[10];
+	PlayerStruct PI[4];
 
 	MinionInfo	MI1[40];
 	MinionInfo	MI2[40];

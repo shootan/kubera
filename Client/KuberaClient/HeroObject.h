@@ -9,8 +9,8 @@ class HeroObject : public CGameObject
 private:
 	D3DXVECTOR3 m_vAstarIncrement;
 	BOOL m_bMove;
-	CGameObject* m_pTarget;
-	int m_iState;
+	
+	
 	float m_fAttackTime;
 
 	Astar* m_pAstar;
@@ -30,8 +30,8 @@ public:
 	void SetAstar(BOOL _astar) {m_bAstar = _astar;}
 	BOOL GetAstar() { return m_bAstar; }
 
-	void SetTarget(CGameObject* _target) { m_pTarget = _target; }
-	CGameObject* GetTarget() { return m_pTarget; }
+	
+	
 
 	void SetState(int _state) { m_iState = _state;}
 

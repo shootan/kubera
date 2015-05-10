@@ -1,5 +1,5 @@
 #include "OtherPlayerObject.h"
-
+#include "MissileManager.h"
 OtherPlayerObject::OtherPlayerObject(void)
 {
 	CGameObject::CGameObject();
@@ -8,13 +8,15 @@ OtherPlayerObject::OtherPlayerObject(void)
 	m_Visible = FALSE;
 	m_ID = 0;
 	m_bSetDestination = FALSE;
+	 m_iTargetID = 0;
+
+	m_fAttackTime = 0.0f;
 }
 
 OtherPlayerObject::~OtherPlayerObject(void)
 {
 	CGameObject::~CGameObject();
 }
-
 
 void OtherPlayerObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
 {
@@ -23,6 +25,24 @@ void OtherPlayerObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
 
 void OtherPlayerObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
 	if(_pos == m_Pos) return;
+	Vector3 f_pos;
+	Vector3 s_pos;
+	ZeroMemory(&f_pos, sizeof(Vector3));
+	ZeroMemory(&s_pos, sizeof(Vector3));
+	f_pos.x = m_Pos.x;
+	f_pos.z = m_Pos.z;
+	s_pos.x = _pos.x;
+	s_pos.z = _pos.z;
+
+	float distance = ST::sharedManager()->GetDistance(f_pos, s_pos);
+	if(distance > 40.0f)
+	{
+		m_Pos.x = _pos.x;
+		m_Pos.y = _pos.y;
+		m_Pos.z = _pos.z;
+		return;
+	}
+
 	m_vDestination.x = _pos.x;
 	m_vDestination.y = _pos.y;
 	m_vDestination.z = _pos.z;       
@@ -81,5 +101,23 @@ void OtherPlayerObject::Update(float fTimeElapsed)
 
 void OtherPlayerObject::Animate(float fTimeElapsed)
 {
+	if(m_iState == ATTACK)
+	{
+		if(m_pTarget == NULL) return;
+		m_fAttackTime += fTimeElapsed;
 
+		for(int i=0; i<MAX_MISSILE; i++)
+		{
+			if(MissileManager::sharedManager()->m_pMissile[i]->GetUsed() == TRUE) continue;
+
+			if(m_fAttackTime >= 0.5f)
+			{
+				MissileManager::sharedManager()->m_pMissile[i]->SetPosition(m_Pos);
+				MissileManager::sharedManager()->m_pMissile[i]->SetUsed(TRUE);
+				MissileManager::sharedManager()->m_pMissile[i]->SetTarget(m_pTarget);
+
+				m_fAttackTime = 0.f;
+			}
+		}
+	}
 }
