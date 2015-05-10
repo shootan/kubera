@@ -221,9 +221,10 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 		TowerManager::sharedManager()->m_pTower[i]->Update(fTimeElapsed);
 
 		m_DistanceToHero = ST::sharedManager()->GetDistance(m_pHero->GetPos(), TowerManager::sharedManager()->m_pTower[i]->GetPos());
-		if(m_DistanceToHero < 50.0f && TowerManager::sharedManager()->m_pTower[i]->GetTarget() == NULL)
+		if(m_DistanceToHero < 50.0f)
 		{
 			TowerManager::sharedManager()->m_pTower[i]->SetTarget(m_pHero);
+			continue;
 		}
 		else
 		{
@@ -237,7 +238,7 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 			
 			m_DistanceToOtherPlayer = ST::sharedManager()->GetDistance(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetPos(), 
 				TowerManager::sharedManager()->m_pTower[i]->GetPos()); 
-			if(m_DistanceToOtherPlayer < 50.f && TowerManager::sharedManager()->m_pTower[i]->GetTarget() == NULL)
+			if(m_DistanceToOtherPlayer < 50.f)
 			{
 				TowerManager::sharedManager()->m_pTower[i]->SetTarget(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]);
 			}
