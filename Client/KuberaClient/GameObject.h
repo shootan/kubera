@@ -14,6 +14,8 @@ protected:
 	int			m_ID;
 	BOOL		m_Visible;
 	int			m_iTag;
+	int			m_iState;
+	int			 m_iTargetID;
 
 	//
 	int m_nReferences;
@@ -30,6 +32,7 @@ protected:
 	float BoundsizeX, BoundsizeY, BoundsizeZ;
 
 	BOOL		 m_bSelected;
+	CGameObject* m_pTarget;
 	//BOOL m_bAstar;
 	//BOOL m_bFindPath;
 
@@ -68,13 +71,20 @@ public:
 	void SetID(int _id) { m_ID= _id;}
 	void SetVisible(BOOL _vi) { m_Visible  = _vi; }
 	BOOL GetVisible() { return m_Visible; }
+	int GetState() { return m_iState; }
+	void SetState(int _state) {m_iState = _state; }
 	int GetTag() { return m_iTag; }
 	void SetTag(int _tag) { m_iTag = _tag;}
+	void SetTargetID(int _id) { m_iTargetID = _id;}
+	int GetTargetID() { return m_iTargetID; }
+	void SetTarget(CGameObject* _target) { m_pTarget = _target; }
+	CGameObject* GetTarget() { return m_pTarget; }
 
 	void SetBoundSize(float x, float y, float z);
 	float GetBoundSizeX() {return BoundsizeX;}
 	float GetBoundSizeY() {return BoundsizeY;}
 	float GetBoundSizeZ() {return BoundsizeZ;}
+	
 //	void SetAstar(BOOL _astar) {m_bAstar = _astar;}
 //	BOOL GetAstar() { return m_bAstar; }
 

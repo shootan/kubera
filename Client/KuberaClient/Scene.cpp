@@ -249,6 +249,12 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 			
 		}
 	}
+
+	for(int i=0; i<MAX_OTHER_PLAYER; i++)
+	{
+		OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->Update(fTimeElapsed);
+		OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->Animate(fTimeElapsed);
+	}
 	
 	//플레이어 충돌박스 보이기
 	pBoundBox[0]->SetPosition(m_pHero->GetPosition());
@@ -367,12 +373,14 @@ void CScene::SetOtherClient(PlayerStruct* _PI, int _Count)
 	{
 		if(_PI[i].Use == TRUE) continue;
 		if(_PI[i].PI.m_ID == 0) continue;
-		for(int j=0; j<10; j++)
+		for(int j=0; j<MAX_OTHER_PLAYER; j++)
 		{
 			if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetID() != 0) continue;
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetID(_PI[i].PI.m_ID);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetPos(_PI[i].PI.m_Pos);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Rot);
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetState(_PI[i].PI.m_iState);
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetTargetID(_PI[i].PI.m_iTargetID);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetVisible(TRUE);
 			_PI[i].Use = TRUE;
 			break;
@@ -388,12 +396,17 @@ void CScene::UpdateOtherClient(PlayerStruct* _PI, int _Count)
 	{
 		if(_PI[i].Use != TRUE) continue;
 		if(_PI[i].PI.m_ID == 0) continue;
-		for(int j=0; j<10; j++)
+		for(int j=0; j<MAX_OTHER_PLAYER; j++)
 		{
 			if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetID() != _PI[i].PI.m_ID) continue;
-
-			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetPos(_PI[i].PI.m_Pos);
+			D3DXVECTOR3 q;
+			q.x = _PI[i].PI.m_Pos.x;
+			q.y = _PI[i].PI.m_Pos.y;
+			q.z = _PI[i].PI.m_Pos.z;
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetNewDestination(q);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Rot);
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetState(_PI[i].PI.m_iState);
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetTargetID(_PI[i].PI.m_iTargetID);
 			break;
 		}
 	}
@@ -542,3 +555,31 @@ void CScene::SetMinionInfo(MinionInfo* _MI)
 //	m_pTxtHelper->End();
 //}
 
+void CScene::TargetSetting()
+{
+	for(int i=0; i<MAX_OTHER_PLAYER; i++)
+	{
+
+//  		for(int j=0; j<MAX_OTHER_PLAYER; j++)
+//  		{
+//  			if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetTargetID() ==	
+//  				OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetID())
+//  			{
+//  				OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->SetTarget(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]);
+//  				return;
+//  			}
+//  		}
+
+		for(int j=0; j<MAX_TOWER; j++)
+		{
+			
+			if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetTargetID() ==	
+				TowerManager::sharedManager()->m_pTower[j]->GetID())
+			{
+				OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->SetTarget(TowerManager::sharedManager()->m_pTower[j]);
+				return;
+			}
+		}
+		
+	}
+}

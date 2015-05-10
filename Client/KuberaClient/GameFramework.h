@@ -50,7 +50,7 @@ private:
 	// Network
 	Network Net;
 	float time;
-	void ExchangeInfo();
+	
 	
 public:
 	CGameFramework();
@@ -58,6 +58,8 @@ public:
 
 	bool OnCreate(HINSTANCE hInstance, HWND hMainWnd);
 	void OnDestroy();
+	void ExchangeInfo();
+	void SendHeroData();
 
 	//디바이스, 스왑 체인, 디바이스 컨텍스트, 디바이스와 관련된 뷰를 생성하는 함수이다. 
 

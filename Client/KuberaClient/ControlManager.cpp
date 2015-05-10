@@ -87,6 +87,7 @@ void ControlManager::SetTarget(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRay
 		{
 			//TowerManager::sharedManager()->m_pTower[i]->SetSelected(TRUE);
 			m_Player->SetTarget(TowerManager::sharedManager()->m_pTower[i]);
+			m_Player->SetTargetID(TowerManager::sharedManager()->m_pTower[i]->GetID());
 			return;
 		}
 		//TowerManager::sharedManager()->m_pTower[i]->SetSelected(FALSE);
@@ -102,6 +103,7 @@ void ControlManager::SetTarget(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRay
 		if( dist > 0 )
 		{
 			m_Player->SetTarget(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]);
+			m_Player->SetTargetID(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetID());
 			return;
 		}
 

@@ -333,6 +333,7 @@ void CGameFramework::FrameAdvance()
 	m_GameTimer.Tick(60);
 
 	this->ExchangeInfo();
+	m_pScene->TargetSetting();
 	
 	ProcessInput();
 	AnimateObjects();
@@ -365,6 +366,7 @@ void CGameFramework::FrameAdvance()
 	m_pd3dDeviceContext->VSSetConstantBuffers( VS_SLOT_VIEWPROJECTION_MATRIX, 1, &m_pd3dcbViewProjection);
 
 	//////////////////
+	this->SendHeroData();
 	m_pScene->Render(m_pd3dDeviceContext);
 
 	//DXUT_BeginPerfEvent( DXUT_PERFEVENTCOLOR, L"HUD / Stats" );
@@ -490,24 +492,27 @@ void CGameFramework::SetCameraPos()
 
 void CGameFramework::ExchangeInfo()
 {
-	if(Net.m_ID != 0)
-	{
-		HeroInfo.PI.m_Pos = m_pScene->GetHero()->GetPos();
-		HeroInfo.PI.m_Rot = m_pScene->GetHero()->GetRot();
-		HeroInfo.PI.m_ID = Net.m_ID;
-
-		Net.SendData(&HeroInfo);
-	}
-
  	if(Net.m_ClientCount != 0)
  	{
 		m_pScene->SetMinionInfo(Net.MI);
 
 		m_pScene->SetOtherClient(Net.PI, Net.m_ClientCount);
 		m_pScene->UpdateOtherClient(Net.PI, Net.m_ClientCount);
-
-
 	}	
+}
+
+void CGameFramework::SendHeroData()
+{
+	if(Net.m_ID != 0)
+	{
+		HeroInfo.PI.m_Pos = m_pScene->GetHero()->GetPos();
+		HeroInfo.PI.m_Rot = m_pScene->GetHero()->GetRot();
+		HeroInfo.PI.m_iState = m_pScene->GetHero()->GetState();
+		HeroInfo.PI.m_iTargetID = m_pScene->GetHero()->GetTargetID();
+		HeroInfo.PI.m_ID = Net.m_ID;
+
+		Net.SendData(&HeroInfo);
+	}
 }
 
 

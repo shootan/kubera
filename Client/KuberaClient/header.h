@@ -39,6 +39,8 @@ struct Vector3
 
 struct PlayerInfo{
 	int		m_ID;
+	int		m_iState;
+	int		m_iTargetID;
 	Vector3 m_Pos;
 	float	m_Rot;
 };
@@ -70,7 +72,6 @@ struct MinionInfo
 	int		m_ID;
 	bool    m_Live;
 	Vector3 m_Pos;
-	float	m_Rot;
 };
 
 struct MinionPacket

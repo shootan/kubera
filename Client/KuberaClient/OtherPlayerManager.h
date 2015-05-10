@@ -3,7 +3,7 @@
 #include "OtherPlayerObject.h"
 #include "Mesh.h"
 
-#define MAX_OTHER_PLAYER 10
+#define MAX_OTHER_PLAYER 4
 
 class OtherPlayerManager
 {

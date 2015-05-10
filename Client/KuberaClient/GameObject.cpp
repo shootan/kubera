@@ -22,12 +22,15 @@ CGameObject::CGameObject(void)
 
 	m_iTag = NONE;
 
+	m_iState = IDLE;
 	BoundsizeX = 0.0f;
 	BoundsizeY = 0.0f;
 	BoundsizeZ = 0.0f;
 
+	m_pTarget = NULL;
 	m_bSelected = FALSE;
 
+	m_iTargetID = 0;
 	//m_pAstar = NULL;
 	//m_pBestWay = NULL;
 	//m_bAstar = FALSE;
