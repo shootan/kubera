@@ -8,8 +8,9 @@
 #include "ControlManager.h"
 #include "TowerObject.h"
 #include "ST.h"
-#include "EnemyObject.h"
+#include "OtherPlayerObject.h"
 #include "TowerManager.h"
+#include "OtherPlayerManager.h"
 
 class CScene
 {
@@ -44,7 +45,7 @@ private:
 
 	HeroObject *m_pHero;
 	CGameObject *m_pPlane;
-	EnemyObject	*m_pOtherPlayer[10];
+	//OtherPlayerObject	*m_pOtherPlayer[10];
 
 	float distance;
 	CGameObject *pBoundBox[2];

@@ -382,7 +382,7 @@
     <ClCompile Include="DXUT\Optional\DXUTsettingsdlg.cpp" />
     <ClCompile Include="DXUT\Optional\SDKmesh.cpp" />
     <ClCompile Include="DXUT\Optional\SDKmisc.cpp" />
-    <ClCompile Include="EnemyObject.cpp" />
+    <ClCompile Include="OtherPlayerObject.cpp" />
     <ClCompile Include="GameFramework.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="HeroObject.cpp" />
@@ -413,7 +413,7 @@
     <ClInclude Include="DXUT\Optional\DXUTsettingsdlg.h" />
     <ClInclude Include="DXUT\Optional\SDKmesh.h" />
     <ClInclude Include="DXUT\Optional\SDKmisc.h" />
-    <ClInclude Include="EnemyObject.h" />
+    <ClInclude Include="OtherPlayerObject.h" />
     <ClInclude Include="GameFramework.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="header.h" />
@@ -426,6 +426,7 @@
     <ClInclude Include="Network.h" />
     <ClInclude Include="ObstacleManager.h" />
     <ClInclude Include="ObstacleObject.h" />
+    <ClInclude Include="OtherPlayerManager.h" />
     <CLInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />

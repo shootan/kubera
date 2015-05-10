@@ -226,6 +226,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 // 			backbuffer->Height = m_nWndClientHeight;
 // 
 // 			m_DialogResourceManager.OnD3D11ResizedSwapChain( m_pd3dDevice, backbuffer );
+
 			break;
 		}
 	case WM_LBUTTONDOWN:

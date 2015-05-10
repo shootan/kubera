@@ -21,7 +21,7 @@ void ControlManager::TouchRightDown(float _x, float _y, HWND hWnd)
 	}     
 
 	SetTargetTower(vRayDirection, vRayOrigin);
-
+	SetTargetOtherPlayer(vRayDirection, vRayOrigin);
 }
 
 void ControlManager::TouchLeftDown(float _x, float _y , HWND hWnd)
@@ -31,6 +31,7 @@ void ControlManager::TouchLeftDown(float _x, float _y , HWND hWnd)
 	this->CalculateScreenRayFromCoordinates( _x, _y, vRayDirection , hWnd );
 
 	SetTargetTower(vRayDirection, vRayOrigin);
+	SetTargetOtherPlayer(vRayDirection, vRayOrigin);
 }
 
 void ControlManager::AssignSelectedUnitsToNewDestination ( const D3DXVECTOR3 &vec )
@@ -91,6 +92,26 @@ void ControlManager::SetTargetTower(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3
 			return;
 		}
 		//TowerManager::sharedManager()->m_pTower[i]->SetSelected(FALSE);
+	}
+
+	m_Player->SetTarget(NULL);
+}
+
+void ControlManager::SetTargetOtherPlayer(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRayOrigin)
+{
+	for(int i=0; i<MAX_OTHER_PLAYER; i++)
+	{
+		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetVisible() != TRUE) continue;
+
+		float dist = INTersectRaySphere(vRayDirection, vRayOrigin, OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetPosition(), 
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetBoundSizeX()*2);
+
+		if( dist > 0 )
+		{
+			m_Player->SetTarget(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]);
+			return;
+		}
+
 	}
 
 	m_Player->SetTarget(NULL);
