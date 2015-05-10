@@ -18,20 +18,21 @@ private:
 	
 
 	float m_fRegenTime;
+	float m_fUnitTime;
 
 	int RootTurn1[40];
 	int RootTurn2[40];
 	int RootTurn3[40];
 	int RootTurn4[40];
 
-	int MinionCount1;
-	int MinionCount2;
-	int MinionCount3;
-	int MinionCount4;
+	int MinionCount;
+	
 
 	int MinionID[160];
 
 	float m_fWalkSpeed;
+
+	
 
 public:
 	ArrangeData();
@@ -41,6 +42,11 @@ public:
 	MinionInfo MI2[40];
 	MinionInfo MI3[40];
 	MinionInfo MI4[40];
+
+	bool m_bMinionLive1;
+	bool m_bMinionLive2;
+	bool m_bMinionLive3;
+	bool m_bMinionLive4;
 
 	void SetRoot();
 	void SetMinionPosition(float _dt);
@@ -52,6 +58,8 @@ public:
 	void SetRoot3();
 	void SetRoot4();
 	
+	void CheckMinionLive();
+
 	int SetID();	
 	
 };

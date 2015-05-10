@@ -23,11 +23,12 @@ int main()
 	while(1)
 	{
 		Timer.Tick(60);
-		system("cls");
+		//system("cls");
 		//Timer.GetFrameRate();
 		
 		Server.ArrangeDataInfo(Timer.GetTimeElapsed());
-		Server.SendData();
+
+		Server.SendData(Timer.GetTimeElapsed());
 	}
 	return 0;
 }

@@ -146,11 +146,37 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 			}
 		case MINIONDATA:
 			{
-				retval = recv(server->m_ConnectSock, (char*)server->MI1, sizeof(MinionInfo)*40, 0);
-				retval = recv(server->m_ConnectSock, (char*)server->MI2, sizeof(MinionInfo)*40, 0);
-				retval = recv(server->m_ConnectSock, (char*)server->MI3, sizeof(MinionInfo)*40, 0);
-				retval = recv(server->m_ConnectSock, (char*)server->MI4, sizeof(MinionInfo)*40, 0);
+				recv(server->m_ConnectSock,(char*)&Number, sizeof(int), 0);
 
+				switch(Number)
+				{
+				case 1:
+					retval = recv(server->m_ConnectSock, (char*)server->MI1, sizeof(MinionInfo)*40, 0);
+					break;
+				case 2:
+					retval = recv(server->m_ConnectSock, (char*)server->MI2, sizeof(MinionInfo)*40, 0);
+					break;
+				case 3:
+					retval = recv(server->m_ConnectSock, (char*)server->MI3, sizeof(MinionInfo)*40, 0);
+					break;
+				case 4:
+					retval = recv(server->m_ConnectSock, (char*)server->MI4, sizeof(MinionInfo)*40, 0);
+					break;
+				}
+				
+
+				for(int i=0; i<40; i++)
+				{
+// 					if(server->MI1[i].m_Live == TRUE)
+// 						printf("%.1f, %.1f, %.1f \n", server->MI1[i].m_Pos.x,server->MI1[i].m_Pos.y,server->MI1[i].m_Pos.z);
+//  					if(server->MI2[i].m_Live == TRUE)
+// 						printf("%.1f, %.1f, %.1f \n", server->MI2[i].m_Pos.x,server->MI2[i].m_Pos.y,server->MI2[i].m_Pos.z);
+// 					if(server->MI3[i].m_Live == TRUE)
+// 						printf("%.1f, %.1f, %.1f \n", server->MI3[i].m_Pos.x,server->MI3[i].m_Pos.y,server->MI3[i].m_Pos.z);
+//  					if(server->MI4[i].m_Live == TRUE)
+//  						printf("%.1f, %.1f, %.1f \n", server->MI4[i].m_Pos.x,server->MI4[i].m_Pos.y,server->MI4[i].m_Pos.z);
+
+				}
 				/*retval = recv(server->m_ConnectSock, (char*)&Number, sizeof(int));
 
 				switch(Number)

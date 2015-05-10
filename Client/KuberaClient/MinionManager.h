@@ -3,7 +3,6 @@
 #include "MinionObject.h"
 #include "Mesh.h"
 
-#define MAX_MINION 40
 
 class MinionManager
 {
@@ -53,6 +52,7 @@ public:
 			m_pMinion1[i] = new MinionObject();
 			m_pMinion1[i]->SetMesh(mesh);
 			m_pMinion1[i]->SetPosition(pos);
+			m_pMinion1[i]->SetVisible(FALSE);
 		}
 	}
 	void CreateMinion2(D3DXVECTOR3 pos, CMesh* mesh)
@@ -63,6 +63,7 @@ public:
 			m_pMinion2[i] = new MinionObject();
 			m_pMinion2[i]->SetMesh(mesh);
 			m_pMinion2[i]->SetPosition(pos);
+			m_pMinion2[i]->SetVisible(FALSE);
 		}
 	}
 	void CreateMinion3(D3DXVECTOR3 pos, CMesh* mesh)
@@ -73,6 +74,7 @@ public:
 			m_pMinion3[i] = new MinionObject();
 			m_pMinion3[i]->SetMesh(mesh);
 			m_pMinion3[i]->SetPosition(pos);
+			m_pMinion3[i]->SetVisible(TRUE);
 		}
 	}
 	void CreateMinion4(D3DXVECTOR3 pos, CMesh* mesh)
@@ -83,6 +85,34 @@ public:
 			m_pMinion4[i] = new MinionObject();
 			m_pMinion4[i]->SetMesh(mesh);
 			m_pMinion4[i]->SetPosition(pos);
+			m_pMinion4[i]->SetVisible(TRUE);
+		}
+	}
+
+	void ChangeVisible()
+	{
+		for(int i=0; i<MAX_MINION; i++)
+		{
+			if(m_pMinion1[i]->GetVisible() == TRUE)
+				m_pMinion1[i]->SetVisible(FALSE);
+			else
+				m_pMinion1[i]->SetVisible(TRUE);
+
+			if(m_pMinion2[i]->GetVisible() == TRUE)
+				m_pMinion2[i]->SetVisible(FALSE);
+			else
+				m_pMinion2[i]->SetVisible(TRUE);
+
+			if(m_pMinion3[i]->GetVisible() == TRUE)
+				m_pMinion3[i]->SetVisible(FALSE);
+			else
+				m_pMinion3[i]->SetVisible(TRUE);
+
+			if(m_pMinion4[i]->GetVisible() == TRUE)
+				m_pMinion4[i]->SetVisible(FALSE);
+			else
+				m_pMinion4[i]->SetVisible(TRUE);
+
 		}
 	}
 	//void AddMissile(CGPoint _pos, Object_Enemy* _target, int _damage)

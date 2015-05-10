@@ -1,8 +1,11 @@
 #pragma once
 #include "GameObject.h"
+#define MAX_MINION 40
 
 class MinionObject : public CGameObject
 {
+private:
+	BOOL m_bSetDestination;
 public:
 	MinionObject();
 	~MinionObject();

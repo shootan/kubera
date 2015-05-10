@@ -14,6 +14,7 @@ IOCPServer::IOCPServer()
 	m_bServerStart			= FALSE;
 
 	m_iClientCount			= 0;
+	m_MinionTimer			= 0.0f;
 
 	ZeroMemory(&m_ClinetAddr, sizeof(SOCKADDR));
 	ZeroMemory(m_ID, sizeof(char)*100);
@@ -319,12 +320,14 @@ void IOCPServer::OnSendFinish(IOBuffer* _buff, DWORD _size)
 	//}
 }
 
-BOOL IOCPServer::SendData()
+BOOL IOCPServer::SendData(float _dt)
 {
 	IOBuffer* Buffer;
 	Player*   play;
 	Buffer = m_pNextBufferList;
 	int Number = 0;
+
+
 
 	while(Buffer != NULL)
 	{
@@ -350,32 +353,6 @@ BOOL IOCPServer::SendData()
 				this->SendPacket(Buffer, HERODATA, play->m_PI, sizeof(PlayerPacket));
 				this->SetOpCode(Buffer, OP_SEND_FINISH);
 
-				
-// 				Number = 1;
-// 				int size = sizeof(int) + sizeof(MinionInfo)*40;
-// 				char* buffer = new char[size];
-// 				*(int*)buffer = Number;
-// 				memcpy(buffer+sizeof(int), Arrange.MI1, size);
-				this->SendPacket(Buffer, MINIONDATA, Arrange.MI1, sizeof(MinionInfo)*40);
-				this->SetOpCode(Buffer, OP_SEND_FINISH);
-
-// 				Number = 2;
-// 				*(int*)buffer = Number;
-// 				memcpy(buffer+sizeof(int), Arrange.MI1, size);
-				this->SendPacket(Buffer, MINIONDATA, Arrange.MI2, sizeof(MinionInfo)*40);
-				this->SetOpCode(Buffer, OP_SEND_FINISH);
-
-// 				Number = 3;
-// 				*(int*)buffer = Number;
-// 				memcpy(buffer+sizeof(int), Arrange.MI1, size);
-				this->SendPacket(Buffer, MINIONDATA, Arrange.MI3, sizeof(MinionInfo)*40);
-				this->SetOpCode(Buffer, OP_SEND_FINISH);
-
-// 				Number = 4;
-// 				*(int*)buffer = Number;
-// 				memcpy(buffer+sizeof(int), Arrange.MI1, size);
-				this->SendPacket(Buffer, MINIONDATA, Arrange.MI4, sizeof(MinionInfo)*40);
-				this->SetOpCode(Buffer, OP_SEND_FINISH);
 			}
 			play = play->m_pNext;
 		}
@@ -383,6 +360,66 @@ BOOL IOCPServer::SendData()
 		Buffer = Buffer->m_pNext;
 		//LeaveCriticalSection(&m_BufferListLock);
 	}
+
+	m_MinionTimer += _dt;
+
+	if(m_MinionTimer > 0.03f)
+	{
+		Buffer = m_pNextBufferList;
+
+		while(Buffer != NULL)
+		{
+			if(!Buffer->m_Disconnect)
+			{
+				int size = sizeof(int) + sizeof(MinionInfo)*40;
+				char* buff = new char[size];
+
+				if(Arrange.m_bMinionLive1== true)
+				{
+					Number = 1;
+					*(int*)buff = Number;
+					memcpy(buff+sizeof(int), Arrange.MI1, size);
+					this->SendPacket(Buffer, MINIONDATA, buff, sizeof(MinionInfo)*40);
+					this->SetOpCode(Buffer, OP_SEND_FINISH);
+				}
+				
+				if(Arrange.m_bMinionLive2== true)
+				{
+					Number = 2;
+					*(int*)buff = Number;
+					memcpy(buff+sizeof(int), Arrange.MI2, size);
+					this->SendPacket(Buffer, MINIONDATA, buff, sizeof(MinionInfo)*40);
+					this->SetOpCode(Buffer, OP_SEND_FINISH);
+				}
+				
+				if(Arrange.m_bMinionLive3== true)
+				{
+					Number = 3;
+					*(int*)buff = Number;
+					memcpy(buff+sizeof(int), Arrange.MI3, size);
+					this->SendPacket(Buffer, MINIONDATA, buff, sizeof(MinionInfo)*40);
+					this->SetOpCode(Buffer, OP_SEND_FINISH);
+				}
+		
+				if(Arrange.m_bMinionLive4== true)
+				{
+					Number = 4;
+					*(int*)buff = Number;
+					memcpy(buff+sizeof(int), Arrange.MI4, size);
+					this->SendPacket(Buffer, MINIONDATA, buff, sizeof(MinionInfo)*40);
+					this->SetOpCode(Buffer, OP_SEND_FINISH);
+				}
+				
+				//delete[] buff;
+			}
+			Buffer = Buffer->m_pNext;
+			//LeaveCriticalSection(&m_BufferListLock);
+		}
+
+		m_MinionTimer = 0.0f;
+	}
+
+	
 	return TRUE;
 }
 
@@ -405,14 +442,22 @@ void IOCPServer::SendPacket(IOBuffer* _buffer, int NetworkCode, void *_packet, i
 	memcpy(_buffer->m_SendBuf, Buffer, Size);
 	
 	if(_buffer->m_Disconnect) return;
-	WSASend(_buffer->m_ClientSock, &_buffer->m_SendWsabuf, 1, &io_size, NULL, &_buffer->m_Overlapped, NULL);
+	int retval = WSASend(_buffer->m_ClientSock, &_buffer->m_SendWsabuf, 1, &io_size, NULL, &_buffer->m_Overlapped, NULL);
+
+	if(retval > 800)
+	{
+		int ddfaf;
+		ddfaf = 9;
+	}
 }
 
 void IOCPServer::ArrangeDataInfo(float _dt)
 {
-	if(m_iClientCount < 1) return;
+	if(m_iClientCount < 2) return;
 
 	Arrange.SetTime(_dt);
 	Arrange.RegenMinion();
 	Arrange.SetMinionPosition(_dt);
+
+	Arrange.CheckMinionLive();
 }

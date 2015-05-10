@@ -59,8 +59,8 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	CFBXMesh *pObstacleMesh = new CFBXMesh(pd3dDevice, L"tower/Tower1_303030.FBX");
 	pObstacleMesh->LoadTexture(pd3dDevice, L"micro_wizard_col.tif");
 
-	pMinionDragonMesh = new CFBXMesh(pd3dDevice, L"Dragon7107.FBX");
-	pMinionDragonMesh->LoadTexture(pd3dDevice, L"micro_dragon_col.tif");
+	pMinionDragonMesh = new CFBXMesh(pd3dDevice, L"minion/Dragon7107.FBX");
+	pMinionDragonMesh->LoadTexture(pd3dDevice, L"minion/micro_dragon_col.tif");
 
 	//삼각형 객체(CTriangleObject)를 생성하고 삼각형 메쉬를 연결한다.
 	m_pHero = new HeroObject;
@@ -69,6 +69,32 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pHero->SetPosition(D3DXVECTOR3(550, 0, 0));
 	m_pHero->SetBoundSize(10, 13, 10);
 
+	for(int i=0; i<MAX_MINION; i++)
+	{
+		m_pMinion1[i] = new MinionObject();
+		m_pMinion1[i]->SetMesh(pMinionDragonMesh);
+		m_pMinion1[i]->SetPosition(D3DXVECTOR3(485,0,20));
+	}
+	for(int i=0; i<MAX_MINION; i++)
+	{
+		m_pMinion2[i] = new MinionObject();
+		m_pMinion2[i]->SetMesh(pMinionDragonMesh);
+		m_pMinion2[i]->SetPosition(D3DXVECTOR3(-485,0,20));
+	}
+	for(int i=0; i<MAX_MINION; i++)
+	{
+		m_pMinion3[i] = new MinionObject();
+		m_pMinion3[i]->SetMesh(pMinionDragonMesh);
+		m_pMinion3[i]->SetPosition(D3DXVECTOR3(485,0,-20));
+	}
+	for(int i=0; i<MAX_MINION; i++)
+	{
+		m_pMinion4[i] = new MinionObject();
+		m_pMinion4[i]->SetMesh(pMinionDragonMesh);
+		m_pMinion4[i]->SetPosition(D3DXVECTOR3(-485,0,-20));
+	}
+
+	
 	m_pPlane = new CGameObject();
 	m_pPlane->SetMesh(pPlaneMesh);
 	
@@ -163,6 +189,7 @@ bool CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 		break;
 	case WM_RBUTTONUP:
 		m_bRbutton = FALSE;
+		
 		break;
 	case WM_LBUTTONUP:
 		m_bLbutton = FALSE;
@@ -206,12 +233,18 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 
 	m_pHero->Animate(fTimeElapsed);
 	m_pHero->Update(fTimeElapsed);
+
 	for(int i=0; i<MAX_MINION; i++)
 	{
-		MinionManager::sharedManager()->m_pMinion1[i]->Update(fTimeElapsed);
-		MinionManager::sharedManager()->m_pMinion2[i]->Update(fTimeElapsed);
-		MinionManager::sharedManager()->m_pMinion3[i]->Update(fTimeElapsed);
-		MinionManager::sharedManager()->m_pMinion4[i]->Update(fTimeElapsed);
+		m_pMinion1[i]->Update(fTimeElapsed);
+		m_pMinion2[i]->Update(fTimeElapsed);
+		m_pMinion3[i]->Update(fTimeElapsed);
+		m_pMinion4[i]->Update(fTimeElapsed);
+
+		m_pMinion1[i]->Animate(fTimeElapsed);
+		m_pMinion2[i]->Animate(fTimeElapsed);
+		m_pMinion3[i]->Animate(fTimeElapsed);
+		m_pMinion4[i]->Animate(fTimeElapsed);
 	}
 
 	for(int i=0; i<MAX_MISSILE; i++)
@@ -280,9 +313,10 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext)
 	
 	m_pObjectShaders->Render(pd3dDeviceContext);
 
+	
 	m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pHero->m_d3dxmtxWorld);
 	m_pHero->Render(pd3dDeviceContext);
-
+	
 	for(int i=0; i<10; i++)
 	{
 		if(m_pOtherPlayer[i]->GetVisible() != TRUE) continue;
@@ -296,6 +330,18 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext)
 	m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &pBoundBox[0]->m_d3dxmtxWorld);
 	pBoundBox[0]->Render(pd3dDeviceContext);
 
+	for(int i=0; i<MAX_MINION; i++)
+	{
+		m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pMinion1[i]->m_d3dxmtxWorld);
+		m_pMinion1[i]->Render(pd3dDeviceContext);
+		m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pMinion2[i]->m_d3dxmtxWorld);
+		m_pMinion2[i]->Render(pd3dDeviceContext);
+		m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pMinion3[i]->m_d3dxmtxWorld);
+		m_pMinion3[i]->Render(pd3dDeviceContext);
+		m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pMinion4[i]->m_d3dxmtxWorld);
+		m_pMinion4[i]->Render(pd3dDeviceContext);
+	}
+
 	m_pInstancingShaders->Render(pd3dDeviceContext);
 
 	for(int i=0; i<MAX_MISSILE; i++)
@@ -304,13 +350,13 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext)
 		TowerManager::sharedManager()->m_pTower[i]->Render(pd3dDeviceContext);
 	for(int i=0; i<872; i++)
 		ObstacleManager::sharedManager()->m_pObstacle[i]->Render(pd3dDeviceContext);
-	for(int i=0; i<MAX_MINION; i++)
+	/*for(int i=0; i<MAX_MINION; i++)
 	{
 		MinionManager::sharedManager()->m_pMinion1[i]->Render(pd3dDeviceContext);
 		MinionManager::sharedManager()->m_pMinion2[i]->Render(pd3dDeviceContext);
 		MinionManager::sharedManager()->m_pMinion3[i]->Render(pd3dDeviceContext);
 		MinionManager::sharedManager()->m_pMinion4[i]->Render(pd3dDeviceContext);
-	}
+	}*/
 
 }
 
@@ -494,4 +540,40 @@ void CScene::GameCollision(CGameObject* obj1, CGameObject* obj2)
 	}
 	
 	
+}
+
+void CScene::SetMinionInfo(MinionInfo* _MI1, MinionInfo* _MI2, MinionInfo* _MI3, MinionInfo* _MI4)
+{
+	D3DXVECTOR3 des;
+	ZeroMemory(&des, sizeof(D3DXVECTOR3));
+	for(int i=0; i<MAX_MINION; i++)
+	{
+		des.x = _MI1[i].m_Pos.x;
+		des.y= _MI1[i].m_Pos.y;
+		des.z = _MI1[i].m_Pos.z;
+
+		m_pMinion1[i]->SetNewDestination(des);
+		m_pMinion1[i]->SetVisible(_MI1[i].m_Live);
+
+ 		des.x = _MI2[i].m_Pos.x;
+ 		des.y= _MI2[i].m_Pos.y;
+ 		des.z = _MI2[i].m_Pos.z;
+ 		m_pMinion2[i]->SetNewDestination(des);
+ 		m_pMinion2[i]->SetVisible(_MI2[i].m_Live);
+ 
+ 		des.x = _MI3[i].m_Pos.x;
+ 		des.y= _MI3[i].m_Pos.y;
+ 		des.z = _MI3[i].m_Pos.z;
+ 		m_pMinion3[i]->SetNewDestination(des);
+ 		m_pMinion3[i]->SetVisible(_MI3[i].m_Live);
+ 
+ 		des.x = _MI4[i].m_Pos.x;
+ 		des.y= _MI4[i].m_Pos.y;
+ 		des.z = _MI4[i].m_Pos.z;
+ 		m_pMinion4[i]->SetNewDestination(des);
+ 		m_pMinion4[i]->SetVisible(_MI4[i].m_Live);
+
+	}
+	printf("%.2f, %.2f, %.2f \n", m_pMinion1[1]->GetPos().x, m_pMinion1[1]->GetPos().y, m_pMinion1[1]->GetPos().z);
+	printf("%.2f, %.2f, %.2f \n", m_pMinion4[1]->GetPos().x, m_pMinion4[1]->GetPos().y, m_pMinion4[1]->GetPos().z);
 }

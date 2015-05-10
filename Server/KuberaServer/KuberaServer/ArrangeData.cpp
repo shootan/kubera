@@ -28,12 +28,16 @@ ArrangeData::ArrangeData()
 
 	ZeroMemory(MinionID, sizeof(int)*160);
 
-	MinionCount1 = 0;
-	MinionCount2 = 0;
-	MinionCount3 = 0;
-	MinionCount4 = 0;
+	MinionCount = 0;
+	
+
+	m_bMinionLive1 = false;
+	m_bMinionLive2 =false;
+	m_bMinionLive3 = false;
+	m_bMinionLive4 =false;
 
 	m_fWalkSpeed = 10.0f;
+	m_fUnitTime = 0.0f;
 }
 
 ArrangeData::~ArrangeData()
@@ -51,8 +55,8 @@ void ArrangeData::SetRoot()
 
 void ArrangeData::RegenMinion()
 {
-	printf("%.1f \n", m_fRegenTime);
-	if(m_fRegenTime < 40.0f) return;
+	//printf("%.1f \n", m_fRegenTime);
+	if(m_fUnitTime < 1.0f) return;
 
 	for(int i=0; i<40; i++)
 	{
@@ -62,16 +66,11 @@ void ArrangeData::RegenMinion()
 		
 		RootTurn1[i] += 1;
 		Minion1[i].m_TargetPos = Root1[RootTurn1[i]];
-		MinionCount1++;
-
+		
 		MI1[i].m_Live = TRUE;
 		MI1[i].m_ID = i;
 
-		if(MinionCount1 > 3) 
-		{
-			MinionCount1 = 0;
-			break;
-		}
+		break;
 	}
 
 	for(int i=0; i<40; i++)
@@ -82,16 +81,11 @@ void ArrangeData::RegenMinion()
 
 		RootTurn2[i] += 1;
 		Minion2[i].m_TargetPos = Root2[RootTurn2[i]];
-		MinionCount2++;
 
 		MI2[i].m_Live = TRUE;
 		MI2[i].m_ID = i;
 
-		if(MinionCount2 > 3) 
-		{
-			MinionCount2 = 0;
-			break;
-		}
+		break;
 	}
 
 	for(int i=0; i<40; i++)
@@ -102,16 +96,11 @@ void ArrangeData::RegenMinion()
 
 		RootTurn3[i] += 1;
 		Minion3[i].m_TargetPos = Root3[RootTurn3[i]];
-		MinionCount3++;
 
 		MI3[i].m_Live = TRUE;
 		MI3[i].m_ID = i;
 
-		if(MinionCount3 > 3) 
-		{
-			MinionCount3 = 0;
-			break;
-		}
+		break;
 	}
 
 	for(int i=0; i<40; i++)
@@ -122,19 +111,20 @@ void ArrangeData::RegenMinion()
 
 		RootTurn4[i] += 1;
 		Minion4[i].m_TargetPos = Root4[RootTurn4[i]];
-		MinionCount4++;
 
 		MI4[i].m_Live = TRUE;
 		MI4[i].m_ID = i;
 
-		if(MinionCount4 > 3) 
-		{
-			MinionCount4 = 0;
-			break;
-		}
+		break;
 	}
 
-	m_fRegenTime = 0.0f;
+	MinionCount++;
+	m_fUnitTime = 0.0f;
+	if(MinionCount > 3)
+	{
+		m_fRegenTime = 0.0f;
+		MinionCount = 0;
+	}
 }
 
 void ArrangeData::SetMinionPosition(float _dt)
@@ -311,7 +301,9 @@ void ArrangeData::SetMinionPosition(float _dt)
 void ArrangeData::SetTime(float _time)
 {
 	m_fRegenTime += _time;
-	//printf("%.4f \n", m_fRegenTime);
+	if(m_fRegenTime > 30.0f)
+		m_fUnitTime += _time;
+	printf("%.1f \n", m_fRegenTime);
 }
 
 void ArrangeData::SetRoot1()
@@ -417,4 +409,36 @@ void ArrangeData::SetRoot4()
 
 	Root4[56].x = 485;
 	Root4[56].z = -20;
+}
+
+void ArrangeData::CheckMinionLive()
+{
+
+	m_bMinionLive1 = false;
+	m_bMinionLive2 =false;
+	m_bMinionLive3 = false;
+	m_bMinionLive4 =false;
+
+	for(int i=0; i<40; i++)
+	{
+		if(m_bMinionLive1 == false)
+		{
+			if(MI1[i].m_Live == TRUE) m_bMinionLive1 = true;
+		}
+
+		if(m_bMinionLive2 == false)
+		{
+			if(MI2[i].m_Live == TRUE) m_bMinionLive2 = true;
+		}
+
+		if(m_bMinionLive3 == false)
+		{
+			if(MI3[i].m_Live == TRUE) m_bMinionLive3 = true;
+		}
+
+		if(m_bMinionLive4 == false)
+		{
+			if(MI4[i].m_Live == TRUE) m_bMinionLive4 = true;
+		}
+	}
 }

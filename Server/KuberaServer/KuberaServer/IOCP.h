@@ -61,6 +61,8 @@ public:
 	int		m_iClientCount;
 
 	char	m_ID[100];
+
+	float	m_MinionTimer;
 	
 	//함수
 	IOCPServer();
@@ -83,7 +85,7 @@ public:
 	void SetOpCode(IOBuffer* _buff, OPCODE _opCode);
 
 	// Send
-	BOOL SendData();
+	BOOL SendData(float _dt);
 	void SendPacket(IOBuffer* _buffer, int NetworkCode, void *_packet, int _size);
 
 	//스레드

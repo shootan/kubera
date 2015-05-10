@@ -1,4 +1,5 @@
 #include "GameFramework.h"
+#include "MinionManager.h"
 
 
 CGameFramework::CGameFramework()
@@ -38,7 +39,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	//렌더링할 객체(게임 월드 객체)를 생성한다. 
 	BuildObjects();
 
-	Net.InitClient("172.16.3.216", 9000);
+	Net.InitClient("192.168.0.2", 9000);
 	time = 0.0f;
 
 	return(true);
@@ -221,6 +222,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			break;
 		}
 	case WM_LBUTTONDOWN:
+		//MinionManager::sharedManager()->ChangeVisible();
 		break;
 	case WM_RBUTTONDOWN:
 	case WM_LBUTTONUP:
@@ -229,6 +231,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 		OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
 		break;
 	case WM_KEYDOWN:
+
 	case WM_KEYUP:
 		OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 		break;
@@ -319,9 +322,6 @@ void CGameFramework::FrameAdvance()
 {    
 	m_GameTimer.Tick(60);
 
-	HeroInfo.PI.m_Pos = m_pScene->GetHero()->GetPos();
-	printf("X: %.2f, Y: %.2f, Z: %.2f \n", HeroInfo.PI.m_Pos.x,HeroInfo.PI.m_Pos.y,HeroInfo.PI.m_Pos.z);
-
 	this->ExchangeInfo();
 	
 	ProcessInput();
@@ -366,7 +366,7 @@ void CGameFramework::FrameAdvance()
 
 void CGameFramework::SetCameraPos()
 {
-	D3DXVECTOR3 d3dxvEyePosition = D3DXVECTOR3(m_CameraPosX, 60.0f, m_CameraPosZ);
+	D3DXVECTOR3 d3dxvEyePosition = D3DXVECTOR3(m_CameraPosX, 120.0f, m_CameraPosZ);
 	D3DXVECTOR3 d3dxvLookAt = D3DXVECTOR3(m_CameraPosX, 0.0f, m_CameraPosZ+17.0f);
 	m_vCamera.SetViewParams( &d3dxvEyePosition, &d3dxvLookAt );
 
@@ -485,9 +485,13 @@ void CGameFramework::ExchangeInfo()
 		Net.SendData(&HeroInfo);
 	}
 
-	if(Net.m_ClientCount != 0)
-	{
+ 	if(Net.m_ClientCount != 0)
+ 	{
+		m_pScene->SetMinionInfo(Net.MI1,Net.MI2,Net.MI3,Net.MI4);
+
 		m_pScene->SetOtherClient(Net.PI, Net.m_ClientCount);
 		m_pScene->UpdateOtherClient(Net.PI, Net.m_ClientCount);
+
+
 	}	
 }
