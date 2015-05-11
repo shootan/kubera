@@ -23,6 +23,8 @@ CGameObject::CGameObject(void)
 	m_iTag = NONE;
 
 	m_iState = IDLE;
+	m_iTeam = NONE_TEAM;
+
 	BoundsizeX = 0.0f;
 	BoundsizeY = 0.0f;
 	BoundsizeZ = 0.0f;

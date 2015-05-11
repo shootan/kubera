@@ -297,6 +297,30 @@ CFBXMesh::CFBXMesh(ID3D11Device *pd3dDevice, LPCWSTR filename) : CMesh(pd3dDevic
 	m_d3dPrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 	m_pTexture = NULL;
+	m_barray = FALSE;
+	m_fuv = 0.f;
+
+	OnCreateFBXDevice(pd3dDevice, filename);
+}
+
+CFBXMesh::CFBXMesh(ID3D11Device *pd3dDevice, LPCWSTR filename, float UV) : CMesh(pd3dDevice)
+{
+	m_nVertices = 0;
+	//m_nStride = sizeof(FBXVertex);
+	//m_nOffset = 0;
+	m_pnVertexStrides = new UINT[1];
+	m_pnVertexStrides[0] = sizeof(FBXVertex);
+	m_pnVertexOffsets = new UINT[1];
+	m_pnVertexOffsets[0] = 0;
+	m_nVertexSlot = 0;
+	m_nVertexBuffers = 1;
+	m_ppd3dVertexBuffers = new ID3D11Buffer*[m_nVertexBuffers];
+
+	m_d3dPrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+	m_pTexture = NULL;
+	m_barray = TRUE;
+	m_fuv = UV;
 	OnCreateFBXDevice(pd3dDevice, filename);
 }
 
@@ -399,6 +423,14 @@ HRESULT CFBXMesh::LoadFBX(const char* filename, std::vector<FBXVertex>* pOutVert
 					FbxVector2 fbxVecUV = IUVElement->GetDirectArray().GetAt(ITextureUVIndex);
 					vertex.uv.x = (float)fbxVecUV.mData[0];
 					vertex.uv.y = 1- (float)fbxVecUV.mData[1];
+
+					if(m_barray == TRUE)
+					{
+						if(vertex.uv.x == 1)
+							vertex.uv.x = m_fuv;
+						if(vertex.uv.y == 1)
+							vertex.uv.y = m_fuv;
+					}
 
 					pOutVertexVector->push_back(vertex);
 				}

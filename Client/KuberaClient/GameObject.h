@@ -16,7 +16,7 @@ protected:
 	int			m_iTag;
 	int			m_iState;
 	int			 m_iTargetID;
-
+	int			m_iTeam;
 	//
 	int m_nReferences;
 	D3DXVECTOR3 m_Pos;
@@ -90,4 +90,7 @@ public:
 
 	void SetSelected(BOOL _selected) { m_bSelected = _selected; }
 	BOOL GetSelected() { return m_bSelected; }
+
+	void SetTeam(int _team) { m_iTeam = _team; }
+	int GetTeam() { return m_iTeam; }
 };

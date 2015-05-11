@@ -6,7 +6,6 @@ class MissileObject : public CGameObject
 {
 private:
 	BOOL m_bUsed;
-	CGameObject* m_pTarget;
 public:
 	MissileObject();
 	~MissileObject();

@@ -18,6 +18,8 @@ CGameFramework::CGameFramework()
 
 	m_CameraPosX = 500.f;
 	m_CameraPosZ = -10.f;
+	m_CameraZoom = 60.f;
+	m_CameraUpDown = 0.f;
 
 	ZeroMemory(&HeroInfo, sizeof(PlayerPacket));
 	HeroInfo.size = sizeof(PlayerPacket);
@@ -202,6 +204,9 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
 	m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+	if(nMessageID != WM_MOUSEWHEEL)
+		m_CameraUpDown = 0;
+
 	switch (nMessageID)
 	{
 		/*윈도우의 크기가 변경될 때(현재는 “Alt+Enter“ 전체 화면 모드와 윈도우 모드로 전환될 때) 스왑 체인의 후면버퍼 크기를 조정하고 후면버퍼에 대한 렌더 타겟 뷰를 다시 생성한다. */
@@ -242,6 +247,12 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 
 	case WM_KEYUP:
 		OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+		break;
+	case WM_MOUSEWHEEL:
+		if (((short) HIWORD(wParam))/120 > 0 )
+			m_CameraUpDown = 1;
+		else if (((short) HIWORD(wParam))/120 < 0 )
+			m_CameraUpDown = 2;
 		break;
 	}
 	return(0);
@@ -382,9 +393,21 @@ void CGameFramework::FrameAdvance()
 
 void CGameFramework::SetCameraPos()
 {
-	D3DXVECTOR3 d3dxvEyePosition = D3DXVECTOR3(m_CameraPosX, 70.0f, m_CameraPosZ);
+	D3DXVECTOR3 d3dxvEyePosition = D3DXVECTOR3(m_CameraPosX, m_CameraZoom, m_CameraPosZ);
 	D3DXVECTOR3 d3dxvLookAt = D3DXVECTOR3(m_CameraPosX, 0.0f, m_CameraPosZ+17.0f);
 	m_vCamera.SetViewParams( &d3dxvEyePosition, &d3dxvLookAt );
+
+	if(m_CameraUpDown == 1)
+		m_CameraZoom += 1 * 3.0f;
+	else if(m_CameraUpDown == 2)
+		m_CameraZoom -= 1 * 3.0f;
+
+	if(m_CameraZoom <= 30)
+		m_CameraZoom = 30;
+	if(m_CameraZoom >= 100)
+		m_CameraZoom = 100;
+
+
 
 	if(m_CameraPosX <= -500)
 	{

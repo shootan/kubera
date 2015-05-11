@@ -23,6 +23,8 @@ CScene::CScene(void)
 
 	m_pHero = NULL;
 	m_pPlane = NULL;
+	m_pBlueNexus = NULL;
+	m_pRedNexus = NULL;
 
 	//m_pTxtHelper = NULL;
 }
@@ -55,14 +57,21 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	pHeroMesh = new CFBXMesh(pd3dDevice, L"Wizard101310.FBX");
 	pHeroMesh->LoadTexture(pd3dDevice, L"micro_wizard_col.tif");
 
-	CFBXMesh *pPlaneMesh = new CFBXMesh(pd3dDevice, L"Plane4.FBX");
-	pPlaneMesh->LoadTexture(pd3dDevice, L"map2.png");
+	CFBXMesh *pPlaneMesh = new CFBXMesh(pd3dDevice, L"Plane4.FBX", 10);
+	pPlaneMesh->LoadTexture(pd3dDevice, L"imagefile/11.png");
 
 	CFBXMesh *pObstacleMesh = new CFBXMesh(pd3dDevice, L"tower/Tower1_303030.FBX");
 	pObstacleMesh->LoadTexture(pd3dDevice, L"micro_wizard_col.tif");
 
-	pMinionDragonMesh = new CFBXMesh(pd3dDevice, L"minion/Dragon7107.FBX");
-	pMinionDragonMesh->LoadTexture(pd3dDevice, L"minion/micro_dragon_col.tif");
+	CFBXMesh *pBlueNexusMesh = new CFBXMesh(pd3dDevice, L"tower/Nexus.FBX");
+	pBlueNexusMesh->LoadTexture(pd3dDevice, L"tower/Nexus.png");
+
+	CFBXMesh *pRedNexusMesh = new CFBXMesh(pd3dDevice, L"tower/Nexus.FBX");
+	pRedNexusMesh->LoadTexture(pd3dDevice, L"tower/Nexus2.png");
+
+	//pMinionDragonMesh = new CFBXMesh(pd3dDevice, L"minion/Dragon7107.FBX");
+	//pMinionDragonMesh->LoadTexture(pd3dDevice, L"minion/micro_dragon_col.tif");
+
 
 	//»ï°¢Çü °´Ã¼(CTriangleObject)¸¦ »ý¼ºÇÏ°í »ï°¢Çü ¸Þ½¬¸¦ ¿¬°áÇÑ´Ù.
 	m_pHero = new HeroObject;
@@ -71,7 +80,6 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pHero->SetPosition(D3DXVECTOR3(550, 0, 0));
 	m_pHero->SetBoundSize(10, 13, 10);
 
-	
 	
 	m_pPlane = new CGameObject();
 	m_pPlane->SetMesh(pPlaneMesh);
@@ -90,15 +98,26 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	}
 	pBoundBox[1]->SetPosition(D3DXVECTOR3(25,0,0));
 
+	m_pBlueNexus = new CGameObject();
+	m_pBlueNexus->SetMesh(pBlueNexusMesh);
+	m_pBlueNexus->SetPosition(D3DXVECTOR3(-450, 0, 0));
+	m_pBlueNexus->SetBoundSize(10, 13, 10);
+
+	m_pRedNexus = new CGameObject();
+	m_pRedNexus->SetMesh(pRedNexusMesh);
+	m_pRedNexus->SetPosition(D3DXVECTOR3(450, 0, 0));
+	m_pRedNexus->SetBoundSize(10, 13, 10);
+
 
 	//pFBXMesh->Release();
 
  	//»ï°¢Çü °´Ã¼¸¦ ½¦ÀÌ´õ °´Ã¼¿¡ ¿¬°áÇÑ´Ù.
  	m_pObjectShaders->AddObject(m_pHero);
 	m_pObjectShaders->AddObject(m_pPlane);
-
 	for(int i=0; i<iObjectNum; i++)
 		m_pObjectShaders->AddObject(pBoundBox[i]);
+	m_pObjectShaders->AddObject(m_pBlueNexus);
+	m_pObjectShaders->AddObject(m_pRedNexus);
 
 	OtherPlayerManager::sharedManager()->CreateOtherPlayer(D3DXVECTOR3(1500, 0, 0), pHeroMesh, 10, 13, 10);
 	for(int i=0; i<MAX_OTHER_PLAYER;i++)
@@ -229,7 +248,7 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 		else
 		{
 			TowerManager::sharedManager()->m_pTower[i]->SetTarget(NULL);
-			TowerManager::sharedManager()->m_pTower[i]->SetAttackTime(0.f);
+			//TowerManager::sharedManager()->m_pTower[i]->SetAttackTime(0.f);
 		}
 
 		for(int j=0; j<MAX_OTHER_PLAYER; j++)
@@ -245,7 +264,7 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 			else
 			{
 				TowerManager::sharedManager()->m_pTower[i]->SetTarget(NULL);
-				TowerManager::sharedManager()->m_pTower[i]->SetAttackTime(0.f);
+				//TowerManager::sharedManager()->m_pTower[i]->SetAttackTime(0.f);
 			}
 			
 		}
@@ -318,7 +337,10 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext)
 
 	m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &pBoundBox[0]->m_d3dxmtxWorld);
 	pBoundBox[0]->Render(pd3dDeviceContext);
-
+	m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pBlueNexus->m_d3dxmtxWorld);
+	m_pBlueNexus->Render(pd3dDeviceContext);
+	m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pRedNexus->m_d3dxmtxWorld);
+	m_pRedNexus->Render(pd3dDeviceContext);
 
 
 	m_pInstancingShaders->Render(pd3dDeviceContext);

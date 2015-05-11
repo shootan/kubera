@@ -50,6 +50,8 @@ private:
 	float m_DistanceToHero;
 	float m_DistanceToOtherPlayer;
 	CGameObject *pBoundBox[2];
+	CGameObject *m_pBlueNexus;
+	CGameObject *m_pRedNexus;
 
 
 	//CDXUTTextHelper* m_pTxtHelper;

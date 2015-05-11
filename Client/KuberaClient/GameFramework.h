@@ -29,8 +29,11 @@ private:
 	CModelViewerCamera m_vCamera;
 	ID3D11Buffer *m_pd3dcbViewProjection;
 	PlayerPacket m_MyHero;
+
 	float m_CameraPosX;
 	float m_CameraPosZ;
+	float m_CameraZoom;
+	float m_CameraUpDown;
 
 	//디바이스 인터페이스에 대한 포인터이다. 주로 리소스를 생성하기 위하여 필요하다.
 	ID3D11Device *m_pd3dDevice;
