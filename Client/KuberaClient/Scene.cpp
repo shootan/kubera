@@ -229,7 +229,7 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 		else
 		{
 			TowerManager::sharedManager()->m_pTower[i]->SetTarget(NULL);
-			TowerManager::sharedManager()->m_pTower[i]->SetAttackTime(0.f);
+			//TowerManager::sharedManager()->m_pTower[i]->SetAttackTime(0.f);
 		}
 
 		for(int j=0; j<MAX_OTHER_PLAYER; j++)
@@ -245,7 +245,7 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 			else
 			{
 				TowerManager::sharedManager()->m_pTower[i]->SetTarget(NULL);
-				TowerManager::sharedManager()->m_pTower[i]->SetAttackTime(0.f);
+				//TowerManager::sharedManager()->m_pTower[i]->SetAttackTime(0.f);
 			}
 			
 		}
