@@ -6,7 +6,6 @@
 class TowerObject : public CGameObject
 {
 private:
-	CGameObject* m_pTarget;
 	CGameObject* m_pPrevTarget;
 	float		 m_fAttackTime;
 public:

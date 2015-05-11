@@ -106,14 +106,16 @@ public:
 	CMesh *m_pRock2Mesh;
 	CMesh *m_pRock3Mesh;
 	CMesh *m_pMissileMesh;
-	CMesh *m_pTowerMesh;
+	CMesh *m_pBlueTowerMesh;
+	CMesh *m_pRedTowerMesh;
 	CMesh *m_pMinionMesh;
 
 	int m_nBush3Objects;
 	int m_nRock2Objects;
 	int m_nRock3Objects;
 	int m_nMissileObjects;
-	int m_nTowerObjects;
+	int m_nBlueTowerObjects;
+	int m_nRedTowerObjects;
 	int m_nMinionObjects;
 
 	//월드 변환 행렬과 월드 변환 행렬을 위한 상수 버퍼이다.
@@ -125,7 +127,8 @@ public:
 	ID3D11Buffer *m_pd3dcbRock2InstanceMatrices;
 	ID3D11Buffer *m_pd3dcbRock3InstanceMatrices;
 	ID3D11Buffer *m_pd3dcbMissileInstanceMatrices;
-	ID3D11Buffer *m_pd3dcbTowerInstanceMatrices;
+	ID3D11Buffer *m_pd3dcbBlueTowerInstanceMatrices;
+	ID3D11Buffer *m_pd3dcbRedTowerInstanceMatrices;
 	ID3D11Buffer *m_pd3dcbMinionInstanceMatrices;
 
 	//인스턴싱으로 그릴 객체의 색상들의 배열을 저장할 상수 버퍼이다.

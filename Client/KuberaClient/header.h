@@ -67,6 +67,11 @@ enum STATE
 	IDLE, ATTACK, MOVE, DEATH
 };
 
+enum TEAM
+{
+	NONE_TEAM, RED_TEAM, BLUE_TEAM
+};
+
 struct MinionInfo
 {
 	int		m_ID;

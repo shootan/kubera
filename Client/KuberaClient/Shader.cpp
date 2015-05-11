@@ -225,21 +225,24 @@ CInstancingShader::CInstancingShader()
 	m_pRock2Mesh = NULL;
 	m_pRock3Mesh = NULL;
 	m_pMissileMesh = NULL;
-	m_pTowerMesh = NULL;
+	m_pBlueTowerMesh = NULL;
+	m_pRedTowerMesh = NULL;
 	m_pMinionMesh = NULL;
 
 	m_pd3dcbBush3InstanceMatrices = NULL;
 	m_pd3dcbRock2InstanceMatrices = NULL;
 	m_pd3dcbRock3InstanceMatrices = NULL;
 	m_pd3dcbMissileInstanceMatrices = NULL;
-	m_pd3dcbTowerInstanceMatrices = NULL;
+	m_pd3dcbBlueTowerInstanceMatrices = NULL;
+	m_pd3dcbRedTowerInstanceMatrices = NULL;
 	m_pd3dcbMinionInstanceMatrices = NULL;
 
 	m_nBush3Objects = 0;
 	m_nRock2Objects = 0;
 	m_nRock3Objects = 0;
 	m_nMissileObjects = 0;
-	m_nTowerObjects = 0;
+	m_nBlueTowerObjects = 0;
+	m_nRedTowerObjects = 0;
 	m_nMinionObjects = 0;
 
 	m_pd3dcbInstanceColors = NULL;
@@ -261,7 +264,8 @@ void CInstancingShader::ReleaseObjects()
 	if (m_pRock2Mesh) m_pRock2Mesh->Release();
 	if (m_pRock2Mesh) m_pRock3Mesh->Release();
 	if (m_pMissileMesh) m_pMissileMesh->Release();
-	if (m_pTowerMesh) m_pTowerMesh->Release();
+	if (m_pBlueTowerMesh) m_pBlueTowerMesh->Release();
+	if (m_pRedTowerMesh) m_pRedTowerMesh->Release();
 	if (m_pMinionMesh) m_pMinionMesh->Release();
 
 	if (m_pd3dcbWorldMatrix) m_pd3dcbWorldMatrix->Release();
@@ -275,7 +279,8 @@ void CInstancingShader::ReleaseObjects()
 	if (m_pd3dcbRock2InstanceMatrices) m_pd3dcbRock2InstanceMatrices->Release();
 	if (m_pd3dcbRock3InstanceMatrices) m_pd3dcbRock3InstanceMatrices->Release();
 	if (m_pd3dcbMissileInstanceMatrices) m_pd3dcbMissileInstanceMatrices->Release();
-	if (m_pd3dcbTowerInstanceMatrices) m_pd3dcbTowerInstanceMatrices->Release();
+	if (m_pd3dcbBlueTowerInstanceMatrices) m_pd3dcbBlueTowerInstanceMatrices->Release();
+	if (m_pd3dcbRedTowerInstanceMatrices) m_pd3dcbRedTowerInstanceMatrices->Release();
 	if (m_pd3dcbMinionInstanceMatrices) m_pd3dcbMinionInstanceMatrices->Release();
 	if (m_pd3dcbInstanceColors) m_pd3dcbInstanceColors->Release();
 }
@@ -298,8 +303,11 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pMissileMesh = new CFBXMesh(pd3dDevice, L"missile/Missile.FBX");
 	m_pMissileMesh->LoadTexture(pd3dDevice, L"missile/Missile.png");
 
-	m_pTowerMesh = new CFBXMesh(pd3dDevice, L"tower/BlueHqTower.FBX");
-	m_pTowerMesh->LoadTexture(pd3dDevice, L"tower/BlueHqTower.png");
+	m_pBlueTowerMesh = new CFBXMesh(pd3dDevice, L"tower/BlueHqTower.FBX");
+	m_pBlueTowerMesh->LoadTexture(pd3dDevice, L"tower/BlueHqTower.png");
+
+	m_pRedTowerMesh = new CFBXMesh(pd3dDevice, L"tower/RedHqTower.FBX");
+	m_pRedTowerMesh->LoadTexture(pd3dDevice, L"tower/RedHqTower.png");
 
 	m_pMinionMesh = new CFBXMesh(pd3dDevice, L"minion/Dragon7107.FBX");
 	m_pMinionMesh->LoadTexture(pd3dDevice, L"minion/micro_dragon_col.tif");
@@ -315,10 +323,12 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	m_nRock2Objects = (Rock2x*Rock2z*4);
 	m_nRock3Objects = (Rock3x*Rock3z*2);
 	m_nMissileObjects = MAX_MISSILE;
-	m_nTowerObjects = MAX_TOWER;
+	m_nBlueTowerObjects = MAX_TOWER/2;
+	m_nRedTowerObjects = MAX_TOWER/2;
 	m_nMinionObjects = MAX_MINION;
 
-	m_nObjects = m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nTowerObjects +m_nMinionObjects ;
+	m_nObjects = m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + 
+		m_nBlueTowerObjects + m_nRedTowerObjects + m_nMinionObjects ;
 	//인스턴싱을 할 객체들의 배열이다.
 	m_ppObjects = new CGameObject*[m_nObjects]; 
 
@@ -419,28 +429,44 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pMissileMesh->AppendVertexBuffer(m_pd3dcbMissileInstanceMatrices, sizeof(D3DXMATRIX), 0);
 
 
-	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(-400.f + 15.f , 0, 165.f), m_pTowerMesh, 30, 30, 30);
-	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(-50.f - 15.f, 0, 165.f), m_pTowerMesh, 30, 30, 30);
-	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(50.f + 15.f, 0, 165.f), m_pTowerMesh, 30, 30, 30);
-	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(400.f - 15.f, 0, 165.f), m_pTowerMesh, 30, 30, 30);
-	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(-400.f + 15.f, 0, -165.f), m_pTowerMesh, 30, 30, 30);
-	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(-50.f - 15.f, 0, -165.f), m_pTowerMesh, 30, 30, 30);
-	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(50.f + 15.f, 0, -165.f), m_pTowerMesh, 30, 30, 30);
-	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(400.f - 15.f, 0, -165.f), m_pTowerMesh, 30, 30, 30);
-	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(-275.f, 0, -10.f), m_pTowerMesh, 30, 30, 30);
-	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(275.f, 0, 10.f), m_pTowerMesh, 30, 30, 30);
-	for(int j=0; j<m_nTowerObjects; j++)
-		m_ppObjects[i++] = TowerManager::sharedManager()->m_pTower[j];
-
+	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(-400.f + 15.f , 0, 165.f), m_pBlueTowerMesh, 30, 30, 30, BLUE_TEAM);
+	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(-50.f - 15.f, 0, 165.f), m_pBlueTowerMesh, 30, 30, 30, BLUE_TEAM);
+	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(50.f + 15.f, 0, 165.f), m_pRedTowerMesh, 30, 30, 30, RED_TEAM);
+	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(400.f - 15.f, 0, 165.f), m_pRedTowerMesh, 30, 30, 30, RED_TEAM);
+	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(-400.f + 15.f, 0, -165.f), m_pBlueTowerMesh, 30, 30, 30, BLUE_TEAM);
+	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(-50.f - 15.f, 0, -165.f), m_pBlueTowerMesh, 30, 30, 30, BLUE_TEAM);
+	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(50.f + 15.f, 0, -165.f), m_pRedTowerMesh, 30, 30, 30, RED_TEAM);
+	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(400.f - 15.f, 0, -165.f), m_pRedTowerMesh, 30, 30, 30, RED_TEAM);
+	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(-275.f, 0, -10.f), m_pBlueTowerMesh, 30, 30, 30, BLUE_TEAM);
+	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(275.f, 0, 10.f), m_pRedTowerMesh, 30, 30, 30, RED_TEAM);
+	for(int j=0; j<MAX_TOWER; j++)
+	{
+		if(TowerManager::sharedManager()->m_pTower[j]->GetTeam() == BLUE_TEAM)
+			m_ppObjects[i++] = TowerManager::sharedManager()->m_pTower[j];
+	}
+	for(int j=0; j<MAX_TOWER; j++)
+	{
+		if(TowerManager::sharedManager()->m_pTower[j]->GetTeam() == RED_TEAM)
+			m_ppObjects[i++] = TowerManager::sharedManager()->m_pTower[j];
+	}
 
 	ZeroMemory(&d3dBufferDesc, sizeof(D3D11_BUFFER_DESC));
 	d3dBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	d3dBufferDesc.ByteWidth = sizeof(D3DXMATRIX) * m_nTowerObjects;
+	d3dBufferDesc.ByteWidth = sizeof(D3DXMATRIX) * m_nBlueTowerObjects;
 	d3dBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	d3dBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	pd3dDevice->CreateBuffer(&d3dBufferDesc, NULL, &m_pd3dcbTowerInstanceMatrices);
+	pd3dDevice->CreateBuffer(&d3dBufferDesc, NULL, &m_pd3dcbBlueTowerInstanceMatrices);
 
-	m_pTowerMesh->AppendVertexBuffer(m_pd3dcbTowerInstanceMatrices, sizeof(D3DXMATRIX), 0);
+	m_pBlueTowerMesh->AppendVertexBuffer(m_pd3dcbBlueTowerInstanceMatrices, sizeof(D3DXMATRIX), 0);
+
+	ZeroMemory(&d3dBufferDesc, sizeof(D3D11_BUFFER_DESC));
+	d3dBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dBufferDesc.ByteWidth = sizeof(D3DXMATRIX) * m_nRedTowerObjects;
+	d3dBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	d3dBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	pd3dDevice->CreateBuffer(&d3dBufferDesc, NULL, &m_pd3dcbRedTowerInstanceMatrices);
+
+	m_pRedTowerMesh->AppendVertexBuffer(m_pd3dcbRedTowerInstanceMatrices, sizeof(D3DXMATRIX), 0);
 
 
 	//미니언 인스턴싱
@@ -552,19 +578,28 @@ void CInstancingShader::UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceCon
  		pcbWorldMatrix[j] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + j]->m_d3dxmtxWorld;
  	pd3dDeviceContext->Unmap(m_pd3dcbMissileInstanceMatrices, 0);
 
-	pd3dDeviceContext->Map(m_pd3dcbTowerInstanceMatrices, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
+	pd3dDeviceContext->Map(m_pd3dcbBlueTowerInstanceMatrices, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
 	pcbWorldMatrix = (D3DXMATRIX *)d3dMappedResource.pData;
 	//인스턴싱 객체들의 월드 변환 행렬을 정점 버퍼에 쓴다.
-	for (int j = 0; j < m_nTowerObjects; j++)
+	for (int j = 0; j < m_nBlueTowerObjects; j++)
 		pcbWorldMatrix[j] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + j]->m_d3dxmtxWorld;
-	pd3dDeviceContext->Unmap(m_pd3dcbTowerInstanceMatrices, 0);
+	pd3dDeviceContext->Unmap(m_pd3dcbBlueTowerInstanceMatrices, 0);
+
+	pd3dDeviceContext->Map(m_pd3dcbRedTowerInstanceMatrices, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
+	pcbWorldMatrix = (D3DXMATRIX *)d3dMappedResource.pData;
+	//인스턴싱 객체들의 월드 변환 행렬을 정점 버퍼에 쓴다.
+	for (int j = 0; j < m_nRedTowerObjects; j++)
+		pcbWorldMatrix[j] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + 
+		j]->m_d3dxmtxWorld;
+	pd3dDeviceContext->Unmap(m_pd3dcbRedTowerInstanceMatrices, 0);
 
 
   	pd3dDeviceContext->Map(m_pd3dcbMinionInstanceMatrices, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
   	pcbWorldMatrix = (D3DXMATRIX *)d3dMappedResource.pData;
   	//인스턴싱 객체들의 월드 변환 행렬을 정점 버퍼에 쓴다.
   	for (int j = 0; j < m_nMinionObjects; j++)
-  		pcbWorldMatrix[j] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nTowerObjects + j]->m_d3dxmtxWorld;
+  		pcbWorldMatrix[j] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + 
+		m_nRedTowerObjects + j]->m_d3dxmtxWorld;
   	pd3dDeviceContext->Unmap(m_pd3dcbMinionInstanceMatrices, 0);
 
 
@@ -594,7 +629,8 @@ void CInstancingShader::Render(ID3D11DeviceContext *pd3dDeviceContext)
 	if (m_pRock2Mesh) m_pRock2Mesh->RenderInstanced(pd3dDeviceContext, m_nRock2Objects, 0);
 	if (m_pRock3Mesh) m_pRock3Mesh->RenderInstanced(pd3dDeviceContext, m_nRock3Objects, 0);
 	if (m_pMissileMesh) m_pMissileMesh->RenderInstanced(pd3dDeviceContext, m_nMissileObjects, 0);
-	if (m_pTowerMesh) m_pTowerMesh->RenderInstanced(pd3dDeviceContext, m_nTowerObjects, 0);
+	if (m_pBlueTowerMesh) m_pBlueTowerMesh->RenderInstanced(pd3dDeviceContext, m_nBlueTowerObjects, 0);
+	if (m_pRedTowerMesh) m_pRedTowerMesh->RenderInstanced(pd3dDeviceContext, m_nRedTowerObjects, 0);
 	if (m_pMinionMesh) m_pMinionMesh->RenderInstanced(pd3dDeviceContext, m_nMinionObjects, 0);
 }
 

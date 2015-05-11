@@ -35,7 +35,7 @@ public:
 		return instance;
 	}
 public:
-	void CreateTower(D3DXVECTOR3 pos, CMesh* mesh, float boundx, float boundy, float boundz)
+	void CreateTower(D3DXVECTOR3 pos, CMesh* mesh, float boundx, float boundy, float boundz, int team)
 	{
 		for(int i=0; i<MAX_TOWER; i++)
 		{
@@ -44,6 +44,7 @@ public:
 			m_pTower[i]->SetID(i+164);
 			m_pTower[i]->SetMesh(mesh);
 			m_pTower[i]->SetPosition(pos);
+			m_pTower[i]->SetTeam(team);
 			//m_pTower[i]->SetP(pos.x, pos.y, pos.z);
 			m_pTower[i]->SetBoundSize(boundx, boundy, boundz);
 			break;

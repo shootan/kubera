@@ -118,7 +118,11 @@ class CFBXMesh : public CMesh
 	FBXVERTS m_verts;
 
 public:
+	BOOL m_barray;
+	float m_fuv;
+
 	CFBXMesh(ID3D11Device *pd3dDevice, LPCWSTR filename);
+	CFBXMesh(ID3D11Device *pd3dDevice, LPCWSTR filename, float UV);
 	virtual ~CFBXMesh();
 
 	HRESULT OnCreateFBXDevice(ID3D11Device* pd3dDevice, LPCWSTR filename);
@@ -128,6 +132,7 @@ public:
 	virtual void RenderInstanced(ID3D11DeviceContext *pd3dDeviceContext, int nInstances=0, int nStartInstance=0);
 	virtual bool LoadTexture(ID3D11Device* pd3dDevice, WCHAR* filename);
 	virtual void ReleaseTexture();
+
 
 	CTextureclass* m_pTexture;
 };
