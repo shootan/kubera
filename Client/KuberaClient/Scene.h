@@ -43,9 +43,7 @@ private:
 	float m_fMissileAttackTime;
 	int m_nMinionObjects;
 
-	HeroObject *m_pHero;
 	CGameObject *m_pPlane;
-	//OtherPlayerObject	*m_pOtherPlayer[10];
 
 	float m_DistanceToHero;
 	float m_DistanceToOtherPlayer;
@@ -53,9 +51,6 @@ private:
 	CGameObject *m_pBlueNexus;
 	CGameObject *m_pRedNexus;
 
-
-	//CDXUTTextHelper* m_pTxtHelper;
-	//CDXUTDialogResourceManager m_DialogResourceManager;
 public:
 	CScene(void);
 	~CScene(void);
@@ -88,10 +83,6 @@ public:
 	BOOL m_bJoinOtherPlayer;
 	BOOL m_bJoin;
 
-	CGameObject* GetHero()
-	{
-		return m_pHero;
-	}
 	// net
 
 	void SetOtherClient(PlayerStruct* _PI, int _Count);
@@ -99,5 +90,4 @@ public:
 
 	void SetMinionInfo(MinionInfo* _MI);
 	void TargetSetting();
-	//void RenderText();
 };

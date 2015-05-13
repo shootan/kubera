@@ -1,6 +1,5 @@
 #pragma once
 #include "GameObject.h"
-#define MAX_MINION 160
 
 class MinionObject : public CGameObject
 {
