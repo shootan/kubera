@@ -39,7 +39,7 @@ ArrangeData::ArrangeData()
 
 	m_fWalkSpeed = 10.0f;
 
-	m_fRegenTime = 20.0f;
+	m_fRegenTime = 0.0f;
 	m_fUnitTime = 0.0f;
 }
 
