@@ -68,18 +68,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	pRedNexusMesh->LoadTexture(pd3dDevice, L"tower/Nexus2.png");
 
 	//히어로 생성
-	HeroManager::sharedManager()->CreateHero(D3DXVECTOR3(0, 0, 0), pHeroMesh, 10, 13, 10);
-	if(HeroManager::sharedManager()->GetID()%2 == 0)
-	{
-		HeroManager::sharedManager()->m_pHero->SetTeam(RED_TEAM);
-		HeroManager::sharedManager()->m_pHero->SetPosition(D3DXVECTOR3(550, 0, 0));
-	}
-	else
-	{
-		HeroManager::sharedManager()->m_pHero->SetTeam(BLUE_TEAM);
-		HeroManager::sharedManager()->m_pHero->SetPosition(D3DXVECTOR3(-550, 0, 0));
-	}
-
+	HeroManager::sharedManager()->CreateHero(pHeroMesh, 10, 13, 10);
 
 	m_pPlane = new CGameObject();
 	m_pPlane->SetMesh(pPlaneMesh);
@@ -385,6 +374,10 @@ void CScene::SetOtherClient(PlayerStruct* _PI, int _Count)
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Rot);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetState(_PI[i].PI.m_iState);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetTargetID(_PI[i].PI.m_iTargetID);
+			if(_PI[i].PI.m_ID%2 == 0)
+				OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetTeam(RED_TEAM);
+			else
+				OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetTeam(BLUE_TEAM);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetVisible(TRUE);
 			_PI[i].Use = TRUE;
 			break;

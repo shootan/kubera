@@ -8,7 +8,7 @@ OtherPlayerObject::OtherPlayerObject(void)
 	m_Visible = FALSE;
 	m_ID = 0;
 	m_bSetDestination = FALSE;
-	 m_iTargetID = 0;
+	m_iTargetID = 0;
 
 	m_fAttackTime = 0.0f;
 }

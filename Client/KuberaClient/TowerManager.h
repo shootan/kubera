@@ -41,7 +41,7 @@ public:
 		{
 			if(m_pTower[i] != NULL) continue;
 			m_pTower[i] = new TowerObject();
-			m_pTower[i]->SetID(i+164);
+			m_pTower[i]->SetID(i+165);
 			m_pTower[i]->SetMesh(mesh);
 			m_pTower[i]->SetPosition(pos);
 			m_pTower[i]->SetTeam(team);

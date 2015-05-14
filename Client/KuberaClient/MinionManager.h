@@ -45,15 +45,21 @@ public:
 		return instance;
 	}
 public:
-	void CreateMinion1(D3DXVECTOR3 pos, CMesh* mesh)
+	void CreateMinion1(D3DXVECTOR3 pos, CMesh* mesh, float boundx, float boundy, float boundz)
 	{
 		for(int i=0; i<MAX_MINION; i++)
 		{
 			if(m_pMinion1[i] != NULL) continue;
 			m_pMinion1[i] = new MinionObject();
-			m_pMinion1[i]->SetID(i+4);
+			m_pMinion1[i]->SetID(i+5);
 			m_pMinion1[i]->SetMesh(mesh);
 			m_pMinion1[i]->SetPosition(pos);
+			m_pMinion1[i]->SetBoundSize(boundx, boundy, boundz);
+			if(i %2 == 0)
+				m_pMinion1[i]->SetTeam(RED_TEAM);
+			else
+				m_pMinion1[i]->SetTeam(BLUE_TEAM);
+
 			m_pMinion1[i]->SetVisible(FALSE);
 		}
 	}
