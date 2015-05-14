@@ -48,7 +48,6 @@ private:
 
 	CDXUTTextHelper* m_pTxtHelper;
 	CDXUTDialogResourceManager m_DialogResourceManager;
-	DXGI_SURFACE_DESC* backbuffer;
 
 	// Network
 	Network Net;

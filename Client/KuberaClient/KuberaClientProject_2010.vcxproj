@@ -413,6 +413,7 @@
     <ClInclude Include="DXUT\Optional\DXUTsettingsdlg.h" />
     <ClInclude Include="DXUT\Optional\SDKmesh.h" />
     <ClInclude Include="DXUT\Optional\SDKmisc.h" />
+    <ClInclude Include="HeroManager.h" />
     <ClInclude Include="OtherPlayerObject.h" />
     <ClInclude Include="GameFramework.h" />
     <ClInclude Include="GameObject.h" />

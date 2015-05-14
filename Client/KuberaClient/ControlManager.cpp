@@ -15,8 +15,8 @@ void ControlManager::TouchRightDown(float _x, float _y, HWND hWnd)
 		if ( fpINTersectionTime > 0) {
 			vGroundPlaneHit = vRayOrigin;
 			vGroundPlaneHit += ( vRayDirection * fpINTersectionTime );
-			m_Player->SetNewDestination(vGroundPlaneHit);
-			m_Player->SetState(MOVE);
+			HeroManager::sharedManager()->m_pHero->SetNewDestination(vGroundPlaneHit);
+			HeroManager::sharedManager()->m_pHero->SetState(MOVE);
 		}
 	}     
 
@@ -86,8 +86,8 @@ void ControlManager::SetTarget(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRay
 		if( dist > 0 )
 		{
 			//TowerManager::sharedManager()->m_pTower[i]->SetSelected(TRUE);
-			m_Player->SetTarget(TowerManager::sharedManager()->m_pTower[i]);
-			m_Player->SetTargetID(TowerManager::sharedManager()->m_pTower[i]->GetID());
+			HeroManager::sharedManager()->m_pHero->SetTarget(TowerManager::sharedManager()->m_pTower[i]);
+			HeroManager::sharedManager()->m_pHero->SetTargetID(TowerManager::sharedManager()->m_pTower[i]->GetID());
 			return;
 		}
 		//TowerManager::sharedManager()->m_pTower[i]->SetSelected(FALSE);
@@ -102,13 +102,26 @@ void ControlManager::SetTarget(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRay
 
 		if( dist > 0 )
 		{
-			m_Player->SetTarget(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]);
-			m_Player->SetTargetID(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetID());
+			HeroManager::sharedManager()->m_pHero->SetTarget(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]);
+			HeroManager::sharedManager()->m_pHero->SetTargetID(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetID());
 			return;
 		}
-
 	}
 
-	m_Player->SetTarget(NULL);
-	m_Player->SetTargetID(0);
+	for(int i=0; i<MAX_MINION; i++)  //미니언 타겟 잡기
+	{
+		float dist = INTersectRaySphere(vRayDirection, vRayOrigin, MinionManager::sharedManager()->m_pMinion1[i]->GetPosition(), 
+			MinionManager::sharedManager()->m_pMinion1[i]->GetBoundSizeX()*2);
+
+		if( dist > 0 )
+		{
+			HeroManager::sharedManager()->m_pHero->SetTarget(MinionManager::sharedManager()->m_pMinion1[i]);
+			HeroManager::sharedManager()->m_pHero->SetTargetID(MinionManager::sharedManager()->m_pMinion1[i]->GetID());
+			return;
+		}
+	}
+
+
+	HeroManager::sharedManager()->m_pHero->SetTarget(NULL);
+	HeroManager::sharedManager()->m_pHero->SetTargetID(0);
 }

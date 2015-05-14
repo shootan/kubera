@@ -462,6 +462,7 @@ public:
     // D3D11 specific
     HRESULT OnD3D11CreateDevice( ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3d11DeviceContext );
     HRESULT OnD3D11ResizedSwapChain( ID3D11Device* pd3dDevice, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc );
+	HRESULT OnD3D11ResizedSwapChain( ID3D11Device* pd3dDevice, float width, float height );
     void    OnD3D11ReleasingSwapChain();
     void    OnD3D11DestroyDevice();
     void    StoreD3D11State( ID3D11DeviceContext* pd3dImmediateContext );

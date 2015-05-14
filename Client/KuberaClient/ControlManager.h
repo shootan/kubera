@@ -4,11 +4,12 @@
 #include "TowerManager.h"
 #include "ST.h"
 #include "OtherPlayerManager.h"
+#include "HeroManager.h"
+#include "MinionManager.h"
 
 class ControlManager 
 {
 public:
-	HeroObject*				m_Player;
 	CModelViewerCamera*		m_Camera;
 
 	//

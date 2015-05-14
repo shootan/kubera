@@ -677,6 +677,17 @@ HRESULT CDXUTDialogResourceManager::OnD3D11ResizedSwapChain( ID3D11Device* pd3dD
     return hr;
 }
 
+HRESULT CDXUTDialogResourceManager::OnD3D11ResizedSwapChain( ID3D11Device* pd3dDevice, float width, float height )
+{
+	HRESULT hr = S_OK;
+
+	m_nBackBufferWidth = width;
+	m_nBackBufferHeight = height;
+
+	return hr;
+
+}
+
 
 //--------------------------------------------------------------------------------------
 void CDXUTDialogResourceManager::OnD3D11ReleasingSwapChain()

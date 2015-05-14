@@ -16,8 +16,6 @@ CGameFramework::CGameFramework()
 	m_pScene = NULL;
 	_tcscpy_s(m_pszBuffer, _T("Kubera ("));
 
-	m_CameraPosX = 500.f;
-	m_CameraPosZ = -10.f;
 	m_CameraZoom = 60.f;
 	m_CameraUpDown = 0.f;
 
@@ -42,14 +40,27 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 
 	Net.InitClient("192.168.0.2", 9000);
 
+
 	while (Net.m_ID == 0)
 	{
 		Sleep(100);
 	}
 	//렌더링할 객체(게임 월드 객체)를 생성한다. 
+
+	HeroManager::sharedManager()->SetID(Net.m_ID);
+	if(Net.m_ID%2 == 0) //초기 시작 카메리위치 설정
+	{
+		m_CameraPosX = 500.f;
+		m_CameraPosZ = -10.f;
+	}
+	else
+	{
+		m_CameraPosX = -500.f;
+		m_CameraPosZ = -10.f;
+	}
 	BuildObjects();
 
-	
+
 	time = 0.0f;
 
 	return(true);
@@ -168,6 +179,10 @@ bool CGameFramework::CreateDirect3DDisplay()
 	//렌더 타겟 뷰를 생성하는 함수를 호출한다.
 	if(!CreateRenderTargetDepthStencilView()) return(false);
 
+
+	m_DialogResourceManager.OnD3D11CreateDevice( m_pd3dDevice, m_pd3dDeviceContext );
+	m_pTxtHelper = new CDXUTTextHelper( m_pd3dDevice, m_pd3dDeviceContext, &m_DialogResourceManager, 15 );
+
 	return(true);
 }
 
@@ -232,12 +247,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 
 			CreateRenderTargetDepthStencilView();
 
-			
-// 			backbuffer->Width = m_nWndClientWidth;
-// 			backbuffer->Height = m_nWndClientHeight;
-// 
-// 			m_DialogResourceManager.OnD3D11ResizedSwapChain( m_pd3dDevice, backbuffer );
-
+			m_DialogResourceManager.OnD3D11ResizedSwapChain( m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight );
 			break;
 		}
 	case WM_LBUTTONDOWN:
@@ -278,6 +288,9 @@ void CGameFramework::OnDestroy()
 	if (m_pDXGISwapChain) m_pDXGISwapChain->Release();
 	if (m_pd3dDeviceContext) m_pd3dDeviceContext->Release();
 	if (m_pd3dDevice) m_pd3dDevice->Release();
+
+	m_DialogResourceManager.OnD3D11DestroyDevice();
+	SAFE_DELETE( m_pTxtHelper );
 }
 
 void CGameFramework::BuildObjects()
@@ -306,6 +319,7 @@ void CGameFramework::BuildObjects()
 	////투영 변환 행렬을 생성한다. 
 	//pCamera->GenerateProjectionMatrix(1.0f, 500.0f, float(m_nWndClientWidth)/float(m_nWndClientHeight), 90.0f);
 	m_vCamera.SetProjParams((float)D3DXToRadian(90.0f), float(m_nWndClientWidth)/float(m_nWndClientHeight), 1.0f, 500.0f);
+
 	////카메라 변환 행렬을 생성한다. 
 	
 	//D3DXVECTOR3 d3dxvUp = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
@@ -316,8 +330,7 @@ void CGameFramework::BuildObjects()
 
 	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice);
 
-	//m_DialogResourceManager.OnD3D11CreateDevice( m_pd3dDevice, m_pd3dDeviceContext )
-	//m_pTxtHelper = new CDXUTTextHelper( m_pd3dDevice, m_pd3dDeviceContext, &m_DialogResourceManager, 15 );
+	m_DialogResourceManager.OnD3D11ResizedSwapChain( m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight );
 }
 
 void CGameFramework::ReleaseObjects()
@@ -350,7 +363,7 @@ void CGameFramework::FrameAdvance()
 	m_GameTimer.Tick(60);
 
 	this->ExchangeInfo();
-	m_pScene->TargetSetting();
+	m_pScene->OtherPlayerTargetSetting();
 	
 	ProcessInput();
 	AnimateObjects();
@@ -386,9 +399,7 @@ void CGameFramework::FrameAdvance()
 	this->SendHeroData();
 	m_pScene->Render(m_pd3dDeviceContext);
 
-	//DXUT_BeginPerfEvent( DXUT_PERFEVENTCOLOR, L"HUD / Stats" );
-	//RenderText();
-	//DXUT_EndPerfEvent();
+	RenderText();
 
 	m_pDXGISwapChain->Present(0, 0);
 
@@ -534,10 +545,10 @@ void CGameFramework::SendHeroData()
 {
 	if(Net.m_ID != 0)
 	{
-		HeroInfo.PI.m_Pos = m_pScene->GetHero()->GetPos();
-		HeroInfo.PI.m_Rot = m_pScene->GetHero()->GetRot();
-		HeroInfo.PI.m_iState = m_pScene->GetHero()->GetState();
-		HeroInfo.PI.m_iTargetID = m_pScene->GetHero()->GetTargetID();
+		HeroInfo.PI.m_Pos = HeroManager::sharedManager()->m_pHero->GetPos();
+		HeroInfo.PI.m_Rot = HeroManager::sharedManager()->m_pHero->GetRot();
+		HeroInfo.PI.m_iState = HeroManager::sharedManager()->m_pHero->GetState();
+		HeroInfo.PI.m_iTargetID = HeroManager::sharedManager()->m_pHero->GetTargetID();
 		HeroInfo.PI.m_ID = Net.m_ID;
 
 		Net.SendData(&HeroInfo);
@@ -548,14 +559,41 @@ void CGameFramework::SendHeroData()
 void CGameFramework::RenderText()
 {
 	m_pTxtHelper->Begin();
-	m_pTxtHelper->SetInsertionPos(5, 50);
-	m_pTxtHelper->SetForegroundColor( D3DXCOLOR( 0.0f, 0.0f, 0.0f, 1.0f ) );
-	//m_pTxtHelper->DrawTextLine( DXUTGetFrameStats( DXUTIsVsyncEnabled() ) );
-	//m_pTxtHelper->DrawTextLine( DXUTGetDeviceStats() );
-	m_pTxtHelper->DrawTextLine(L"Target : ");
-	m_pTxtHelper->DrawTextLine( L"Touch a unit to select." );
-	m_pTxtHelper->DrawTextLine( L"Touch a spot on the ground plane to issue commands." );
-	m_pTxtHelper->DrawTextLine( L"Rotate the camera by placing 3 fingers on the screen and dragging." );
-	m_pTxtHelper->DrawTextLine( L"Pinch the screen to zoom in." );
+	m_pTxtHelper->SetInsertionPos(5, 30);
+	m_pTxtHelper->SetForegroundColor( D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ) );
+	//m_pTxtHelper->DrawTextLine(L"Target : ");
+	WCHAR str[255];
+	for(int i=0; i<MAX_TOWER; i++)
+	{
+		if(HeroManager::sharedManager()->m_pHero->GetTarget() == TowerManager::sharedManager()->m_pTower[i])
+		{
+			int id = TowerManager::sharedManager()->m_pTower[i]->GetID();
+			swprintf(str, 255, L"Target : Tower [%d]",id);
+			m_pTxtHelper->DrawTextLine(str);
+			break;
+		}
+	}
+	for(int i=0; i<MAX_MINION; i++)
+	{
+		if(HeroManager::sharedManager()->m_pHero->GetTarget() == MinionManager::sharedManager()->m_pMinion1[i])
+		{
+			int id = MinionManager::sharedManager()->m_pMinion1[i]->GetID();
+			swprintf(str, 255, L"Target : Minion [%d]",id);
+			m_pTxtHelper->DrawTextLine(str);
+			break;
+		}
+	}
+	for(int i=0; i<MAX_OTHER_PLAYER; i++)
+	{
+		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetVisible() != TRUE) continue;
+
+		if(HeroManager::sharedManager()->m_pHero->GetTarget() == OtherPlayerManager::sharedManager()->m_pOtherPlayer[i])
+		{
+			int id = OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetID();
+			swprintf(str, 255, L"Target : OtherPlayer [%d]",id);
+			m_pTxtHelper->DrawTextLine(str);
+			break;
+		}
+	}
 	m_pTxtHelper->End();
 }
