@@ -16,6 +16,10 @@ IOCPServer::IOCPServer()
 	m_iClientCount			= 0;
 	m_MinionTimer			= 0.0f;
 
+	Check8 = 0;
+	Check3000 = 0;
+	Check0 = 0;
+
 	ZeroMemory(&m_ClinetAddr, sizeof(SOCKADDR));
 	ZeroMemory(m_ID, sizeof(char)*100);
 
@@ -205,6 +209,9 @@ UINT WINAPI IOCPServer::WorkerThread(LPVOID arg)
 		case OP_RECV_DONE:
 			server->OnRecvFinish(buff, dwSize);
 			break;
+		case OP_SEND:
+			server->OnSend(buff, dwSize);
+			break;
 		case OP_SEND_FINISH:
 			server->OnSendFinish(buff, dwSize);
 			break;
@@ -274,7 +281,7 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 	}
 	
 	SetOpCode(_buff, OP_RECV);
-	if(_buff->m_Disconnect) return;
+	//if(_buff->m_Disconnect) return;
 	BOOL bSuccess = PostQueuedCompletionStatus(m_hIO, 0, (ULONG_PTR)_buff, &(_buff->m_Overlapped));
 	_buff->m_iRecvbytes = 0;
 
@@ -284,40 +291,102 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 	}
 }
 
+void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
+{
+	if(_buff->m_iSendbytesCount != 0) return;
+	IOBuffer* Buffer;
+	Player*   play;
+	int Number = 0;
+	
+	int* Count = new int;
+	*Count = m_iClientCount;
+
+	SetOpCode(_buff, OP_SEND_FINISH);	
+	this->SendPacket(_buff, HEROCOUNT, Count, sizeof(int));
+	play = m_pPlayerList;
+
+	while(play != NULL)
+	{
+		if( play->m_Id == _buff->m_Id)
+		{
+			play = play->m_pNext;
+			continue;
+		}
+
+		if(!_buff->m_Disconnect)
+		{
+			//printf("ID : %d, x: %3f, y: %3f, z : %3f, size : %d \n", play->m_PI->PI.m_ID, play->m_PI->PI.m_Pos.x, play->m_PI->PI.m_Pos.y, play->m_PI->PI.m_Pos.z, play->m_PI->size);
+			this->SetOpCode(_buff, OP_SEND_FINISH);
+			this->SendPacket(_buff, HERODATA, play->m_PI, sizeof(PlayerPacket));
+		}
+		play = play->m_pNext;
+	}
+
+	SetOpCode(_buff, OP_SEND_FINISH);
+	this->SendPacket(_buff, MINIONDATA, Arrange.MI, sizeof(MinionInfo)*160);
+}
+
 void IOCPServer::OnSendFinish(IOBuffer* _buff, DWORD _size)
 {
-	//if ( _size == 0 )
-	//{
-	//	//check
-	//}
+	if ( _size == 0 )
+	{
+		Check0++;
+	}
 
-	//SetOpCode(_buff, OP_RECV);
-	//_buff->m_iRecvbytes = 0;
-	//BOOL bSuccess = PostQueuedCompletionStatus(m_hIO, 0, (ULONG_PTR)_buff, &(_buff->m_Overlapped));
-	//
-	//if ( !bSuccess && WSAGetLastError() != ERROR_IO_PENDING )
-	//{
-	//	// error
-	//}
+	if(_size < 8)
+	{
+		Check0++;
+	}
+	if(_size == 8)
+	{
+		Check8++;
+	}
+
+	if(_size > 8 )
+	{
+		Check3000++;
+	}
+
+	SetOpCode(_buff, OP_RECV);
+	_buff->m_iRecvbytes = 0;
+	BOOL bSuccess = PostQueuedCompletionStatus(m_hIO, 0, (ULONG_PTR)_buff, &(_buff->m_Overlapped));
+	
+	if ( !bSuccess && WSAGetLastError() != ERROR_IO_PENDING )
+	{
+		// error
+	}
 	int retval;
 
-	_buff->m_iSendbytes -= _size;
+// 	_buff->m_iSendbytes += _size;
+// 
+// 	printf("1: %d,   2: %d \n", _buff->m_iSendbytes, _buff->m_iSendbytesCount);
+// 
+// 	if(_buff->m_iSendbytes == _buff->m_iSendbytesCount)
+// 	{
+// 		_buff->m_iSendbytes = 0;
+// 		_buff->m_iSendbytesCount = 0;
+// 
+// 		SetOpCode(_buff, OP_RECV);
+// 		_buff->m_iRecvbytes = 0;
+// 		BOOL bSuccess = PostQueuedCompletionStatus(m_hIO, 0, (ULONG_PTR)_buff, &(_buff->m_Overlapped));
+// 		
+// 		if ( !bSuccess && WSAGetLastError() != ERROR_IO_PENDING )
+// 		{
+// 			// error
+// 		}
+// 	}
 
+//  	this->SetOpCode(_buff, OP_RECV_DONE);
+//  
+//  	buffRecv.buf = _buff->m_RecvBuf;
+//  	buffRecv.len = BUFSIZE;
+//  
+//  	retval = WSARecv(_buff->m_ClientSock, &buffRecv, 1, &dwRecv, &dwFlags, &(_buff->m_Overlapped), NULL);
 	
-	DWORD dwRecv = 0, dwFlags = 0;
-	WSABUF buffRecv;
-
-	this->SetOpCode(_buff, OP_RECV_DONE);
-
-	buffRecv.buf = _buff->m_RecvBuf;
-	buffRecv.len = BUFSIZE;
-
-	retval = WSARecv(_buff->m_ClientSock, &buffRecv, 1, &dwRecv, &dwFlags, &(_buff->m_Overlapped), NULL);
-	
-	//if ( retval == SOCKET_ERROR && (ERROR_IO_PENDING != WSAGetLastError())) 
-	//{
-	//	// error
-	//}
+// 	if ( retval == SOCKET_ERROR && (ERROR_IO_PENDING != WSAGetLastError())) 
+// 	{
+// 		// error
+// 	}
 }
 
 BOOL IOCPServer::SendData(float _dt)
@@ -333,8 +402,9 @@ BOOL IOCPServer::SendData(float _dt)
 
 		int* Count = new int;
 		*Count = m_iClientCount;
-		this->SendPacket(Buffer, HEROCOUNT, Count, sizeof(int));
 		this->SetOpCode(Buffer, OP_SEND_FINISH);
+		this->SendPacket(Buffer, HEROCOUNT, Count, sizeof(int));
+		
 
 		play = m_pPlayerList;
 		while(play != NULL)
@@ -348,9 +418,8 @@ BOOL IOCPServer::SendData(float _dt)
 			if(!Buffer->m_Disconnect)
 			{
 				//printf("ID : %d, x: %3f, y: %3f, z : %3f, size : %d \n", play->m_PI->PI.m_ID, play->m_PI->PI.m_Pos.x, play->m_PI->PI.m_Pos.y, play->m_PI->PI.m_Pos.z, play->m_PI->size);
-				this->SendPacket(Buffer, HERODATA, play->m_PI, sizeof(PlayerPacket));
 				this->SetOpCode(Buffer, OP_SEND_FINISH);
-
+				this->SendPacket(Buffer, HERODATA, play->m_PI, sizeof(PlayerPacket));
 			}
 			play = play->m_pNext;
 		}
@@ -361,17 +430,16 @@ BOOL IOCPServer::SendData(float _dt)
 
  	m_MinionTimer += _dt;
  
- 	if(m_MinionTimer > 0.05f)
- 	{
+ 	//if(m_MinionTimer > 0.05f)
+ 	//{
  		Buffer = m_pNextBufferList;
  
  		while(Buffer != NULL)
  		{
  			if(!Buffer->m_Disconnect)
  			{
- 
+				this->SetOpCode(Buffer, OP_SEND_FINISH);
  				this->SendPacket(Buffer, MINIONDATA, Arrange.MI, sizeof(MinionInfo)*160);
- 				this->SetOpCode(Buffer, OP_SEND_FINISH);
  
  
  				////4개 나눠서 보내기
@@ -416,8 +484,8 @@ BOOL IOCPServer::SendData(float _dt)
  			//LeaveCriticalSection(&m_BufferListLock);
  		}
  
- 		m_MinionTimer = 0.0f;
- 	}
+ 	//	m_MinionTimer = 0.0f;
+ 	//}
 
 
 	return TRUE;
@@ -441,14 +509,15 @@ void IOCPServer::SendPacket(IOBuffer* _buffer, int NetworkCode, void *_packet, i
 
 	memcpy(_buffer->m_SendBuf, Buffer, Size);
 	
+	//_buffer->m_iSendbytesCount += Size;
 	if(_buffer->m_Disconnect) return;
 	int retval = WSASend(_buffer->m_ClientSock, &_buffer->m_SendWsabuf, 1, &io_size, NULL, &_buffer->m_Overlapped, NULL);
-
-	if(retval > 800)
-	{
-		int ddfaf;
-		ddfaf = 9;
-	}
+// 
+// 	if(retval > 800)
+// 	{
+// 		int ddfaf;
+// 		ddfaf = 9;
+// 	}
 }
 
 void IOCPServer::ArrangeDataInfo(float _dt)

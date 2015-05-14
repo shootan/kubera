@@ -17,7 +17,6 @@ int main()
 
 	float time = 0.0f;
 	
-	
 	//unsigned int d;
 	//HANDLE y  = (HANDLE)_beginthreadex(NULL, 0, Th, NULL, 0, &d);
 	while(1)
@@ -25,6 +24,8 @@ int main()
 		Timer.Tick(60);
 		//system("cls");
 		//Timer.GetFrameRate();
+
+		//printf("8: %d, 3024 : %d   0 : %d .\n", Server.Check8, Server.Check3000, Server.Check0);
 		
 		Server.ArrangeDataInfo(Timer.GetTimeElapsed());
 

@@ -110,4 +110,5 @@ void ControlManager::SetTarget(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRay
 	}
 
 	m_Player->SetTarget(NULL);
+	m_Player->SetTargetID(0);
 }

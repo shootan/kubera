@@ -8,11 +8,11 @@ typedef enum OPCODE
 	OP_INIT,
 	OP_RECV,
 	OP_RECV_DONE,
+	OP_SEND,
 	OP_SEND_FINISH
 } OPCODE;
 
 struct IOBuffer{
-	
 	SOCKET		m_ClientSock;
 	int			m_Id;
 	OVERLAPPED	m_Overlapped;
@@ -20,6 +20,7 @@ struct IOBuffer{
 	char		m_SendBuf[BUFSIZE]; 
 	int			m_iRecvbytes;
 	int			m_iSendbytes;
+	int			m_iSendbytesCount;
 	WSABUF		m_Wsabuf;
 	WSABUF		m_SendWsabuf;
 	OPCODE		m_Opcode;
@@ -39,6 +40,9 @@ struct Player{
 class IOCPServer : public Network
 {
 public:
+	int Check8;
+	int Check3000;
+	int Check0;
 	ArrangeData Arrange;
 
 	//리스트로 관리해줄 포인터
@@ -80,6 +84,7 @@ public:
 	void OnInit(IOBuffer* _buff);
 	void OnRecv(IOBuffer* _buff, char* _recvBuff, int _size);
 	void OnRecvFinish(IOBuffer* _buff, DWORD _size);
+	void OnSend(IOBuffer* _buff, DWORD _size);
 	void OnSendFinish(IOBuffer* _buff, DWORD _size);
 
 	void SetOpCode(IOBuffer* _buff, OPCODE _opCode);
