@@ -41,6 +41,7 @@ public:
 		m_pHero->SetPosition(pos);
 		//m_pTower[i]->SetP(pos.x, pos.y, pos.z);
 		m_pHero->SetBoundSize(boundx, boundy, boundz);
+		m_pHero->SetID(m_iID);
 		
 	}
 

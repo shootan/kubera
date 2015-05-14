@@ -22,7 +22,7 @@ private:
 	float m_fRegenTime;
 	float m_fUnitTime;
 
-	int RootTurn1[40];
+	int RootTurn1[160];
 	int RootTurn2[40];
 	int RootTurn3[40];
 	int RootTurn4[40];

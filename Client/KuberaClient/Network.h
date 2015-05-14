@@ -23,6 +23,7 @@ public:
 	bool	m_bJoinPlayer;
 	int		m_ClientCount;
 	int		m_ID;
+	Vector3 m_Pos;
 	Network();
 	~Network();
 

@@ -78,10 +78,15 @@ BOOL IOCPServer::InitThread()
 UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 {
 	IOCPServer* pThis = (IOCPServer*)arg;
+	SOCKADDR_IN sock_addr;
+	char* p;
+	int soklen;
+	BOOL SameIP = FALSE;
 	
 	while (1)
 	{
 		if(pThis->m_bServerShutDown) break;
+		SameIP = FALSE;
 		ZeroMemory(&pThis->m_ClinetAddr, sizeof(SOCKADDR));
 		int addr_len = sizeof(pThis->m_ClinetAddr);
 
@@ -90,13 +95,41 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 			exit(-1);
 		}
 		
-		pThis->m_iClientCount++;
+		
 		printf("IP 주소= %s, 포트번호= %d , Count = %d\n", 
 			inet_ntoa(pThis->m_ClinetAddr.sin_addr), 
 			ntohs(pThis->m_ClinetAddr.sin_port), pThis->m_iClientCount); 
 
+		//IP체크후 동기화
+		IOBuffer* buffer;
+		buffer = pThis->m_pNextBufferList;
+		while(buffer != NULL)
+		{
+			soklen = sizeof(sock_addr);
+			getpeername(buffer->m_ClientSock,(struct sockaddr*)&sock_addr,&soklen);
+			p = (char*)inet_ntoa((struct in_addr)sock_addr.sin_addr);
+
+			if(!strcmp(inet_ntoa(sock_addr.sin_addr), inet_ntoa(pThis->m_ClinetAddr.sin_addr)))
+			{
+				buffer->m_ClientSock = client_sock;
+				buffer->m_Opcode			= OP_INIT;
+				buffer->m_Disconnect		= FALSE;
+				int header = INITCLIENT;
+				send(client_sock, (char*)&header, sizeof(int), 0);
+				send(client_sock, (char*)&buffer->m_Id, sizeof(int), 0);
+				send(client_sock, (char*)&buffer->m_PlayerData.m_Pos, sizeof(Vector3), 0);
+				SameIP = TRUE;
+				PostQueuedCompletionStatus(pThis->m_hIO, 0, (ULONG_PTR)buffer, &buffer->m_Overlapped);
+				break;
+			}
+			buffer = buffer->m_pNext;
+		}
+		//////////////////////////////////////
+
+		if(SameIP) continue;
+		pThis->m_iClientCount++;
 		//버퍼 생성
-		IOBuffer* buffer = new IOBuffer;
+		buffer = new IOBuffer;
 		ZeroMemory(buffer, sizeof(IOBuffer));
 		buffer->m_Id = pThis->GetNewId();
 		if(buffer->m_Id == 0)
@@ -122,6 +155,23 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 			int header = INITCLIENT;
 			send(client_sock, (char*)&header, sizeof(int), 0);
 			send(client_sock, (char*)&buffer->m_Id, sizeof(int), 0);
+			
+			if(buffer->m_Id % 2 == 0)
+			{
+				Vector3 po;
+				po.x = 550;
+				po.y = 0;
+				po.z = 0;
+				send(client_sock, (char*)&po, sizeof(Vector3), 0);
+			}
+			else
+			{
+				Vector3 po;
+				po.x = -550;
+				po.y = 0;
+				po.z = 0;
+				send(client_sock, (char*)&po, sizeof(Vector3), 0);
+			}
 
 			Player* pl = new Player;
 			ZeroMemory(pl, sizeof(Player));
@@ -275,6 +325,7 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 		if(_buff->m_Id == play->m_Id)
 		{
 			play->m_PI = (PlayerPacket*)_buff->m_RecvBuf;
+			_buff->m_PlayerData = play->m_PI->PI;
 			break;
 		}
 		play = play->m_pNext;
@@ -430,8 +481,8 @@ BOOL IOCPServer::SendData(float _dt)
 
  	m_MinionTimer += _dt;
  
- 	//if(m_MinionTimer > 0.05f)
- 	//{
+ 	if(m_MinionTimer > 0.05f)
+ 	{
  		Buffer = m_pNextBufferList;
  
  		while(Buffer != NULL)
@@ -484,8 +535,8 @@ BOOL IOCPServer::SendData(float _dt)
  			//LeaveCriticalSection(&m_BufferListLock);
  		}
  
- 	//	m_MinionTimer = 0.0f;
- 	//}
+ 		m_MinionTimer = 0.0f;
+ 	}
 
 
 	return TRUE;

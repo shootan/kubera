@@ -19,7 +19,7 @@ ArrangeData::ArrangeData()
 
 	int size = sizeof(MinionInfo);
 
-	ZeroMemory(&RootTurn1, sizeof(int)*40);
+	ZeroMemory(&RootTurn1, sizeof(int)*160);
 	ZeroMemory(&RootTurn2, sizeof(int)*40);
 	ZeroMemory(&RootTurn3, sizeof(int)*40);
 	ZeroMemory(&RootTurn4, sizeof(int)*40);
@@ -72,7 +72,7 @@ void ArrangeData::RegenMinion()
 		m_bMinion[i].m_TargetPos = Root1[RootTurn1[i]];
 
 		MI[i].m_Live = TRUE;
-		MI[i].m_ID = i;
+		MI[i].m_ID = i+5;
 
 		break;
 	}
@@ -88,7 +88,7 @@ void ArrangeData::RegenMinion()
 		m_bMinion[i].m_TargetPos = Root2[RootTurn2[i]];
 
 		MI[i].m_Live = TRUE;
-		MI[i].m_ID = i;
+		MI[i].m_ID = i+5;
 
 		break;
 	}
@@ -104,7 +104,7 @@ void ArrangeData::RegenMinion()
 		m_bMinion[i].m_TargetPos = Root3[RootTurn3[i]];
 
 		MI[i].m_Live = TRUE;
-		MI[i].m_ID = i;
+		MI[i].m_ID = i+5;
 
 		break;
 	}
@@ -120,7 +120,7 @@ void ArrangeData::RegenMinion()
 		m_bMinion[i].m_TargetPos = Root4[RootTurn4[i]];
 
 		MI[i].m_Live = TRUE;
-		MI[i].m_ID = i;
+		MI[i].m_ID = i+5;
 
 		break;
 	}
@@ -239,6 +239,11 @@ void ArrangeData::SetMinionPosition(float _dt)
 			else
 			{
 				RootTurn1[i]++;
+				if(RootTurn1[i] > 56)
+				{
+					RootTurn1[i] = 0;
+					m_bMinion[i].m_Pos = Root1[RootTurn1[i]];
+				}
 				m_bMinion[i].m_TargetPos = Root1[RootTurn1[i]];
 			}
 			break;
@@ -277,8 +282,13 @@ void ArrangeData::SetMinionPosition(float _dt)
 			}
 			else
 			{
-				RootTurn2[i]++;
-				m_bMinion[i].m_TargetPos = Root2[RootTurn2[i]];
+				RootTurn1[i]++;
+				if(RootTurn1[i] > 56)
+				{
+						RootTurn1[i] = 0;
+						m_bMinion[i].m_Pos = Root2[RootTurn1[i]];
+				}
+				m_bMinion[i].m_TargetPos = Root2[RootTurn1[i]];
 			}
 			break;
 		case 3:
@@ -315,8 +325,13 @@ void ArrangeData::SetMinionPosition(float _dt)
 			}
 			else
 			{
-				RootTurn3[i]++;
-				m_bMinion[i].m_TargetPos = Root3[RootTurn3[i]];
+				RootTurn1[i]++;
+				if(RootTurn1[i] > 56)
+				{
+					RootTurn1[i] = 0;
+					m_bMinion[i].m_Pos = Root3[RootTurn1[i]];
+				}
+				m_bMinion[i].m_TargetPos = Root3[RootTurn1[i]];
 			}
 			break;
 		case 4:
@@ -353,8 +368,13 @@ void ArrangeData::SetMinionPosition(float _dt)
 			}
 			else
 			{
-				RootTurn4[i]++;
-				m_bMinion[i].m_TargetPos = Root4[RootTurn4[i]];
+				RootTurn1[i]++;
+				if(RootTurn1[i] > 56)
+				{
+					RootTurn1[i] = 0;
+					m_bMinion[i].m_Pos = Root4[RootTurn1[i]];
+				}
+				m_bMinion[i].m_TargetPos = Root4[RootTurn1[i]];
 			}
 			break;
 		}

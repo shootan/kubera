@@ -51,7 +51,7 @@ public:
 		{
 			if(m_pMinion1[i] != NULL) continue;
 			m_pMinion1[i] = new MinionObject();
-			m_pMinion1[i]->SetID(i+4);
+			m_pMinion1[i]->SetID(i+5);
 			m_pMinion1[i]->SetMesh(mesh);
 			m_pMinion1[i]->SetPosition(pos);
 			m_pMinion1[i]->SetVisible(FALSE);

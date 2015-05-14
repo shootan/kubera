@@ -385,6 +385,10 @@ void CScene::SetOtherClient(PlayerStruct* _PI, int _Count)
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Rot);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetState(_PI[i].PI.m_iState);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetTargetID(_PI[i].PI.m_iTargetID);
+			if(_PI[i].PI.m_ID%2 == 0)
+				OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetTeam(RED_TEAM);
+			else
+				OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetTeam(BLUE_TEAM);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetVisible(TRUE);
 			_PI[i].Use = TRUE;
 			break;
@@ -543,6 +547,7 @@ void CScene::SetMinionInfo(MinionInfo* _MI)
 
 		MinionManager::sharedManager()->m_pMinion1[i]->SetNewDestination(des);
 		MinionManager::sharedManager()->m_pMinion1[i]->SetVisible(_MI[i].m_Live);
+		MinionManager::sharedManager()->m_pMinion1[i]->SetID(_MI[i].m_ID);
 
 	}
 }
