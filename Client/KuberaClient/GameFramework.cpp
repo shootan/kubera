@@ -16,8 +16,6 @@ CGameFramework::CGameFramework()
 	m_pScene = NULL;
 	_tcscpy_s(m_pszBuffer, _T("Kubera ("));
 
-	m_CameraPosX = 500.f;
-	m_CameraPosZ = -10.f;
 	m_CameraZoom = 60.f;
 	m_CameraUpDown = 0.f;
 
@@ -40,10 +38,28 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	//Direct3D 디바이스, 디바이스 컨텍스트, 스왑 체인 등을 생성하는 함수를 호출한다. 
 	if (!CreateDirect3DDisplay()) return(false); 
 
+	Net.InitClient("10.254.0.30", 9000);
+
+	while (Net.m_ID == 0)
+	{
+		Sleep(100);
+	}
 	//렌더링할 객체(게임 월드 객체)를 생성한다. 
+
+	HeroManager::sharedManager()->SetID(Net.m_ID);
+	if(Net.m_ID%2 == 0) //초기 시작 카메리위치 설정
+	{
+		m_CameraPosX = 500.f;
+		m_CameraPosZ = -10.f;
+	}
+	else
+	{
+		m_CameraPosX = -500.f;
+		m_CameraPosZ = -10.f;
+	}
 	BuildObjects();
 
-	Net.InitClient("192.168.0.3", 9000);
+
 	time = 0.0f;
 
 	return(true);
@@ -346,7 +362,7 @@ void CGameFramework::FrameAdvance()
 	m_GameTimer.Tick(60);
 
 	this->ExchangeInfo();
-	m_pScene->TargetSetting();
+	m_pScene->OtherPlayerTargetSetting();
 	
 	ProcessInput();
 	AnimateObjects();

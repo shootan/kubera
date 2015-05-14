@@ -21,12 +21,10 @@ CScene::CScene(void)
 	m_fMissileAttackTime = 0.f;
 	m_nMinionObjects = 0;
 
-	//m_pHero = NULL;
 	m_pPlane = NULL;
 	m_pBlueNexus = NULL;
 	m_pRedNexus = NULL;
 
-	//m_pTxtHelper = NULL;
 }
 
 
@@ -70,8 +68,19 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	pRedNexusMesh->LoadTexture(pd3dDevice, L"tower/Nexus2.png");
 
 	//히어로 생성
-	HeroManager::sharedManager()->CreateHero(D3DXVECTOR3(550, 0, 0), pHeroMesh, 10, 13, 10);
-	
+	HeroManager::sharedManager()->CreateHero(D3DXVECTOR3(0, 0, 0), pHeroMesh, 10, 13, 10);
+	if(HeroManager::sharedManager()->GetID()%2 == 0)
+	{
+		HeroManager::sharedManager()->m_pHero->SetTeam(RED_TEAM);
+		HeroManager::sharedManager()->m_pHero->SetPosition(D3DXVECTOR3(550, 0, 0));
+	}
+	else
+	{
+		HeroManager::sharedManager()->m_pHero->SetTeam(BLUE_TEAM);
+		HeroManager::sharedManager()->m_pHero->SetPosition(D3DXVECTOR3(-550, 0, 0));
+	}
+
+
 	m_pPlane = new CGameObject();
 	m_pPlane->SetMesh(pPlaneMesh);
 
@@ -187,20 +196,6 @@ bool CScene::ProcessInput()
 
 void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 {
-	m_fMinionRespawnTime += fTimeElapsed;
-
-	if(m_fMinionRespawnTime >= 0.5f && m_nMinionObjects < 10)
-	{
-		AddMinion(pd3dDevice);
-		m_fMinionRespawnTime = 0.f;
-	}
-
-	if(m_nMinionObjects == 10)
-	{
-		if(m_fMinionRespawnTime > 20.0f)
-			m_nMinionObjects = 0;
-	}
-
 	HeroManager::sharedManager()->m_pHero->Animate(fTimeElapsed);
 	HeroManager::sharedManager()->m_pHero->Update(fTimeElapsed);
  
@@ -223,14 +218,15 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 
 		m_DistanceToHero = ST::sharedManager()->GetDistance(HeroManager::sharedManager()->m_pHero->GetPos(), 
 			TowerManager::sharedManager()->m_pTower[i]->GetPos());
-		if(m_DistanceToHero < 50.0f)
+		if(m_DistanceToHero < 50.0f 
+			&& TowerManager::sharedManager()->m_pTower[i]->GetTeam() != HeroManager::sharedManager()->m_pHero->GetTeam())
 		{
 			TowerManager::sharedManager()->m_pTower[i]->SetTarget(HeroManager::sharedManager()->m_pHero);
 			continue;
 		}
 		else
 		{
-			TowerManager::sharedManager()->m_pTower[i]->SetTarget(NULL);
+			//TowerManager::sharedManager()->m_pTower[i]->SetTarget(NULL);
 			//TowerManager::sharedManager()->m_pTower[i]->SetAttackTime(0.f);
 		}
 
@@ -240,14 +236,15 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 			
 			m_DistanceToOtherPlayer = ST::sharedManager()->GetDistance(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetPos(), 
 				TowerManager::sharedManager()->m_pTower[i]->GetPos()); 
-			if(m_DistanceToOtherPlayer < 50.f)
+			if(m_DistanceToOtherPlayer < 50.f 
+				&& TowerManager::sharedManager()->m_pTower[i]->GetTeam() != OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetTeam())
 			{
 				TowerManager::sharedManager()->m_pTower[i]->SetTarget(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]);
 			}
 			else
 			{
 				TowerManager::sharedManager()->m_pTower[i]->SetTarget(NULL);
-				//TowerManager::sharedManager()->m_pTower[i]->SetAttackTime(0.f);
+				TowerManager::sharedManager()->m_pTower[i]->SetAttackTime(0.f);
 			}
 			
 		}
@@ -255,6 +252,8 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 
 	for(int i=0; i<MAX_OTHER_PLAYER; i++)
 	{
+		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetVisible() != TRUE) continue;
+
 		OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->Update(fTimeElapsed);
 		OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->Animate(fTimeElapsed);
 	}
@@ -548,43 +547,40 @@ void CScene::SetMinionInfo(MinionInfo* _MI)
 	}
 }
 
-//void CScene::RenderText()
-//{
-//	m_pTxtHelper->Begin();
-//	m_pTxtHelper->SetInsertionPos(5, 50);
-//	m_pTxtHelper->SetForegroundColor( D3DXCOLOR( 0.0f, 0.0f, 0.0f, 1.0f ) );
-//	m_pTxtHelper->DrawTextLine( DXUTGetFrameStats( DXUTIsVsyncEnabled() ) );
-//	m_pTxtHelper->DrawTextLine( DXUTGetDeviceStats() );
-//	m_pTxtHelper->DrawTextLine(L"Target : ");
-//
-//	m_pTxtHelper->End();
-//}
-
-void CScene::TargetSetting()
+void CScene::OtherPlayerTargetSetting()
 {
 	for(int i=0; i<MAX_OTHER_PLAYER; i++)
 	{
+		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetVisible() != TRUE) continue;
 
-//  		for(int j=0; j<MAX_OTHER_PLAYER; j++)
-//  		{
-//  			if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetTargetID() ==	
-//  				OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetID())
-//  			{
-//  				OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->SetTarget(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]);
-//  				return;
-//  			}
-//  		}
-
-		for(int j=0; j<MAX_TOWER; j++)
+		for(int j=0; j<MAX_TOWER; j++)   //타워와의 타겟 체크
 		{
-			
-			if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetTargetID() ==	
-				TowerManager::sharedManager()->m_pTower[j]->GetID())
+			if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetTargetID() ==	TowerManager::sharedManager()->m_pTower[j]->GetID()
+				&& OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetTeam() !=	TowerManager::sharedManager()->m_pTower[j]->GetTeam())
 			{
 				OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->SetTarget(TowerManager::sharedManager()->m_pTower[j]);
 				return;
 			}
 		}
+
+		//플레이어와의 타겟 체크
+		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetTargetID() ==	HeroManager::sharedManager()->m_pHero->GetID()
+			&& OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetTeam() != HeroManager::sharedManager()->m_pHero->GetTeam())              
+		{
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->SetTarget(HeroManager::sharedManager()->m_pHero);
+			return;
+		}
+
+		for(int j = 0; j < MAX_MINION; j++)   //미니언과의 타겟 체크
+		{
+			if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetTargetID() ==	MinionManager::sharedManager()->m_pMinion1[j]->GetID()
+				&& OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetTeam() !=	MinionManager::sharedManager()->m_pMinion1[j]->GetTeam())
+			{
+				OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->SetTarget(MinionManager::sharedManager()->m_pMinion1[j]);
+				return;
+			}
+		}
 		
+		OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->SetTarget(NULL);
 	}
 }

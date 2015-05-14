@@ -123,4 +123,5 @@ void ControlManager::SetTarget(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRay
 
 
 	HeroManager::sharedManager()->m_pHero->SetTarget(NULL);
+	HeroManager::sharedManager()->m_pHero->SetTargetID(0);
 }

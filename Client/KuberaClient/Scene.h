@@ -89,5 +89,5 @@ public:
 	void UpdateOtherClient(PlayerStruct* _PI, int _Count);
 
 	void SetMinionInfo(MinionInfo* _MI);
-	void TargetSetting();
+	void OtherPlayerTargetSetting();
 };

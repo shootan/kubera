@@ -199,8 +199,8 @@ void HeroObject::Animate(float fTimeElapsed)
 		m_fAttackTime = 0.f;
 
 		if(m_pTarget == NULL) return;
-
-		if(ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 50.f)
+		
+		if(ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 50.f && m_pTarget->GetTeam() != this->GetTeam())
 			m_iState = ATTACK;
 	}
 }

@@ -8,6 +8,7 @@ class HeroManager
 {
 public:
 	HeroObject* m_pHero;
+	int m_iID;
 
 private:
 	HeroManager()
@@ -42,6 +43,9 @@ public:
 		m_pHero->SetBoundSize(boundx, boundy, boundz);
 		
 	}
+
+	void SetID(int _id){ m_iID = _id; }
+	int GetID() { return m_iID; }
 	//void AddMissile(CGPoint _pos, Object_Enemy* _target, int _damage)
 	//{
 	//	for(int i=0; i<MAX_MISSILE; i++)
