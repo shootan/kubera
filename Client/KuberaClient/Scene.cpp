@@ -68,18 +68,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	pRedNexusMesh->LoadTexture(pd3dDevice, L"tower/Nexus2.png");
 
 	//히어로 생성
-	HeroManager::sharedManager()->CreateHero(D3DXVECTOR3(0, 0, 0), pHeroMesh, 10, 13, 10);
-	if(HeroManager::sharedManager()->GetID()%2 == 0)
-	{
-		HeroManager::sharedManager()->m_pHero->SetTeam(RED_TEAM);
-		HeroManager::sharedManager()->m_pHero->SetPosition(D3DXVECTOR3(550, 0, 0));
-	}
-	else
-	{
-		HeroManager::sharedManager()->m_pHero->SetTeam(BLUE_TEAM);
-		HeroManager::sharedManager()->m_pHero->SetPosition(D3DXVECTOR3(-550, 0, 0));
-	}
-
+	HeroManager::sharedManager()->CreateHero(pHeroMesh, 10, 13, 10);
 
 	m_pPlane = new CGameObject();
 	m_pPlane->SetMesh(pPlaneMesh);

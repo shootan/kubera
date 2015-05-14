@@ -110,6 +110,10 @@ void ControlManager::SetTarget(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRay
 
 	for(int i=0; i<MAX_MINION; i++)  //미니언 타겟 잡기
 	{
+		if(MinionManager::sharedManager()->m_pMinion1[i]->GetVisible() == FALSE) continue;
+
+		D3DXVECTOR3 a = MinionManager::sharedManager()->m_pMinion1[i]->GetPosition();
+
 		float dist = INTersectRaySphere(vRayDirection, vRayOrigin, MinionManager::sharedManager()->m_pMinion1[i]->GetPosition(), 
 			MinionManager::sharedManager()->m_pMinion1[i]->GetBoundSizeX()*2);
 

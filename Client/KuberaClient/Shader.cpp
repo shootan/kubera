@@ -470,7 +470,7 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 
 
 	//미니언 인스턴싱
- 	MinionManager::sharedManager()->CreateMinion1(D3DXVECTOR3(-1200, 0, -1220), m_pMinionMesh);
+ 	MinionManager::sharedManager()->CreateMinion1(D3DXVECTOR3(-1200, 0, -1220), m_pMinionMesh, 7, 10 ,7);
  	
  	for(int j=0; j<MAX_MINION; j++)
  	{

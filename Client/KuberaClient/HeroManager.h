@@ -9,6 +9,7 @@ class HeroManager
 public:
 	HeroObject* m_pHero;
 	int m_iID;
+	D3DXVECTOR3 m_vPos;
 
 private:
 	HeroManager()
@@ -34,46 +35,22 @@ public:
 		return instance;
 	}
 public:
-	void CreateHero(D3DXVECTOR3 pos, CMesh* mesh, float boundx, float boundy, float boundz)
+	void CreateHero(CMesh* mesh, float boundx, float boundy, float boundz)
 	{
 		m_pHero = new HeroObject();
 		m_pHero->SetMesh(mesh);
-		m_pHero->SetPosition(pos);
-		//m_pTower[i]->SetP(pos.x, pos.y, pos.z);
-		m_pHero->SetBoundSize(boundx, boundy, boundz);
+		m_pHero->SetPosition(m_vPos);
 		m_pHero->SetID(m_iID);
-		
+		m_pHero->SetBoundSize(boundx, boundy, boundz);
+
+
+		if(m_iID % 2 == 0)
+			HeroManager::sharedManager()->m_pHero->SetTeam(RED_TEAM);
+		else
+			HeroManager::sharedManager()->m_pHero->SetTeam(BLUE_TEAM);
 	}
 
 	void SetID(int _id){ m_iID = _id; }
+	void SetStartPos(D3DXVECTOR3 _v) { m_vPos = _v; }
 	int GetID() { return m_iID; }
-	//void AddMissile(CGPoint _pos, Object_Enemy* _target, int _damage)
-	//{
-	//	for(int i=0; i<MAX_MISSILE; i++)
-	//	{
-	//		if(m_pMissile[i] != NULL) continue;
-	//		m_pMissile[i] = new Object_Missile;
-	//		m_pMissile[i]->init();
-	//		m_pMissile[i]->setPosition(_pos);
-	//		m_pMissile[i]->SetDamage(_damage);
-	//		m_pMissile[i]->SetTarget(_target);
-	//		m_pScene->addChild(m_pMissile[i]);
-	//		break;
-	//	}
-	//}
-
-	//void Update()
-	//{
-	//	for(int i=0; i<MAX_MISSILE; i++)
-	//	{
-	//		if(m_pMissile[i] == NULL) continue;
-	//		if(m_pMissile[i]->getActive() == false)
-	//		{
-	//			m_pScene->removeChild(m_pMissile[i],true);
-	//			//delete m_pMissile[i];
-	//			m_pMissile[i] = NULL;
-	//			continue;
-	//		}
-	//	}
-	//}
 };
