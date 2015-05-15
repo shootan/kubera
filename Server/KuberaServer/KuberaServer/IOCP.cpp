@@ -34,6 +34,14 @@ IOCPServer::~IOCPServer()
 		m_pNextBufferList = next->m_pNext;
 		delete next;
 	}
+
+	Player* playe;
+	while(m_pPlayerList != NULL)
+	{
+		playe = m_pPlayerList;
+		m_pPlayerList = playe->m_pNext;
+		delete playe;
+	}
 	DeleteCriticalSection(&m_BufferListLock);
 }
 
@@ -113,11 +121,12 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 			{
 				buffer->m_ClientSock = client_sock;
 				buffer->m_Opcode			= OP_INIT;
-				buffer->m_Disconnect		= FALSE;
+				buffer->m_Connect		= TRUE;
+				buffer->m_pPlayer->m_Connect = TRUE;
 				int header = INITCLIENT;
 				send(client_sock, (char*)&header, sizeof(int), 0);
 				send(client_sock, (char*)&buffer->m_Id, sizeof(int), 0);
-				send(client_sock, (char*)&buffer->m_PlayerData.m_Pos, sizeof(Vector3), 0);
+				send(client_sock, (char*)&buffer->m_pPlayer->m_PI->PI.m_Pos, sizeof(Vector3), 0);
 				SameIP = TRUE;
 				PostQueuedCompletionStatus(pThis->m_hIO, 0, (ULONG_PTR)buffer, &buffer->m_Overlapped);
 				break;
@@ -150,15 +159,15 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 			buffer->m_SendWsabuf.len	= BUFSIZE;
 			buffer->m_ClientSock		= client_sock;
 			buffer->m_Opcode			= OP_INIT;
-			buffer->m_Disconnect		= FALSE;
+			buffer->m_Connect		= TRUE;
 
 			int header = INITCLIENT;
 			send(client_sock, (char*)&header, sizeof(int), 0);
 			send(client_sock, (char*)&buffer->m_Id, sizeof(int), 0);
-			
+			Vector3 po;
 			if(buffer->m_Id % 2 == 0)
 			{
-				Vector3 po;
+				
 				po.x = 550;
 				po.y = 0;
 				po.z = 0;
@@ -166,7 +175,6 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 			}
 			else
 			{
-				Vector3 po;
 				po.x = -550;
 				po.y = 0;
 				po.z = 0;
@@ -176,13 +184,16 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 			Player* pl = new Player;
 			ZeroMemory(pl, sizeof(Player));
 			pl->m_Id = buffer->m_Id;
-			
 			pl->m_PI = new PlayerPacket;
 			ZeroMemory(pl->m_PI, sizeof(PlayerPacket));
+			pl->m_PI->PI.m_Pos = po;
 			pl->m_PI->PI.m_ID = buffer->m_Id;
 			pl->m_PI->size = 32;
 			pl->m_pNext = pThis->m_pPlayerList;
+			pl->m_Connect = TRUE;
+			
 			pThis->m_pPlayerList = pl;
+			buffer->m_pPlayer = pl;
 
 			//비동기 입출력 시작
 			DWORD flags = 0;
@@ -272,7 +283,7 @@ UINT WINAPI IOCPServer::WorkerThread(LPVOID arg)
 
 void IOCPServer::SetOpCode(IOBuffer* _buff, OPCODE _opCode)
 {
-	if(_buff->m_Disconnect) return;
+	if(!_buff->m_Connect) return;
 	ZeroMemory(&_buff->m_Overlapped, sizeof(OVERLAPPED));
 	_buff->m_Opcode = _opCode;
 }
@@ -291,6 +302,17 @@ void IOCPServer::OnInit(IOBuffer* _buff)
 
 void IOCPServer::OnRecv(IOBuffer* _buff, char* _recvBuff, int _size)
 {
+	if(_size == 0)
+	{
+		_buff->m_Connect = FALSE;
+		_buff->m_pPlayer->m_Connect = FALSE;
+	}
+	else if(_size != 0 && _buff->m_Connect == FALSE)
+	{
+		_buff->m_Connect = TRUE;
+		_buff->m_pPlayer->m_Connect = TRUE;
+	}
+
 	DWORD dwRecv = 0, dwFlags = 0;
 	WSABUF buffRecv;
 
@@ -299,7 +321,6 @@ void IOCPServer::OnRecv(IOBuffer* _buff, char* _recvBuff, int _size)
 	buffRecv.buf = _recvBuff;
 	buffRecv.len = _size;
 
-	if(_buff->m_Disconnect) return;
 	int retval = WSARecv(_buff->m_ClientSock, &buffRecv, 1, &dwRecv, &dwFlags, &(_buff->m_Overlapped), NULL);
 
 	if ( retval == SOCKET_ERROR && (ERROR_IO_PENDING != WSAGetLastError())) 
@@ -310,11 +331,15 @@ void IOCPServer::OnRecv(IOBuffer* _buff, char* _recvBuff, int _size)
 
 void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 {
-	if ( _size == 0 )
+	if(_size == 0)
 	{
-		/*m_iClientCount--;
-		delete _buff;
-		return;*/
+		_buff->m_Connect = FALSE;
+		_buff->m_pPlayer->m_Connect = FALSE;
+	}
+	else if(_size != 0 && _buff->m_Connect == FALSE)
+	{
+		_buff->m_Connect = TRUE;
+		_buff->m_pPlayer->m_Connect = TRUE;
 	}
 
 	Player* play;
@@ -325,7 +350,6 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 		if(_buff->m_Id == play->m_Id)
 		{
 			play->m_PI = (PlayerPacket*)_buff->m_RecvBuf;
-			_buff->m_PlayerData = play->m_PI->PI;
 			break;
 		}
 		play = play->m_pNext;
@@ -364,7 +388,7 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 			continue;
 		}
 
-		if(!_buff->m_Disconnect)
+		if(!_buff->m_Connect)
 		{
 			//printf("ID : %d, x: %3f, y: %3f, z : %3f, size : %d \n", play->m_PI->PI.m_ID, play->m_PI->PI.m_Pos.x, play->m_PI->PI.m_Pos.y, play->m_PI->PI.m_Pos.z, play->m_PI->size);
 			this->SetOpCode(_buff, OP_SEND_FINISH);
@@ -379,9 +403,15 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 
 void IOCPServer::OnSendFinish(IOBuffer* _buff, DWORD _size)
 {
-	if ( _size == 0 )
+	if(_size == 0)
 	{
-		Check0++;
+		_buff->m_Connect = FALSE;
+		_buff->m_pPlayer->m_Connect = FALSE;
+	}
+	else if(_size != 0 && _buff->m_Connect == FALSE)
+	{
+		_buff->m_Connect = TRUE;
+		_buff->m_pPlayer->m_Connect = TRUE;
 	}
 
 	if(_size < 8)
@@ -450,7 +480,11 @@ BOOL IOCPServer::SendData(float _dt)
 	while(Buffer != NULL)
 	{
 		//EnterCriticalSection(&m_BufferListLock);
-
+		if(!Buffer->m_Connect)
+		{
+			Buffer = Buffer->m_pNext;
+			continue;
+		}
 		int* Count = new int;
 		*Count = m_iClientCount;
 		this->SetOpCode(Buffer, OP_SEND_FINISH);
@@ -460,18 +494,16 @@ BOOL IOCPServer::SendData(float _dt)
 		play = m_pPlayerList;
 		while(play != NULL)
 		{
-			if( play->m_Id == Buffer->m_Id)
+			if( play->m_Id == Buffer->m_Id || !play->m_Connect)
 			{
 				play = play->m_pNext;
 				continue;
 			}
-
-			if(!Buffer->m_Disconnect)
-			{
-				//printf("ID : %d, x: %3f, y: %3f, z : %3f, size : %d \n", play->m_PI->PI.m_ID, play->m_PI->PI.m_Pos.x, play->m_PI->PI.m_Pos.y, play->m_PI->PI.m_Pos.z, play->m_PI->size);
-				this->SetOpCode(Buffer, OP_SEND_FINISH);
-				this->SendPacket(Buffer, HERODATA, play->m_PI, sizeof(PlayerPacket));
-			}
+			
+			//printf("ID : %d, x: %3f, y: %3f, z : %3f, size : %d \n", play->m_PI->PI.m_ID, play->m_PI->PI.m_Pos.x, play->m_PI->PI.m_Pos.y, play->m_PI->PI.m_Pos.z, play->m_PI->size);
+			this->SetOpCode(Buffer, OP_SEND_FINISH);
+			this->SendPacket(Buffer, HERODATA, play->m_PI, sizeof(PlayerPacket));
+			
 			play = play->m_pNext;
 		}
 
@@ -479,66 +511,28 @@ BOOL IOCPServer::SendData(float _dt)
 		//LeaveCriticalSection(&m_BufferListLock);
 	}
 
- 	m_MinionTimer += _dt;
- 
- 	if(m_MinionTimer > 0.05f)
- 	{
- 		Buffer = m_pNextBufferList;
- 
- 		while(Buffer != NULL)
- 		{
- 			if(!Buffer->m_Disconnect)
- 			{
-				this->SetOpCode(Buffer, OP_SEND_FINISH);
- 				this->SendPacket(Buffer, MINIONDATA, Arrange.MI, sizeof(MinionInfo)*160);
- 
- 
- 				////4개 나눠서 보내기
- 				/*int size = sizeof(int) + sizeof(MinionInfo)*40;
- 				char* buff = new char[size];
- 
- 
- 				Number = 1;
- 				*(int*)buff = Number;
- 				memcpy(buff+sizeof(int), Arrange.MI1, size);
- 				this->SendPacket(Buffer, MINIONDATA, buff, sizeof(MinionInfo)*40);
- 				this->SetOpCode(Buffer, OP_SEND_FINISH);
- 
- 
- 
- 				Number = 2;
- 				*(int*)buff = Number;
- 				memcpy(buff+sizeof(int), Arrange.MI2, size);
- 				this->SendPacket(Buffer, MINIONDATA, buff, sizeof(MinionInfo)*40);
- 				this->SetOpCode(Buffer, OP_SEND_FINISH);
- 
- 
- 
- 				Number = 3;
- 				*(int*)buff = Number;
- 				memcpy(buff+sizeof(int), Arrange.MI3, size);
- 				this->SendPacket(Buffer, MINIONDATA, buff, sizeof(MinionInfo)*40);
- 				this->SetOpCode(Buffer, OP_SEND_FINISH);
- 
- 
- 
- 				Number = 4;
- 				*(int*)buff = Number;
- 				memcpy(buff+sizeof(int), Arrange.MI4, size);
- 				this->SendPacket(Buffer, MINIONDATA, buff, sizeof(MinionInfo)*40);
- 				this->SetOpCode(Buffer, OP_SEND_FINISH);*/
- 
- 
- 				//delete[] buff;
- 			}
- 			Buffer = Buffer->m_pNext;
- 			//LeaveCriticalSection(&m_BufferListLock);
- 		}
- 
- 		m_MinionTimer = 0.0f;
- 	}
+	m_MinionTimer += _dt;
 
+	if(m_MinionTimer > 0.05f)
+	{
+		Buffer = m_pNextBufferList;
 
+		while(Buffer != NULL)
+		{
+			if(!Buffer->m_Connect)
+			{
+				Buffer = Buffer->m_pNext;
+				continue;
+			}
+			this->SetOpCode(Buffer, OP_SEND_FINISH);
+			this->SendPacket(Buffer, MINIONDATA, Arrange.MI, sizeof(MinionInfo)*160);
+
+			Buffer = Buffer->m_pNext;
+		}
+		
+		//LeaveCriticalSection(&m_BufferListLock);
+		m_MinionTimer = 0.0f;
+	}
 	return TRUE;
 }
 
@@ -561,7 +555,6 @@ void IOCPServer::SendPacket(IOBuffer* _buffer, int NetworkCode, void *_packet, i
 	memcpy(_buffer->m_SendBuf, Buffer, Size);
 	
 	//_buffer->m_iSendbytesCount += Size;
-	if(_buffer->m_Disconnect) return;
 	int retval = WSASend(_buffer->m_ClientSock, &_buffer->m_SendWsabuf, 1, &io_size, NULL, &_buffer->m_Overlapped, NULL);
 // 
 // 	if(retval > 800)

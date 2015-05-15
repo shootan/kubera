@@ -12,6 +12,13 @@ typedef enum OPCODE
 	OP_SEND_FINISH
 } OPCODE;
 
+struct Player{
+	int m_Id;
+	BOOL m_Connect;
+	PlayerPacket*	m_PI;
+	Player*			m_pNext;
+};
+
 struct IOBuffer{
 	SOCKET		m_ClientSock;
 	int			m_Id;
@@ -24,18 +31,13 @@ struct IOBuffer{
 	WSABUF		m_Wsabuf;
 	WSABUF		m_SendWsabuf;
 	OPCODE		m_Opcode;
-	PlayerInfo	m_PlayerData;
-	BOOL		m_Use;
-	BOOL		m_Disconnect;
+	BOOL		m_Connect;
 	IOBuffer*	m_pNext;
 	IOBuffer*	m_pPrev;
+	Player*		m_pPlayer;
 };
 
-struct Player{
-	int m_Id;
-	PlayerPacket*	m_PI;
-	Player*			m_pNext;
-};
+
 
 class IOCPServer : public Network
 {
