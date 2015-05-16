@@ -9,7 +9,8 @@ typedef enum OPCODE
 	OP_RECV,
 	OP_RECV_DONE,
 	OP_SEND,
-	OP_SEND_FINISH
+	OP_SEND_FINISH,
+	OP_DISCONNECT
 } OPCODE;
 
 struct Player{
