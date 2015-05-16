@@ -87,8 +87,11 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 {
 	IOCPServer* pThis = (IOCPServer*)arg;
 	SOCKADDR_IN sock_addr;
+	SOCKADDR_IN sock_addr2;
 	char* p;
+	char* q;
 	int soklen;
+	int soklen2;
 	BOOL SameIP = FALSE;
 	
 	while (1)
@@ -116,8 +119,12 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 			soklen = sizeof(sock_addr);
 			getpeername(buffer->m_ClientSock,(struct sockaddr*)&sock_addr,&soklen);
 			p = (char*)inet_ntoa((struct in_addr)sock_addr.sin_addr);
+			char IP[16];
+			strcpy(IP, p);
+			q = (char*)inet_ntoa(pThis->m_ClinetAddr.sin_addr);
 
-			if(!strcmp(inet_ntoa(sock_addr.sin_addr), inet_ntoa(pThis->m_ClinetAddr.sin_addr)))
+
+			if(!strcmp(IP, q))
 			{
 				buffer->m_ClientSock = client_sock;
 				buffer->m_Opcode			= OP_INIT;
@@ -257,11 +264,9 @@ UINT WINAPI IOCPServer::WorkerThread(LPVOID arg)
 			}
 		}
 
-		if(buff->m_Opcode != OP_RECV_DONE && dwSize == 0 && Check == FALSE)
+		if(buff->m_Opcode != OP_RECV_DONE && dwSize == 32 )
 		{
-			int d;
-			 d = 0;
-
+			//server->SetOpCode(buff, OP_RECV_DONE);
 		}
 		// 클라이언트정보얻기
 		SOCKADDR_IN clientaddr; 
@@ -286,6 +291,10 @@ UINT WINAPI IOCPServer::WorkerThread(LPVOID arg)
 			server->OnSendFinish(buff, dwSize);
 			break;
 		case OP_DISCONNECT:
+			buff->m_ReconnectCount++;
+			if(buff->m_ReconnectCount < 40) server->OnInit(buff);
+			else buff->m_ReconnectCount = 0;
+			
 			break;
 		}
 	}
@@ -317,22 +326,27 @@ void IOCPServer::OnRecv(IOBuffer* _buff, char* _recvBuff, int _size)
 	{
 		_buff->m_Connect = FALSE;
 		_buff->m_pPlayer->m_Connect = FALSE;
+		printf("어디냐1\n");
 	}
 	else if(_size != 0 && _buff->m_Connect == FALSE)
 	{
 		_buff->m_Connect = TRUE;
 		_buff->m_pPlayer->m_Connect = TRUE;
+		printf("어디냐2\n");
 	}
 
 	DWORD dwRecv = 0, dwFlags = 0;
 	WSABUF buffRecv;
+	printf("RECV: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
 
 	this->SetOpCode(_buff, OP_RECV_DONE);
 
 	buffRecv.buf = _recvBuff;
 	buffRecv.len = _size;
 
+	_buff->m_MinionCount++;
 	int retval = WSARecv(_buff->m_ClientSock, &buffRecv, 1, &dwRecv, &dwFlags, &(_buff->m_Overlapped), NULL);
+
 
 	if ( retval == SOCKET_ERROR && (ERROR_IO_PENDING != WSAGetLastError())) 
 	{
@@ -348,13 +362,14 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 		_buff->m_pPlayer->m_Connect = FALSE;
  		SetOpCode(_buff, OP_DISCONNECT);
  		BOOL bSuccess = PostQueuedCompletionStatus(m_hIO, 0, (ULONG_PTR)_buff, &(_buff->m_Overlapped));
-
+		printf("어디냐3\n");
 		return;
 	}
 	else if(_size != 0 && _buff->m_Connect == FALSE)
 	{
 		_buff->m_Connect = TRUE;
 		_buff->m_pPlayer->m_Connect = TRUE;
+		printf("어디냐4\n");
 	}
 
 	Player* play;
@@ -370,6 +385,7 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 		play = play->m_pNext;
 	}
 	
+	printf("RECVDONE: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
 	SetOpCode(_buff, OP_SEND);
 	//if(_buff->m_Disconnect) return;
 	BOOL bSuccess = PostQueuedCompletionStatus(m_hIO, 0, (ULONG_PTR)_buff, &(_buff->m_Overlapped));
@@ -383,7 +399,7 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 
 void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 {
-	if(_buff->m_iSendbytesCount != 0) return;
+	//if(_buff->m_iSendbytesCount != 0) return;
 	IOBuffer* Buffer;
 	Player*   play;
 	int Number = 0;
@@ -391,8 +407,11 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 	int* Count = new int;
 	*Count = m_iClientCount;
 
+
 	SetOpCode(_buff, OP_SEND_FINISH);	
 	this->SendPacket(_buff, HEROCOUNT, Count, sizeof(int));
+	printf("1: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
+
 	play = m_pPlayerList;
 
 	while(play != NULL)
@@ -403,45 +422,58 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 			continue;
 		}
 
-		if(!_buff->m_Connect)
+		if(_buff->m_Connect)
 		{
 			//printf("ID : %d, x: %3f, y: %3f, z : %3f, size : %d \n", play->m_PI->PI.m_ID, play->m_PI->PI.m_Pos.x, play->m_PI->PI.m_Pos.y, play->m_PI->PI.m_Pos.z, play->m_PI->size);
-		//	this->SetOpCode(_buff, OP_SEND_FINISH);
+			this->SetOpCode(_buff, OP_SEND_FINISH);
 			this->SendPacket(_buff, HERODATA, play->m_PI, sizeof(PlayerPacket));
+			printf("2: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
 		}
 		play = play->m_pNext;
 	}
 
-	//SetOpCode(_buff, OP_SEND_FINISH);
-	this->SendPacket(_buff, MINIONDATA, Arrange.MI, sizeof(MinionInfo)*160);
+	if(_buff->m_MinionCount > 2)
+	{
+		_buff->m_MinionCount = 0;
+		SetOpCode(_buff, OP_SEND_FINISH);
+		this->SendPacket(_buff, MINIONDATA, Arrange.MI, sizeof(MinionInfo)*160);
+		printf("3: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
+		
+	}
+
+	BOOL bSuccess = PostQueuedCompletionStatus(m_hIO, 0, (ULONG_PTR)_buff, &(_buff->m_Overlapped));
+	_buff->m_bSendFinish = TRUE;
+	
 }
 
 void IOCPServer::OnSendFinish(IOBuffer* _buff, DWORD _size)
 {
- 	if(_size == 0)
- 	{
- 		_buff->m_Connect = FALSE;
- 		_buff->m_pPlayer->m_Connect = FALSE;
- 	}
- 	else if(_size != 0 && _buff->m_Connect == FALSE)
- 	{
- 		_buff->m_Connect = TRUE;
- 		_buff->m_pPlayer->m_Connect = TRUE;
- 	}
-
-	if(_size < 8)
-	{
-		Check0++;
-	}
-	if(_size == 8)
-	{
-		Check8++;
-	}
-
-	if(_size > 8 )
-	{
-		Check3000++;
-	}
+//  	if(_size == 0)
+//  	{
+//  		_buff->m_Connect = FALSE;
+//  		_buff->m_pPlayer->m_Connect = FALSE;
+// 		printf("어디냐5\n");
+//  	}
+//  	else if(_size != 0 && _buff->m_Connect == FALSE)
+//  	{
+//  		_buff->m_Connect = TRUE;
+//  		_buff->m_pPlayer->m_Connect = TRUE;
+// 		printf("어디냐6\n");
+//  	}
+// 
+// 	if(_size < 8)
+// 	{
+// 		Check0++;
+// 	}
+// 	if(_size == 8)
+// 	{
+// 		Check8++;
+// 	}
+// 
+// 	if(_size > 8 )
+// 	{
+// 		Check3000++;
+// 	}
 
 	
 // 	SetOpCode(_buff, OP_RECV);
@@ -455,20 +487,29 @@ void IOCPServer::OnSendFinish(IOBuffer* _buff, DWORD _size)
 // 	int retval;
 
  	_buff->m_iSendbytes += _size;
-	printf("%d \n", _size);
-	if(_buff->m_iSendbytes > 3000)
+	//printf("%d \n", _size);
+	printf("%d, %d \n", _buff->m_iSendbytes, _buff->m_iSendbytesCount);
+	if(_size == 32)
 	{
 		int d;
 		d = 0;
 
 	}
  
- 	printf("1: %d,   2: %d \n", _buff->m_iSendbytes, _buff->m_iSendbytesCount);
+ //	printf("1: %d,   2: %d \n", _buff->m_iSendbytes, _buff->m_iSendbytesCount);
  
- 	if(_buff->m_iSendbytes == _buff->m_iSendbytesCount || _buff->m_iSendbytes > 18000)
+	printf("4: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
+	if(_buff->m_iSendbytes != _buff->m_iSendbytesCount)
+	{
+		printf("%d, %d \n", _buff->m_iSendbytes, _buff->m_iSendbytesCount);
+	}
+ 	//if(_buff->m_iSendbytes == _buff->m_iSendbytesCount || _buff->m_iSendbytes > 3400)
+	if(_buff->m_bSendFinish)
  	{
  		_buff->m_iSendbytes = 0;
  		_buff->m_iSendbytesCount = 0;
+
+		_buff->m_bSendFinish = FALSE;
  
  		SetOpCode(_buff, OP_RECV);
  		_buff->m_iRecvbytes = 0;

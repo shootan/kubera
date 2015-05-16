@@ -43,6 +43,7 @@ struct PlayerInfo{
 	int		m_iTargetID;
 	Vector3 m_Pos;
 	float	m_Rot;
+	BOOL	m_Connect;
 };
 
 struct PlayerPacket

@@ -29,6 +29,9 @@ struct IOBuffer{
 	int			m_iRecvbytes;
 	int			m_iSendbytes;
 	int			m_iSendbytesCount;
+	int			m_MinionCount;
+	int			m_ReconnectCount;
+	BOOL		m_bSendFinish;
 	WSABUF		m_Wsabuf;
 	WSABUF		m_SendWsabuf;
 	OPCODE		m_Opcode;

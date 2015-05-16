@@ -39,7 +39,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	if (!CreateDirect3DDisplay()) return(false); 
 	char IP[30];
 	//scanf("%s", IP);
-	Net.InitClient("192.168.0.2", 9000);
+	Net.InitClient("192.168.0.3", 9000);
 
 	while (Net.m_ID == 0)
 	{
