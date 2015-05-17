@@ -10,6 +10,7 @@ TowerObject::TowerObject(void)
 	m_fAttackTime = 0.f;
 	m_HP = 1000.0f;
 	m_Damage = 50.0f;
+	m_bExplosion = false;
 }
 
 TowerObject::~TowerObject(void)
@@ -62,6 +63,22 @@ void TowerObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
 
 void TowerObject::Update(float fTimeElapsed)
 {
+	if(m_HP< 1.0f && !m_bExplosion)
+	{
+		for(int i=0;i<MAX_DESTROY_TOWER; i++)
+		{
+			if(ObstacleManager::sharedManager()->m_pDestroyTower[i]->GetUsed() == TRUE) continue;
+
+			ObstacleManager::sharedManager()->m_pDestroyTower[i]->SetUsed(TRUE);
+			ObstacleManager::sharedManager()->m_pDestroyTower[i]->SetPosition(m_Pos);
+			break;
+		}
+		m_Pos = D3DXVECTOR3(0, 0, -2000);
+		m_pTarget = NULL;
+		m_bExplosion = true;
+		return;
+	}
+
 	if(m_pTarget == NULL) return;
 
 	m_fAttackTime += fTimeElapsed;

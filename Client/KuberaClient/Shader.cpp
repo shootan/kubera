@@ -228,6 +228,7 @@ CInstancingShader::CInstancingShader()
 	m_pBlueTowerMesh = NULL;
 	m_pRedTowerMesh = NULL;
 	m_pMinionMesh = NULL;
+	m_pDestroyTowerMesh = NULL;
 
 	m_pd3dcbBush3InstanceMatrices = NULL;
 	m_pd3dcbRock2InstanceMatrices = NULL;
@@ -236,6 +237,7 @@ CInstancingShader::CInstancingShader()
 	m_pd3dcbBlueTowerInstanceMatrices = NULL;
 	m_pd3dcbRedTowerInstanceMatrices = NULL;
 	m_pd3dcbMinionInstanceMatrices = NULL;
+	m_pd3dcbDestroyTowerInstanceMatrices = NULL;
 
 	m_nBush3Objects = 0;
 	m_nRock2Objects = 0;
@@ -244,6 +246,7 @@ CInstancingShader::CInstancingShader()
 	m_nBlueTowerObjects = 0;
 	m_nRedTowerObjects = 0;
 	m_nMinionObjects = 0;
+	m_nDestroyTowerObjects = 0;
 
 	m_pd3dcbInstanceColors = NULL;
 	m_nColorBufferStride = 0;
@@ -267,6 +270,7 @@ void CInstancingShader::ReleaseObjects()
 	if (m_pBlueTowerMesh) m_pBlueTowerMesh->Release();
 	if (m_pRedTowerMesh) m_pRedTowerMesh->Release();
 	if (m_pMinionMesh) m_pMinionMesh->Release();
+	if (m_pDestroyTowerMesh) m_pDestroyTowerMesh->Release();
 
 	if (m_pd3dcbWorldMatrix) m_pd3dcbWorldMatrix->Release();
 	if (m_ppObjects)
@@ -282,6 +286,7 @@ void CInstancingShader::ReleaseObjects()
 	if (m_pd3dcbBlueTowerInstanceMatrices) m_pd3dcbBlueTowerInstanceMatrices->Release();
 	if (m_pd3dcbRedTowerInstanceMatrices) m_pd3dcbRedTowerInstanceMatrices->Release();
 	if (m_pd3dcbMinionInstanceMatrices) m_pd3dcbMinionInstanceMatrices->Release();
+	if (m_pd3dcbDestroyTowerInstanceMatrices) m_pd3dcbDestroyTowerInstanceMatrices->Release();
 	if (m_pd3dcbInstanceColors) m_pd3dcbInstanceColors->Release();
 }
 
@@ -312,6 +317,9 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pMinionMesh = new CFBXMesh(pd3dDevice, L"minion/Dragon7107.FBX");
 	m_pMinionMesh->LoadTexture(pd3dDevice, L"minion/micro_dragon_col.tif");
 
+	m_pDestroyTowerMesh = new CFBXMesh(pd3dDevice, L"tower/DestroyedTower.FBX");
+	m_pDestroyTowerMesh->LoadTexture(pd3dDevice, L"tower/DestroyedTower.png");
+
 	int bush3x = 24, bush3z = 7, i = 0;  //위아래 100 픽셀
 	int bush3x1 = 5, bush3z1 = 10; //좌우 100픽셀
 
@@ -326,9 +334,10 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	m_nBlueTowerObjects = MAX_TOWER/2;
 	m_nRedTowerObjects = MAX_TOWER/2;
 	m_nMinionObjects = MAX_MINION;
+	m_nDestroyTowerObjects = MAX_DESTROY_TOWER;
 
 	m_nObjects = m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + 
-		m_nBlueTowerObjects + m_nRedTowerObjects + m_nMinionObjects ;
+		m_nBlueTowerObjects + m_nRedTowerObjects + m_nMinionObjects + m_nDestroyTowerObjects ;
 	//인스턴싱을 할 객체들의 배열이다.
 	m_ppObjects = new CGameObject*[m_nObjects]; 
 
@@ -487,6 +496,23 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
  	m_pMinionMesh->AppendVertexBuffer(m_pd3dcbMinionInstanceMatrices, sizeof(D3DXMATRIX), 0);
 
 
+	//부서진 타워 인스턴싱
+	ObstacleManager::sharedManager()->CreateDestroyTower(D3DXVECTOR3(0, 0,-2000), m_pDestroyTowerMesh, 30, 30, 30);
+
+	for(int j=0; j<MAX_DESTROY_TOWER; j++)
+		m_ppObjects[i++] = ObstacleManager::sharedManager()->m_pDestroyTower[j];
+	
+
+	ZeroMemory(&d3dBufferDesc, sizeof(D3D11_BUFFER_DESC));
+	d3dBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dBufferDesc.ByteWidth = sizeof(D3DXMATRIX) * m_nDestroyTowerObjects;
+	d3dBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	d3dBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	pd3dDevice->CreateBuffer(&d3dBufferDesc, NULL, &m_pd3dcbDestroyTowerInstanceMatrices);
+
+	m_pDestroyTowerMesh->AppendVertexBuffer(m_pd3dcbDestroyTowerInstanceMatrices, sizeof(D3DXMATRIX), 0);
+
+
 	ZeroMemory(&d3dBufferDesc, sizeof(D3D11_BUFFER_DESC));
 	d3dBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	m_nColorBufferStride = sizeof(D3DXCOLOR);
@@ -602,6 +628,14 @@ void CInstancingShader::UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceCon
 		m_nRedTowerObjects + j]->m_d3dxmtxWorld;
   	pd3dDeviceContext->Unmap(m_pd3dcbMinionInstanceMatrices, 0);
 
+	pd3dDeviceContext->Map(m_pd3dcbDestroyTowerInstanceMatrices, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
+	pcbWorldMatrix = (D3DXMATRIX *)d3dMappedResource.pData;
+	//인스턴싱 객체들의 월드 변환 행렬을 정점 버퍼에 쓴다.
+	for (int j = 0; j < m_nDestroyTowerObjects; j++)
+		pcbWorldMatrix[j] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + 
+		m_nRedTowerObjects + m_nMinionObjects + j]->m_d3dxmtxWorld;
+	pd3dDeviceContext->Unmap(m_pd3dcbDestroyTowerInstanceMatrices, 0);
+
 
 	//객체들의 색상 데이터를 상수 버퍼에 쓴다.
 	pd3dDeviceContext->Map(m_pd3dcbInstanceColors, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
@@ -632,6 +666,7 @@ void CInstancingShader::Render(ID3D11DeviceContext *pd3dDeviceContext)
 	if (m_pBlueTowerMesh) m_pBlueTowerMesh->RenderInstanced(pd3dDeviceContext, m_nBlueTowerObjects, 0);
 	if (m_pRedTowerMesh) m_pRedTowerMesh->RenderInstanced(pd3dDeviceContext, m_nRedTowerObjects, 0);
 	if (m_pMinionMesh) m_pMinionMesh->RenderInstanced(pd3dDeviceContext, m_nMinionObjects, 0);
+	if (m_pDestroyTowerMesh) m_pDestroyTowerMesh->RenderInstanced(pd3dDeviceContext, m_nDestroyTowerObjects, 0);
 }
 
 void CInstancingShader::AddObject(CGameObject *pObject) 

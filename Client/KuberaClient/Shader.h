@@ -109,6 +109,7 @@ public:
 	CMesh *m_pBlueTowerMesh;
 	CMesh *m_pRedTowerMesh;
 	CMesh *m_pMinionMesh;
+	CMesh *m_pDestroyTowerMesh;
 
 	int m_nBush3Objects;
 	int m_nRock2Objects;
@@ -117,6 +118,7 @@ public:
 	int m_nBlueTowerObjects;
 	int m_nRedTowerObjects;
 	int m_nMinionObjects;
+	int m_nDestroyTowerObjects;
 
 	//월드 변환 행렬과 월드 변환 행렬을 위한 상수 버퍼이다.
 	D3DXMATRIX m_d3dxmtxWorld;         
@@ -130,6 +132,7 @@ public:
 	ID3D11Buffer *m_pd3dcbBlueTowerInstanceMatrices;
 	ID3D11Buffer *m_pd3dcbRedTowerInstanceMatrices;
 	ID3D11Buffer *m_pd3dcbMinionInstanceMatrices;
+	ID3D11Buffer *m_pd3dcbDestroyTowerInstanceMatrices;
 
 	//인스턴싱으로 그릴 객체의 색상들의 배열을 저장할 상수 버퍼이다.
 	ID3D11Buffer *m_pd3dcbInstanceColors;

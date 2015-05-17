@@ -279,6 +279,12 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 		GameCollision(HeroManager::sharedManager()->m_pHero, ObstacleManager::sharedManager()->m_pObstacle[i]);
 	}
 
+	for(int i=0; i<MAX_DESTROY_TOWER; i++) //캐릭터와 부서진 타워 충돌체크
+	{
+		if(ObstacleManager::sharedManager()->m_pDestroyTower[i] == NULL) continue;
+		GameCollision(HeroManager::sharedManager()->m_pHero, ObstacleManager::sharedManager()->m_pDestroyTower[i]);
+	}
+
 	for(int i=0; i<MAX_TOWER; i++) //캐릭터와 타워 충돌체크
 	{
 		if(TowerManager::sharedManager()->m_pTower[i] == NULL) continue;
@@ -325,9 +331,10 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext)
 	for(int i=0; i<872; i++)
 		ObstacleManager::sharedManager()->m_pObstacle[i]->Render(pd3dDeviceContext);
   	for(int i=0; i<MAX_MINION; i++)
-  	{
   		MinionManager::sharedManager()->m_pMinion1[i]->Render(pd3dDeviceContext);
-  	}
+	for(int i=0; i<MAX_DESTROY_TOWER; i++)
+		ObstacleManager::sharedManager()->m_pDestroyTower[i]->Render(pd3dDeviceContext);
+ 
 
 }
 

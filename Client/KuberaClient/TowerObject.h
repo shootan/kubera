@@ -2,12 +2,15 @@
 #include "GameObject.h"
 #include "ST.h"
 #include "MissileManager.h"
+#include "ObstacleManager.h"
+
 
 class TowerObject : public CGameObject
 {
 private:
 	CGameObject* m_pPrevTarget;
 	float		 m_fAttackTime;
+	bool		 m_bExplosion;
 public:
 	TowerObject();
 	~TowerObject();

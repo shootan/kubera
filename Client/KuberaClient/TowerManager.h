@@ -9,7 +9,6 @@ class TowerManager
 {
 public:
 	TowerObject* m_pTower[MAX_TOWER];
-
 private:
 	TowerManager()
 	{
@@ -50,6 +49,7 @@ public:
 			break;
 		}
 	}
+
 	//void AddMissile(CGPoint _pos, Object_Enemy* _target, int _damage)
 	//{
 	//	for(int i=0; i<MAX_MISSILE; i++)
