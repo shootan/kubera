@@ -81,6 +81,7 @@ void TowerObject::Update(float fTimeElapsed)
 
 	if(m_pTarget == NULL) return;
 
+
 	m_fAttackTime += fTimeElapsed;
 
 	if(m_pTarget->GetHP() < 1 || ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos())> 50.0f)

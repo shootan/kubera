@@ -17,6 +17,7 @@ private:
 	node_t* m_pBestWay;
 	BOOL m_bAstar;
 	BOOL m_bFindPath;
+	
 public:
 	HeroObject();
 	~HeroObject();

@@ -90,13 +90,19 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 
 	m_pBlueNexus = new CGameObject();
 	m_pBlueNexus->SetMesh(pBlueNexusMesh);
-	m_pBlueNexus->SetPosition(D3DXVECTOR3(-450, 0, 0));
-	m_pBlueNexus->SetBoundSize(50, 50, 50);
+	m_pBlueNexus->SetPosition(D3DXVECTOR3(-550, 0, 0));
+	m_pBlueNexus->SetBoundSize(50, 20, 50);
+	m_pBlueNexus->SetHP(2000);
+	m_pBlueNexus->SetID(175);
 
 	m_pRedNexus = new CGameObject();
 	m_pRedNexus->SetMesh(pRedNexusMesh);
-	m_pRedNexus->SetPosition(D3DXVECTOR3(450, 0, 0));
+	m_pRedNexus->SetPosition(D3DXVECTOR3(550, 0, 0));
 	m_pRedNexus->SetBoundSize(50, 50, 50);
+	m_pRedNexus->SetHP(2000);
+	m_pRedNexus->SetID(176);
+
+	HeroManager::sharedManager()->SetNexus(m_pRedNexus, m_pBlueNexus);
 
 
 	//pFBXMesh->Release();
@@ -567,6 +573,18 @@ void CScene::OtherPlayerTargetSetting()
 				OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->SetTarget(MinionManager::sharedManager()->m_pMinion1[j]);
 				return;
 			}
+		}
+
+		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetTargetID() == m_pBlueNexus->GetID())
+		{
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->SetTarget(m_pBlueNexus);
+			return;
+		}
+
+		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetTargetID() == m_pRedNexus->GetID())
+		{
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->SetTarget(m_pRedNexus);
+			return;
 		}
 		
 		OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->SetTarget(NULL);

@@ -180,14 +180,14 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 			if(buffer->m_Id % 2 == 0)
 			{
 				
-				po.x = 550;
+				po.x = 510;
 				po.y = 0;
 				po.z = 0;
 				send(client_sock, (char*)&po, sizeof(Vector3), 0);
 			}
 			else
 			{
-				po.x = -550;
+				po.x = -510;
 				po.y = 0;
 				po.z = 0;
 				send(client_sock, (char*)&po, sizeof(Vector3), 0);
@@ -621,7 +621,7 @@ void IOCPServer::SendPacket(IOBuffer* _buffer, int NetworkCode, void *_packet, i
 
 void IOCPServer::ArrangeDataInfo(float _dt)
 {
-	if(m_iClientCount < 2) return;
+	//if(m_iClientCount < 2) return;
 
 	Arrange.SetTime(_dt);
 	Arrange.RegenMinion();
