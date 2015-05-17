@@ -36,6 +36,9 @@ public:
 		return instance;
 	}
 public:
+	CGameObject* RedNexus;
+	CGameObject* BlueNexus;
+
 	void CreateHero(CMesh* mesh, float boundx, float boundy, float boundz)
 	{
 		m_pHero = new HeroObject();
@@ -52,6 +55,7 @@ public:
 			HeroManager::sharedManager()->m_pHero->SetTeam(BLUE_TEAM);
 	}
 
+	void SetNexus(CGameObject* _red, CGameObject* _blue) { RedNexus= _red; BlueNexus = _blue; }
 	void SetID(int _id){ m_iID = _id; }
 	void SetStartPos(D3DXVECTOR3 _v) { m_vPos = _v; }
 	void SetHP(float _hp) { m_HP = _hp; }

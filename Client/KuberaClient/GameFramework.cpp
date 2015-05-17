@@ -610,15 +610,28 @@ void CGameFramework::RenderText()
 		if(HeroManager::sharedManager()->m_pHero->GetTarget() == OtherPlayerManager::sharedManager()->m_pOtherPlayer[i])
 		{
 			int id = OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetID();
-			swprintf(str, 255, L"Target : OtherPlayer [%d]",id);
+			swprintf(str, 255, L"Target : OtherPlayer [%d], HP : %.0f",id, OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetHP());
 			m_pTxtHelper->DrawTextLine(str);
 			break;
 		}
 	}
+
+	if(HeroManager::sharedManager()->m_pHero->GetTarget() == HeroManager::sharedManager()->RedNexus)
+	{
+		swprintf(str, 255, L"Target : RedNexus, HP : %.0f", HeroManager::sharedManager()->RedNexus->GetHP());
+		m_pTxtHelper->DrawTextLine(str);
+	}
+
+	if(HeroManager::sharedManager()->m_pHero->GetTarget() == HeroManager::sharedManager()->BlueNexus)
+	{
+		swprintf(str, 255, L"Target : RedNexus, HP : %.0f", HeroManager::sharedManager()->BlueNexus->GetHP());
+		m_pTxtHelper->DrawTextLine(str);
+	}
+
 	m_pTxtHelper->End();
 
 	m_pTxtHelper2->Begin();
-	m_pTxtHelper2->SetInsertionPos(5, 20);
+	m_pTxtHelper2->SetInsertionPos(5, 10);
 	m_pTxtHelper2->SetForegroundColor( D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ) );
 	//m_pTxtHelper->DrawTextLine(L"Target : ");
 	str[255];

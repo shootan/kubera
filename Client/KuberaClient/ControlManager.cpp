@@ -127,6 +127,23 @@ void ControlManager::SetTarget(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRay
 		}
 	}
 
+	float dist = INTersectRaySphere(vRayDirection, vRayOrigin, HeroManager::sharedManager()->RedNexus->GetPosition(), 
+		HeroManager::sharedManager()->RedNexus->GetBoundSizeX()*2);
+	if(dist> 0)
+	{
+		HeroManager::sharedManager()->m_pHero->SetTarget(HeroManager::sharedManager()->RedNexus);
+		HeroManager::sharedManager()->m_pHero->SetTargetID(HeroManager::sharedManager()->RedNexus->GetID());
+		return;
+	}
+
+	dist = INTersectRaySphere(vRayDirection, vRayOrigin, HeroManager::sharedManager()->BlueNexus->GetPosition(), 
+		HeroManager::sharedManager()->BlueNexus->GetBoundSizeX()*2);
+	if(dist> 0)
+	{
+		HeroManager::sharedManager()->m_pHero->SetTarget(HeroManager::sharedManager()->BlueNexus);
+		HeroManager::sharedManager()->m_pHero->SetTargetID(HeroManager::sharedManager()->BlueNexus->GetID());
+		return;
+	}
 
 	HeroManager::sharedManager()->m_pHero->SetTarget(NULL);
 	HeroManager::sharedManager()->m_pHero->SetTargetID(0);
