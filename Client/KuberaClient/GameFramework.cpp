@@ -49,6 +49,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 
 	HeroManager::sharedManager()->SetID(Net.m_ID);
 	HeroManager::sharedManager()->SetStartPos(D3DXVECTOR3(Net.m_Pos.x, Net.m_Pos.y, Net.m_Pos.z));
+	HeroManager::sharedManager()->SetHP(Net.m_HP);
 	if(Net.m_ID%2 == 0) //초기 시작 카메리위치 설정
 	{
 		m_CameraPosX = 500.f;
@@ -261,15 +262,27 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 		OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
 		break;
 	case WM_KEYDOWN:
+		switch (wParam) 
+		{
+		case VK_SPACE:
+			if(HeroManager::sharedManager()->m_pHero != NULL)
+			{
+				m_CameraPosX = HeroManager::sharedManager()->m_pHero->GetPos().x;
+				m_CameraPosZ = HeroManager::sharedManager()->m_pHero->GetPos().z-10;
+			}
+			
+			break;
+		} 
 
+		break;
 	case WM_KEYUP:
 		OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 		break;
 	case WM_MOUSEWHEEL:
 		if (((short) HIWORD(wParam))/120 > 0 )
-			m_CameraUpDown = 1;
-		else if (((short) HIWORD(wParam))/120 < 0 )
 			m_CameraUpDown = 2;
+		else if (((short) HIWORD(wParam))/120 < 0 )
+			m_CameraUpDown = 1;
 		break;
 	}
 	return(0);
@@ -551,6 +564,8 @@ void CGameFramework::SendHeroData()
 		HeroInfo.PI.m_iState = HeroManager::sharedManager()->m_pHero->GetState();
 		HeroInfo.PI.m_iTargetID = HeroManager::sharedManager()->m_pHero->GetTargetID();
 		HeroInfo.PI.m_ID = Net.m_ID;
+		HeroInfo.PI.m_HP = HeroManager::sharedManager()->m_pHero->GetHP();
+		HeroInfo.size = sizeof(PlayerPacket);
 
 		Net.SendData(&HeroInfo);
 	}

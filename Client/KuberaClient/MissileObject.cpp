@@ -9,6 +9,7 @@ MissileObject::MissileObject(void)
 	m_Visible = TRUE;
 	m_bUsed = FALSE;
 	m_pTarget = NULL;
+	m_pAttacker  = NULL;
 	m_fWalkSpeed = 0.15f;
 }
 
@@ -107,6 +108,7 @@ void MissileObject::Update(float fTimeElapsed)
 
 	if ( finished < 0.5f ) 
 	{
+		if(m_pTarget->GetTag() != OTHERPLAYER) m_pTarget->SetDamage(m_pAttacker->GetDamage());
 		m_Pos = D3DXVECTOR3(1200, 0 ,0);
 		m_bUsed = FALSE;
 		m_pTarget = NULL;

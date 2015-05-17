@@ -208,7 +208,7 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 		m_DistanceToHero = ST::sharedManager()->GetDistance(HeroManager::sharedManager()->m_pHero->GetPos(), 
 			TowerManager::sharedManager()->m_pTower[i]->GetPos());
 		if(m_DistanceToHero < 50.0f 
-			&& TowerManager::sharedManager()->m_pTower[i]->GetTeam() != HeroManager::sharedManager()->m_pHero->GetTeam())
+			&& TowerManager::sharedManager()->m_pTower[i]->GetTeam() != HeroManager::sharedManager()->m_pHero->GetTeam() && HeroManager::sharedManager()->m_pHero->GetHP() > 1.0f)
 		{
 			TowerManager::sharedManager()->m_pTower[i]->SetTarget(HeroManager::sharedManager()->m_pHero);
 			continue;
@@ -374,6 +374,7 @@ void CScene::SetOtherClient(PlayerStruct* _PI, int _Count)
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Rot);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetState(_PI[i].PI.m_iState);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetTargetID(_PI[i].PI.m_iTargetID);
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetHP(_PI[i].PI.m_HP);
 			if(_PI[i].PI.m_ID%2 == 0)
 				OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetTeam(RED_TEAM);
 			else
@@ -404,6 +405,7 @@ void CScene::UpdateOtherClient(PlayerStruct* _PI, int _Count)
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Rot);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetState(_PI[i].PI.m_iState);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetTargetID(_PI[i].PI.m_iTargetID);
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetHP(_PI[i].PI.m_HP);
 			break;
 		}
 	}
@@ -411,23 +413,6 @@ void CScene::UpdateOtherClient(PlayerStruct* _PI, int _Count)
 
 void CScene::AddMinion(ID3D11Device *pd3dDevice)
 {
-
-	/*for(int i=0; i<m_nObjects; i++)
-	{
-		if(m_ppObjects[i] == NULL)
-			continue;
-		if(m_ppObjects[i]->GetTag() == MINION && m_ppObjects[i]->GetVisible() == FALSE)
-		{
-			m_ppObjects[i]->SetVisible(TRUE);
-			m_ppObjects[i]->SetPosition(D3DXVECTOR3(500,0,0));
-			if(m_nMinionObjects % 2 == 0)
-				m_ppObjects[i]->SetNewDestination(D3DXVECTOR3(0, 0, 300));
-			else
-				m_ppObjects[i]->SetNewDestination(D3DXVECTOR3(0, 0, -300));
-			m_nMinionObjects++;
-			return;
-		}
-	}*/
 }
 
 CGameObject* CScene::GetObject(int num)

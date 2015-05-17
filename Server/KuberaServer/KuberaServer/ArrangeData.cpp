@@ -554,7 +554,7 @@ void ArrangeData::SetMinionPosition(float _dt)
 void ArrangeData::SetTime(float _time)
 {
 	m_fRegenTime += _time;
-	if(m_fRegenTime > 10.0f)
+	if(m_fRegenTime > 60.0f)
 		m_fUnitTime += _time;
 	//printf("%.1f \n", m_fRegenTime);
 }

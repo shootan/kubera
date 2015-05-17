@@ -8,6 +8,8 @@ TowerObject::TowerObject(void)
 	m_iTag = TOWER;
 	m_Visible = TRUE;
 	m_fAttackTime = 0.f;
+	m_HP = 1000.0f;
+	m_Damage = 50.0f;
 }
 
 TowerObject::~TowerObject(void)
@@ -64,6 +66,13 @@ void TowerObject::Update(float fTimeElapsed)
 
 	m_fAttackTime += fTimeElapsed;
 
+	if(m_pTarget->GetHP() < 1 || ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos())> 50.0f)
+	{
+		m_pTarget = NULL;
+		m_fAttackTime = 0.0f;
+		return;
+	}
+	
 	for(int i=0; i<MAX_MISSILE; i++)
 	{
 		if(MissileManager::sharedManager()->m_pMissile[i]->GetUsed() == TRUE) continue;
@@ -73,6 +82,7 @@ void TowerObject::Update(float fTimeElapsed)
 			MissileManager::sharedManager()->m_pMissile[i]->SetPosition(m_Pos + D3DXVECTOR3(0, BoundsizeY * 2/3, 0));
 			MissileManager::sharedManager()->m_pMissile[i]->SetUsed(TRUE);
 			MissileManager::sharedManager()->m_pMissile[i]->SetTarget(m_pTarget);
+			MissileManager::sharedManager()->m_pMissile[i]->SetAttacker(this);
 
 			m_fAttackTime = 0.f;
 		}

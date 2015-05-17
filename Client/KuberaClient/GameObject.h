@@ -12,6 +12,8 @@ public:
 protected:
 	//
 	int			m_ID;
+	float		m_HP;
+	float		m_Damage;
 	BOOL		m_Visible;
 	int			m_iTag;
 	int			m_iState;
@@ -65,6 +67,12 @@ public:
 	void SetPos(Vector3 v);
 	void SetScale(Vector3 v);
 	void SetRot(float f);
+
+	float GetHP() {return m_HP;}
+	void SetHP(float _hp) { m_HP = _hp; }
+
+	float GetDamage() {return m_Damage;}
+	void SetDamage(float _damage) { m_HP -= _damage; }
 
 
 	int	GetID() { return m_ID; }

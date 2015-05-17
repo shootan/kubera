@@ -79,6 +79,7 @@ void ControlManager::SetTarget(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRay
 	for(int i=0; i<MAX_TOWER; i++)  //타워 타겟 잡기
 	{
 		//if(TowerManager::sharedManager()->m_pTower[i]->GetSelected() == TRUE) continue;
+		if(TowerManager::sharedManager()->m_pTower[i]->GetHP() < 1.0f) continue;
 
 		float dist = INTersectRaySphere(vRayDirection, vRayOrigin, TowerManager::sharedManager()->m_pTower[i]->GetPosition(), 
 			TowerManager::sharedManager()->m_pTower[i]->GetBoundSizeX()*2);
@@ -111,6 +112,7 @@ void ControlManager::SetTarget(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRay
 	for(int i=0; i<MAX_MINION; i++)  //미니언 타겟 잡기
 	{
 		if(MinionManager::sharedManager()->m_pMinion1[i]->GetVisible() == FALSE) continue;
+		//if(MinionManager::sharedManager()->m_pMinion1[i]->GetVisible() == FALSE) continue;
 
 		D3DXVECTOR3 a = MinionManager::sharedManager()->m_pMinion1[i]->GetPosition();
 

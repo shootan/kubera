@@ -43,6 +43,7 @@ struct PlayerInfo{
 	int		m_iTargetID;
 	Vector3 m_Pos;
 	float	m_Rot;
+	float	m_HP;
 	BOOL	m_Connect;
 };
 

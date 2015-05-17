@@ -15,6 +15,9 @@ HeroObject::HeroObject(void)
 	m_bAstar = FALSE;
 	m_bFindPath = FALSE;
 
+	//m_HP = 300.0;
+	m_Damage = 50.0f;
+
 	node_t* temp;
 
 	while(m_pBestWay) {
@@ -88,7 +91,25 @@ bool HeroObject::InMotion()
 void HeroObject::Update(float fTimeElapsed)
 {
 	if(m_Visible == FALSE) return;
-	
+	printf("%.0f \n", m_HP);
+	if(m_HP < 1.0f)
+	{
+		Vector3 po;
+		if(m_ID % 2 == 0)
+		{
+			po.x = 550;
+			po.y = 0;
+			po.z = 0;
+		}
+		else
+		{
+			po.y = 0;
+			po.x = -550;
+			po.z = 0;
+		}
+		m_HP = 500.0f;
+		this->SetPos(po);
+	}
 	if(m_iState != MOVE) return;
 
 	if(!m_bAstar)
@@ -178,6 +199,13 @@ void HeroObject::Animate(float fTimeElapsed)
 	}
 	else if(m_iState == ATTACK)
 	{
+		if(m_pTarget->GetHP() < 1 || ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) > 40.0f)
+		{
+			m_pTarget = NULL;
+			m_fAttackTime = 0.0f;
+			m_iState = IDLE;
+			return;
+		}
 		m_fAttackTime += fTimeElapsed;
 
 		for(int i=0; i<MAX_MISSILE; i++)
@@ -189,6 +217,7 @@ void HeroObject::Animate(float fTimeElapsed)
 				MissileManager::sharedManager()->m_pMissile[i]->SetPosition(m_Pos + D3DXVECTOR3(0 , BoundsizeY *2/3, 0));
 				MissileManager::sharedManager()->m_pMissile[i]->SetUsed(TRUE);
 				MissileManager::sharedManager()->m_pMissile[i]->SetTarget(m_pTarget);
+				MissileManager::sharedManager()->m_pMissile[i]->SetAttacker(this);
 
 				m_fAttackTime = 0.f;
 			}
@@ -200,7 +229,7 @@ void HeroObject::Animate(float fTimeElapsed)
 
 		if(m_pTarget == NULL) return;
 		
-		if(ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 50.f && m_pTarget->GetTeam() != this->GetTeam())
+		if(ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 40.f && m_pTarget->GetTeam() != this->GetTeam())
 			m_iState = ATTACK;
 	}
 }

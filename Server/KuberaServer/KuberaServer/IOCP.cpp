@@ -136,6 +136,7 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 				send(client_sock, (char*)&header, sizeof(int), 0);
 				send(client_sock, (char*)&buffer->m_Id, sizeof(int), 0);
 				send(client_sock, (char*)&buffer->m_pPlayer->m_PI->PI.m_Pos, sizeof(Vector3), 0);
+				send(client_sock, (char*)&buffer->m_pPlayer->m_PI->PI.m_HP, sizeof(float), 0);
 				SameIP = TRUE;
 				CreateIoCompletionPort((HANDLE)client_sock, pThis->m_hIO, (DWORD)buffer, 0);
 				PostQueuedCompletionStatus(pThis->m_hIO, 0, (ULONG_PTR)buffer, &buffer->m_Overlapped);
@@ -191,7 +192,8 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 				po.z = 0;
 				send(client_sock, (char*)&po, sizeof(Vector3), 0);
 			}
-
+			float hp = 500.0f;
+			send(client_sock, (char*)&hp, sizeof(float), 0);
 			Player* pl = new Player;
 			ZeroMemory(pl, sizeof(Player));
 			pl->m_Id = buffer->m_Id;

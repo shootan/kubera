@@ -10,6 +10,7 @@ public:
 	HeroObject* m_pHero;
 	int m_iID;
 	D3DXVECTOR3 m_vPos;
+	float m_HP;
 
 private:
 	HeroManager()
@@ -42,6 +43,7 @@ public:
 		m_pHero->SetPosition(m_vPos);
 		m_pHero->SetID(m_iID);
 		m_pHero->SetBoundSize(boundx, boundy, boundz);
+		m_pHero->SetHP(m_HP);
 
 
 		if(m_iID % 2 == 0)
@@ -52,5 +54,6 @@ public:
 
 	void SetID(int _id){ m_iID = _id; }
 	void SetStartPos(D3DXVECTOR3 _v) { m_vPos = _v; }
+	void SetHP(float _hp) { m_HP = _hp; }
 	int GetID() { return m_iID; }
 };

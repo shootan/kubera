@@ -24,6 +24,7 @@ public:
 	int		m_ClientCount;
 	int		m_ID;
 	Vector3 m_Pos;
+	float	m_HP;
 
 	Network();
 	~Network();
