@@ -115,6 +115,7 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 				MissileManager::sharedManager()->m_pMissile[i]->SetPosition(m_Pos);
 				MissileManager::sharedManager()->m_pMissile[i]->SetUsed(TRUE);
 				MissileManager::sharedManager()->m_pMissile[i]->SetTarget(m_pTarget);
+				MissileManager::sharedManager()->m_pMissile[i]->SetAttacker(this);
 
 				m_fAttackTime = 0.f;
 			}

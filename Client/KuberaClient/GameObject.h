@@ -72,7 +72,9 @@ public:
 	void SetHP(float _hp) { m_HP = _hp; }
 
 	float GetDamage() {return m_Damage;}
-	void SetDamage(float _damage) { m_HP -= _damage; }
+	void SetDamage(float _damage) { m_Damage = _damage; }
+
+	void SetAttackDamage(float _damage) { m_HP -= _damage; }
 
 
 	int	GetID() { return m_ID; }

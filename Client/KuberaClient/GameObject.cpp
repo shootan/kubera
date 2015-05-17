@@ -18,8 +18,8 @@ CGameObject::CGameObject(void)
 	m_nReferences = 1;
 
 	m_Visible = TRUE;
-	m_fWalkSpeed= 0.1f;
-
+	
+	m_fWalkSpeed = 0.1f;
 	m_iTag = NONE;
 
 	m_iState = IDLE;

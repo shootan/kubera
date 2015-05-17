@@ -18,6 +18,8 @@ HeroObject::HeroObject(void)
 	//m_HP = 300.0;
 	m_Damage = 50.0f;
 
+	m_fWalkSpeed = 25.0f;
+
 	node_t* temp;
 
 	while(m_pBestWay) {
@@ -116,10 +118,10 @@ void HeroObject::Update(float fTimeElapsed)
 	{
 		if ( InMotion() && m_iTag == HERO )
 		{
-			D3DXVECTOR3 update_delta = m_vWalkIncrement *5.0f;
+			D3DXVECTOR3 update_delta = m_vWalkIncrement;
 			D3DXVECTOR3 location_vector = m_vDestination - m_Pos;
 
-			m_Pos += update_delta;
+			m_Pos += update_delta * fTimeElapsed;
 
 			float finished = D3DXVec3Dot( &m_vWalkIncrement, &location_vector );
 			if ( finished < 0.0f ) 
@@ -212,7 +214,7 @@ void HeroObject::Animate(float fTimeElapsed)
 		{
 			if(MissileManager::sharedManager()->m_pMissile[i]->GetUsed() == TRUE) continue;
 
-			if(m_fAttackTime >= 0.5f)
+			if(m_fAttackTime >= 1.0f)
 			{
 				MissileManager::sharedManager()->m_pMissile[i]->SetPosition(m_Pos + D3DXVECTOR3(0 , BoundsizeY *2/3, 0));
 				MissileManager::sharedManager()->m_pMissile[i]->SetUsed(TRUE);
