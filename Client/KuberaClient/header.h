@@ -44,7 +44,7 @@ struct PlayerInfo{
 	Vector3 m_Pos;
 	float	m_Rot;
 	float	m_HP;
-	BOOL	m_Connect;
+	float	m_Damage;
 };
 
 struct PlayerPacket

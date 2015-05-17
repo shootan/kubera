@@ -91,7 +91,7 @@ bool HeroObject::InMotion()
 void HeroObject::Update(float fTimeElapsed)
 {
 	if(m_Visible == FALSE) return;
-	printf("%.0f \n", m_HP);
+	//printf("%.0f \n", m_HP);
 	if(m_HP < 1.0f)
 	{
 		Vector3 po;

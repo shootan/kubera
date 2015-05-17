@@ -47,6 +47,7 @@ private:
 	ID3D11DepthStencilView *m_pd3dDepthStencilView;
 
 	CDXUTTextHelper* m_pTxtHelper;
+	CDXUTTextHelper* m_pTxtHelper2;
 	CDXUTDialogResourceManager m_DialogResourceManager;
 
 	// Network

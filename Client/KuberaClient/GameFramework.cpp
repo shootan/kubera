@@ -23,6 +23,7 @@ CGameFramework::CGameFramework()
 	HeroInfo.size = sizeof(PlayerPacket);
 
 	m_pTxtHelper = NULL;
+	m_pTxtHelper2 = NULL;
 }
 
 CGameFramework::~CGameFramework()
@@ -184,6 +185,7 @@ bool CGameFramework::CreateDirect3DDisplay()
 
 	m_DialogResourceManager.OnD3D11CreateDevice( m_pd3dDevice, m_pd3dDeviceContext );
 	m_pTxtHelper = new CDXUTTextHelper( m_pd3dDevice, m_pd3dDeviceContext, &m_DialogResourceManager, 15 );
+	m_pTxtHelper2 = new CDXUTTextHelper( m_pd3dDevice, m_pd3dDeviceContext, &m_DialogResourceManager, 15 );
 
 	return(true);
 }
@@ -305,6 +307,7 @@ void CGameFramework::OnDestroy()
 
 	m_DialogResourceManager.OnD3D11DestroyDevice();
 	SAFE_DELETE( m_pTxtHelper );
+	SAFE_DELETE( m_pTxtHelper2 );
 }
 
 void CGameFramework::BuildObjects()
@@ -565,6 +568,7 @@ void CGameFramework::SendHeroData()
 		HeroInfo.PI.m_iTargetID = HeroManager::sharedManager()->m_pHero->GetTargetID();
 		HeroInfo.PI.m_ID = Net.m_ID;
 		HeroInfo.PI.m_HP = HeroManager::sharedManager()->m_pHero->GetHP();
+		HeroInfo.PI.m_Damage = HeroManager::sharedManager()->m_pHero->GetDamage();
 		HeroInfo.size = sizeof(PlayerPacket);
 
 		Net.SendData(&HeroInfo);
@@ -584,7 +588,7 @@ void CGameFramework::RenderText()
 		if(HeroManager::sharedManager()->m_pHero->GetTarget() == TowerManager::sharedManager()->m_pTower[i])
 		{
 			int id = TowerManager::sharedManager()->m_pTower[i]->GetID();
-			swprintf(str, 255, L"Target : Tower [%d]",id);
+			swprintf(str, 255, L"Target : Tower [%d], HP : %.0f",id, TowerManager::sharedManager()->m_pTower[i]->GetHP());
 			m_pTxtHelper->DrawTextLine(str);
 			break;
 		}
@@ -612,4 +616,13 @@ void CGameFramework::RenderText()
 		}
 	}
 	m_pTxtHelper->End();
+
+	m_pTxtHelper2->Begin();
+	m_pTxtHelper2->SetInsertionPos(5, 20);
+	m_pTxtHelper2->SetForegroundColor( D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ) );
+	//m_pTxtHelper->DrawTextLine(L"Target : ");
+	str[255];
+	swprintf(str, 255, L"HERO HP : [ %.0f ]", HeroManager::sharedManager()->m_pHero->GetHP());
+	m_pTxtHelper->DrawTextLine(str);
+	m_pTxtHelper2->End();
 }
