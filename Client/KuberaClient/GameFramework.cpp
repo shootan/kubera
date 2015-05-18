@@ -39,8 +39,8 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	//Direct3D 디바이스, 디바이스 컨텍스트, 스왑 체인 등을 생성하는 함수를 호출한다. 
 	if (!CreateDirect3DDisplay()) return(false); 
 	char IP[30];
-	//scanf("%s", IP);
-	Net.InitClient("192.168.0.3", 9000);
+	scanf("%s", IP);
+	Net.InitClient(IP, 9000);
 
 	while (Net.m_ID == 0)
 	{

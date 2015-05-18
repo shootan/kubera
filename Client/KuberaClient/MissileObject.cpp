@@ -113,7 +113,7 @@ void MissileObject::Update(float fTimeElapsed)
 	s_pos.z = m_vDestination.z;
 	float finished = ST::sharedManager()->GetDistance(f_pos, s_pos);
 
-	if ( finished < 0.5f ) 
+	if ( finished < 1.0f ) 
 	{
 		if(m_pTarget->GetTag() != OTHERPLAYER) m_pTarget->SetAttackDamage(m_pAttacker->GetDamage());
 		m_Pos = D3DXVECTOR3(1200, 0 ,0);

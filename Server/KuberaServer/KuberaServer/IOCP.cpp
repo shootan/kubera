@@ -210,7 +210,7 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 
 			//비동기 입출력 시작
 			DWORD flags = 0;
-			CreateIoCompletionPort((HANDLE)client_sock, pThis->m_hIO, (DWORD)buffer, 0);
+			CreateIoCompletionPort((HANDLE)client_sock, pThis->m_hIO, (ULONG_PTR)buffer, 0);
 
 			PostQueuedCompletionStatus(pThis->m_hIO, 0, (ULONG_PTR)buffer, &buffer->m_Overlapped);
 		}
@@ -409,7 +409,6 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 	int* Count = new int;
 	*Count = m_iClientCount;
 
-
 	SetOpCode(_buff, OP_SEND_FINISH);	
 	this->SendPacket(_buff, HEROCOUNT, Count, sizeof(int));
 	printf("1: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
@@ -508,6 +507,7 @@ void IOCPServer::OnSendFinish(IOBuffer* _buff, DWORD _size)
  	//if(_buff->m_iSendbytes == _buff->m_iSendbytesCount || _buff->m_iSendbytes > 3400)
 	if(_buff->m_bSendFinish)
  	{
+		printf("어디냐");
  		_buff->m_iSendbytes = 0;
  		_buff->m_iSendbytesCount = 0;
 
@@ -594,11 +594,9 @@ BOOL IOCPServer::SendData(float _dt)
 void IOCPServer::SendPacket(IOBuffer* _buffer, int NetworkCode, void *_packet, int _size)
 {
 	int adq = reinterpret_cast<unsigned char *>(_packet)[0];
-
 	int Size = HEADERSIZE + _size;
  	char* Buffer = new char[Size];
 	*(int*)Buffer = NetworkCode;
-	
 	memcpy(Buffer+HEADERSIZE, _packet, Size);
 
 	_buffer->m_SendWsabuf.buf = _buffer->m_SendBuf;
@@ -621,7 +619,7 @@ void IOCPServer::SendPacket(IOBuffer* _buffer, int NetworkCode, void *_packet, i
 
 void IOCPServer::ArrangeDataInfo(float _dt)
 {
-	//if(m_iClientCount < 2) return;
+	if(m_iClientCount < 2) return;
 
 	Arrange.SetTime(_dt);
 	Arrange.RegenMinion();
