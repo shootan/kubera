@@ -624,7 +624,7 @@ void CGameFramework::RenderText()
 
 	if(HeroManager::sharedManager()->m_pHero->GetTarget() == HeroManager::sharedManager()->BlueNexus)
 	{
-		swprintf(str, 255, L"Target : RedNexus, HP : %.0f", HeroManager::sharedManager()->BlueNexus->GetHP());
+		swprintf(str, 255, L"Target : BlueNexus, HP : %.0f", HeroManager::sharedManager()->BlueNexus->GetHP());
 		m_pTxtHelper->DrawTextLine(str);
 	}
 
