@@ -52,14 +52,14 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 
 	//정육면체 메쉬를 생성하고 객체에 연결한다.
 	//CCubeMesh *pMesh = new CCubeMesh(pd3dDevice, 15.0f, 15.0f, 15.0f);
-	pHeroMesh = new CFBXMesh(pd3dDevice, L"Wizard101310.FBX");
-	pHeroMesh->LoadTexture(pd3dDevice, L"micro_wizard_col.tif");
+	pHeroMesh = new CFBXMesh(pd3dDevice, L"Hero/Wizard101310.FBX");
+	pHeroMesh->LoadTexture(pd3dDevice, L"Hero/micro_wizard_col.tif");
 
-	CFBXMesh *pPlaneMesh = new CFBXMesh(pd3dDevice, L"Plane4.FBX", 10);
-	pPlaneMesh->LoadTexture(pd3dDevice, L"imagefile/11.png");
+	CFBXMesh *pPlaneMesh = new CFBXMesh(pd3dDevice, L"imagefile/Plane4.FBX", 10);
+	pPlaneMesh->LoadTexture(pd3dDevice, L"imagefile/12.png");
 
 	CFBXMesh *pObstacleMesh = new CFBXMesh(pd3dDevice, L"tower/Tower1_303030.FBX");
-	pObstacleMesh->LoadTexture(pd3dDevice, L"micro_wizard_col.tif");
+	pObstacleMesh->LoadTexture(pd3dDevice, L"Hero/micro_wizard_col.tif");
 
 	CFBXMesh *pBlueNexusMesh = new CFBXMesh(pd3dDevice, L"tower/Nexus.FBX");
 	pBlueNexusMesh->LoadTexture(pd3dDevice, L"tower/Nexus.png");
@@ -320,8 +320,8 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext)
 	m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pPlane->m_d3dxmtxWorld);
 	m_pPlane->Render(pd3dDeviceContext);
 
-	m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &pBoundBox[0]->m_d3dxmtxWorld);
-	pBoundBox[0]->Render(pd3dDeviceContext);
+	//m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &pBoundBox[0]->m_d3dxmtxWorld);
+	//pBoundBox[0]->Render(pd3dDeviceContext);
 	m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pBlueNexus->m_d3dxmtxWorld);
 	m_pBlueNexus->Render(pd3dDeviceContext);
 	m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pRedNexus->m_d3dxmtxWorld);

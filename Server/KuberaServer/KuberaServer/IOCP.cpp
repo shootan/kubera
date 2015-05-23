@@ -328,18 +328,18 @@ void IOCPServer::OnRecv(IOBuffer* _buff, char* _recvBuff, int _size)
 	{
 		_buff->m_Connect = FALSE;
 		_buff->m_pPlayer->m_Connect = FALSE;
-		printf("어디냐1\n");
+		//printf("어디냐1\n");
 	}
 	else if(_size != 0 && _buff->m_Connect == FALSE)
 	{
 		_buff->m_Connect = TRUE;
 		_buff->m_pPlayer->m_Connect = TRUE;
-		printf("어디냐2\n");
+		//printf("어디냐2\n");
 	}
 
 	DWORD dwRecv = 0, dwFlags = 0;
 	WSABUF buffRecv;
-	printf("RECV: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
+	//printf("RECV: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
 
 	this->SetOpCode(_buff, OP_RECV_DONE);
 
@@ -364,14 +364,14 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 		_buff->m_pPlayer->m_Connect = FALSE;
  		SetOpCode(_buff, OP_DISCONNECT);
  		BOOL bSuccess = PostQueuedCompletionStatus(m_hIO, 0, (ULONG_PTR)_buff, &(_buff->m_Overlapped));
-		printf("어디냐3\n");
+		//printf("어디냐3\n");
 		return;
 	}
 	else if(_size != 0 && _buff->m_Connect == FALSE)
 	{
 		_buff->m_Connect = TRUE;
 		_buff->m_pPlayer->m_Connect = TRUE;
-		printf("어디냐4\n");
+		//printf("어디냐4\n");
 	}
 
 	Player* play;
@@ -387,7 +387,7 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 		play = play->m_pNext;
 	}
 	
-	printf("RECVDONE: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
+	//printf("RECVDONE: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
 	SetOpCode(_buff, OP_SEND);
 	//if(_buff->m_Disconnect) return;
 	BOOL bSuccess = PostQueuedCompletionStatus(m_hIO, 0, (ULONG_PTR)_buff, &(_buff->m_Overlapped));
@@ -411,7 +411,7 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 
 	SetOpCode(_buff, OP_SEND_FINISH);	
 	this->SendPacket(_buff, HEROCOUNT, Count, sizeof(int));
-	printf("1: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
+	//printf("1: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
 
 	play = m_pPlayerList;
 
@@ -428,7 +428,7 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 			//printf("ID : %d, x: %3f, y: %3f, z : %3f, size : %d \n", play->m_PI->PI.m_ID, play->m_PI->PI.m_Pos.x, play->m_PI->PI.m_Pos.y, play->m_PI->PI.m_Pos.z, play->m_PI->size);
 			this->SetOpCode(_buff, OP_SEND_FINISH);
 			this->SendPacket(_buff, HERODATA, play->m_PI, sizeof(PlayerPacket));
-			printf("2: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
+			//printf("2: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
 		}
 		play = play->m_pNext;
 	}
@@ -438,7 +438,7 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 		_buff->m_MinionCount = 0;
 		SetOpCode(_buff, OP_SEND_FINISH);
 		this->SendPacket(_buff, MINIONDATA, Arrange.MI, sizeof(MinionInfo)*160);
-		printf("3: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
+		//printf("3: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
 		
 	}
 
@@ -489,7 +489,7 @@ void IOCPServer::OnSendFinish(IOBuffer* _buff, DWORD _size)
 
  	_buff->m_iSendbytes += _size;
 	//printf("%d \n", _size);
-	printf("%d, %d \n", _buff->m_iSendbytes, _buff->m_iSendbytesCount);
+	//printf("%d, %d \n", _buff->m_iSendbytes, _buff->m_iSendbytesCount);
 	if(_size == 32)
 	{
 		int d;
@@ -499,15 +499,15 @@ void IOCPServer::OnSendFinish(IOBuffer* _buff, DWORD _size)
  
  //	printf("1: %d,   2: %d \n", _buff->m_iSendbytes, _buff->m_iSendbytesCount);
  
-	printf("4: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
+	//printf("4: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
 	if(_buff->m_iSendbytes != _buff->m_iSendbytesCount)
 	{
-		printf("%d, %d \n", _buff->m_iSendbytes, _buff->m_iSendbytesCount);
+		//printf("%d, %d \n", _buff->m_iSendbytes, _buff->m_iSendbytesCount);
 	}
  	//if(_buff->m_iSendbytes == _buff->m_iSendbytesCount || _buff->m_iSendbytes > 3400)
 	if(_buff->m_bSendFinish)
  	{
-		printf("어디냐");
+		//printf("어디냐");
  		_buff->m_iSendbytes = 0;
  		_buff->m_iSendbytesCount = 0;
 
@@ -527,8 +527,25 @@ void IOCPServer::OnSendFinish(IOBuffer* _buff, DWORD _size)
 
 BOOL IOCPServer::SendData(float _dt)
 {
-	IOBuffer* Buffer;
 	Player*   play;
+
+	play = m_pPlayerList;
+	while(play != NULL)
+	{
+		
+
+		printf("ID : %d, x: %.1f, y: %.1f, z : %.1f \n", play->m_PI->PI.m_ID, play->m_PI->PI.m_Pos.x, play->m_PI->PI.m_Pos.y, play->m_PI->PI.m_Pos.z);
+		
+
+		play = play->m_pNext;
+	}
+	return TRUE;
+
+
+
+	/////////
+	IOBuffer* Buffer;
+	
 	Buffer = m_pNextBufferList;
 	int Number = 0;
 

@@ -16,7 +16,7 @@ CGameFramework::CGameFramework()
 	m_pScene = NULL;
 	_tcscpy_s(m_pszBuffer, _T("Kubera ("));
 
-	m_CameraZoom = 60.f;
+	m_CameraZoom = 37.f;
 	m_CameraUpDown = 0.f;
 
 	ZeroMemory(&HeroInfo, sizeof(PlayerPacket));
@@ -39,6 +39,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	//Direct3D 디바이스, 디바이스 컨텍스트, 스왑 체인 등을 생성하는 함수를 호출한다. 
 	if (!CreateDirect3DDisplay()) return(false); 
 	char IP[30];
+	printf("IP : ");
 	scanf("%s", IP);
 	Net.InitClient(IP, 9000);
 
@@ -184,8 +185,8 @@ bool CGameFramework::CreateDirect3DDisplay()
 
 
 	m_DialogResourceManager.OnD3D11CreateDevice( m_pd3dDevice, m_pd3dDeviceContext );
-	m_pTxtHelper = new CDXUTTextHelper( m_pd3dDevice, m_pd3dDeviceContext, &m_DialogResourceManager, 15 );
-	m_pTxtHelper2 = new CDXUTTextHelper( m_pd3dDevice, m_pd3dDeviceContext, &m_DialogResourceManager, 15 );
+	m_pTxtHelper = new CDXUTTextHelper( m_pd3dDevice, m_pd3dDeviceContext, &m_DialogResourceManager, 20 );
+	m_pTxtHelper2 = new CDXUTTextHelper( m_pd3dDevice, m_pd3dDeviceContext, &m_DialogResourceManager, 20 );
 
 	return(true);
 }
@@ -579,7 +580,7 @@ void CGameFramework::SendHeroData()
 void CGameFramework::RenderText()
 {
 	m_pTxtHelper->Begin();
-	m_pTxtHelper->SetInsertionPos(5, 30);
+	m_pTxtHelper->SetInsertionPos(30, 40);
 	m_pTxtHelper->SetForegroundColor( D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ) );
 	//m_pTxtHelper->DrawTextLine(L"Target : ");
 	WCHAR str[255];
@@ -634,7 +635,6 @@ void CGameFramework::RenderText()
 	m_pTxtHelper2->SetInsertionPos(5, 10);
 	m_pTxtHelper2->SetForegroundColor( D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ) );
 	//m_pTxtHelper->DrawTextLine(L"Target : ");
-	str[255];
 	swprintf(str, 255, L"HERO HP : [ %.0f ]", HeroManager::sharedManager()->m_pHero->GetHP());
 	m_pTxtHelper->DrawTextLine(str);
 	m_pTxtHelper2->End();

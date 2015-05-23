@@ -8,7 +8,7 @@ TowerObject::TowerObject(void)
 	m_iTag = TOWER;
 	m_Visible = TRUE;
 	m_fAttackTime = 0.f;
-	m_HP = 1000.0f;
+	m_HP = 300.0f;
 	m_Damage = 50.0f;
 	m_bExplosion = false;
 }

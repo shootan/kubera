@@ -127,9 +127,9 @@ void CObjectShader::CreateShader(ID3D11Device *pd3dDevice, int nObjects)
 	};
 	UINT nElements = ARRAYSIZE(d3dInputLayout);
 	//파일 “Effect.fx”에서 정점-쉐이더의 시작 함수가 "VS"인 정점-쉐이더를 생성한다. 
-	CreateVertexShaderFromFile(pd3dDevice, L"Effect.fx", "VS", "vs_4_0", &m_pd3dVertexShader, d3dInputLayout, nElements, &m_pd3dVertexLayout);
+	CreateVertexShaderFromFile(pd3dDevice, L"fx/Effect.fx", "VS", "vs_4_0", &m_pd3dVertexShader, d3dInputLayout, nElements, &m_pd3dVertexLayout);
 	//파일 “Effect.fx”에서 픽셀-쉐이더의 시작 함수가 "PS"인 픽셀-쉐이더를 생성한다. 
-	CreatePixelShaderFromFile(pd3dDevice, L"Effect.fx", "PS", "ps_4_0", &m_pd3dPixelShader);
+	CreatePixelShaderFromFile(pd3dDevice, L"fx/Effect.fx", "PS", "ps_4_0", &m_pd3dPixelShader);
 
 
 
@@ -540,8 +540,8 @@ void CInstancingShader::CreateShader(ID3D11Device *pd3dDevice, int nObjects)
 		{ "POSINSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1 }
 	};
 	UINT nElements = ARRAYSIZE(d3dInputLayout);
-	CreateVertexShaderFromFile(pd3dDevice, L"instance.fx", "VSInstancedDiffusedColor", "vs_4_0", &m_pd3dVertexShader, d3dInputLayout, nElements, &m_pd3dVertexLayout);
-	CreatePixelShaderFromFile(pd3dDevice, L"instance.fx", "PSInstancedDiffusedColor", "ps_4_0", &m_pd3dPixelShader);
+	CreateVertexShaderFromFile(pd3dDevice, L"fx/instance.fx", "VSInstancedDiffusedColor", "vs_4_0", &m_pd3dVertexShader, d3dInputLayout, nElements, &m_pd3dVertexLayout);
+	CreatePixelShaderFromFile(pd3dDevice, L"fx/instance.fx", "PSInstancedDiffusedColor", "ps_4_0", &m_pd3dPixelShader);
 
 	// Create a sampler state
 	D3D11_SAMPLER_DESC SamDesc;

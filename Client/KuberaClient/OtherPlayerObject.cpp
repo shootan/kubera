@@ -110,7 +110,7 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 		{
 			if(MissileManager::sharedManager()->m_pMissile[i]->GetUsed() == TRUE) continue;
 
-			if(m_fAttackTime >= 0.5f)
+			if(m_fAttackTime >= 1.0f)
 			{
 				MissileManager::sharedManager()->m_pMissile[i]->SetPosition(m_Pos);
 				MissileManager::sharedManager()->m_pMissile[i]->SetUsed(TRUE);

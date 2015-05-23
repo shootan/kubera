@@ -29,7 +29,7 @@ int main()
 		
 		Server.ArrangeDataInfo(Timer.GetTimeElapsed());
 
-		//Server.SendData(Timer.GetTimeElapsed());
+		Server.SendData(Timer.GetTimeElapsed());
 	}
 	return 0;
 }
