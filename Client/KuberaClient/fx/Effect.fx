@@ -5,16 +5,11 @@ cbuffer cbViewProjectionMatrix : register(b0)
 	matrix gmtxProjection : packoffset(c4);
 };
 
-//월드 변환 행렬을 위한 쉐이더 변수를 선언한다(슬롯 1을 사용). 
 cbuffer cbWorldMatrix : register(b1)
 {
 	matrix gmtxWorld : packoffset(c0);
 };
 
-cbuffer cbClickTarget : register (b2)
-{
-    float4 m_vSelected ;
-};
 
 Texture2D	g_txDiffuse : register( t0 );
 SamplerState g_samLinear : register( s0 );

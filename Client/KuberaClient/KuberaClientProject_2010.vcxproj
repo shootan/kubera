@@ -366,8 +366,9 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="Effect.fx" />
-    <None Include="instance.fx" />
+    <None Include="fx\Effect.fx" />
+    <None Include="fx\instance.fx" />
+    <None Include="fx\Soldier.fx" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="astarclass.cpp" />
@@ -382,6 +383,12 @@
     <ClCompile Include="DXUT\Optional\DXUTsettingsdlg.cpp" />
     <ClCompile Include="DXUT\Optional\SDKmesh.cpp" />
     <ClCompile Include="DXUT\Optional\SDKmisc.cpp" />
+    <ClCompile Include="FBX\GFBXBone.cpp" />
+    <ClCompile Include="FBX\GFBXMesh.cpp" />
+    <ClCompile Include="FBX\GFBXMeshLoader.cpp" />
+    <ClCompile Include="FBX\GFBXSkeleton.cpp" />
+    <ClCompile Include="FBX\MathHelper.cpp" />
+    <ClCompile Include="FBX\Utilities.cpp" />
     <ClCompile Include="OtherPlayerObject.cpp" />
     <ClCompile Include="GameFramework.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -413,6 +420,14 @@
     <ClInclude Include="DXUT\Optional\DXUTsettingsdlg.h" />
     <ClInclude Include="DXUT\Optional\SDKmesh.h" />
     <ClInclude Include="DXUT\Optional\SDKmisc.h" />
+    <ClInclude Include="FBX\GFBXBone.h" />
+    <ClInclude Include="FBX\GFBXMesh.h" />
+    <ClInclude Include="FBX\GFBXMeshLoader.h" />
+    <ClInclude Include="FBX\GFBXSkeleton.h" />
+    <ClInclude Include="FBX\Material.h" />
+    <ClInclude Include="FBX\MathHelper.h" />
+    <ClInclude Include="FBX\Utilities.h" />
+    <ClInclude Include="FBX\Vertex.h" />
     <ClInclude Include="HeroManager.h" />
     <ClInclude Include="OtherPlayerObject.h" />
     <ClInclude Include="GameFramework.h" />

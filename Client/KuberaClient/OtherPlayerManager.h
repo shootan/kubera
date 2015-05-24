@@ -35,13 +35,13 @@ public:
 		return instance;
 	}
 public:
-	void CreateOtherPlayer(D3DXVECTOR3 pos, CMesh* mesh, float boundx, float boundy, float boundz)
+	void CreateOtherPlayer(D3DXVECTOR3 pos, GFBX::Mesh* mesh, float boundx, float boundy, float boundz)
 	{
 		for(int i=0; i<MAX_OTHER_PLAYER; i++)
 		{
 			if(m_pOtherPlayer[i] != NULL) continue;
 			m_pOtherPlayer[i] = new OtherPlayerObject();
-			m_pOtherPlayer[i]->SetMesh(mesh);
+			m_pOtherPlayer[i]->SetAniMesh(mesh);
 			m_pOtherPlayer[i]->SetPosition(pos);
 			//m_pTower[i]->SetP(pos.x, pos.y, pos.z);
 			m_pOtherPlayer[i]->SetBoundSize(boundx, boundy, boundz);

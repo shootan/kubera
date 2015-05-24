@@ -3,6 +3,7 @@
 #include "astarclass.h"
 #include "ST.h"
 #include "MissileManager.h"
+#include "FBX\GFBXMesh.h"
 
 class HeroObject : public CGameObject
 {
@@ -17,6 +18,8 @@ private:
 	node_t* m_pBestWay;
 	BOOL m_bAstar;
 	BOOL m_bFindPath;
+
+	GFBX::Mesh *m_pAniMesh;
 	
 public:
 	HeroObject();
@@ -35,5 +38,7 @@ public:
 	
 
 	void SetState(int _state) { m_iState = _state;}
+
+	void SetAniMesh(GFBX::Mesh *pAniMesh);
 
 };

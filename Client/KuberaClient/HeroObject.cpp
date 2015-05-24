@@ -4,6 +4,8 @@ HeroObject::HeroObject(void)
 {
 	CGameObject::CGameObject();
 
+	m_pAniMesh = NULL;
+
 	m_iTag = HERO;
 	m_bMove = FALSE;
 	m_pTarget = NULL;
@@ -37,7 +39,49 @@ HeroObject::~HeroObject(void)
 
 void HeroObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
 {
-	CGameObject::Render(pd3dDeviceContext);
+	if(m_Visible != TRUE) return;
+
+	if(m_iTag == OTHERPLAYER)
+	{
+		int asdfdf;
+		asdfdf = 0;
+	}
+	D3DXMATRIX mWorld;
+	D3DXMatrixIdentity(&mWorld);
+
+	//S
+	D3DXMATRIX mtxScale;
+	D3DXMatrixIdentity(&mtxScale);
+
+	D3DXMatrixScaling(&mtxScale, m_Scale.x, m_Scale.y, m_Scale.z);
+	//mWorld *= mtxScale;
+
+	//R
+	D3DXMATRIX mtxRotate;
+	D3DXMatrixIdentity(&mtxRotate);
+
+	if(m_axis == 1)
+		D3DXMatrixRotationX(&mtxRotate, D3DX_PI / m_Rot);
+	else if(m_axis == 2)
+		D3DXMatrixRotationY(&mtxRotate, D3DX_PI / m_Rot);
+	else if(m_axis == 3)
+		D3DXMatrixRotationZ(&mtxRotate, D3DX_PI / m_Rot);
+
+	mWorld *= mtxRotate;
+
+	//T
+	D3DXMATRIX mtxTrans;
+	D3DXMatrixIdentity(&mtxTrans);
+
+	D3DXMatrixTranslation(&mtxTrans, m_Pos.x, m_Pos.y, m_Pos.z);
+	//mWorld *= mtxTrans;
+
+	mWorld = mtxScale * mtxRotate * mtxTrans;
+	m_d3dxmtxWorld = mWorld;
+
+
+
+	if (m_pAniMesh) m_pAniMesh->Render(pd3dDeviceContext);
 }
 
 void HeroObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
@@ -234,4 +278,12 @@ void HeroObject::Animate(float fTimeElapsed)
 		if(ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 40.f && m_pTarget->GetTeam() != this->GetTeam())
 			m_iState = ATTACK;
 	}
+}
+
+
+void HeroObject::SetAniMesh(GFBX::Mesh *pAniMesh)
+{
+	//if (m_pAniMesh) m_pAniMesh->Release();
+	m_pAniMesh = pAniMesh;
+	//if (m_pAniMesh) m_pAniMesh->AddRef();
 }

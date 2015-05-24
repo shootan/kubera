@@ -437,8 +437,8 @@ void CGameFramework::SetCameraPos()
 	else if(m_CameraUpDown == 2)
 		m_CameraZoom -= 1 * 3.0f;
 
-	if(m_CameraZoom <= 30)
-		m_CameraZoom = 30;
+	if(m_CameraZoom <= 1)
+		m_CameraZoom = 1;
 	if(m_CameraZoom >= 100)
 		m_CameraZoom = 100;
 

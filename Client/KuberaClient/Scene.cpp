@@ -4,10 +4,12 @@ CScene::CScene(void)
 {
 	m_pObjectShaders = NULL;
 	m_pInstancingShaders = NULL;
+	m_pAnimationShaders = NULL;
 	m_nShaders = 0;
      
 	m_nObjects = 0;
 	m_nIntanceObjects = 0;
+	m_nAnimationObjects = 0;
 
 	m_MousePosX = 0;
 	m_MousePosY = 0;
@@ -24,6 +26,7 @@ CScene::CScene(void)
 	m_pPlane = NULL;
 	m_pBlueNexus = NULL;
 	m_pRedNexus = NULL;
+	m_pHeroMesh = NULL;
 
 }
 
@@ -45,6 +48,9 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pInstancingShaders = new CInstancingShader();
 	m_pInstancingShaders->CreateShader(pd3dDevice, 10);
 	m_pInstancingShaders->BuildObjects(pd3dDevice);
+
+	m_pAnimationShaders = new CAnimationShader();
+	m_pAnimationShaders->CreateShader(pd3dDevice, 15);
 		
 	//게임 객체에 대한 포인터들의 배열을 정의한다.
 	m_nIntanceObjects = m_pInstancingShaders->GetObjectsNumber();
@@ -52,8 +58,12 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 
 	//정육면체 메쉬를 생성하고 객체에 연결한다.
 	//CCubeMesh *pMesh = new CCubeMesh(pd3dDevice, 15.0f, 15.0f, 15.0f);
-	pHeroMesh = new CFBXMesh(pd3dDevice, L"Hero/Wizard101310.FBX");
-	pHeroMesh->LoadTexture(pd3dDevice, L"Hero/micro_wizard_col.tif");
+	//pHeroMesh = new CFBXMesh(pd3dDevice, L"Hero/Wizard101310.FBX");
+	m_pHeroMesh = new GFBX::Mesh();
+	GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pHeroMesh, L"Hero/Wizard101310.FBX", pd3dDevice);
+	m_pHeroMesh->OnCreateDevice(pd3dDevice);
+	for(int i=0; i<m_pHeroMesh->GetSubsetCount(); i++)
+		m_pHeroMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Hero/micro_wizard_col.tif");
 
 	CFBXMesh *pPlaneMesh = new CFBXMesh(pd3dDevice, L"imagefile/Plane4.FBX", 10);
 	pPlaneMesh->LoadTexture(pd3dDevice, L"imagefile/12.png");
@@ -68,7 +78,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	pRedNexusMesh->LoadTexture(pd3dDevice, L"tower/Nexus2.png");
 
 	//히어로 생성
-	HeroManager::sharedManager()->CreateHero(pHeroMesh, 10, 13, 10);
+	HeroManager::sharedManager()->CreateHero(m_pHeroMesh, 10, 13, 10);
 
 	m_pPlane = new CGameObject();
 	m_pPlane->SetMesh(pPlaneMesh);
@@ -108,16 +118,16 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	//pFBXMesh->Release();
 
  	//삼각형 객체를 쉐이더 객체에 연결한다.
- 	m_pObjectShaders->AddObject(HeroManager::sharedManager()->m_pHero);
+ 	m_pAnimationShaders->AddObject(HeroManager::sharedManager()->m_pHero);
 	m_pObjectShaders->AddObject(m_pPlane);
 	for(int i=0; i<iObjectNum; i++)
 		m_pObjectShaders->AddObject(pBoundBox[i]);
 	m_pObjectShaders->AddObject(m_pBlueNexus);
 	m_pObjectShaders->AddObject(m_pRedNexus);
 
-	OtherPlayerManager::sharedManager()->CreateOtherPlayer(D3DXVECTOR3(1500, 0, 0), pHeroMesh, 10, 13, 10);
+	OtherPlayerManager::sharedManager()->CreateOtherPlayer(D3DXVECTOR3(1500, 0, 0), m_pHeroMesh, 10, 13, 10);
 	for(int i=0; i<MAX_OTHER_PLAYER;i++)
-		m_pObjectShaders->AddObject(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]);
+		m_pAnimationShaders->AddObject(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]);
 	
 	this->AddOtherPlayer(pd3dDevice);
 
@@ -129,7 +139,7 @@ void CScene::ReleaseObjects()
 
 	if(m_pObjectShaders) delete m_pObjectShaders;
 	if(m_pInstancingShaders) delete m_pInstancingShaders;
-
+	if(m_pAnimationShaders) delete m_pAnimationShaders;
 	//게임 객체 리스트의 각 객체를 반환(Release)하고 리스트를 소멸시킨다.
 
 	if(m_pPlane) m_pPlane->Release();
@@ -307,16 +317,16 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext)
 	m_pObjectShaders->Render(pd3dDeviceContext);
 
 	
-	m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &HeroManager::sharedManager()->m_pHero->m_d3dxmtxWorld);
-	HeroManager::sharedManager()->m_pHero->Render(pd3dDeviceContext);
+	//m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &HeroManager::sharedManager()->m_pHero->m_d3dxmtxWorld);
+	//HeroManager::sharedManager()->m_pHero->Render(pd3dDeviceContext);
 	
-	for(int i=0; i<MAX_OTHER_PLAYER; i++)
+	/*for(int i=0; i<MAX_OTHER_PLAYER; i++)
 	{
 		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetVisible() != TRUE) continue;
 
 		m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->m_d3dxmtxWorld);
 		OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->Render(pd3dDeviceContext);
-	}
+	}*/
 	m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pPlane->m_d3dxmtxWorld);
 	m_pPlane->Render(pd3dDeviceContext);
 
@@ -341,6 +351,18 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext)
 	for(int i=0; i<MAX_DESTROY_TOWER; i++)
 		ObstacleManager::sharedManager()->m_pDestroyTower[i]->Render(pd3dDeviceContext);
  
+	m_pAnimationShaders->Render(pd3dDeviceContext);
+
+	m_pAnimationShaders->UpdateShaderVariables(pd3dDeviceContext, &HeroManager::sharedManager()->m_pHero->m_d3dxmtxWorld);
+	HeroManager::sharedManager()->m_pHero->Render(pd3dDeviceContext);
+
+	for(int i=0; i<MAX_OTHER_PLAYER; i++)
+	{
+		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetVisible() != TRUE) continue;
+
+		m_pAnimationShaders->UpdateShaderVariables(pd3dDeviceContext, &OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->m_d3dxmtxWorld);
+		OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->Render(pd3dDeviceContext);
+	}
 
 }
 

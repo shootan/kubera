@@ -11,24 +11,22 @@
 #include "OtherPlayerObject.h"
 #include "TowerManager.h"
 #include "OtherPlayerManager.h"
+#include "FBX\GFBXMeshLoader.h"
 
 class CScene
 {
 private:
 
-// 	MinionObject* m_pMinion1[MAX_MINION];
-// 	MinionObject* m_pMinion2[MAX_MINION];
-// 	MinionObject* m_pMinion3[MAX_MINION];
-// 	MinionObject* m_pMinion4[MAX_MINION];
-
 	MinionObject* m_pMinion[MAX_MINION*4];
 
 	CObjectShader *m_pObjectShaders;
 	CInstancingShader *m_pInstancingShaders;
+	CAnimationShader *m_pAnimationShaders;
 	int m_nShaders;
 
 	int m_nObjects;
 	int m_nIntanceObjects;
+	int m_nAnimationObjects;
 
 	int m_MousePosX;
 	int m_MousePosY;
@@ -37,6 +35,7 @@ private:
 	BOOL m_bLbutton;
 
 	CFBXMesh *pHeroMesh;
+	GFBX::Mesh *m_pHeroMesh;
 	CFBXMesh *pMinionDragonMesh;
 
 	float m_fMinionRespawnTime;

@@ -39,10 +39,10 @@ public:
 	CGameObject* RedNexus;
 	CGameObject* BlueNexus;
 
-	void CreateHero(CMesh* mesh, float boundx, float boundy, float boundz)
+	void CreateHero(GFBX::Mesh* mesh, float boundx, float boundy, float boundz)
 	{
 		m_pHero = new HeroObject();
-		m_pHero->SetMesh(mesh);
+		m_pHero->SetAniMesh(mesh);
 		m_pHero->SetPosition(m_vPos);
 		m_pHero->SetID(m_iID);
 		m_pHero->SetBoundSize(boundx, boundy, boundz);
