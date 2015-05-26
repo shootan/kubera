@@ -82,6 +82,7 @@ public:
 
 	CBConstBoneWorld    g_CBConstBoneWorld;
 	ID3D11Buffer*       g_pCBConstBoneWorld;
+
 };
 
 };

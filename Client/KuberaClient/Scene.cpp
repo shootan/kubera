@@ -60,19 +60,13 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	//CCubeMesh *pMesh = new CCubeMesh(pd3dDevice, 15.0f, 15.0f, 15.0f);
 	//pHeroMesh = new CFBXMesh(pd3dDevice, L"Hero/Wizard101310.FBX");
 	m_pHeroMesh = new GFBX::Mesh();
-	
-	GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pHeroMesh, L"Hero/golem.fbx", pd3dDevice);
-	m_pHeroMesh->OnCreateDevice(pd3dDevice);
-	for(int i=0; i<m_pHeroMesh->GetSubsetCount(); i++)
-		m_pHeroMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Hero/golem.png");
-		
 
-	/*
-	GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pHeroMesh, L"Hero/Wizard101310.fbx", pd3dDevice);
+	GFBXMeshLoader::getInstance()->OnCreateDevice(pd3dDevice);
+	GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pHeroMesh, L"Hero/golem.FBX", pd3dDevice);
 	m_pHeroMesh->OnCreateDevice(pd3dDevice);
 	for(int i=0; i<m_pHeroMesh->GetSubsetCount(); i++)
-		m_pHeroMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Hero/micro_wizard_col.tif");
-		*/
+		m_pHeroMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Hero/golem.bmp");
+
 
 	CFBXMesh *pPlaneMesh = new CFBXMesh(pd3dDevice, L"imagefile/Plane4.FBX", 10);
 	pPlaneMesh->LoadTexture(pd3dDevice, L"imagefile/12.png");
@@ -88,11 +82,8 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 
 	//È÷¾î·Î »ý¼º
 	HeroManager::sharedManager()->CreateHero(m_pHeroMesh, 10, 13, 10);
-	Vector3 s;
-	s.x = 0.3;
-	s.y = 0.3;
-	s.z = 0.3;
-	HeroManager::sharedManager()->m_pHero->SetScale(s);
+
+	HeroManager::sharedManager()->m_pHero->SetScale(D3DXVECTOR3(0.3, 0.3, 0.3));
 
 	m_pPlane = new CGameObject();
 	m_pPlane->SetMesh(pPlaneMesh);
@@ -324,7 +315,7 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 	GameCollision(HeroManager::sharedManager()->m_pHero, m_pRedNexus);
 }
 
-void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext)
+void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext, float fTimeElapsed)
 {
 	//½¦ÀÌ´õ °´Ã¼ ¸®½ºÆ®ÀÇ °¢ ½¦ÀÌ´õ °´Ã¼¸¦ ·»´õ¸µÇÑ´Ù.
 	
@@ -368,14 +359,14 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext)
 	m_pAnimationShaders->Render(pd3dDeviceContext);
 
 	m_pAnimationShaders->UpdateShaderVariables(pd3dDeviceContext, &HeroManager::sharedManager()->m_pHero->m_d3dxmtxWorld);
-	HeroManager::sharedManager()->m_pHero->Render(pd3dDeviceContext);
+	HeroManager::sharedManager()->m_pHero->Render(pd3dDeviceContext, fTimeElapsed);
 
 	for(int i=0; i<MAX_OTHER_PLAYER; i++)
 	{
 		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetVisible() != TRUE) continue;
 
 		m_pAnimationShaders->UpdateShaderVariables(pd3dDeviceContext, &OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->m_d3dxmtxWorld);
-		OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->Render(pd3dDeviceContext);
+		OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->Render(pd3dDeviceContext, fTimeElapsed);
 	}
 
 }

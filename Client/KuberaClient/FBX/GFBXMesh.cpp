@@ -12,6 +12,7 @@ namespace GFBX {
 MeshSubset::MeshSubset(ID3D11Device *pd3dDevice) : CMesh(pd3dDevice)
 {
 	m_nVertices = 0;
+	m_nIndices = 0;
 	m_pnVertexStrides = new UINT[1];
 	m_pnVertexStrides[0] = sizeof(GFBX::Vertex);
 	m_pnVertexOffsets = new UINT[1];
@@ -21,6 +22,7 @@ MeshSubset::MeshSubset(ID3D11Device *pd3dDevice) : CMesh(pd3dDevice)
 	m_ppd3dVertexBuffers = new ID3D11Buffer*[m_nVertexBuffers];
 
 	m_d3dPrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	m_dxgiIndexFormat = DXGI_FORMAT_R32_UINT;
 
 	m_pTexture = NULL;
 }
@@ -40,6 +42,12 @@ HRESULT MeshSubset::OnCreateDevice(ID3D11Device* pd3dDevice)
 
 void MeshSubset::Render(ID3D11DeviceContext* pd3dImmediateContext)
 {
+	m_nVertices = m_verts.size();
+	m_nIndices = m_indices.size();
+	pd3dImmediateContext->PSSetShaderResources(0, 1, &m_pTexture->m_texture );
+	CMesh::Render(pd3dImmediateContext);
+	return;
+
 	/*
 	m_nVertices = m_verts.size();
 	m_nIndices = m_indices.size();
@@ -71,6 +79,7 @@ void MeshSubset::Render(ID3D11DeviceContext* pd3dImmediateContext)
 	return;
 
 	CMesh::Render(pd3dImmediateContext);
+	
 }
 
 void MeshSubset::CreateRasterizerState(ID3D11Device *pd3dDevice)
@@ -162,7 +171,7 @@ HRESULT MeshSubset::CreateBuffers(ID3D11Device* pd3dDevice)
 	pd3dDevice->CreateBuffer(&indexBufferDesc, &indexData, &m_pd3dIndexBuffer);
 
 	CreateRasterizerState(pd3dDevice);
-
+	 
 	return S_OK;
 }
 
@@ -233,15 +242,14 @@ HRESULT Mesh::Render(ID3D11DeviceContext* pd3dImmediateContext)
 		if (mats.size() < MAX_MATRICES)
 			mats.push_back(mat);
 	}
+	for(int k=0; k < mats.size(); k++)
+		D3DXMatrixTranspose(&g_CBConstBoneWorld.g_mConstBoneWorld[k], &mats[k]);
 
 	D3D11_MAPPED_SUBRESOURCE MappedResource;
 	pd3dImmediateContext->Map(g_pCBConstBoneWorld, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource); 
 	memcpy(MappedResource.pData, &g_CBConstBoneWorld, sizeof (g_CBConstBoneWorld));
-	for(int k=0; k < mats.size(); k++)
-		D3DXMatrixTranspose(&g_CBConstBoneWorld.g_mConstBoneWorld[k], &mats[k]);
 	pd3dImmediateContext->Unmap(g_pCBConstBoneWorld, 0);
 	pd3dImmediateContext->VSSetConstantBuffers(2, 1, &g_pCBConstBoneWorld); 
-	
 
 	for (int i = 0; i < m_Subsets.size(); i++)
 	{
@@ -270,11 +278,12 @@ HRESULT Mesh::Render(ID3D11DeviceContext* pd3dImmediateContext , float t)
 			if (mats.size() < MAX_MATRICES)
 				mats.push_back(mat);
 		}
+		for(int k=0; k < mats.size(); k++)
+			D3DXMatrixTranspose(&g_CBConstBoneWorld.g_mConstBoneWorld[k], &mats[k]);
+
 		D3D11_MAPPED_SUBRESOURCE MappedResource;
 		pd3dImmediateContext->Map(g_pCBConstBoneWorld, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource); 
 		memcpy(MappedResource.pData, &g_CBConstBoneWorld, sizeof (g_CBConstBoneWorld));
-		for(int k=0; k < mats.size(); k++)
-			D3DXMatrixTranspose(&g_CBConstBoneWorld.g_mConstBoneWorld[k], &mats[k]);
 		pd3dImmediateContext->Unmap(g_pCBConstBoneWorld, 0);
 	}
 	else
@@ -283,7 +292,6 @@ HRESULT Mesh::Render(ID3D11DeviceContext* pd3dImmediateContext , float t)
 	}
 
 	pd3dImmediateContext->VSSetConstantBuffers(2, 1, &g_pCBConstBoneWorld); 
-
 
 	int a = m_Subsets.size();
 	for (int i = 0; i < m_Subsets.size(); i++)

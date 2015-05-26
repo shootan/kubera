@@ -39,7 +39,7 @@ HeroObject::~HeroObject(void)
 }
 
 
-void HeroObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
+void HeroObject::Render(ID3D11DeviceContext *pd3dDeviceContext, float fTimeElapsed)
 {
 	if(m_Visible != TRUE) return;
 

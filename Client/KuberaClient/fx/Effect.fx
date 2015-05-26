@@ -35,13 +35,13 @@ struct VS_OUTPUT
 VS_OUTPUT VS(VS_INPUT input)
 {
     VS_OUTPUT output = (VS_OUTPUT)0;
-    output.position = mul(input.position, gmtxWorld);
-    output.position = mul(output.position, gmtxView);
-    output.position = mul(output.position, gmtxProjection);
-
-	output.normal = mul(input.normal, (float3x3)gmtxWorld);
-
-	output.texcoord = input.texcoord;
+//    output.position = mul(input.position, gmtxWorld);
+//    output.position = mul(output.position, gmtxView);
+//    output.position = mul(output.position, gmtxProjection);
+//
+//	output.normal = mul(input.normal, (float3x3)gmtxWorld);
+//
+//	output.texcoord = input.texcoord;
 
     return output;
 }

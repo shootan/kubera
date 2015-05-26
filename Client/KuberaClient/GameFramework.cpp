@@ -416,8 +416,9 @@ void CGameFramework::FrameAdvance()
 	m_pd3dDeviceContext->VSSetConstantBuffers( VS_SLOT_VIEWPROJECTION_MATRIX, 1, &m_pd3dcbViewProjection);
 
 	//////////////////
-	//this->SendHeroData();
-	m_pScene->Render(m_pd3dDeviceContext);
+
+	this->SendHeroData();
+	m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f);
 
 	RenderText();
 
