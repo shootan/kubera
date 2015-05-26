@@ -38,15 +38,15 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 
 	//Direct3D 디바이스, 디바이스 컨텍스트, 스왑 체인 등을 생성하는 함수를 호출한다. 
 	if (!CreateDirect3DDisplay()) return(false); 
-	char IP[30];
-	printf("IP : ");
-	scanf("%s", IP);
-	Net.InitClient(IP, 9000);
+// 	char IP[30];
+// 	printf("IP : ");
+// 	scanf("%s", IP);
+// 	Net.InitClient(IP, 9000);
 
-	while (Net.m_ID == 0)
-	{
-		Sleep(100);
-	}
+// 	while (Net.m_ID == 0)
+// 	{
+// 		Sleep(100);
+// 	}
 	//렌더링할 객체(게임 월드 객체)를 생성한다. 
 
 	HeroManager::sharedManager()->SetID(Net.m_ID);
@@ -272,8 +272,10 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			{
 				m_CameraPosX = HeroManager::sharedManager()->m_pHero->GetPos().x;
 				m_CameraPosZ = HeroManager::sharedManager()->m_pHero->GetPos().z-10;
-			}
-			
+			}			
+			break;
+		case VK_UP:
+			HeroManager::sharedManager()->m_pHero->SetState(DEATH);
 			break;
 		} 
 
@@ -380,8 +382,8 @@ void CGameFramework::FrameAdvance()
 {    
 	m_GameTimer.Tick(60);
 
-	this->ExchangeInfo();
-	m_pScene->OtherPlayerTargetSetting();
+	//this->ExchangeInfo();
+	//m_pScene->OtherPlayerTargetSetting();
 	
 	ProcessInput();
 	AnimateObjects();
@@ -414,7 +416,7 @@ void CGameFramework::FrameAdvance()
 	m_pd3dDeviceContext->VSSetConstantBuffers( VS_SLOT_VIEWPROJECTION_MATRIX, 1, &m_pd3dcbViewProjection);
 
 	//////////////////
-	this->SendHeroData();
+	//this->SendHeroData();
 	m_pScene->Render(m_pd3dDeviceContext);
 
 	RenderText();

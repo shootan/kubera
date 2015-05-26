@@ -60,10 +60,19 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	//CCubeMesh *pMesh = new CCubeMesh(pd3dDevice, 15.0f, 15.0f, 15.0f);
 	//pHeroMesh = new CFBXMesh(pd3dDevice, L"Hero/Wizard101310.FBX");
 	m_pHeroMesh = new GFBX::Mesh();
-	GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pHeroMesh, L"Hero/Wizard101310.FBX", pd3dDevice);
+	
+	GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pHeroMesh, L"Hero/golem.fbx", pd3dDevice);
+	m_pHeroMesh->OnCreateDevice(pd3dDevice);
+	for(int i=0; i<m_pHeroMesh->GetSubsetCount(); i++)
+		m_pHeroMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Hero/golem.png");
+		
+
+	/*
+	GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pHeroMesh, L"Hero/Wizard101310.fbx", pd3dDevice);
 	m_pHeroMesh->OnCreateDevice(pd3dDevice);
 	for(int i=0; i<m_pHeroMesh->GetSubsetCount(); i++)
 		m_pHeroMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Hero/micro_wizard_col.tif");
+		*/
 
 	CFBXMesh *pPlaneMesh = new CFBXMesh(pd3dDevice, L"imagefile/Plane4.FBX", 10);
 	pPlaneMesh->LoadTexture(pd3dDevice, L"imagefile/12.png");
@@ -79,6 +88,11 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 
 	//히어로 생성
 	HeroManager::sharedManager()->CreateHero(m_pHeroMesh, 10, 13, 10);
+	Vector3 s;
+	s.x = 0.3;
+	s.y = 0.3;
+	s.z = 0.3;
+	HeroManager::sharedManager()->m_pHero->SetScale(s);
 
 	m_pPlane = new CGameObject();
 	m_pPlane->SetMesh(pPlaneMesh);

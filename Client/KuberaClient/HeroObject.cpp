@@ -20,6 +20,8 @@ HeroObject::HeroObject(void)
 	//m_HP = 300.0;
 	m_Damage = 50.0f;
 
+	m_time = 0.0f;
+
 	m_fWalkSpeed = 25.0f;
 
 	node_t* temp;
@@ -79,9 +81,10 @@ void HeroObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
 	mWorld = mtxScale * mtxRotate * mtxTrans;
 	m_d3dxmtxWorld = mWorld;
 
+	if(m_time > 180.0f) m_time = 0.0f;
 
+	if (m_pAniMesh) m_pAniMesh->Render(pd3dDeviceContext, m_time);
 
-	if (m_pAniMesh) m_pAniMesh->Render(pd3dDeviceContext);
 }
 
 void HeroObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
@@ -137,6 +140,7 @@ bool HeroObject::InMotion()
 void HeroObject::Update(float fTimeElapsed)
 {
 	if(m_Visible == FALSE) return;
+	
 	//printf("%.0f \n", m_HP);
 	if(m_HP < 1.0f)
 	{
@@ -239,9 +243,12 @@ void HeroObject::Update(float fTimeElapsed)
 
 void HeroObject::Animate(float fTimeElapsed)
 {
+	m_time += fTimeElapsed * 1.7f;
+	printf(" %.3f \n", m_time);
 	if(m_iState == IDLE)
 	{
-		int a = 1;
+		if(m_time < 17.2f) m_time = 17.2f;
+		if(m_time > 18.7f) m_time = 17.2f;
 	}
 	else if(m_iState == ATTACK)
 	{
@@ -271,12 +278,23 @@ void HeroObject::Animate(float fTimeElapsed)
 	}
 	else if(m_iState == MOVE)
 	{
+		if(m_time < 7.45f) m_time = 7.45f;
+		if(m_time > 9.3f ) m_time = 7.45f;
 		m_fAttackTime = 0.f;
 
 		if(m_pTarget == NULL) return;
 		
 		if(ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 40.f && m_pTarget->GetTeam() != this->GetTeam())
 			m_iState = ATTACK;
+	}
+	else if(m_iState == DEATH)
+	{
+		if(m_time < 22.45f) m_time = 22.45f;
+		if(m_time > 25 )
+		{
+			m_iState = IDLE;
+		}
+		
 	}
 }
 

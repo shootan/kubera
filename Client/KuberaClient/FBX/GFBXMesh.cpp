@@ -40,9 +40,36 @@ HRESULT MeshSubset::OnCreateDevice(ID3D11Device* pd3dDevice)
 
 void MeshSubset::Render(ID3D11DeviceContext* pd3dImmediateContext)
 {
+	/*
 	m_nVertices = m_verts.size();
 	m_nIndices = m_indices.size();
 	pd3dImmediateContext->PSSetShaderResources(0, 1, &m_pTexture->m_texture );
+	*/
+
+	HRESULT hr;
+
+	//pd3dImmediateContext->VSSetShader(m_pVertexBuffer, NULL, 0);
+	//pd3dImmediateContext->PSSetShader(m_pIndexBuffer, NULL, 0);
+
+	//pd3dImmediateContext->VSSetConstantBuffers(2, 1, &g_pCBConstBoneWorld); 
+	ID3D11Buffer* pBuffers[1];
+	UINT stride[1]; 
+	UINT offset[1] = { 0 };
+
+
+	pBuffers[0] = *m_ppd3dVertexBuffers;
+	stride[0] = sizeof(GFBX::Vertex);
+	offset[0] = 0;
+
+
+	pd3dImmediateContext->IASetVertexBuffers( 0, 1, pBuffers, stride, offset );
+	pd3dImmediateContext->IASetIndexBuffer( m_pd3dIndexBuffer, DXGI_FORMAT_R32_UINT, 0 );
+
+	pd3dImmediateContext->DrawIndexed( m_indices.size(), 0 ,0 );
+	
+	
+	return;
+
 	CMesh::Render(pd3dImmediateContext);
 }
 
