@@ -65,7 +65,7 @@ public:
 
 	bool ProcessInput();
 	void AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice);
-	void Render(ID3D11DeviceContext *pd3dDeviceContext);
+	void Render(ID3D11DeviceContext *pd3dDeviceContext, float fTimeElapsed);
 
 	int GetMousePosX();
 	int GetMousePosY();

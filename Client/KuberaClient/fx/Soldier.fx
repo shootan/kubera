@@ -68,6 +68,7 @@ cbuffer cbAnimMatrices : register (b2)
 //--------------------------------------------------------------------------------------
 Texture2D g_txDiffuse : register( t0 );
 SamplerState g_samLinear : register( s0 );
+
 Texture2D g_txNormal;
 // Texture for bone matrices
 Texture1D g_txTexBoneWorld;

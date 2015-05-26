@@ -415,7 +415,7 @@ void CGameFramework::FrameAdvance()
 
 	//////////////////
 	this->SendHeroData();
-	m_pScene->Render(m_pd3dDeviceContext);
+	m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f);
 
 	RenderText();
 

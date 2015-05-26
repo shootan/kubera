@@ -37,7 +37,7 @@ HeroObject::~HeroObject(void)
 }
 
 
-void HeroObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
+void HeroObject::Render(ID3D11DeviceContext *pd3dDeviceContext, float fTimeElapsed)
 {
 	if(m_Visible != TRUE) return;
 
@@ -81,7 +81,7 @@ void HeroObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
 
 
 
-	if (m_pAniMesh) m_pAniMesh->Render(pd3dDeviceContext);
+	if (m_pAniMesh) m_pAniMesh->Render(pd3dDeviceContext, fTimeElapsed);
 }
 
 void HeroObject::SetNewDestination ( D3DXVECTOR3 _pos ) {

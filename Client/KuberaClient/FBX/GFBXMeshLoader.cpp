@@ -1054,22 +1054,22 @@ bool GFBXMeshLoader::CopyToTargetMesh(GFBX::MeshSubset* targetMesh)
 		v.binorm = D3DXVECTOR3(mVertices[i].mBinormal.x, mVertices[i].mBinormal.y, mVertices[i].mBinormal.z);
 		if (mHasAnimation)
 		{
-			float a = mVertices[i].mVertexBlendingInfos.size();
-			if(mVertices[i].mVertexBlendingInfos.size() < 4)
+			if(mVertices[i].mVertexBlendingInfos.size() >= 4)
 			{
-				int a = 10;
+				v.weights = D3DXVECTOR4( 
+					static_cast<float>(mVertices[i].mVertexBlendingInfos[0].mBlendingWeight),
+					static_cast<float>(mVertices[i].mVertexBlendingInfos[1].mBlendingWeight),
+					static_cast<float>(mVertices[i].mVertexBlendingInfos[2].mBlendingWeight),
+					static_cast<float>(mVertices[i].mVertexBlendingInfos[3].mBlendingWeight));
+				v.indices[0] = (BYTE)mVertices[i].mVertexBlendingInfos[0].mBlendingIndex;
+				v.indices[1] = (BYTE)mVertices[i].mVertexBlendingInfos[1].mBlendingIndex;
+				v.indices[2] = (BYTE)mVertices[i].mVertexBlendingInfos[2].mBlendingIndex;
+				v.indices[3] = (BYTE)mVertices[i].mVertexBlendingInfos[3].mBlendingIndex;
 			}
-
-			v.weights = D3DXVECTOR4( 
-				static_cast<float>(mVertices[i].mVertexBlendingInfos[0].mBlendingWeight),
-				static_cast<float>(mVertices[i].mVertexBlendingInfos[1].mBlendingWeight),
-				static_cast<float>(mVertices[i].mVertexBlendingInfos[2].mBlendingWeight),
-				static_cast<float>(mVertices[i].mVertexBlendingInfos[3].mBlendingWeight));
-			v.indices[0] = (BYTE)mVertices[i].mVertexBlendingInfos[0].mBlendingIndex;
-			v.indices[1] = (BYTE)mVertices[i].mVertexBlendingInfos[1].mBlendingIndex;
-			v.indices[2] = (BYTE)mVertices[i].mVertexBlendingInfos[2].mBlendingIndex;
-			v.indices[3] = (BYTE)mVertices[i].mVertexBlendingInfos[3].mBlendingIndex;
-
+			else
+			{
+				OutputDebugString(L"Some mVertexBlendingInfos was wrong ... \n");
+			}
 			//char szTmp[512];
 			//sprintf(szTmp, "%d => index : %d %d %d %d    weight : %f %f %f %f \n", i, 
 			//	mVertices[i].mVertexBlendingInfos[0].mBlendingIndex,

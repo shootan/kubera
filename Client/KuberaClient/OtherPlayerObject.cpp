@@ -18,7 +18,7 @@ OtherPlayerObject::~OtherPlayerObject(void)
 	CGameObject::~CGameObject();
 }
 
-void OtherPlayerObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
+void OtherPlayerObject::Render(ID3D11DeviceContext *pd3dDeviceContext, float fTimeElapsed)
 {
 	if(m_Visible != TRUE) return;
 
@@ -62,7 +62,7 @@ void OtherPlayerObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
 
 
 
-	if (m_pAniMesh) m_pAniMesh->Render(pd3dDeviceContext);
+	if (m_pAniMesh) m_pAniMesh->Render(pd3dDeviceContext, fTimeElapsed);
 }
 
 void OtherPlayerObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
