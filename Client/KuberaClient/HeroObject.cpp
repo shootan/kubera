@@ -141,7 +141,6 @@ void HeroObject::Update(float fTimeElapsed)
 {
 	if(m_Visible == FALSE) return;
 	
-	//printf("%.0f \n", m_HP);
 	if(m_HP < 1.0f)
 	{
 		Vector3 po;
@@ -244,7 +243,7 @@ void HeroObject::Update(float fTimeElapsed)
 void HeroObject::Animate(float fTimeElapsed)
 {
 	m_time += fTimeElapsed * 1.7f;
-	printf(" %.3f \n", m_time);
+	//printf(" %.3f \n", m_time);
 	if(m_iState == IDLE)
 	{
 		if(m_time < 17.2f) m_time = 17.2f;

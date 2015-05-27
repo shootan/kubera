@@ -40,5 +40,13 @@ public:
 	void SetState(int _state) { m_iState = _state;}
 
 	void SetAniMesh(GFBX::Mesh *pAniMesh);
+	 Vector3 GetDestination()
+	 {
+		 Vector3 p;
+		 p.x = m_vDestination.x;
+		 p.y = m_vDestination.y;
+		 p.z = m_vDestination.z; 
+		 return p;
+	 }
 
 };

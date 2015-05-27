@@ -24,6 +24,8 @@ CGameFramework::CGameFramework()
 
 	m_pTxtHelper = NULL;
 	m_pTxtHelper2 = NULL;
+
+	m_SendTick = 0;
 }
 
 CGameFramework::~CGameFramework()
@@ -38,15 +40,15 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 
 	//Direct3D 디바이스, 디바이스 컨텍스트, 스왑 체인 등을 생성하는 함수를 호출한다. 
 	if (!CreateDirect3DDisplay()) return(false); 
-// 	char IP[30];
-// 	printf("IP : ");
-// 	scanf("%s", IP);
-// 	Net.InitClient(IP, 9000);
+ 	char IP[30];
+ 	printf("IP : ");
+ 	scanf("%s", IP);
+ 	Net.InitClient(IP, 9000);
 
-// 	while (Net.m_ID == 0)
-// 	{
-// 		Sleep(100);
-// 	}
+ 	while (Net.m_ID == 0)
+ 	{
+ 		Sleep(100);
+ 	}
 	//렌더링할 객체(게임 월드 객체)를 생성한다. 
 
 	HeroManager::sharedManager()->SetID(Net.m_ID);
@@ -381,9 +383,11 @@ void CGameFramework::AnimateObjects()
 void CGameFramework::FrameAdvance()
 {    
 	m_GameTimer.Tick(60);
+	m_SendTick += 1;
 
-	//this->ExchangeInfo();
-	//m_pScene->OtherPlayerTargetSetting();
+
+	this->ExchangeInfo();
+	m_pScene->OtherPlayerTargetSetting();
 	
 	ProcessInput();
 	AnimateObjects();
@@ -417,7 +421,12 @@ void CGameFramework::FrameAdvance()
 
 	//////////////////
 
-	this->SendHeroData();
+	if(m_SendTick > 2)
+	{
+		this->SendHeroData();
+		m_SendTick  = 0;
+	}
+	
 	m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f);
 
 	RenderText();
@@ -566,7 +575,7 @@ void CGameFramework::SendHeroData()
 {
 	if(Net.m_ID != 0)
 	{
-		HeroInfo.PI.m_Pos = HeroManager::sharedManager()->m_pHero->GetPos();
+		HeroInfo.PI.m_Pos = HeroManager::sharedManager()->m_pHero->GetDestination();
 		HeroInfo.PI.m_Rot = HeroManager::sharedManager()->m_pHero->GetRot();
 		HeroInfo.PI.m_iState = HeroManager::sharedManager()->m_pHero->GetState();
 		HeroInfo.PI.m_iTargetID = HeroManager::sharedManager()->m_pHero->GetTargetID();
