@@ -41,8 +41,8 @@ struct PlayerInfo{
 	int		m_ID;
 	int		m_iState;
 	int		m_iTargetID;
+	int		m_Type;
 	Vector3 m_Pos;
-	float	m_Rot;
 	float	m_HP;
 	float	m_Damage;
 };
@@ -66,7 +66,7 @@ enum TAG
 
 enum STATE
 {
-	IDLE, ATTACK, MOVE, DEATH
+	IDLE, ATTACK, MOVE, DEATH, SKILL1
 };
 
 enum TEAM
@@ -89,5 +89,10 @@ struct MinionPacket
 
 enum NETWORKCODE
 {
-	NETNONE, HERODATA, HEROCOUNT, INITCLIENT, MINIONDATA
+	NETNONE, HERODATA, HEROCOUNT, INITCLIENT, MINIONDATA, HEROCHOOSE
+};
+
+enum HEROTYPE
+{
+	TYPENONE, KNIGHT, WIZARD
 };

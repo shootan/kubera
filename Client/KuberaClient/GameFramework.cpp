@@ -49,9 +49,23 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
  	{
  		Sleep(100);
  	}
+	int herotype1;
+	while(TRUE)
+	{
+		printf(" \n\nHero 선택( 1. 워리어, 2. 위자드 ) : ");
+		
+		scanf("%d", &herotype1);
+		if(herotype1 == 1 || herotype1 == 2)
+		{
+			break;
+		}
+	}
+	
+
 	//렌더링할 객체(게임 월드 객체)를 생성한다. 
 
 	HeroManager::sharedManager()->SetID(Net.m_ID);
+	HeroManager::sharedManager()->SetType(herotype1);
 	HeroManager::sharedManager()->SetStartPos(D3DXVECTOR3(Net.m_Pos.x, Net.m_Pos.y, Net.m_Pos.z));
 	HeroManager::sharedManager()->SetHP(Net.m_HP);
 	if(Net.m_ID%2 == 0) //초기 시작 카메리위치 설정
@@ -278,6 +292,10 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			break;
 		case VK_UP:
 			HeroManager::sharedManager()->m_pHero->SetState(DEATH);
+			break;
+
+		case VK_DOWN:
+			HeroManager::sharedManager()->m_pHero->SetState(SKILL1);
 			break;
 		} 
 
@@ -576,12 +594,12 @@ void CGameFramework::SendHeroData()
 	if(Net.m_ID != 0)
 	{
 		HeroInfo.PI.m_Pos = HeroManager::sharedManager()->m_pHero->GetDestination();
-		HeroInfo.PI.m_Rot = HeroManager::sharedManager()->m_pHero->GetRot();
 		HeroInfo.PI.m_iState = HeroManager::sharedManager()->m_pHero->GetState();
 		HeroInfo.PI.m_iTargetID = HeroManager::sharedManager()->m_pHero->GetTargetID();
 		HeroInfo.PI.m_ID = Net.m_ID;
 		HeroInfo.PI.m_HP = HeroManager::sharedManager()->m_pHero->GetHP();
 		HeroInfo.PI.m_Damage = HeroManager::sharedManager()->m_pHero->GetDamage();
+		HeroInfo.PI.m_Type = HeroManager::sharedManager()->m_pHero->GetType();
 		HeroInfo.size = sizeof(PlayerPacket);
 
 		Net.SendData(&HeroInfo);

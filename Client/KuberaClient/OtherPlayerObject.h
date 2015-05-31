@@ -10,6 +10,7 @@ private:
 	BOOL m_bSetDestination;	
 
 	float m_fAttackTime;
+	float m_Time;
 
 	GFBX::Mesh *m_pAniMesh;
 

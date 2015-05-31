@@ -110,9 +110,10 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 		printf("IP 주소= %s, 포트번호= %d , Count = %d\n", 
 			inet_ntoa(pThis->m_ClinetAddr.sin_addr), 
 			ntohs(pThis->m_ClinetAddr.sin_port), pThis->m_iClientCount); 
-
-		//IP체크후 동기화
 		IOBuffer* buffer;
+
+		/*
+		//IP체크후 동기화
 		buffer = pThis->m_pNextBufferList;
 		while(buffer != NULL)
 		{
@@ -145,6 +146,7 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 			buffer = buffer->m_pNext;
 		}
 		//////////////////////////////////////
+		*/
 
 		if(SameIP) continue;
 		pThis->m_iClientCount++;
@@ -436,8 +438,8 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 	if(_buff->m_MinionCount > 2)
 	{
 		_buff->m_MinionCount = 0;
-		SetOpCode(_buff, OP_SEND_FINISH);
-		this->SendPacket(_buff, MINIONDATA, Arrange.MI, sizeof(MinionInfo)*160);
+		//SetOpCode(_buff, OP_SEND_FINISH);
+		//this->SendPacket(_buff, MINIONDATA, Arrange.MI, sizeof(MinionInfo)*160);
 		//printf("3: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
 		
 	}
@@ -636,11 +638,11 @@ void IOCPServer::SendPacket(IOBuffer* _buffer, int NetworkCode, void *_packet, i
 
 void IOCPServer::ArrangeDataInfo(float _dt)
 {
-	if(m_iClientCount < 2) return;
-
-	Arrange.SetTime(_dt);
-	Arrange.RegenMinion();
-	Arrange.SetMinionPosition(_dt);
-
-	Arrange.CheckMinionLive();
+// 	if(m_iClientCount) return;
+// 
+// 	Arrange.SetTime(_dt);
+// 	Arrange.RegenMinion();
+// 	Arrange.SetMinionPosition(_dt);
+// 
+// 	Arrange.CheckMinionLive();
 }

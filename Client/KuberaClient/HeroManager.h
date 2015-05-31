@@ -11,6 +11,7 @@ public:
 	int m_iID;
 	D3DXVECTOR3 m_vPos;
 	float m_HP;
+	int m_Type;
 
 private:
 	HeroManager()
@@ -39,15 +40,24 @@ public:
 	CGameObject* RedNexus;
 	CGameObject* BlueNexus;
 
-	void CreateHero(GFBX::Mesh* mesh, float boundx, float boundy, float boundz)
+	void CreateHero(GFBX::Mesh* _warrior,GFBX::Mesh* _wizard, float boundx, float boundy, float boundz)
 	{
 		m_pHero = new HeroObject();
-		m_pHero->SetAniMesh(mesh);
+		
 		m_pHero->SetPosition(m_vPos);
 		m_pHero->SetID(m_iID);
 		m_pHero->SetBoundSize(boundx, boundy, boundz);
 		m_pHero->SetHP(m_HP);
+		m_pHero->SetType(m_Type);
 
+		if(m_Type == 1)
+		{
+			m_pHero->SetAniMesh(_warrior);
+		}
+		else if(m_Type == 2)
+		{
+			m_pHero->SetAniMesh(_wizard);
+		}
 
 		if(m_iID % 2 == 0)
 			HeroManager::sharedManager()->m_pHero->SetTeam(RED_TEAM);
@@ -59,5 +69,6 @@ public:
 	void SetID(int _id){ m_iID = _id; }
 	void SetStartPos(D3DXVECTOR3 _v) { m_vPos = _v; }
 	void SetHP(float _hp) { m_HP = _hp; }
+	void SetType(int _type) { m_Type = _type; }
 	int GetID() { return m_iID; }
 };

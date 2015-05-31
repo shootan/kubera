@@ -37,7 +37,7 @@ ArrangeData::ArrangeData()
 	m_bMinionLive3 = false;
 	m_bMinionLive4 =false;
 
-	m_fWalkSpeed = 10.0f;
+	m_fWalkSpeed = 25.0f;
 
 	m_fRegenTime = 0.0f;
 	m_fUnitTime = 0.0f;
@@ -223,9 +223,7 @@ void ArrangeData::SetMinionPosition(float _dt)
 				// 			fAngle /= D3DX_PI;
 				// 			this->SetRotation(2, 1/fAngle);
 
-				m_vWalkIncrement.x *= m_fWalkSpeed; 
-				m_vWalkIncrement.y *= m_fWalkSpeed; 
-				m_vWalkIncrement.z *= m_fWalkSpeed; 
+				m_vWalkIncrement *= m_fWalkSpeed;  
 
 				m_vWalkIncrement*= _dt;
 				m_bMinion[i].m_Pos.x += m_vWalkIncrement.x;
@@ -267,9 +265,7 @@ void ArrangeData::SetMinionPosition(float _dt)
 				// 			fAngle /= D3DX_PI;
 				// 			this->SetRotation(2, 1/fAngle);
 
-				m_vWalkIncrement.x *= m_fWalkSpeed; 
-				m_vWalkIncrement.y *= m_fWalkSpeed; 
-				m_vWalkIncrement.z *= m_fWalkSpeed; 
+				m_vWalkIncrement *= m_fWalkSpeed;  
 
 				m_vWalkIncrement*= _dt;
 				m_bMinion[i].m_Pos.x += m_vWalkIncrement.x;
@@ -310,9 +306,7 @@ void ArrangeData::SetMinionPosition(float _dt)
 				// 			fAngle /= D3DX_PI;
 				// 			this->SetRotation(2, 1/fAngle);
 
-				m_vWalkIncrement.x *= m_fWalkSpeed; 
-				m_vWalkIncrement.y *= m_fWalkSpeed; 
-				m_vWalkIncrement.z *= m_fWalkSpeed; 
+				m_vWalkIncrement *= m_fWalkSpeed; 
 
 				m_vWalkIncrement*= _dt;
 				m_bMinion[i].m_Pos.x += m_vWalkIncrement.x;
@@ -353,9 +347,7 @@ void ArrangeData::SetMinionPosition(float _dt)
 				// 			fAngle /= D3DX_PI;
 				// 			this->SetRotation(2, 1/fAngle);
 
-				m_vWalkIncrement.x *= m_fWalkSpeed; 
-				m_vWalkIncrement.y *= m_fWalkSpeed; 
-				m_vWalkIncrement.z *= m_fWalkSpeed; 
+				m_vWalkIncrement *= m_fWalkSpeed;  
 
 				m_vWalkIncrement*= _dt;
 				m_bMinion[i].m_Pos.x += m_vWalkIncrement.x;

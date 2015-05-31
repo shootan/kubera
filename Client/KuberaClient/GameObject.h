@@ -17,8 +17,10 @@ protected:
 	BOOL		m_Visible;
 	int			m_iTag;
 	int			m_iState;
-	int			 m_iTargetID;
+	int			m_iTargetID;
 	int			m_iTeam;
+	int			m_iType;
+
 	//
 	int m_nReferences;
 	D3DXVECTOR3 m_Pos;
@@ -76,7 +78,8 @@ public:
 
 	void SetAttackDamage(float _damage) { m_HP -= _damage; }
 
-
+	int GetType() { return m_iType; }
+	void SetType(int _type) { m_iType = _type; }
 	int	GetID() { return m_ID; }
 	void SetID(int _id) { m_ID= _id;}
 	void SetVisible(BOOL _vi) { m_Visible  = _vi; }

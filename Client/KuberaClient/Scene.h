@@ -35,7 +35,8 @@ private:
 	BOOL m_bLbutton;
 
 	CFBXMesh *pHeroMesh;
-	GFBX::Mesh *m_pHeroMesh;
+	GFBX::Mesh *m_pWarriorMesh;
+	GFBX::Mesh *m_pWizardMesh;
 	CFBXMesh *pMinionDragonMesh;
 
 	float m_fMinionRespawnTime;

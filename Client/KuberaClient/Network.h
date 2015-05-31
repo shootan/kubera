@@ -37,6 +37,7 @@ public:
 	void err_quit(char *msg);
 
 	BOOL SendData(PlayerPacket* PI);
+	BOOL SendType(int _type);
 
 
 	//½º·¹µå

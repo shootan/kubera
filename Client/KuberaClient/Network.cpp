@@ -118,7 +118,7 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 				if(retval == SOCKET_ERROR)
 					break;
 
-				for(int i=0; i<10; i++)
+				for(int i=0; i<4; i++)
 				{
 					if(server->PI[i].PI.m_ID == p.PI.m_ID)
 					{
@@ -126,9 +126,9 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 						break;
 					}
 
-					if(i == 9)
+					if(i == 3)
 					{
-						for(int j=0; j<10; j++)
+						for(int j=0; j<4; j++)
 						{
 							if(server->PI[j].PI.m_ID == 0)
 							{
@@ -170,20 +170,7 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 					retval = recv(server->m_ConnectSock, (char*)server->MI4, sizeof(MinionInfo)*40, 0);
 					break;
 				}*/
-				
-
-				for(int i=0; i<40; i++)
-				{
-// 					if(server->MI1[i].m_Live == TRUE)
-// 						printf("%.1f, %.1f, %.1f \n", server->MI1[i].m_Pos.x,server->MI1[i].m_Pos.y,server->MI1[i].m_Pos.z);
-//  					if(server->MI2[i].m_Live == TRUE)
-// 						printf("%.1f, %.1f, %.1f \n", server->MI2[i].m_Pos.x,server->MI2[i].m_Pos.y,server->MI2[i].m_Pos.z);
-// 					if(server->MI3[i].m_Live == TRUE)
-// 						printf("%.1f, %.1f, %.1f \n", server->MI3[i].m_Pos.x,server->MI3[i].m_Pos.y,server->MI3[i].m_Pos.z);
-//  					if(server->MI4[i].m_Live == TRUE)
-//  						printf("%.1f, %.1f, %.1f \n", server->MI4[i].m_Pos.x,server->MI4[i].m_Pos.y,server->MI4[i].m_Pos.z);
-
-				}
+			
 				/*retval = recv(server->m_ConnectSock, (char*)&Number, sizeof(int));
 
 				switch(Number)
@@ -215,7 +202,24 @@ BOOL Network::SendData(PlayerPacket* _pi)
 {
 	int retval = 0;
 	int p = sizeof(PlayerPacket);
+	
 	retval = send(m_ConnectSock, (char*)_pi, sizeof(PlayerPacket), 0);
+	if(retval == SOCKET_ERROR)
+		return FALSE;
+
+	return TRUE;
+}
+
+BOOL Network::SendType(int _type)
+{
+	int retval = 0;
+	int header = HEROCHOOSE;
+	int p = sizeof(PlayerPacket);
+	retval = send(m_ConnectSock, (char*)&header, sizeof(int), 0);
+	if(retval == SOCKET_ERROR)
+		return FALSE;
+
+	retval = send(m_ConnectSock, (char*)&_type, sizeof(PlayerPacket), 0);
 	if(retval == SOCKET_ERROR)
 		return FALSE;
 

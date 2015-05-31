@@ -242,15 +242,36 @@ void HeroObject::Update(float fTimeElapsed)
 
 void HeroObject::Animate(float fTimeElapsed)
 {
-	m_time += fTimeElapsed * 1.7f;
+	m_time += fTimeElapsed * 2.0f;
 	//printf(" %.3f \n", m_time);
 	if(m_iState == IDLE)
 	{
-		if(m_time < 17.2f) m_time = 17.2f;
-		if(m_time > 18.7f) m_time = 17.2f;
+		switch(m_iType)
+		{
+		case KNIGHT:
+			if(m_time < 1.1f) m_time = 1.1f;
+			if(m_time > 7.0f) m_time = 1.1f;
+			break;
+		case WIZARD:
+			if(m_time < 1.1f) m_time = 1.1f;
+			if(m_time > 7.1f) m_time = 1.1f;
+			break;
+		}
 	}
 	else if(m_iState == ATTACK)
 	{
+		switch(m_iType)
+		{
+		case KNIGHT:
+			if(m_time < 41.0f) m_time = 41.0f;
+			if(m_time > 49.0f) m_time = 41.0f;
+			break;
+		case WIZARD:
+			if(m_time < 20.0f) m_time = 20.0f;
+			if(m_time > 23.0f) m_time = 20.0f;
+			break;
+		}
+
 		if(m_pTarget->GetHP() < 1 || ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) > 40.0f)
 		{
 			m_pTarget = NULL;
@@ -260,6 +281,7 @@ void HeroObject::Animate(float fTimeElapsed)
 		}
 		m_fAttackTime += fTimeElapsed;
 
+		/*
 		for(int i=0; i<MAX_MISSILE; i++)
 		{
 			if(MissileManager::sharedManager()->m_pMissile[i]->GetUsed() == TRUE) continue;
@@ -273,27 +295,74 @@ void HeroObject::Animate(float fTimeElapsed)
 
 				m_fAttackTime = 0.f;
 			}
-		}
+		}*/
 	}
 	else if(m_iState == MOVE)
 	{
-		if(m_time < 7.45f) m_time = 7.45f;
-		if(m_time > 9.3f ) m_time = 7.45f;
+		switch(m_iType)
+		{
+		case KNIGHT:
+			if(m_time < 57.5f) m_time = 57.5f;
+			if(m_time > 59.7f ) m_time = 57.5f;
+			break;
+		case WIZARD:
+			if(m_time < 68.0f) m_time = 68.0f;
+			if(m_time > 70.3f ) m_time = 68.0f;
+			break;
+		}
 		m_fAttackTime = 0.f;
 
 		if(m_pTarget == NULL) return;
 		
-		if(ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 40.f && m_pTarget->GetTeam() != this->GetTeam())
+		if(ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 15.f && m_pTarget->GetTeam() != this->GetTeam())
 			m_iState = ATTACK;
 	}
 	else if(m_iState == DEATH)
 	{
-		if(m_time < 22.45f) m_time = 22.45f;
-		if(m_time > 25 )
+		switch(m_iType)
 		{
-			m_iState = IDLE;
+		case KNIGHT:
+			if(m_time < 30.0f) m_time = 30.0f;
+			if(m_time > 34.0f)
+			{
+				m_time = 1.1f;
+				m_iState = IDLE;
+			}
+			break;
+		case WIZARD:
+			if(m_time < 30.0f) m_time = 30.0f;
+			if(m_time > 34.0f)
+			{
+				m_time = 1.1f;
+				m_iState = IDLE;
+			}
+
+			break;
 		}
-		
+	}
+	else if(m_iState == SKILL1)
+	{
+		switch(m_iType)
+		{
+		case KNIGHT:
+			if(m_time < 50.0f)  m_time = 50.0f;
+			if(m_time > 54.0f) 
+			{
+				m_time = 1.1f;
+				m_iState = IDLE;
+			}
+			break;
+		case WIZARD:
+			if(m_time < 45.0f) m_time = 45.0f;
+			if(m_time > 50.0f)
+			{
+				m_time = 1.1f;
+				m_iState = IDLE;
+			}
+
+			break;
+		}
+
 	}
 }
 

@@ -9,6 +9,8 @@ MinionObject::MinionObject(void)
 	m_vDestination	 = D3DXVECTOR3(1000, 0, 0);
 	m_iTag = MINION;
 
+	m_fWalkSpeed = 25.0f;
+
 	m_bSetDestination = FALSE;
 
 }
@@ -77,7 +79,7 @@ void MinionObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
 	s_pos.z = _pos.z;
 
 	float distance = ST::sharedManager()->GetDistance(f_pos, s_pos);
-	if(distance > 40.0f)
+	if(distance > 10.0f)
 	{
 		m_Pos.x = _pos.x;
 		m_Pos.y = _pos.y;
@@ -126,10 +128,10 @@ void MinionObject::Update(float fTimeElapsed)
 	}
 	if ( InMotion() && m_bSetDestination == TRUE)
 	{
-		D3DXVECTOR3 update_delta = m_vWalkIncrement *7.0f;
+		D3DXVECTOR3 update_delta = m_vWalkIncrement ;
 		D3DXVECTOR3 location_vector = m_vDestination - m_Pos;
 
-		m_Pos += update_delta;
+		m_Pos += update_delta * fTimeElapsed;
 
 		Vector3 f_pos;
 		Vector3 s_pos;

@@ -26,7 +26,8 @@ CScene::CScene(void)
 	m_pPlane = NULL;
 	m_pBlueNexus = NULL;
 	m_pRedNexus = NULL;
-	m_pHeroMesh = NULL;
+	m_pWarriorMesh = NULL;
+	m_pWizardMesh = NULL;
 
 }
 
@@ -59,14 +60,19 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	//정육면체 메쉬를 생성하고 객체에 연결한다.
 	//CCubeMesh *pMesh = new CCubeMesh(pd3dDevice, 15.0f, 15.0f, 15.0f);
 	//pHeroMesh = new CFBXMesh(pd3dDevice, L"Hero/Wizard101310.FBX");
-	m_pHeroMesh = new GFBX::Mesh();
-
+	m_pWarriorMesh = new GFBX::Mesh();
 	GFBXMeshLoader::getInstance()->OnCreateDevice(pd3dDevice);
-	GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pHeroMesh, L"Hero/Wizard101310.FBX", pd3dDevice);
-	m_pHeroMesh->OnCreateDevice(pd3dDevice);
-	for(int i=0; i<m_pHeroMesh->GetSubsetCount(); i++)
-		m_pHeroMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Hero/micro_wizard_col.tif");
+	GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pWarriorMesh, L"Hero/Hero/knight2.FBX", pd3dDevice);
+	m_pWarriorMesh->OnCreateDevice(pd3dDevice);
+	for(int i=0; i<m_pWarriorMesh->GetSubsetCount(); i++)
+		m_pWarriorMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Hero/micro_knight.png");
 
+	m_pWizardMesh = new GFBX::Mesh();
+	GFBXMeshLoader::getInstance()->OnCreateDevice(pd3dDevice);
+	GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pWizardMesh, L"Hero/Hero/Wizard2.FBX", pd3dDevice);
+	m_pWizardMesh->OnCreateDevice(pd3dDevice);
+	for(int i=0; i<m_pWizardMesh->GetSubsetCount(); i++)
+		m_pWizardMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Hero/micro_wizard_col.tif");
 
 	CFBXMesh *pPlaneMesh = new CFBXMesh(pd3dDevice, L"imagefile/Plane4.FBX", 10);
 	pPlaneMesh->LoadTexture(pd3dDevice, L"imagefile/12.png");
@@ -81,9 +87,9 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	pRedNexusMesh->LoadTexture(pd3dDevice, L"tower/Nexus2.png");
 
 	//히어로 생성
-	HeroManager::sharedManager()->CreateHero(m_pHeroMesh, 10, 13, 10);
+	HeroManager::sharedManager()->CreateHero(m_pWarriorMesh, m_pWizardMesh, 10, 13, 10);
 
-	//HeroManager::sharedManager()->m_pHero->SetScale(D3DXVECTOR3(0.3, 0.3, 0.3));
+	HeroManager::sharedManager()->m_pHero->SetScale(D3DXVECTOR3(0.1, 0.1, 0.1));
 
 	m_pPlane = new CGameObject();
 	m_pPlane->SetMesh(pPlaneMesh);
@@ -130,7 +136,8 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pObjectShaders->AddObject(m_pBlueNexus);
 	m_pObjectShaders->AddObject(m_pRedNexus);
 
-	OtherPlayerManager::sharedManager()->CreateOtherPlayer(D3DXVECTOR3(1500, 0, 0), m_pHeroMesh, 10, 13, 10);
+	OtherPlayerManager::sharedManager()->SetMesh(m_pWarriorMesh, m_pWizardMesh);
+	OtherPlayerManager::sharedManager()->CreateOtherPlayer(D3DXVECTOR3(1500, 0, 0), 10, 13, 10);
 	for(int i=0; i<MAX_OTHER_PLAYER;i++)
 		m_pAnimationShaders->AddObject(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]);
 	
@@ -406,16 +413,24 @@ void CScene::SetOtherClient(PlayerStruct* _PI, int _Count)
 	{
 		if(_PI[i].Use == TRUE) continue;
 		if(_PI[i].PI.m_ID == 0) continue;
+		if(_PI[i].PI.m_Type == 0) continue;
 		for(int j=0; j<MAX_OTHER_PLAYER; j++)
 		{
 			if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetID() != 0) continue;
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetID(_PI[i].PI.m_ID);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetPos(_PI[i].PI.m_Pos);
-			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Rot);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetState(_PI[i].PI.m_iState);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetTargetID(_PI[i].PI.m_iTargetID);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetHP(_PI[i].PI.m_HP);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetDamage(_PI[i].PI.m_Damage);
+
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetType(_PI[i].PI.m_Type);
+			if(_PI[i].PI.m_Type == 1)
+				OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetAniMesh(m_pWarriorMesh);
+			else if(_PI[i].PI.m_Type == 2)
+				OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetAniMesh(m_pWizardMesh);
+
+
 			if(_PI[i].PI.m_ID%2 == 0)
 				OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetTeam(RED_TEAM);
 			else
@@ -443,7 +458,7 @@ void CScene::UpdateOtherClient(PlayerStruct* _PI, int _Count)
 			q.y = _PI[i].PI.m_Pos.y;
 			q.z = _PI[i].PI.m_Pos.z;
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetNewDestination(q);
-			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Rot);
+			//OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Rot);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetState(_PI[i].PI.m_iState);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetTargetID(_PI[i].PI.m_iTargetID);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetHP(_PI[i].PI.m_HP);
