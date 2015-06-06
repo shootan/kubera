@@ -41,14 +41,15 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	//Direct3D 디바이스, 디바이스 컨텍스트, 스왑 체인 등을 생성하는 함수를 호출한다. 
 	if (!CreateDirect3DDisplay()) return(false); 
  	char IP[30];
- 	printf("IP : ");
- 	scanf("%s", IP);
- 	Net.InitClient(IP, 9000);
-
- 	while (Net.m_ID == 0)
- 	{
- 		Sleep(100);
- 	}
+  	printf("IP : ");
+  	scanf("%s", IP);
+  	Net.InitClient(IP, 9000);
+ 
+  	while (Net.m_ID == 0)
+  	{
+  		Sleep(100);
+  	}
+ 	
 	int herotype1;
 	while(TRUE)
 	{
@@ -439,7 +440,7 @@ void CGameFramework::FrameAdvance()
 
 	//////////////////
 
-	if(m_SendTick > 2)
+	if(m_SendTick > 0)
 	{
 		this->SendHeroData();
 		m_SendTick  = 0;

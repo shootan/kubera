@@ -268,6 +268,26 @@ UINT WINAPI IOCPServer::WorkerThread(LPVOID arg)
 			}
 		}
 
+// 		switch(buff->m_Opcode)
+// 		{
+// 		case OP_RECV:
+// 			printf("RECV:%d\n", dwSize);
+// 			break;
+// 		case OP_RECV_DONE:
+// 			printf("RECVDONE:%d\n", dwSize);
+// 			break;
+// 		case OP_SEND:
+// 			printf("SEND:%d\n", dwSize);
+// 			break;
+// 		case OP_SEND_FINISH:
+// 			printf("SENDFINISH:%d\n", dwSize);
+// 			break;
+// 		case OP_INIT:
+// 			printf("INIT:%d\n", dwSize);
+// 			break;
+// 
+// 		}
+		
 		if(buff->m_Opcode != OP_RECV_DONE && dwSize == 32 )
 		{
 			//server->SetOpCode(buff, OP_RECV_DONE);
@@ -283,7 +303,7 @@ UINT WINAPI IOCPServer::WorkerThread(LPVOID arg)
 			server->OnInit(buff);
 			break;
 		case OP_RECV:
-			server->OnRecv(buff, buff->m_RecvBuf, BUFSIZE);
+			server->OnRecv(buff, buff->m_RecvBuf, dwSize);
 			break;
 		case OP_RECV_DONE:
 			server->OnRecvFinish(buff, dwSize);
@@ -296,7 +316,11 @@ UINT WINAPI IOCPServer::WorkerThread(LPVOID arg)
 			break;
 		case OP_DISCONNECT:
 			buff->m_ReconnectCount++;
-			if(buff->m_ReconnectCount < 40) server->OnInit(buff);
+			if(buff->m_ReconnectCount < 100)
+			{
+					server->OnInit(buff);
+					printf("*****\n");
+			}
 			else buff->m_ReconnectCount = 0;
 			
 			break;
@@ -316,6 +340,7 @@ void IOCPServer::OnInit(IOBuffer* _buff)
 {
 	BOOL bSuccess;
 	this->SetOpCode(_buff, OP_RECV);
+	//printf("INIT ID : %d, %d, %d", _buff->m_Id, _buff->m_iSendbytes, _buff->m_iSendbytesCount);
 	bSuccess = PostQueuedCompletionStatus(m_hIO, 0, (ULONG_PTR)_buff, &(_buff->m_Overlapped));
 
 	if ( !bSuccess && WSAGetLastError() != ERROR_IO_PENDING )
@@ -326,27 +351,33 @@ void IOCPServer::OnInit(IOBuffer* _buff)
 
 void IOCPServer::OnRecv(IOBuffer* _buff, char* _recvBuff, int _size)
 {
-	if(_size == 0)
+ 	/*if(_size == 0)
+ 	{
+ 		_buff->m_Connect = FALSE;
+ 		_buff->m_pPlayer->m_Connect = FALSE;
+ 		printf("어디냐1\n");
+ 	}
+ 	else if(_size != 0 && _buff->m_Connect == FALSE)
+ 	{
+ 		_buff->m_Connect = TRUE;
+ 		_buff->m_pPlayer->m_Connect = TRUE;
+ 		printf("어디냐2\n");
+ 	}*/
+
+	if(_size != 0)
 	{
-		_buff->m_Connect = FALSE;
-		_buff->m_pPlayer->m_Connect = FALSE;
-		//printf("어디냐1\n");
-	}
-	else if(_size != 0 && _buff->m_Connect == FALSE)
-	{
-		_buff->m_Connect = TRUE;
-		_buff->m_pPlayer->m_Connect = TRUE;
-		//printf("어디냐2\n");
+		int q;
+		q = 0;
 	}
 
 	DWORD dwRecv = 0, dwFlags = 0;
 	WSABUF buffRecv;
-	//printf("RECV: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
+	//printf("RECV: %d, %d, SIZE : %d \n", _buff->m_Id, _buff->m_Opcode, _size);
 
 	this->SetOpCode(_buff, OP_RECV_DONE);
 
 	buffRecv.buf = _recvBuff;
-	buffRecv.len = _size;
+	buffRecv.len = BUFSIZE;
 
 	_buff->m_MinionCount++;
 	int retval = WSARecv(_buff->m_ClientSock, &buffRecv, 1, &dwRecv, &dwFlags, &(_buff->m_Overlapped), NULL);
@@ -362,18 +393,18 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 {
 	if(_size == 0)
 	{
-		_buff->m_Connect = FALSE;
-		_buff->m_pPlayer->m_Connect = FALSE;
- 		SetOpCode(_buff, OP_DISCONNECT);
- 		BOOL bSuccess = PostQueuedCompletionStatus(m_hIO, 0, (ULONG_PTR)_buff, &(_buff->m_Overlapped));
-		//printf("어디냐3\n");
+		//_buff->m_Connect = FALSE;
+		//_buff->m_pPlayer->m_Connect = FALSE;
+ 		//SetOpCode(_buff, OP_DISCONNECT);
+ 		//BOOL bSuccess = PostQueuedCompletionStatus(m_hIO, 0, (ULONG_PTR)_buff, &(_buff->m_Overlapped));
+	//	printf("어디냐3\n");
 		return;
 	}
 	else if(_size != 0 && _buff->m_Connect == FALSE)
 	{
-		_buff->m_Connect = TRUE;
-		_buff->m_pPlayer->m_Connect = TRUE;
-		//printf("어디냐4\n");
+		//_buff->m_Connect = TRUE;
+		//_buff->m_pPlayer->m_Connect = TRUE;
+	//	printf("어디냐4\n");
 	}
 
 	Player* play;
@@ -427,10 +458,10 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 
 		if(_buff->m_Connect)
 		{
-			//printf("ID : %d, x: %3f, y: %3f, z : %3f, size : %d \n", play->m_PI->PI.m_ID, play->m_PI->PI.m_Pos.x, play->m_PI->PI.m_Pos.y, play->m_PI->PI.m_Pos.z, play->m_PI->size);
+		//	printf("ID : %d, x: %3f, y: %3f, z : %3f, size : %d \n", play->m_PI->PI.m_ID, play->m_PI->PI.m_Pos.x, play->m_PI->PI.m_Pos.y, play->m_PI->PI.m_Pos.z, play->m_PI->size);
 			this->SetOpCode(_buff, OP_SEND_FINISH);
 			this->SendPacket(_buff, HERODATA, play->m_PI, sizeof(PlayerPacket));
-			//printf("2: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
+		//	printf("2: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
 		}
 		play = play->m_pNext;
 	}
@@ -444,8 +475,8 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 		
 	}
 
-	BOOL bSuccess = PostQueuedCompletionStatus(m_hIO, 0, (ULONG_PTR)_buff, &(_buff->m_Overlapped));
-	_buff->m_bSendFinish = TRUE;
+	//BOOL bSuccess = PostQueuedCompletionStatus(m_hIO, 0, (ULONG_PTR)_buff, &(_buff->m_Overlapped));
+	//_buff->m_bSendFinish = TRUE;
 	
 }
 
@@ -499,17 +530,20 @@ void IOCPServer::OnSendFinish(IOBuffer* _buff, DWORD _size)
 
 	}
  
- //	printf("1: %d,   2: %d \n", _buff->m_iSendbytes, _buff->m_iSendbytesCount);
+ 	//printf("7: %d,   2: %d \n", _buff->m_iSendbytes, _buff->m_iSendbytesCount);
  
 	//printf("4: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
 	if(_buff->m_iSendbytes != _buff->m_iSendbytesCount)
 	{
-		//printf("%d, %d \n", _buff->m_iSendbytes, _buff->m_iSendbytesCount);
+	//	printf("8: %d, %d \n", _buff->m_iSendbytes, _buff->m_iSendbytesCount);
+		//_buff->m_iSendbytes = 0;
+		//_buff->m_iSendbytesCount = 0;
 	}
- 	//if(_buff->m_iSendbytes == _buff->m_iSendbytesCount || _buff->m_iSendbytes > 3400)
-	if(_buff->m_bSendFinish)
+ 	if(_buff->m_iSendbytes == _buff->m_iSendbytesCount || _buff->m_iSendbytes > 140)
+	//if(_buff->m_iSendbytes == 8)
  	{
-		//printf("어디냐");
+	//	printf("어디냐 9 \n");
+		printf("SUCCESS!!\n");
  		_buff->m_iSendbytes = 0;
  		_buff->m_iSendbytesCount = 0;
 
@@ -536,7 +570,7 @@ BOOL IOCPServer::SendData(float _dt)
 	{
 		
 
-		printf("ID : %d, x: %.1f, y: %.1f, z : %.1f \n", play->m_PI->PI.m_ID, play->m_PI->PI.m_Pos.x, play->m_PI->PI.m_Pos.y, play->m_PI->PI.m_Pos.z);
+		//printf("ID : %d, x: %.1f, y: %.1f, z : %.1f \n", play->m_PI->PI.m_ID, play->m_PI->PI.m_Pos.x, play->m_PI->PI.m_Pos.y, play->m_PI->PI.m_Pos.z);
 		
 
 		play = play->m_pNext;
@@ -638,11 +672,11 @@ void IOCPServer::SendPacket(IOBuffer* _buffer, int NetworkCode, void *_packet, i
 
 void IOCPServer::ArrangeDataInfo(float _dt)
 {
-// 	if(m_iClientCount) return;
-// 
+ 	if(m_iClientCount < 1) return;
+
 // 	Arrange.SetTime(_dt);
 // 	Arrange.RegenMinion();
-// 	Arrange.SetMinionPosition(_dt);
-// 
+ //	Arrange.SetMinionPosition(_dt);
+ 
 // 	Arrange.CheckMinionLive();
 }

@@ -243,7 +243,7 @@ void HeroObject::Update(float fTimeElapsed)
 void HeroObject::Animate(float fTimeElapsed)
 {
 	m_time += fTimeElapsed * 2.0f;
-	//printf(" %.3f \n", m_time);
+	printf(" %.1f \n", m_time);
 	if(m_iState == IDLE)
 	{
 		switch(m_iType)
@@ -314,7 +314,7 @@ void HeroObject::Animate(float fTimeElapsed)
 
 		if(m_pTarget == NULL) return;
 		
-		if(ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 15.f && m_pTarget->GetTeam() != this->GetTeam())
+		if(ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 25.f && m_pTarget->GetTeam() != this->GetTeam())
 			m_iState = ATTACK;
 	}
 	else if(m_iState == DEATH)

@@ -64,6 +64,10 @@ public:
 	
 	void CheckMinionLive();
 
-	int SetID();	
-	
+	int SetID();
+
+	void AttackData()
+	{
+
+	}
 };
