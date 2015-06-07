@@ -27,6 +27,7 @@ HeroObject::HeroObject(void)
 	m_iparticleNum = 500;
 	m_bUseParticle = FALSE;
 	m_bUseParticleMissile = FALSE;
+	m_bUseParticleAttack = FALSE;
 
 	node_t* temp;
 
@@ -277,11 +278,37 @@ void HeroObject::Animate(float fTimeElapsed)
 			break;
 		case WIZARD:
 			if(m_time < 20.0f) m_time = 20.0f;
-			if(m_time > 23.0f) m_time = 20.0f;
+			if(m_time > 21.5f && m_time < 22.0f)
+			{
+				if(m_bUseParticleAttack == FALSE)
+				{
+					for(int i=0; i<MAX_PARTICLE; i++)
+					{
+						if(ParticleManager::sharedManager()->m_pParticle[i] == NULL) continue;
+						if(ParticleManager::sharedManager()->m_pParticle[i]->GetUsed() == TRUE) continue;
+
+						if(ParticleManager::sharedManager()->m_pParticle[i]->GetType() == WIZARD_ATTACK)
+						{
+							D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
+							ParticleManager::sharedManager()->m_pParticle[i]->SetPosition(m_Pos + D3DXVECTOR3(0 , BoundsizeY *2/3, 0) + m_vWalkIncrement*20);
+							ParticleManager::sharedManager()->m_pParticle[i]->SetUsed(TRUE);
+							ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(m_pTarget);
+							ParticleManager::sharedManager()->m_pParticle[i]->SetAttacker(this);
+							m_bUseParticleAttack = TRUE;
+							break;
+						}
+					}
+				}
+			}
+			if(m_time > 23.0f) 
+			{
+				m_time = 20.0f;
+				m_bUseParticleAttack = FALSE;
+			}
 			break;
 		}
 
-		if(m_pTarget->GetHP() < 1 || ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) > 40.0f)
+		if(m_pTarget->GetHP() < 1 || ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) > 50.0f)
 		{
 			m_pTarget = NULL;
 			m_fAttackTime = 0.0f;
@@ -320,20 +347,23 @@ void HeroObject::Animate(float fTimeElapsed)
 		switch(m_iType)
 		{
 		case KNIGHT:
+			if(m_pTarget != NULL && 
+				ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 25.f && m_pTarget->GetTeam() != this->GetTeam())
+				m_iState = ATTACK;
+
 			if(m_time < 57.5f) m_time = 57.5f;
 			if(m_time > 59.7f ) m_time = 57.5f;
 			break;
 		case WIZARD:
+			if(m_pTarget != NULL && 
+				ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 50.f && m_pTarget->GetTeam() != this->GetTeam())
+				m_iState = ATTACK;
+
 			if(m_time < 68.0f) m_time = 68.0f;
 			if(m_time > 70.3f ) m_time = 68.0f;
 			break;
 		}
 		m_fAttackTime = 0.f;
-
-		if(m_pTarget == NULL) return;
-		
-		if(ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 25.f && m_pTarget->GetTeam() != this->GetTeam())
-			m_iState = ATTACK;
 	}
 	else if(m_iState == DEATH)
 	{
@@ -400,10 +430,18 @@ void HeroObject::Animate(float fTimeElapsed)
 						if(ParticleManager::sharedManager()->m_pParticle[i]->GetType() == WIZARD_SKILL_MISSILE)
 						{
 							ParticleManager::sharedManager()->m_pParticle[i]->SetUsed(TRUE);
-							ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(this);
+							for(int j=0;j<MAX_OTHER_PLAYER; j++)
+							{
+								if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetVisible() != TRUE) continue;
+								ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]);
+								break;
+							}
+							if(ParticleManager::sharedManager()->m_pParticle[i]->GetTarget() == NULL)
+								ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(this);
 							D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
 							ParticleManager::sharedManager()->m_pParticle[i]->SetDirection(m_vWalkIncrement);
 							ParticleManager::sharedManager()->m_pParticle[i]->SetPosition(D3DXVECTOR3(m_Pos.x, m_Pos.y + 10, m_Pos.z) + m_vWalkIncrement * 30);
+							ParticleManager::sharedManager()->m_pParticle[i]->SetAttacker(this);
 							m_bUseParticleMissile = TRUE;
 							break;
 						}

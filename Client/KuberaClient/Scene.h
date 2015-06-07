@@ -44,7 +44,7 @@ private:
 	GFBX::Mesh *m_pWizardMesh;
 	CFBXMesh *pMinionDragonMesh;
 	ParticleMesh *m_pParticleMesh;
-	Particle2Mesh *m_pParticle2Mesh;
+	Particle3Mesh *m_pParticle2Mesh;
 	Particle3Mesh *m_pParticle3Mesh;
 
 	float m_fMinionRespawnTime;

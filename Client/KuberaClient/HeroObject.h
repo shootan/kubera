@@ -5,6 +5,7 @@
 #include "MissileManager.h"
 #include "FBX\GFBXMesh.h"
 #include "ParticleManager.h"
+#include "OtherPlayerManager.h"
 
 class HeroObject : public CGameObject
 {
@@ -25,6 +26,7 @@ private:
 	int m_iparticleNum;
 	BOOL m_bUseParticle;
 	BOOL m_bUseParticleMissile;
+	BOOL m_bUseParticleAttack;
 public:
 	HeroObject();
 	~HeroObject();

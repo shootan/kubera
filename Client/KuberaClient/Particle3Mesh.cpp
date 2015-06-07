@@ -27,6 +27,7 @@ Particle3Mesh::Particle3Mesh(ID3D11Device *pd3dDevice) : CMesh(pd3dDevice)
 	m_fLastAddedTime = 0.f;
 	m_vDir = D3DXVECTOR3(1, 0, 0);
 	m_fTTL = 0.6f;
+	m_vScale = D3DXVECTOR2(10, 10);
 
 	m_vCamRight = D3DXVECTOR3(0, 0, 0);
 	m_vCamUp = D3DXVECTOR3(0, 0, 0);

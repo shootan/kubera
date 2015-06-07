@@ -39,6 +39,7 @@ private:
 	FLOAT	m_fLastAddedTime;
 	D3DXVECTOR3	m_vDir;
 	FLOAT	m_fTTL;
+	D3DXVECTOR2	m_vScale;
 
 	D3DXVECTOR3 m_vCamRight;
 	D3DXVECTOR3 m_vCamUp;
@@ -53,6 +54,7 @@ public:
 	virtual bool LoadTexture(ID3D11Device*, WCHAR*);
 	virtual void ReleaseTexture();
 	virtual void Frame(float frametime);
+	virtual void SetScale(D3DXVECTOR2 _scale){ m_vScale = _scale; } 
 
 	bool Initialize(ID3D11Device*, WCHAR*);
 	bool InitializeBuffers(ID3D11Device*);
@@ -62,6 +64,7 @@ public:
 	void UpdateParticles(float);
 	void KillParticles();
 	bool UpdateBuffers(ID3D11DeviceContext*);
+	
 	//bool Frame(float frameTime, ID3D11DeviceContext* deviceContext);
 
 	ID3D11ShaderResourceView* GetTexture();

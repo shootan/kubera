@@ -98,16 +98,18 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pParticleMesh = new ParticleMesh(pd3dDevice);
 	m_pParticleMesh->Initialize(pd3dDevice, L"effect/star.dds");
 
-	m_pParticle2Mesh = new Particle2Mesh(pd3dDevice);
-	m_pParticle2Mesh->Initialize(pd3dDevice, L"effect/rocketlauncher_fx-2.tif");
+	m_pParticle2Mesh = new Particle3Mesh(pd3dDevice);
+	m_pParticle2Mesh->Initialize(pd3dDevice, L"effect/star.dds");
+	m_pParticle2Mesh->SetScale(D3DXVECTOR2(5, 5));
 
 	m_pParticle3Mesh = new Particle3Mesh(pd3dDevice);
 	m_pParticle3Mesh->Initialize(pd3dDevice, L"effect/rocketlauncher_fx-2.tif");
 
 	//파티클 생성
 	for(int i=0; i<4; i++)
-	ParticleManager::sharedManager()->CreateParticle(D3DXVECTOR3(1200, 10, 0), m_pParticleMesh, WIZARD_SKILL_BODY);
-	//ParticleManager::sharedManager()->CreateParticle(D3DXVECTOR3(400, 10, 0), m_pParticle2Mesh, 0);
+		ParticleManager::sharedManager()->CreateParticle(D3DXVECTOR3(1200, 10, 0), m_pParticleMesh, WIZARD_SKILL_BODY);
+	for(int i=0; i<30; i++)
+		ParticleManager::sharedManager()->CreateParticle(D3DXVECTOR3(400, 10, 0), m_pParticle2Mesh, WIZARD_ATTACK);
 	for(int i=0; i<10; i++)
 		ParticleManager::sharedManager()->CreateParticle(D3DXVECTOR3(1200, 10, 0), m_pParticle3Mesh, WIZARD_SKILL_MISSILE);
 	//히어로 생성
@@ -430,11 +432,10 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext, float fTimeElapsed)
 		m_pParticleShaders->UpdateShaderVariables(pd3dDeviceContext, &ParticleManager::sharedManager()->m_pParticle[i]->m_d3dxmtxWorld);
 		ParticleManager::sharedManager()->m_pParticle[i]->Render(pd3dDeviceContext);
 	}
-	//ParticleManager::sharedManager()->m_pParticle[0]->SetPosition(HeroManager::sharedManager()->m_pHero->GetPosition());
 	TurnOffAlphaBlending(pd3dDeviceContext, m_particleDisableBlendingState);
 
 	m_pParticleMesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
-	//m_pParticle2Mesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
+	m_pParticle2Mesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
 	m_pParticle3Mesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
 }
 

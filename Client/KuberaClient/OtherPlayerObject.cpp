@@ -18,6 +18,7 @@ OtherPlayerObject::OtherPlayerObject(void)
 	m_iparticleNum = 500;
 	m_bUseParticle = FALSE;
 	m_bUseParticleMissile = FALSE;
+	m_bUseParticleAttack = FALSE;
 }
 
 OtherPlayerObject::~OtherPlayerObject(void)
@@ -162,11 +163,37 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 			break;
 		case WIZARD:
 			if(m_Time < 20.0f) m_Time = 20.0f;
-			if(m_Time > 23.0f) m_Time = 20.0f;
+			if(m_Time > 21.5f && m_Time < 22.0f)
+			{
+				if(m_bUseParticleAttack == FALSE)
+				{
+					for(int i=0; i<MAX_PARTICLE; i++)
+					{
+						if(ParticleManager::sharedManager()->m_pParticle[i] == NULL) continue;
+						if(ParticleManager::sharedManager()->m_pParticle[i]->GetUsed() == TRUE) continue;
+
+						if(ParticleManager::sharedManager()->m_pParticle[i]->GetType() == WIZARD_ATTACK)
+						{
+							D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
+							ParticleManager::sharedManager()->m_pParticle[i]->SetPosition(m_Pos + D3DXVECTOR3(0 , BoundsizeY *2/3, 0) + m_vWalkIncrement*20);
+							ParticleManager::sharedManager()->m_pParticle[i]->SetUsed(TRUE);
+							ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(m_pTarget);
+							ParticleManager::sharedManager()->m_pParticle[i]->SetAttacker(this);
+							m_bUseParticleAttack = TRUE;
+							break;
+						}
+					}
+				}
+			}
+			if(m_Time > 23.0f) 
+			{
+				m_Time = 20.0f;
+				m_bUseParticleAttack = FALSE;
+			}
 			break;
 		}
 
-		if(m_pTarget->GetHP() < 1 || ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) > 40.0f)
+		if(m_pTarget->GetHP() < 1 || ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) > 50.0f)
 		{
 			m_pTarget = NULL;
 			m_fAttackTime = 0.0f;
@@ -204,20 +231,23 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 		switch(m_iType)
 		{
 		case KNIGHT:
+			if(m_pTarget != NULL && 
+				ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 25.f && m_pTarget->GetTeam() != this->GetTeam())
+				m_iState = ATTACK;
+
 			if(m_Time < 57.5f) m_Time = 57.5f;
 			if(m_Time > 59.7f ) m_Time = 57.5f;
 			break;
 		case WIZARD:
+			if(m_pTarget != NULL && 
+				ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 50.f && m_pTarget->GetTeam() != this->GetTeam())
+				m_iState = ATTACK;
+
 			if(m_Time < 68.0f) m_Time = 68.0f;
 			if(m_Time > 70.3f ) m_Time = 68.0f;
 			break;
 		}
 		m_fAttackTime = 0.f;
-
-		if(m_pTarget == NULL) return;
-		
-		if(ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 40.f && m_pTarget->GetTeam() != this->GetTeam())
-			m_iState = ATTACK;
 	}
 	else if(m_iState == DEATH)
 	{

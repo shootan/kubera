@@ -45,10 +45,10 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
   	scanf("%s", IP);
   	Net.InitClient(IP, 9000);
  
-//   	while (Net.m_InitFinish)
-//   	{
-//   		Sleep(100);
-//   	}
+   	while (Net.m_InitFinish)
+   	{
+   		Sleep(100);
+   	}
  	
 	int herotype1 = Net.m_Type;
 
@@ -606,7 +606,7 @@ void CGameFramework::SendHeroData()
 		HeroInfo.PI.m_ID = Net.m_ID;
 		HeroInfo.PI.m_HP = HeroManager::sharedManager()->m_pHero->GetHP();
 		HeroInfo.PI.m_Damage = HeroManager::sharedManager()->m_pHero->GetDamage();
-		HeroInfo.PI.m_Damage = HeroManager::sharedManager()->m_pHero->GetRot();
+		HeroInfo.PI.m_Rot = HeroManager::sharedManager()->m_pHero->GetRot();
 		HeroInfo.PI.m_Type = HeroManager::sharedManager()->m_pHero->GetType();
 		HeroInfo.size = sizeof(PlayerPacket);
 

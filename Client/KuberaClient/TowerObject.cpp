@@ -91,20 +91,34 @@ void TowerObject::Update(float fTimeElapsed)
 		return;
 	}
 	
-	for(int i=0; i<MAX_MISSILE; i++)
+	for(int i=0; i<MAX_PARTICLE; i++)
 	{
+		if(ParticleManager::sharedManager()->m_pParticle[i] == NULL) continue;
 		if(MissileManager::sharedManager()->m_pMissile[i]->GetUsed() == TRUE) continue;
 
-		if(m_fAttackTime >= 2.0f)
-		{
-			D3DXVECTOR3 p = m_Pos;
-			//p.y+= 5.0f;
-			MissileManager::sharedManager()->m_pMissile[i]->SetPosition(p + D3DXVECTOR3(0, BoundsizeY * 2/3, 0));
-			MissileManager::sharedManager()->m_pMissile[i]->SetUsed(TRUE);
-			MissileManager::sharedManager()->m_pMissile[i]->SetTarget(m_pTarget);
-			MissileManager::sharedManager()->m_pMissile[i]->SetAttacker(this);
 
-			m_fAttackTime = 0.f;
+		if(ParticleManager::sharedManager()->m_pParticle[i]->GetType() == WIZARD_ATTACK)
+		{
+			if(m_fAttackTime >= 1.3f)
+			{
+				ParticleManager::sharedManager()->m_pParticle[i]->SetPosition(m_Pos + D3DXVECTOR3(0, BoundsizeY * 2/3, 0));
+				ParticleManager::sharedManager()->m_pParticle[i]->SetUsed(TRUE);
+				ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(m_pTarget);
+				ParticleManager::sharedManager()->m_pParticle[i]->SetAttacker(this);
+
+				m_fAttackTime = 0.f;
+			}
+
+		//if(m_fAttackTime >= 2.0f)
+		//{
+		//	D3DXVECTOR3 p = m_Pos;
+		//	//p.y+= 5.0f;
+		//	MissileManager::sharedManager()->m_pMissile[i]->SetPosition(p + D3DXVECTOR3(0, BoundsizeY * 2/3, 0));
+		//	MissileManager::sharedManager()->m_pMissile[i]->SetUsed(TRUE);
+		//	MissileManager::sharedManager()->m_pMissile[i]->SetTarget(m_pTarget);
+		//	MissileManager::sharedManager()->m_pMissile[i]->SetAttacker(this);
+
+
 		}
 	}
 }

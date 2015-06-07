@@ -18,6 +18,7 @@ private:
 	int m_iparticleNum;
 	BOOL m_bUseParticle;
 	BOOL m_bUseParticleMissile;
+	BOOL m_bUseParticleAttack;
 public:
 	OtherPlayerObject();
 	~OtherPlayerObject();
