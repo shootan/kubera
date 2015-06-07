@@ -12,6 +12,8 @@ public:
 	int Check8;
 	int Check3000;
 	int Check0;
+	int save1;
+	int save2;
 	ArrangeData Arrange;
 
 	//리스트로 관리해줄 포인터

@@ -15,6 +15,7 @@ int main()
 	Server.StartServer(9000);
 	Server.Arrange.SetRoot();
 
+	int count =  0;
 	float time = 0.0f;
 	
 	int si = sizeof(int);
@@ -26,14 +27,18 @@ int main()
 	while(1)
 	{
 		Timer.Tick(60);
+		//count ++;
 		//system("cls");
 		//Timer.GetFrameRate();
 
-		//printf("8: %d, 3024 : %d   0 : %d .\n", Server.Check8, Server.Check3000, Server.Check0);
+		//printf("8: %d, 44 : %d   0 : %d, save1  : %d .\n", Server.Check8, Server.Check3000, Server.Check0, Server.save1);
 		
 		Server.ArrangeDataInfo(Timer.GetTimeElapsed());
-
-		Server.SendData(Timer.GetTimeElapsed());
+		//if(count > 1)
+		//{
+		//	Server.SendData(Timer.GetTimeElapsed());
+		//}
+		
 	}
 	return 0;
 }
