@@ -44,6 +44,7 @@ struct PlayerInfo{
 	int		m_Type;
 	Vector3 m_Pos;
 	float	m_HP;
+	float	m_Rot;
 	float	m_Damage;
 };
 
