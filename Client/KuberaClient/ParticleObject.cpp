@@ -118,21 +118,21 @@ void ParticleObject::Update(float fTimeElapsed)
 
 		m_Pos += m_vWalkIncrement * fTimeElapsed * m_fWalkSpeed;
 
-
-		if (ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) <= 5.f)
+		if(m_pTarget->GetTag() != EFFECT)
 		{
-			m_pTarget->SetAttackDamage(m_pAttacker->GetDamage());
-			//m_pTarget = NULL;
-			m_Pos = D3DXVECTOR3(1200, 0, 0);
-			m_bUsed = FALSE;
-		}
-
-
-		if (ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) >= 100.f)
-		{
-			m_pTarget = NULL;
-			m_Pos = D3DXVECTOR3(1200, 0, 0);
-			m_bUsed = FALSE;
+			if (ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) <= 5.f)
+			{
+				m_pTarget->SetAttackDamage(m_pAttacker->GetDamage());
+				m_pTarget = NULL;
+				m_Pos = D3DXVECTOR3(1200, 0, 0);
+				m_bUsed = FALSE;
+			}
+			else if (ST::sharedManager()->GetDistance(this->GetPos(), m_pAttacker->GetPos()) >= 100.f)
+			{
+				m_pTarget = NULL;
+				m_Pos = D3DXVECTOR3(1200, 0, 0);
+				m_bUsed = FALSE;
+			}
 		}
 	}
 	else if(m_iType == WIZARD_ATTACK)

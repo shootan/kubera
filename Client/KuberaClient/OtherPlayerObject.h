@@ -4,6 +4,7 @@
 #include "FBX\GFBXMesh.h"
 #include "ParticleManager.h"
 
+
 class OtherPlayerObject : public CGameObject
 {
 private:

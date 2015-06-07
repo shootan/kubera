@@ -324,10 +324,11 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 						if(ParticleManager::sharedManager()->m_pParticle[i]->GetType() == WIZARD_SKILL_MISSILE)
 						{
 							ParticleManager::sharedManager()->m_pParticle[i]->SetUsed(TRUE);
-							ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(this);
+							ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(ParticleManager::sharedManager()->m_pParticle[i]);
 							D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
 							ParticleManager::sharedManager()->m_pParticle[i]->SetDirection(m_vWalkIncrement);
 							ParticleManager::sharedManager()->m_pParticle[i]->SetPosition(D3DXVECTOR3(m_Pos.x, m_Pos.y + 10, m_Pos.z) + m_vWalkIncrement * 30);
+							ParticleManager::sharedManager()->m_pParticle[i]->SetAttacker(this);
 							m_bUseParticleMissile = TRUE;
 							break;
 						}

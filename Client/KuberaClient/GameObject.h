@@ -3,6 +3,7 @@
 #include "header.h"
 //#include "astarclass.h"
 
+
 class CGameObject
 {
 public:

@@ -109,7 +109,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	for(int i=0; i<4; i++)
 		ParticleManager::sharedManager()->CreateParticle(D3DXVECTOR3(1200, 10, 0), m_pParticleMesh, WIZARD_SKILL_BODY);
 	for(int i=0; i<30; i++)
-		ParticleManager::sharedManager()->CreateParticle(D3DXVECTOR3(400, 10, 0), m_pParticle2Mesh, WIZARD_ATTACK);
+		ParticleManager::sharedManager()->CreateParticle(D3DXVECTOR3(1200, 10, 0), m_pParticle2Mesh, WIZARD_ATTACK);
 	for(int i=0; i<10; i++)
 		ParticleManager::sharedManager()->CreateParticle(D3DXVECTOR3(1200, 10, 0), m_pParticle3Mesh, WIZARD_SKILL_MISSILE);
 	//히어로 생성
@@ -270,6 +270,11 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 	for(int i=0; i<MAX_PARTICLE; i++)
 	{
 		if(ParticleManager::sharedManager()->m_pParticle[i] == NULL) continue;
+
+		if(ParticleManager::sharedManager()->m_pParticle[i]->GetTarget() != NULL &&
+			ParticleManager::sharedManager()->m_pParticle[i]->GetTarget()->GetTag() == EFFECT)
+			ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(HeroManager::sharedManager()->m_pHero);
+
 		ParticleManager::sharedManager()->m_pParticle[i]->Update(fTimeElapsed);
 	}
 
