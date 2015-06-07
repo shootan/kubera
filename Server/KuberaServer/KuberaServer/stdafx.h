@@ -49,6 +49,7 @@ struct PlayerPacket
 struct Player{
 	int m_Id;
 	BOOL m_Connect;
+	float	m_AttackTime;
 	PlayerPacket*	m_PI;
 	Player*			m_pNext;
 };

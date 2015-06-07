@@ -55,7 +55,7 @@ public:
 	void SetRoot();
 	void SetMinionPosition(float _dt);
 	void RegenMinion();
-	void SetTime(float _time);
+	void SetTime(float _time, IOBuffer* _list);
 
 	void SetRoot1();
 	void SetRoot2();
@@ -66,8 +66,5 @@ public:
 
 	int SetID();
 
-	void AttackData()
-	{
-
-	}
+	void AttackData(IOBuffer* _list);
 };

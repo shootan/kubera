@@ -25,6 +25,9 @@ public:
 	int		m_ID;
 	Vector3 m_Pos;
 	float	m_HP;
+	int		m_Type;
+
+	BOOL	m_InitFinish;
 
 	Network();
 	~Network();

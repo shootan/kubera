@@ -45,17 +45,22 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
   	scanf("%s", IP);
   	Net.InitClient(IP, 9000);
  
-  	while (Net.m_ID == 0)
+  	while (Net.m_InitFinish)
   	{
   		Sleep(100);
   	}
  	
-	int herotype1;
+	int herotype1 = Net.m_Type;
+
 	while(TRUE)
 	{
-		printf(" \n\nHero 선택( 1. 워리어, 2. 위자드 ) : ");
+		if(herotype1 == 0)
+		{
+			printf(" \n\nHero 선택( 1. 워리어, 2. 위자드 ) : ");
+
+			scanf("%d", &herotype1);
+		}
 		
-		scanf("%d", &herotype1);
 		if(herotype1 == 1 || herotype1 == 2)
 		{
 			break;
@@ -440,7 +445,7 @@ void CGameFramework::FrameAdvance()
 
 	//////////////////
 
-	if(m_SendTick > 0)
+	if(m_SendTick > 1)
 	{
 		this->SendHeroData();
 		m_SendTick  = 0;
@@ -594,7 +599,7 @@ void CGameFramework::SendHeroData()
 {
 	if(Net.m_ID != 0)
 	{
-		HeroInfo.PI.m_Pos = HeroManager::sharedManager()->m_pHero->GetDestination();
+		HeroInfo.PI.m_Pos = HeroManager::sharedManager()->m_pHero->GetPos();
 		HeroInfo.PI.m_iState = HeroManager::sharedManager()->m_pHero->GetState();
 		HeroInfo.PI.m_iTargetID = HeroManager::sharedManager()->m_pHero->GetTargetID();
 		HeroInfo.PI.m_ID = Net.m_ID;

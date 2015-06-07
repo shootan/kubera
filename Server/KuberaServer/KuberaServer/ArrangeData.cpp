@@ -543,11 +543,27 @@ void ArrangeData::SetMinionPosition(float _dt)
 //	}
 }
 
-void ArrangeData::SetTime(float _time)
+void ArrangeData::SetTime(float _time, IOBuffer* _list)
 {
 	m_fRegenTime += _time;
 	if(m_fRegenTime > 80.0f)
 		m_fUnitTime += _time;
+
+	IOBuffer* Buffer = _list;
+
+	while(Buffer != NULL)
+	{
+		if(!Buffer->m_Connect || Buffer->m_pPlayer->m_PI->PI.m_iState != 1)
+		{
+			Buffer->m_pPlayer->m_AttackTime = 0.0f;
+			Buffer = Buffer->m_pNext;
+			continue;
+		}
+
+		Buffer->m_pPlayer->m_AttackTime += _time;
+		Buffer = Buffer->m_pNext;
+	}
+
 	//printf("%.1f \n", m_fRegenTime);
 }
 
@@ -685,5 +701,56 @@ void ArrangeData::CheckMinionLive()
 		{
 			if(MI4[i].m_Live == TRUE) m_bMinionLive4 = true;
 		}
+	}
+}
+
+void AttackData(IOBuffer* _list)
+{
+	IOBuffer* Buffer = _list;
+	while(Buffer != NULL)
+	{
+		//EnterCriticalSection(&m_BufferListLock);
+		if(!Buffer->m_Connect || Buffer->m_pPlayer->m_PI->PI.m_iState != 1)
+		{
+			Buffer = Buffer->m_pNext;
+			continue;
+		}
+		
+		switch(Buffer->m_pPlayer->m_PI->PI.m_Type)
+		{
+		case 1:
+			if(Buffer->m_pPlayer->m_AttackTime > 4.0f)
+			{
+				IOBuffer* Buffer2 = _list;
+				while(Buffer2 != NULL)
+				{
+					if(Buffer->m_pPlayer->m_PI->PI.m_iTargetID == Buffer2->m_Id)
+					{
+						Buffer2->m_pPlayer->m_PI->PI.m_HP -= Buffer->m_pPlayer->m_PI->PI.m_Damage;
+					}
+					Buffer2 = Buffer2->m_pNext;
+				}
+				Buffer2->m_pPlayer->m_AttackTime = 0.0f;
+			}
+			break;
+		case 2:
+			if(Buffer->m_pPlayer->m_AttackTime > 3.0f)
+			{
+				IOBuffer* Buffer2 = _list;
+				while(Buffer2 != NULL)
+				{
+					if(Buffer->m_pPlayer->m_PI->PI.m_iTargetID == Buffer2->m_Id)
+					{
+						Buffer2->m_pPlayer->m_PI->PI.m_HP -= Buffer->m_pPlayer->m_PI->PI.m_Damage;
+					}
+					Buffer2 = Buffer2->m_pNext;
+				}
+				Buffer2->m_pPlayer->m_AttackTime = 0.0f;
+			}
+			break;
+		}
+
+		Buffer = Buffer->m_pNext;
+		//LeaveCriticalSection(&m_BufferListLock);
 	}
 }

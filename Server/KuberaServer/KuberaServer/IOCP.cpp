@@ -112,7 +112,7 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 			ntohs(pThis->m_ClinetAddr.sin_port), pThis->m_iClientCount); 
 		IOBuffer* buffer;
 
-		/*
+		
 		//IP체크후 동기화
 		buffer = pThis->m_pNextBufferList;
 		while(buffer != NULL)
@@ -138,6 +138,7 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 				send(client_sock, (char*)&buffer->m_Id, sizeof(int), 0);
 				send(client_sock, (char*)&buffer->m_pPlayer->m_PI->PI.m_Pos, sizeof(Vector3), 0);
 				send(client_sock, (char*)&buffer->m_pPlayer->m_PI->PI.m_HP, sizeof(float), 0);
+				send(client_sock, (char*)&buffer->m_pPlayer->m_PI->PI.m_Type, sizeof(int), 0);
 				SameIP = TRUE;
 				CreateIoCompletionPort((HANDLE)client_sock, pThis->m_hIO, (DWORD)buffer, 0);
 				PostQueuedCompletionStatus(pThis->m_hIO, 0, (ULONG_PTR)buffer, &buffer->m_Overlapped);
@@ -146,7 +147,7 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 			buffer = buffer->m_pNext;
 		}
 		//////////////////////////////////////
-		*/
+		
 
 		if(SameIP) continue;
 		pThis->m_iClientCount++;
@@ -196,6 +197,8 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 			}
 			float hp = 500.0f;
 			send(client_sock, (char*)&hp, sizeof(float), 0);
+			float type = 0;
+			send(client_sock, (char*)&type, sizeof(int), 0);
 			Player* pl = new Player;
 			ZeroMemory(pl, sizeof(Player));
 			pl->m_Id = buffer->m_Id;
@@ -397,8 +400,8 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 		//_buff->m_pPlayer->m_Connect = FALSE;
  		//SetOpCode(_buff, OP_DISCONNECT);
  		//BOOL bSuccess = PostQueuedCompletionStatus(m_hIO, 0, (ULONG_PTR)_buff, &(_buff->m_Overlapped));
-	//	printf("어디냐3\n");
-		return;
+	    //printf("어디냐3\n");
+		//return;
 	}
 	else if(_size != 0 && _buff->m_Connect == FALSE)
 	{
@@ -535,7 +538,7 @@ void IOCPServer::OnSendFinish(IOBuffer* _buff, DWORD _size)
 	//printf("4: %d, %d \n", _buff->m_Id, _buff->m_Opcode);
 	if(_buff->m_iSendbytes != _buff->m_iSendbytesCount)
 	{
-	//	printf("8: %d, %d \n", _buff->m_iSendbytes, _buff->m_iSendbytesCount);
+		printf("8: %d, %d \n", _buff->m_iSendbytes, _buff->m_iSendbytesCount);
 		//_buff->m_iSendbytes = 0;
 		//_buff->m_iSendbytesCount = 0;
 	}
@@ -543,7 +546,7 @@ void IOCPServer::OnSendFinish(IOBuffer* _buff, DWORD _size)
 	//if(_buff->m_iSendbytes == 8)
  	{
 	//	printf("어디냐 9 \n");
-		printf("SUCCESS!!\n");
+		//printf("SUCCESS!!\n");
  		_buff->m_iSendbytes = 0;
  		_buff->m_iSendbytesCount = 0;
 
@@ -674,9 +677,9 @@ void IOCPServer::ArrangeDataInfo(float _dt)
 {
  	if(m_iClientCount < 1) return;
 
-// 	Arrange.SetTime(_dt);
+ 	//Arrange.SetTime(_dt, m_pNextBufferList);
 // 	Arrange.RegenMinion();
  //	Arrange.SetMinionPosition(_dt);
- 
+	//Arrange.AttackData(m_pNextBufferList);
 // 	Arrange.CheckMinionLive();
 }
