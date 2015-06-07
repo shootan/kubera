@@ -8,8 +8,10 @@ OtherPlayerObject::OtherPlayerObject(void)
 	m_iTag = OTHERPLAYER;
 	m_Visible = FALSE;
 	m_ID = 0;
+	m_PrevState = IDLE;
 	m_bSetDestination = FALSE;
 	m_iTargetID = 0;
+	m_bWarriorAttack = TRUE;
 
 	m_fAttackTime = 0.0f;
 	m_Time = 0.0f;
@@ -76,7 +78,24 @@ void OtherPlayerObject::Render(ID3D11DeviceContext *pd3dDeviceContext, float fTi
 
 void OtherPlayerObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
 	if(_pos == m_Pos) return;
-	if(m_iState == ATTACK) return;
+	
+	if(m_iState == ATTACK || m_iState == DEATH) return;
+
+	Vector3 f_pos;
+	Vector3 s_pos;
+	f_pos.x = m_Pos.x;
+	f_pos.y = m_Pos.y;
+	f_pos.z = m_Pos.z;
+	s_pos.x = _pos.x;
+	s_pos.y = _pos.y;
+	s_pos.z = _pos.z;
+	float finished = ST::sharedManager()->GetDistance(f_pos, s_pos);
+
+	if(finished > 50.0f)
+	{
+		this->m_Pos = _pos;
+		return;
+	}
 
 	m_vDestination.x = _pos.x;
 	m_vDestination.y = _pos.y;
@@ -112,7 +131,7 @@ bool OtherPlayerObject::InMotion()
 void OtherPlayerObject::Update(float fTimeElapsed)
 {
 	if(m_Visible == FALSE) return;
-	
+
 	if ( InMotion() && m_bSetDestination == TRUE)
 	{
 		D3DXVECTOR3 update_delta = m_vWalkIncrement;
@@ -139,8 +158,9 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 {
 	m_Time += fTimeElapsed*2.0f;
 	//printf(" %.3f \n", m_Time);
-	if(m_iState == IDLE)
+	switch(m_iState)
 	{
+	case IDLE:
 		switch(m_iType)
 		{
 		case KNIGHT:
@@ -152,14 +172,74 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 			if(m_Time > 7.1f) m_Time = 1.1f;
 			break;
 		}
-	}
-	else if(m_iState == ATTACK)
-	{
+		break;
+	case MOVE:
+		if(m_iparticleNum  != 500)
+		{
+			m_bUseParticle = FALSE;
+			m_bUseParticleMissile = FALSE;
+			ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetUsed(FALSE);
+			ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetTarget(NULL);
+			ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetPosition(D3DXVECTOR3(1200, 0, 0));
+		}
+		switch(m_iType)
+		{
+		case KNIGHT:
+// 			if(m_pTarget != NULL && 
+// 				ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 25.f && m_pTarget->GetTeam() != this->GetTeam())
+				//m_iState = ATTACK;
+
+			if(m_Time < 57.5f) m_Time = 57.5f;
+			if(m_Time > 59.7f ) m_Time = 57.5f;
+			break;
+		case WIZARD:
+// 			if(m_pTarget != NULL && 
+// 				ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 50.f && m_pTarget->GetTeam() != this->GetTeam())
+				//m_iState = ATTACK;
+
+			if(m_Time < 68.0f) m_Time = 68.0f;
+			if(m_Time > 70.3f ) m_Time = 68.0f;
+			break;
+		}
+		m_fAttackTime = 0.f;
+		break;
+	case DEATH:
+		switch(m_iType)
+		{
+		case KNIGHT:
+			if(m_Time < 30.0f) m_Time = 30.0f;
+			if(m_Time > 34.0f)
+			{
+				m_Time = 1.1f;
+				//m_iState = IDLE;
+			}
+			break;
+		case WIZARD:
+			if(m_Time < 30.0f) m_Time = 30.0f;
+			if(m_Time > 34.0f)
+			{
+				m_Time = 1.1f;
+				//m_iState = IDLE;
+			}
+
+			break;
+		}
+		break;
+	case ATTACK:
 		switch(m_iType)
 		{
 		case KNIGHT:
 			if(m_Time < 41.0f) m_Time = 41.0f;
-			if(m_Time > 49.0f) m_Time = 41.0f;
+			if(m_Time > 43.0f && m_bWarriorAttack)
+			{
+				m_pTarget->SetAttackDamage(this->m_Damage);
+				m_bWarriorAttack = FALSE;
+			}
+			if(m_Time > 44.0f)
+			{
+				m_bWarriorAttack = TRUE;
+				m_Time = 41.0f;
+			}
 			break;
 		case WIZARD:
 			if(m_Time < 20.0f) m_Time = 20.0f;
@@ -197,83 +277,13 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 		{
 			m_pTarget = NULL;
 			m_fAttackTime = 0.0f;
-			m_iState = IDLE;
+			//m_iState = IDLE;
 			return;
 		}
 		m_fAttackTime += fTimeElapsed;
 
-		/*
-		for(int i=0; i<MAX_MISSILE; i++)
-		{
-			if(MissileManager::sharedManager()->m_pMissile[i]->GetUsed() == TRUE) continue;
-
-			if(m_fAttackTime >= 1.0f)
-			{
-				MissileManager::sharedManager()->m_pMissile[i]->SetPosition(m_Pos + D3DXVECTOR3(0 , BoundsizeY *2/3, 0));
-				MissileManager::sharedManager()->m_pMissile[i]->SetUsed(TRUE);
-				MissileManager::sharedManager()->m_pMissile[i]->SetTarget(m_pTarget);
-				MissileManager::sharedManager()->m_pMissile[i]->SetAttacker(this);
-
-				m_fAttackTime = 0.f;
-			}
-		}*/
-	}
-	else if(m_iState == MOVE)
-	{
-		if(m_iparticleNum  != 500)
-		{
-			m_bUseParticle = FALSE;
-			m_bUseParticleMissile = FALSE;
-			ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetUsed(FALSE);
-			ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetTarget(NULL);
-			ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetPosition(D3DXVECTOR3(1200, 0, 0));
-		}
-		switch(m_iType)
-		{
-		case KNIGHT:
-			if(m_pTarget != NULL && 
-				ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 25.f && m_pTarget->GetTeam() != this->GetTeam())
-				m_iState = ATTACK;
-
-			if(m_Time < 57.5f) m_Time = 57.5f;
-			if(m_Time > 59.7f ) m_Time = 57.5f;
-			break;
-		case WIZARD:
-			if(m_pTarget != NULL && 
-				ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 50.f && m_pTarget->GetTeam() != this->GetTeam())
-				m_iState = ATTACK;
-
-			if(m_Time < 68.0f) m_Time = 68.0f;
-			if(m_Time > 70.3f ) m_Time = 68.0f;
-			break;
-		}
-		m_fAttackTime = 0.f;
-	}
-	else if(m_iState == DEATH)
-	{
-		switch(m_iType)
-		{
-		case KNIGHT:
-			if(m_Time < 30.0f) m_Time = 30.0f;
-			if(m_Time > 34.0f)
-			{
-				m_Time = 1.1f;
-				m_iState = IDLE;
-			}
-			break;
-		case WIZARD:
-			if(m_Time < 30.0f) m_Time = 30.0f;
-			if(m_Time > 34.0f)
-			{
-				m_Time = 1.1f;
-				m_iState = IDLE;
-			}
-
-			break;
-		}
-	}
-	else if(m_iState == SKILL1)
-	{
+		break;
+	case SKILL1:
 		switch(m_iType)
 		{
 		case KNIGHT:
@@ -333,12 +343,12 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 				ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetPosition(D3DXVECTOR3(1200, 0, 0));
 				m_iparticleNum = 500;
 				m_Time = 1.1f;
-				m_iState = IDLE;
+			//	m_iState = IDLE;
 			}
 
 			break;
 		}
-
+		break;
 	}
 	
 }

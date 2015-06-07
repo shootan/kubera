@@ -16,7 +16,8 @@ HeroObject::HeroObject(void)
 	m_pBestWay = NULL;
 	m_bAstar = FALSE;
 	m_bFindPath = FALSE;
-
+	m_bDeathAnimation = FALSE;
+	m_iPrevState = 0;
 	//m_HP = 300.0;
 	m_Damage = 50.0f;
 
@@ -26,6 +27,7 @@ HeroObject::HeroObject(void)
 
 	m_iparticleNum = 500;
 	m_bUseParticle = FALSE;
+	m_bWarriorAttack = TRUE;
 	m_bUseParticleMissile = FALSE;
 	m_bUseParticleAttack = FALSE;
 
@@ -145,24 +147,36 @@ bool HeroObject::InMotion()
 void HeroObject::Update(float fTimeElapsed)
 {
 	if(m_Visible == FALSE) return;
-	
+	if(m_iPrevState != m_iState)
+	{
+		m_time = 1.1f;
+		m_iPrevState = m_iState;
+	}
+
 	if(m_HP < 1.0f)
 	{
-		Vector3 po;
-		if(m_ID % 2 == 0)
+		if(m_bDeathAnimation)
 		{
-			po.x = 510;
-			po.y = 0;
-			po.z = 0;
+			Vector3 po;
+			if(m_ID % 2 == 0)
+			{
+				po.x = 510;
+				po.y = 0;
+				po.z = 0;
+			}
+			else
+			{
+				po.y = 0;
+				po.x = -510;
+				po.z = 0;
+			}
+			m_HP = 500.0f;
+			this->SetPos(po);
+			m_bDeathAnimation = FALSE;
+			return;
 		}
-		else
-		{
-			po.y = 0;
-			po.x = -510;
-			po.z = 0;
-		}
-		m_HP = 500.0f;
-		this->SetPos(po);
+		m_iState = DEATH;
+		return;
 	}
 	if(m_iState != MOVE) return;
 
@@ -274,7 +288,16 @@ void HeroObject::Animate(float fTimeElapsed)
 		{
 		case KNIGHT:
 			if(m_time < 41.0f) m_time = 41.0f;
-			if(m_time > 49.0f) m_time = 41.0f;
+			if(m_time > 43.0f && m_bWarriorAttack)
+			{
+				m_pTarget->SetAttackDamage(this->m_Damage);
+				m_bWarriorAttack = FALSE;
+			}
+			if(m_time > 44.0f)
+			{
+				m_bWarriorAttack = TRUE;
+				m_time = 41.0f;
+			}
 			break;
 		case WIZARD:
 			if(m_time < 20.0f) m_time = 20.0f;
@@ -375,6 +398,7 @@ void HeroObject::Animate(float fTimeElapsed)
 			{
 				m_time = 1.1f;
 				m_iState = IDLE;
+				m_bDeathAnimation = TRUE;
 			}
 			break;
 		case WIZARD:
@@ -383,6 +407,7 @@ void HeroObject::Animate(float fTimeElapsed)
 			{
 				m_time = 1.1f;
 				m_iState = IDLE;
+				m_bDeathAnimation = TRUE;
 			}
 
 			break;

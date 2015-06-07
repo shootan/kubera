@@ -45,11 +45,11 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
   	scanf("%s", IP);
   	Net.InitClient(IP, 9000);
  
-   	while (Net.m_InitFinish)
-   	{
-   		Sleep(100);
-   	}
- 	
+    	while (Net.m_InitFinish)
+    	{
+    		Sleep(100);
+    	}
+  	
 	int herotype1 = Net.m_Type;
 
 	while(TRUE)

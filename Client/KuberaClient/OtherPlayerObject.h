@@ -9,9 +9,12 @@ class OtherPlayerObject : public CGameObject
 private:
 	
 	BOOL m_bSetDestination;	
+	BOOL m_bWarriorAttack;
 
 	float m_fAttackTime;
 	float m_Time;
+
+	int m_PrevState;
 
 	GFBX::Mesh *m_pAniMesh;
 

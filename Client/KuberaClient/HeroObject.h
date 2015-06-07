@@ -13,9 +13,12 @@ private:
 	D3DXVECTOR3 m_vAstarIncrement;
 	BOOL m_bMove;
 	float m_time;
+	BOOL m_bWarriorAttack;
 	
 	float m_fAttackTime;
+	int m_iPrevState;
 
+	BOOL m_bDeathAnimation;
 	Astar* m_pAstar;
 	node_t* m_pBestWay;
 	BOOL m_bAstar;
