@@ -3,43 +3,6 @@
 #include "Network.h"
 #include "ArrangeData.h"
 
-typedef enum OPCODE
-{
-	OP_INIT,
-	OP_RECV,
-	OP_RECV_DONE,
-	OP_SEND,
-	OP_SEND_FINISH,
-	OP_DISCONNECT
-} OPCODE;
-
-struct Player{
-	int m_Id;
-	BOOL m_Connect;
-	PlayerPacket*	m_PI;
-	Player*			m_pNext;
-};
-
-struct IOBuffer{
-	SOCKET		m_ClientSock;
-	int			m_Id;
-	OVERLAPPED	m_Overlapped;
-	char		m_RecvBuf[BUFSIZE]; 
-	char		m_SendBuf[BUFSIZE]; 
-	int			m_iRecvbytes;
-	int			m_iSendbytes;
-	int			m_iSendbytesCount;
-	int			m_MinionCount;
-	int			m_ReconnectCount;
-	BOOL		m_bSendFinish;
-	WSABUF		m_Wsabuf;
-	WSABUF		m_SendWsabuf;
-	OPCODE		m_Opcode;
-	BOOL		m_Connect;
-	IOBuffer*	m_pNext;
-	IOBuffer*	m_pPrev;
-	Player*		m_pPlayer;
-};
 
 
 

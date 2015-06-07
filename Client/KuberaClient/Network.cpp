@@ -12,6 +12,8 @@ Network::Network()
 	m_bJoinPlayer = FALSE;
 	m_ClientCount = 0;
 	m_ID = 0;
+	m_Type = 0;
+	m_InitFinish = TRUE;
 }
 
 Network::~Network()
@@ -110,6 +112,8 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 				retval = recv(server->m_ConnectSock, (char*)&server->m_ID, sizeof(int), 0);
 				retval = recv(server->m_ConnectSock, (char*)&server->m_Pos, sizeof(Vector3), 0);
 				retval = recv(server->m_ConnectSock, (char*)&server->m_HP, sizeof(float), 0);
+				retval = recv(server->m_ConnectSock, (char*)&server->m_Type, sizeof(int), 0);
+				m_InitFinish = TRUE;
 				break;
 			}
 		case HERODATA:

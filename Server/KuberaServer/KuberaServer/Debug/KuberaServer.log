@@ -1,17 +1,15 @@
-﻿빌드 시작: 2015-05-31 오후 4:19:14
+﻿빌드 시작: 2015-06-07 오후 6:50:03
      1>2 노드의 "C:\Users\Cho\Desktop\졸업작품\kubera\Server\KuberaServer\KuberaServer\KuberaServer.vcxproj" 프로젝트(build 대상)입니다.
      1>InitializeBuildStatus:
          "AlwaysCreate"이(가) 지정되었기 때문에 "Debug\KuberaServer.unsuccessfulbuild"을(를) 만들고 있습니다.
        ClCompile:
          c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt IOCP.cpp
          IOCP.cpp
+     1>c:\users\cho\desktop\졸업작품\kubera\server\kuberaserver\kuberaserver\iocp.cpp(124): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(105) : 'strcpy' 선언을 참조하십시오.
      1>c:\users\cho\desktop\졸업작품\kubera\server\kuberaserver\kuberaserver\iocp.cpp(94): warning C4101: 'soklen2' :참조되지 않은 지역 변수입니다.
-     1>c:\users\cho\desktop\졸업작품\kubera\server\kuberaserver\kuberaserver\iocp.cpp(91): warning C4101: 'p' :참조되지 않은 지역 변수입니다.
-     1>c:\users\cho\desktop\졸업작품\kubera\server\kuberaserver\kuberaserver\iocp.cpp(93): warning C4101: 'soklen' :참조되지 않은 지역 변수입니다.
      1>c:\users\cho\desktop\졸업작품\kubera\server\kuberaserver\kuberaserver\iocp.cpp(90): warning C4101: 'sock_addr2' :참조되지 않은 지역 변수입니다.
-     1>c:\users\cho\desktop\졸업작품\kubera\server\kuberaserver\kuberaserver\iocp.cpp(89): warning C4101: 'sock_addr' :참조되지 않은 지역 변수입니다.
-     1>c:\users\cho\desktop\졸업작품\kubera\server\kuberaserver\kuberaserver\iocp.cpp(92): warning C4101: 'q' :참조되지 않은 지역 변수입니다.
-     1>c:\users\cho\desktop\졸업작품\kubera\server\kuberaserver\kuberaserver\iocp.cpp(407): warning C4101: 'Buffer' :참조되지 않은 지역 변수입니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\server\kuberaserver\kuberaserver\iocp.cpp(441): warning C4101: 'Buffer' :참조되지 않은 지역 변수입니다.
        ManifestResourceCompile:
          모든 출력이 최신 상태입니다.
        Link:
@@ -35,4 +33,4 @@
 
 빌드했습니다.
 
-경과 시간: 00:00:01.29
+경과 시간: 00:00:01.30

@@ -17,8 +17,12 @@ int main()
 
 	float time = 0.0f;
 	
+	int si = sizeof(int);
+	int sss = sizeof(PlayerPacket);
+	
 	//unsigned int d;
 	//HANDLE y  = (HANDLE)_beginthreadex(NULL, 0, Th, NULL, 0, &d);
+//	printf("%d", si+sss);
 	while(1)
 	{
 		Timer.Tick(60);
