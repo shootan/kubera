@@ -5,6 +5,7 @@ CScene::CScene(void)
 	m_pObjectShaders = NULL;
 	m_pInstancingShaders = NULL;
 	m_pAnimationShaders = NULL;
+	m_pParticleShaders = NULL;
 	m_nShaders = 0;
      
 	m_nObjects = 0;
@@ -29,6 +30,8 @@ CScene::CScene(void)
 	m_pWarriorMesh = NULL;
 	m_pWizardMesh = NULL;
 
+	m_particleEnableBlendingState = 0;
+	m_particleDisableBlendingState = 0;
 }
 
 
@@ -39,6 +42,8 @@ CScene::~CScene(void)
 
 void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 {
+	CreateBlend(pd3dDevice); //이펙트 블렌딩 설정
+
 	m_Control.m_Camera = m_Camera;
 	//이 쉐이더 객체에 대한 포인터들의 배열을 정의한다.
 
@@ -52,6 +57,9 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 
 	m_pAnimationShaders = new CAnimationShader();
 	m_pAnimationShaders->CreateShader(pd3dDevice, 15);
+
+	m_pParticleShaders = new CParticleShader();
+	m_pParticleShaders->CreateShader(pd3dDevice, 300);
 		
 	//게임 객체에 대한 포인터들의 배열을 정의한다.
 	m_nIntanceObjects = m_pInstancingShaders->GetObjectsNumber();
@@ -86,9 +94,24 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	CFBXMesh *pRedNexusMesh = new CFBXMesh(pd3dDevice, L"tower/Nexus.FBX");
 	pRedNexusMesh->LoadTexture(pd3dDevice, L"tower/Nexus2.png");
 
+	//파티클 메쉬
+	m_pParticleMesh = new ParticleMesh(pd3dDevice);
+	m_pParticleMesh->Initialize(pd3dDevice, L"effect/star.dds");
+
+	m_pParticle2Mesh = new Particle2Mesh(pd3dDevice);
+	m_pParticle2Mesh->Initialize(pd3dDevice, L"effect/rocketlauncher_fx-2.tif");
+
+	m_pParticle3Mesh = new Particle3Mesh(pd3dDevice);
+	m_pParticle3Mesh->Initialize(pd3dDevice, L"effect/rocketlauncher_fx-2.tif");
+
+	//파티클 생성
+	for(int i=0; i<4; i++)
+	ParticleManager::sharedManager()->CreateParticle(D3DXVECTOR3(1200, 10, 0), m_pParticleMesh, WIZARD_SKILL_BODY);
+	//ParticleManager::sharedManager()->CreateParticle(D3DXVECTOR3(400, 10, 0), m_pParticle2Mesh, 0);
+	for(int i=0; i<10; i++)
+		ParticleManager::sharedManager()->CreateParticle(D3DXVECTOR3(1200, 10, 0), m_pParticle3Mesh, WIZARD_SKILL_MISSILE);
 	//히어로 생성
 	HeroManager::sharedManager()->CreateHero(m_pWarriorMesh, m_pWizardMesh, 10, 13, 10);
-
 	HeroManager::sharedManager()->m_pHero->SetScale(D3DXVECTOR3(0.1, 0.1, 0.1));
 
 	m_pPlane = new CGameObject();
@@ -143,6 +166,11 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	
 	this->AddOtherPlayer(pd3dDevice);
 
+	for(int i=0; i<MAX_PARTICLE; i++)
+	{
+		if(ParticleManager::sharedManager()->m_pParticle[i] == NULL) continue;
+		m_pParticleShaders->AddObject(ParticleManager::sharedManager()->m_pParticle[i]);
+	}
 }
 
 void CScene::ReleaseObjects()
@@ -152,9 +180,21 @@ void CScene::ReleaseObjects()
 	if(m_pObjectShaders) delete m_pObjectShaders;
 	if(m_pInstancingShaders) delete m_pInstancingShaders;
 	if(m_pAnimationShaders) delete m_pAnimationShaders;
+	if(m_pParticleShaders) delete m_pParticleShaders;
 	//게임 객체 리스트의 각 객체를 반환(Release)하고 리스트를 소멸시킨다.
 
 	if(m_pPlane) m_pPlane->Release();
+	if(m_particleEnableBlendingState)
+	{
+		m_particleEnableBlendingState->Release();
+		m_particleEnableBlendingState = 0;
+	}
+
+	if(m_particleDisableBlendingState)
+	{
+		m_particleDisableBlendingState->Release();
+		m_particleDisableBlendingState = 0;
+	}
 }
 
 bool CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
@@ -225,6 +265,11 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 	for(int i=0; i<MAX_MISSILE; i++)
 		MissileManager::sharedManager()->m_pMissile[i]->Update(fTimeElapsed);
 
+	for(int i=0; i<MAX_PARTICLE; i++)
+	{
+		if(ParticleManager::sharedManager()->m_pParticle[i] == NULL) continue;
+		ParticleManager::sharedManager()->m_pParticle[i]->Update(fTimeElapsed);
+	}
 
 
 	for(int i=0;i<MAX_TOWER; i++)  //타워의 캐릭터 공격
@@ -376,6 +421,21 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext, float fTimeElapsed)
 		OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->Render(pd3dDeviceContext, fTimeElapsed);
 	}
 
+
+	TurnOnAlphaBlending(pd3dDeviceContext, m_particleEnableBlendingState);
+	m_pParticleShaders->Render(pd3dDeviceContext);
+	for(int i=0; i<MAX_PARTICLE; i++)
+	{
+		if(ParticleManager::sharedManager()->m_pParticle[i] == NULL) continue;
+		m_pParticleShaders->UpdateShaderVariables(pd3dDeviceContext, &ParticleManager::sharedManager()->m_pParticle[i]->m_d3dxmtxWorld);
+		ParticleManager::sharedManager()->m_pParticle[i]->Render(pd3dDeviceContext);
+	}
+	//ParticleManager::sharedManager()->m_pParticle[0]->SetPosition(HeroManager::sharedManager()->m_pHero->GetPosition());
+	TurnOffAlphaBlending(pd3dDeviceContext, m_particleDisableBlendingState);
+
+	m_pParticleMesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
+	//m_pParticle2Mesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
+	m_pParticle3Mesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
 }
 
 int CScene::GetMousePosX()
@@ -631,4 +691,73 @@ void CScene::OtherPlayerTargetSetting()
 		
 		OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->SetTarget(NULL);
 	}
+}
+
+
+void CScene::TurnOnAlphaBlending(ID3D11DeviceContext *pd3dDeviceContext, ID3D11BlendState* blendstate)
+{
+	float blendFactor[4];
+
+
+	// Setup the blend factor.
+	blendFactor[0] = 0.0f;
+	blendFactor[1] = 0.0f;
+	blendFactor[2] = 0.0f;
+	blendFactor[3] = 0.0f;
+
+	// Turn on the alpha blending.
+	pd3dDeviceContext->OMSetBlendState(blendstate, blendFactor, 0xffffffff);
+
+	return;
+}
+
+void CScene::TurnOffAlphaBlending(ID3D11DeviceContext *pd3dDeviceContext, ID3D11BlendState* blendstate)
+{
+	float blendFactor[4];
+
+
+	// Setup the blend factor.
+	blendFactor[0] = 0.0f;
+	blendFactor[1] = 0.0f;
+	blendFactor[2] = 0.0f;
+	blendFactor[3] = 0.0f;
+
+	// Turn off the alpha blending.
+	pd3dDeviceContext->OMSetBlendState(blendstate, blendFactor, 0xffffffff);
+
+	return;
+}
+
+HRESULT CScene::CreateBlend(ID3D11Device *pd3dDevice)
+{
+	HRESULT result;
+	D3D11_BLEND_DESC blendStateDescription;
+	// Clear the blend state description.
+	ZeroMemory(&blendStateDescription, sizeof(D3D11_BLEND_DESC));
+
+	// Create an alpha enabled blend state description.
+	blendStateDescription.RenderTarget[0].BlendEnable = TRUE;
+	blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	blendStateDescription.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	blendStateDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blendStateDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blendStateDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	blendStateDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendStateDescription.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+
+	result = pd3dDevice->CreateBlendState(&blendStateDescription, &m_particleEnableBlendingState);
+	if(FAILED(result))
+	{
+		return false;
+	}
+
+	blendStateDescription.RenderTarget[0].BlendEnable = FALSE;
+
+	result = pd3dDevice->CreateBlendState(&blendStateDescription, &m_particleDisableBlendingState);
+	if(FAILED(result))
+	{
+		return false;
+	}
+
+	return S_OK;
 }

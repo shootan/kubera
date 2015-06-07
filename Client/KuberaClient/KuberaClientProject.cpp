@@ -15,6 +15,7 @@
 #include "TowerManager.h"
 #include "OtherPlayerManager.h"
 #include "HeroManager.h"
+#include "ParticleManager.h"
 
 ST* ST::instance = NULL;
 MissileManager* MissileManager::instance = NULL;
@@ -23,6 +24,7 @@ ObstacleManager*  ObstacleManager::instance = NULL;
 TowerManager*  TowerManager::instance = NULL;
 OtherPlayerManager*  OtherPlayerManager::instance = NULL;
 HeroManager*  HeroManager::instance = NULL;
+ParticleManager*  ParticleManager::instance = NULL;
 //--------------------------------------------------------------------------------------
 // Global Variables
 //--------------------------------------------------------------------------------------

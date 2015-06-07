@@ -11,7 +11,11 @@
 #include "OtherPlayerObject.h"
 #include "TowerManager.h"
 #include "OtherPlayerManager.h"
+#include "ParticleManager.h"
 #include "FBX\GFBXMeshLoader.h"
+#include "ParticleMesh.h"
+#include "Particle2Mesh.h"
+#include "Particle3Mesh.h"
 
 class CScene
 {
@@ -22,6 +26,7 @@ private:
 	CObjectShader *m_pObjectShaders;
 	CInstancingShader *m_pInstancingShaders;
 	CAnimationShader *m_pAnimationShaders;
+	CParticleShader *m_pParticleShaders;
 	int m_nShaders;
 
 	int m_nObjects;
@@ -38,6 +43,9 @@ private:
 	GFBX::Mesh *m_pWarriorMesh;
 	GFBX::Mesh *m_pWizardMesh;
 	CFBXMesh *pMinionDragonMesh;
+	ParticleMesh *m_pParticleMesh;
+	Particle2Mesh *m_pParticle2Mesh;
+	Particle3Mesh *m_pParticle3Mesh;
 
 	float m_fMinionRespawnTime;
 	float m_fMissileAttackTime;
@@ -90,4 +98,10 @@ public:
 
 	void SetMinionInfo(MinionInfo* _MI);
 	void OtherPlayerTargetSetting();
+
+	ID3D11BlendState* m_particleEnableBlendingState;
+	ID3D11BlendState* m_particleDisableBlendingState;
+	void TurnOnAlphaBlending(ID3D11DeviceContext *pd3dDeviceContext, ID3D11BlendState* blendstate);
+	void TurnOffAlphaBlending(ID3D11DeviceContext *pd3dDeviceContext, ID3D11BlendState* blendstate);
+	HRESULT CreateBlend(ID3D11Device *pd3dDevice);
 };

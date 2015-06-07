@@ -908,6 +908,10 @@ VOID CModelViewerCamera::FrameMove( FLOAT fElapsedTime )
     // Update the view matrix
     D3DXMatrixLookAtLH( &m_mView, &m_vEye, &m_vLookAt, &vWorldUp );
 
+	////////////////////////////////////////////////////////////////////////////
+	D3DXMatrixInverse( &m_mCameraWorld, NULL, &m_mView );
+	///////////////////////////////////////////////////////////////////////////////
+
     D3DXMATRIX mInvView;
     D3DXMatrixInverse( &mInvView, NULL, &m_mView );
     mInvView._41 = mInvView._42 = mInvView._43 = 0;

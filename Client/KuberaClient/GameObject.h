@@ -106,4 +106,8 @@ public:
 
 	void SetTeam(int _team) { m_iTeam = _team; }
 	int GetTeam() { return m_iTeam; }
+
+
+	D3DXVECTOR3 GetDirection() { return m_vWalkIncrement; }
+	void SetDirection(D3DXVECTOR3 _dir) { m_vWalkIncrement = _dir; }
 };

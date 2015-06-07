@@ -66,6 +66,7 @@ public:
 	virtual void RenderInstanced(ID3D11DeviceContext *pd3dDeviceContext, int nInstances=0, int nStartInstance=0);
 	virtual bool LoadTexture(ID3D11Device* pd3dDevice, WCHAR* filename){return 0;}
 	virtual void ReleaseTexture(){}
+	virtual void Frame(float frametime){}
 };
 
 

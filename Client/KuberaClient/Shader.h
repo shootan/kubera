@@ -83,6 +83,29 @@ public:
 	virtual void AddObject(CGameObject *pObject); 
 };
 
+class CParticleShader : public CShader
+{
+public:
+	CParticleShader();
+	~CParticleShader();
+
+	//쉐이더를 생성하는 함수를 선언한다. nObjects는 쉐이더가 렌더링할 객체의 개수이다.
+	virtual void CreateShader(ID3D11Device *pd3dDevice, int nObjects);
+	virtual void CreateShaderVariables(ID3D11Device *pd3dDevice);
+	virtual void ReleaseShaderVariables();
+	virtual void UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceContext, D3DXMATRIX *pd3dxmtxWorld);
+
+	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext);
+
+private:
+	ID3D11Buffer *m_pd3dcbWorldMatrix;
+
+public:
+	//쉐이더에서 렌더링할 게임 객체를 추가한다. 
+	virtual void AddObject(CGameObject *pObject); 
+};
+
+
 class CAnimationShader : public CShader
 {
 public:

@@ -24,6 +24,10 @@ HeroObject::HeroObject(void)
 
 	m_fWalkSpeed = 25.0f;
 
+	m_iparticleNum = 500;
+	m_bUseParticle = FALSE;
+	m_bUseParticleMissile = FALSE;
+
 	node_t* temp;
 
 	while(m_pBestWay) {
@@ -244,6 +248,7 @@ void HeroObject::Animate(float fTimeElapsed)
 {
 	m_time += fTimeElapsed * 2.0f;
 	//printf(" %.3f \n", m_time);
+
 	if(m_iState == IDLE)
 	{
 		switch(m_iType)
@@ -299,6 +304,15 @@ void HeroObject::Animate(float fTimeElapsed)
 	}
 	else if(m_iState == MOVE)
 	{
+		if(m_iparticleNum  != 500)
+		{
+			m_bUseParticle = FALSE;
+			m_bUseParticleMissile = FALSE;
+			ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetUsed(FALSE);
+			ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetTarget(NULL);
+			ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetPosition(D3DXVECTOR3(1200, 0, 0));
+		}
+
 		switch(m_iType)
 		{
 		case KNIGHT:
@@ -353,9 +367,53 @@ void HeroObject::Animate(float fTimeElapsed)
 			}
 			break;
 		case WIZARD:
-			if(m_time < 45.0f) m_time = 45.0f;
-			if(m_time > 50.0f)
+			if(m_bUseParticle == FALSE)
 			{
+				for(int i=0; i<MAX_PARTICLE; i++)
+				{
+					if(ParticleManager::sharedManager()->m_pParticle[i] == NULL) continue;
+					if(ParticleManager::sharedManager()->m_pParticle[i]->GetUsed() == TRUE) continue;
+
+					if(ParticleManager::sharedManager()->m_pParticle[i]->GetType() == WIZARD_SKILL_BODY)
+					{
+						ParticleManager::sharedManager()->m_pParticle[i]->SetUsed(TRUE);
+						ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(this);
+						m_iparticleNum = i;
+						m_bUseParticle = TRUE;
+						break;
+					}
+				}
+			}
+			if(m_time < 45.0f) m_time = 45.0f;
+			if(m_time > 48.5f && m_time < 49.f)
+			{
+				if(m_bUseParticleMissile == FALSE)
+				{
+					for(int i=0; i<MAX_PARTICLE; i++)
+					{
+						if(ParticleManager::sharedManager()->m_pParticle[i] == NULL) continue;
+						if(ParticleManager::sharedManager()->m_pParticle[i]->GetUsed() == TRUE) continue;
+						if(ParticleManager::sharedManager()->m_pParticle[i]->GetType() == WIZARD_SKILL_MISSILE)
+						{
+							ParticleManager::sharedManager()->m_pParticle[i]->SetUsed(TRUE);
+							ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(this);
+							D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
+							ParticleManager::sharedManager()->m_pParticle[i]->SetDirection(m_vWalkIncrement);
+							ParticleManager::sharedManager()->m_pParticle[i]->SetPosition(D3DXVECTOR3(m_Pos.x, m_Pos.y + 10, m_Pos.z) + m_vWalkIncrement * 30);
+							m_bUseParticleMissile = TRUE;
+							break;
+						}
+					}
+				}
+			}
+			if(m_time > 49.5f)
+			{
+				m_bUseParticle = FALSE;
+				m_bUseParticleMissile = FALSE;
+				ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetUsed(FALSE);
+				ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetTarget(NULL);
+				ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetPosition(D3DXVECTOR3(1200, 0, 0));
+				m_iparticleNum = 500;
 				m_time = 1.1f;
 				m_iState = IDLE;
 			}

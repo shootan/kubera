@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "ST.h"
 #include "FBX\GFBXMesh.h"
+#include "ParticleManager.h"
 
 class OtherPlayerObject : public CGameObject
 {
@@ -14,6 +15,9 @@ private:
 
 	GFBX::Mesh *m_pAniMesh;
 
+	int m_iparticleNum;
+	BOOL m_bUseParticle;
+	BOOL m_bUseParticleMissile;
 public:
 	OtherPlayerObject();
 	~OtherPlayerObject();

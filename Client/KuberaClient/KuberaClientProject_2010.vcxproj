@@ -368,6 +368,8 @@
   <ItemGroup>
     <None Include="fx\Effect.fx" />
     <None Include="fx\instance.fx" />
+    <None Include="fx\particle.ps" />
+    <None Include="fx\particle.vs" />
     <None Include="fx\Soldier.fx" />
   </ItemGroup>
   <ItemGroup>
@@ -399,6 +401,10 @@
     <ClCompile Include="MissileObject.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="ObstacleObject.cpp" />
+    <ClCompile Include="Particle2Mesh.cpp" />
+    <ClCompile Include="Particle3Mesh.cpp" />
+    <ClCompile Include="ParticleMesh.cpp" />
+    <ClCompile Include="ParticleObject.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Textureclass.cpp" />
@@ -443,6 +449,11 @@
     <ClInclude Include="ObstacleManager.h" />
     <ClInclude Include="ObstacleObject.h" />
     <ClInclude Include="OtherPlayerManager.h" />
+    <ClInclude Include="Particle2Mesh.h" />
+    <ClInclude Include="Particle3Mesh.h" />
+    <ClInclude Include="ParticleManager.h" />
+    <ClInclude Include="ParticleMesh.h" />
+    <ClInclude Include="ParticleObject.h" />
     <CLInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />

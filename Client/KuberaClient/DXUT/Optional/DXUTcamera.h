@@ -405,6 +405,15 @@ public:
         m_mWorld = mWorld; m_bDragSinceLastUpdate = true;
     }
 
+	const D3DXVECTOR3* GetWorldRight() const
+	{
+		return ( D3DXVECTOR3* )&m_mCameraWorld._11;
+	}
+	const D3DXVECTOR3* GetWorldUp() const
+	{
+		return ( D3DXVECTOR3* )&m_mCameraWorld._21;
+	}
+
 protected:
     CD3DArcBall m_WorldArcBall;
     CD3DArcBall m_ViewArcBall;
@@ -412,6 +421,8 @@ protected:
     D3DXMATRIX m_mModelLastRot;        // Last arcball rotation matrix for model 
     D3DXMATRIX m_mModelRot;            // Rotation matrix of model
     D3DXMATRIX m_mWorld;               // World matrix of model
+	D3DXMATRIX m_mCameraWorld;
+
 
     int m_nRotateModelButtonMask;
     int m_nZoomButtonMask;

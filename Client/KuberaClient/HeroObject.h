@@ -4,6 +4,7 @@
 #include "ST.h"
 #include "MissileManager.h"
 #include "FBX\GFBXMesh.h"
+#include "ParticleManager.h"
 
 class HeroObject : public CGameObject
 {
@@ -20,7 +21,10 @@ private:
 	BOOL m_bFindPath;
 
 	GFBX::Mesh *m_pAniMesh;
-	
+
+	int m_iparticleNum;
+	BOOL m_bUseParticle;
+	BOOL m_bUseParticleMissile;
 public:
 	HeroObject();
 	~HeroObject();

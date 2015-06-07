@@ -425,6 +425,7 @@ void CGameFramework::FrameAdvance()
 
 	D3DXMATRIX m_d3dxmtxView = *m_vCamera.GetViewMatrix();         
 	D3DXMATRIX m_d3dxmtxProjection = *m_vCamera.GetProjMatrix();   
+	m_vCamera.FrameMove(m_GameTimer.GetTimeElapsed());
 
 	D3D11_MAPPED_SUBRESOURCE d3dMappedResource;
 	/*상수 버퍼의 메모리 주소를 가져와서 카메라 변환 행렬과 투영 변환 행렬을 복사한다. 쉐이더에서 행렬의 행과 열이 바뀌는 것에 주의하라.*/
