@@ -14,6 +14,7 @@ public:
 	int Check0;
 	int save1;
 	int save2;
+	int DummyCount;
 	ArrangeData Arrange;
 
 	//리스트로 관리해줄 포인터

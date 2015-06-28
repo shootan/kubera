@@ -16,6 +16,7 @@ void ControlManager::TouchRightDown(float _x, float _y, HWND hWnd)
 			vGroundPlaneHit = vRayOrigin;
 			vGroundPlaneHit += ( vRayDirection * fpINTersectionTime );
 			HeroManager::sharedManager()->m_pHero->SetNewDestination(vGroundPlaneHit);
+			printf("X: %.1f y: %.1f z: %.1f \n", vGroundPlaneHit.x, vGroundPlaneHit.y, vGroundPlaneHit.z);
 			HeroManager::sharedManager()->m_pHero->SetState(MOVE);
 		}
 	}     

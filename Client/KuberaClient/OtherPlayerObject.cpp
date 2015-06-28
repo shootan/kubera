@@ -288,8 +288,14 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 		{
 		case KNIGHT:
 			if(m_Time < 50.0f)  m_Time = 50.0f;
+			if(m_Time > 52.6f && m_bWarriorAttack)
+			{
+				m_pTarget->SetAttackDamage(this->m_Damage);
+				m_bWarriorAttack = FALSE;
+			}
 			if(m_Time > 54.0f) 
 			{
+				m_bWarriorAttack = TRUE;
 				m_Time = 1.1f;
 				m_iState = IDLE;
 			}

@@ -1,17 +1,37 @@
-﻿빌드 시작: 2015-05-17 오후 8:28:16
+﻿빌드 시작: 2015-06-08 오후 4:15:38
      1>2 노드의 "C:\Users\Cho\Desktop\졸업작품\kubera\Server\KuberaServer\KuberaServer\KuberaServer.vcxproj" 프로젝트(build 대상)입니다.
-     1>InitializeBuildStatus:
+     1>PrepareForBuild:
+         "C:\Users\Cho\Desktop\졸업작품\kubera\Server\KuberaServer\Release\" 디렉터리를 만들고 있습니다.
+       InitializeBuildStatus:
          "AlwaysCreate"이(가) 지정되었기 때문에 "Release\KuberaServer.unsuccessfulbuild"을(를) 만들고 있습니다.
        ClCompile:
-         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /D WIN32 /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt IOCP.cpp
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /D WIN32 /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt ArrangeData.cpp IOCP.cpp Network.cpp Timer.cpp main.cpp stdafx.cpp
+         ArrangeData.cpp
+     1>ArrangeData.cpp(577): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>ArrangeData.cpp(582): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>ArrangeData.cpp(589): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>ArrangeData.cpp(603): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>ArrangeData.cpp(608): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>ArrangeData.cpp(615): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>ArrangeData.cpp(629): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>ArrangeData.cpp(634): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>ArrangeData.cpp(641): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>ArrangeData.cpp(656): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>ArrangeData.cpp(661): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>ArrangeData.cpp(668): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
          IOCP.cpp
-     1>IOCP.cpp(123): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>IOCP.cpp(130): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\string.h(105) : 'strcpy' 선언을 참조하십시오.
-     1>IOCP.cpp(94): warning C4101: 'soklen2' :참조되지 않은 지역 변수입니다.
-     1>IOCP.cpp(90): warning C4101: 'sock_addr2' :참조되지 않은 지역 변수입니다.
-     1>IOCP.cpp(408): warning C4101: 'Buffer' :참조되지 않은 지역 변수입니다.
+     1>IOCP.cpp(96): warning C4101: 'soklen2' :참조되지 않은 지역 변수입니다.
+     1>IOCP.cpp(92): warning C4101: 'sock_addr2' :참조되지 않은 지역 변수입니다.
+     1>IOCP.cpp(460): warning C4101: 'Buffer' :참조되지 않은 지역 변수입니다.
+         Network.cpp
+         Timer.cpp
+         main.cpp
+         stdafx.cpp
+         코드를 생성하고 있습니다...
        ManifestResourceCompile:
-         모든 출력이 최신 상태입니다.
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /nologo /fo"Release\KuberaServer.exe.embed.manifest.res" Release\KuberaServer_manifest.rc 
        Link:
          c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Cho\Desktop\졸업작품\kubera\Server\KuberaServer\Release\KuberaServer.exe" /INCREMENTAL /NOLOGO winmm.lib d3dx9.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Release\KuberaServer.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\Cho\Desktop\졸업작품\kubera\Server\KuberaServer\Release\KuberaServer.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Cho\Desktop\졸업작품\kubera\Server\KuberaServer\Release\KuberaServer.lib" /MACHINE:X86 Release\KuberaServer.exe.embed.manifest.res
          Release\ArrangeData.obj
@@ -34,4 +54,4 @@
 
 빌드했습니다.
 
-경과 시간: 00:00:00.93
+경과 시간: 00:00:03.39

@@ -266,7 +266,7 @@ void HeroObject::Animate(float fTimeElapsed)
 	//printf(" %.3f \n", m_time);
 
 
-	printf(" %.1f \n", m_time);
+	//printf(" %.1f \n", m_time);
 
 	if(m_iState == IDLE)
 	{

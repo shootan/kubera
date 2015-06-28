@@ -21,7 +21,7 @@ IOCPServer::IOCPServer()
 	Check0 = 0;
 	save1 = 0;
 	save2 = 0;
-
+	DummyCount = 0;
 	ZeroMemory(&m_ClinetAddr, sizeof(SOCKADDR));
 	ZeroMemory(m_ID, sizeof(char)*100);
 
@@ -95,6 +95,7 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 	int soklen;
 	int soklen2;
 	BOOL SameIP = FALSE;
+	char* dummy = "127.0.0.1";
 	
 	while (1)
 	{
@@ -107,8 +108,13 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 		if (client_sock == INVALID_SOCKET) {
 			exit(-1);
 		}
-		
-		
+		q = (char*)inet_ntoa(pThis->m_ClinetAddr.sin_addr);
+		if(!strcmp(dummy, q))
+		{
+			pThis->DummyCount++;
+			printf("Dummy Client Check %d", pThis->DummyCount);
+			continue;
+		}
 		
 		IOBuffer* buffer;
 
@@ -123,7 +129,6 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 			char IP[16];
 			strcpy(IP, p);
 			q = (char*)inet_ntoa(pThis->m_ClinetAddr.sin_addr);
-
 
 			if(!strcmp(IP, q))
 			{
@@ -147,7 +152,6 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 			buffer = buffer->m_pNext;
 		}
 		//////////////////////////////////////
-		
 
 		if(SameIP)
 		{
@@ -204,7 +208,7 @@ UINT WINAPI IOCPServer::ListenThread(LPVOID arg)
 				po.z = 0;
 				send(client_sock, (char*)&po, sizeof(Vector3), 0);
 			}
-			float hp = 500.0f;
+			float hp = 1000.0f;
 			send(client_sock, (char*)&hp, sizeof(float), 0);
 			float type = 0;
 			send(client_sock, (char*)&type, sizeof(int), 0);

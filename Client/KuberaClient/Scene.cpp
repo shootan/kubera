@@ -46,18 +46,18 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 
 	m_Control.m_Camera = m_Camera;
 	//이 쉐이더 객체에 대한 포인터들의 배열을 정의한다.
-
+	printf("CreateObjectShader \n");
 	//CObjectShader 클래스 객체를 생성한다.
 	m_pObjectShaders = new CObjectShader();
 	m_pObjectShaders->CreateShader(pd3dDevice, 100);
-
+	printf("CreateInstancingShader\n");
 	m_pInstancingShaders = new CInstancingShader();
 	m_pInstancingShaders->CreateShader(pd3dDevice, 10);
 	m_pInstancingShaders->BuildObjects(pd3dDevice);
-
+	printf("CreateAnimationShader \n");
 	m_pAnimationShaders = new CAnimationShader();
 	m_pAnimationShaders->CreateShader(pd3dDevice, 15);
-
+	printf("CreateParticleShader \n");
 	m_pParticleShaders = new CParticleShader();
 	m_pParticleShaders->CreateShader(pd3dDevice, 300);
 		
@@ -68,6 +68,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	//정육면체 메쉬를 생성하고 객체에 연결한다.
 	//CCubeMesh *pMesh = new CCubeMesh(pd3dDevice, 15.0f, 15.0f, 15.0f);
 	//pHeroMesh = new CFBXMesh(pd3dDevice, L"Hero/Wizard101310.FBX");
+	printf("Load WarriorModel \n");
 	m_pWarriorMesh = new GFBX::Mesh();
 	GFBXMeshLoader::getInstance()->OnCreateDevice(pd3dDevice);
 	GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pWarriorMesh, L"Hero/Hero/knight2.FBX", pd3dDevice);
@@ -75,36 +76,41 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	for(int i=0; i<m_pWarriorMesh->GetSubsetCount(); i++)
 		m_pWarriorMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Hero/micro_knight.png");
 
+	printf("Success Load \n");
+	printf("Load WizardModel \n");
+
 	m_pWizardMesh = new GFBX::Mesh();
 	GFBXMeshLoader::getInstance()->OnCreateDevice(pd3dDevice);
 	GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pWizardMesh, L"Hero/Hero/Wizard2.FBX", pd3dDevice);
 	m_pWizardMesh->OnCreateDevice(pd3dDevice);
 	for(int i=0; i<m_pWizardMesh->GetSubsetCount(); i++)
 		m_pWizardMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Hero/micro_wizard_col.tif");
+	printf("Success Load \n");
 
+	printf("Load Object");
 	CFBXMesh *pPlaneMesh = new CFBXMesh(pd3dDevice, L"imagefile/Plane4.FBX", 10);
 	pPlaneMesh->LoadTexture(pd3dDevice, L"imagefile/12.png");
-
+	printf(".");
 	CFBXMesh *pObstacleMesh = new CFBXMesh(pd3dDevice, L"tower/Tower1_303030.FBX");
 	pObstacleMesh->LoadTexture(pd3dDevice, L"Hero/micro_wizard_col.tif");
-
+	printf(".");
 	CFBXMesh *pBlueNexusMesh = new CFBXMesh(pd3dDevice, L"tower/Nexus.FBX");
 	pBlueNexusMesh->LoadTexture(pd3dDevice, L"tower/Nexus.png");
-
+	printf(".");
 	CFBXMesh *pRedNexusMesh = new CFBXMesh(pd3dDevice, L"tower/Nexus.FBX");
 	pRedNexusMesh->LoadTexture(pd3dDevice, L"tower/Nexus2.png");
-
+	printf(".");
 	//파티클 메쉬
 	m_pParticleMesh = new ParticleMesh(pd3dDevice);
 	m_pParticleMesh->Initialize(pd3dDevice, L"effect/star.dds");
-
+	printf(".");
 	m_pParticle2Mesh = new Particle3Mesh(pd3dDevice);
 	m_pParticle2Mesh->Initialize(pd3dDevice, L"effect/star.dds");
 	m_pParticle2Mesh->SetScale(D3DXVECTOR2(5, 5));
-
+	printf(".");
 	m_pParticle3Mesh = new Particle3Mesh(pd3dDevice);
 	m_pParticle3Mesh->Initialize(pd3dDevice, L"effect/rocketlauncher_fx-2.tif");
-
+	printf(".");
 	//파티클 생성
 	for(int i=0; i<4; i++)
 		ParticleManager::sharedManager()->CreateParticle(D3DXVECTOR3(1200, 10, 0), m_pParticleMesh, WIZARD_SKILL_BODY);

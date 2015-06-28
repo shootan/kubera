@@ -45,12 +45,13 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
   	scanf("%s", IP);
   	Net.InitClient(IP, 9000);
  
-    	while (Net.m_InitFinish)
-    	{
-    		Sleep(100);
-    	}
-  	
-	int herotype1 = Net.m_Type;
+     while (Net.m_InitFinish)
+     {
+     	Sleep(100);
+     }
+   	
+ 	int herotype1 = Net.m_Type;
+ 	printf("Server Connect \n");
 
 	while(TRUE)
 	{
@@ -63,6 +64,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 		
 		if(herotype1 == 1 || herotype1 == 2)
 		{
+			printf("Character Selected \n");
 			break;
 		}
 	}
@@ -73,7 +75,8 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	HeroManager::sharedManager()->SetID(Net.m_ID);
 	HeroManager::sharedManager()->SetType(herotype1);
 	HeroManager::sharedManager()->SetStartPos(D3DXVECTOR3(Net.m_Pos.x, Net.m_Pos.y, Net.m_Pos.z));
-	HeroManager::sharedManager()->SetHP(Net.m_HP);
+	//HeroManager::sharedManager()->SetHP(Net.m_HP);
+	printf("SetData \n");
 	if(Net.m_ID%2 == 0) //초기 시작 카메리위치 설정
 	{
 		m_CameraPosX = 500.f;
@@ -341,6 +344,7 @@ void CGameFramework::OnDestroy()
 
 void CGameFramework::BuildObjects()
 {
+	printf("SetCamera");
 	m_pScene = new CScene();
 	m_pScene->m_Camera = &m_vCamera;
 
