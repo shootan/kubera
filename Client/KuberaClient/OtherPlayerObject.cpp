@@ -28,7 +28,7 @@ OtherPlayerObject::~OtherPlayerObject(void)
 	CGameObject::~CGameObject();
 }
 
-void OtherPlayerObject::Render(ID3D11DeviceContext *pd3dDeviceContext, float fTimeElapsed)
+void OtherPlayerObject::Render(ID3D11DeviceContext *pd3dDeviceContext, float fTimeElapsed, CCamera *pCamera)
 {
 	if(m_Visible != TRUE) return;
 	if(m_pAniMesh == NULL) return;
@@ -72,8 +72,24 @@ void OtherPlayerObject::Render(ID3D11DeviceContext *pd3dDeviceContext, float fTi
 	m_d3dxmtxWorld = mWorld;
 
 
+	if (m_pAniMesh)
+	{
+		/*bool bIsVisible = true;
 
-	if (m_pAniMesh) m_pAniMesh->Render(pd3dDeviceContext, m_Time);
+		for(int i=0; i<m_pAniMesh->GetSubsetCount(); i++)
+		{
+			if (pCamera)
+			{
+				AABB bcBoundingCube = m_pAniMesh->GetSubset(i)->GetBoundingCube();
+				bcBoundingCube.Update(&m_d3dxmtxWorld);
+				bIsVisible = pCamera->IsInFrustum(&bcBoundingCube);
+
+				if (bIsVisible) break;
+			}
+		}
+
+		if (bIsVisible)*/ m_pAniMesh->Render(pd3dDeviceContext, m_Time);
+	}
 }
 
 void OtherPlayerObject::SetNewDestination ( D3DXVECTOR3 _pos ) {

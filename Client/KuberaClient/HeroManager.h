@@ -52,11 +52,13 @@ public:
 
 		if(m_Type == 1)
 		{
-			m_pHero->SetAniMesh(_warrior);
+			m_pHero->SetMesh(_warrior);
+			//m_pHero->SetAniMesh(_warrior);
 		}
 		else if(m_Type == 2)
 		{
-			m_pHero->SetAniMesh(_wizard);
+			m_pHero->SetMesh(_wizard);
+			//m_pHero->SetAniMesh(_wizard);
 		}
 
 		if(m_iID % 2 == 0)

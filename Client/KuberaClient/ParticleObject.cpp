@@ -46,7 +46,7 @@ void ParticleObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
 
 }
 
-void ParticleObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
+void ParticleObject::Render(ID3D11DeviceContext *pd3dDeviceContext, CCamera *pCamera)
 {
 	if(m_Visible != TRUE) return;
 
@@ -102,7 +102,17 @@ void ParticleObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
 	mWorld = mtxScale * mtxRotate * mtxTrans;
 	m_d3dxmtxWorld = mWorld;
 
-	if (m_pMesh) m_pMesh->Render(pd3dDeviceContext);
+	if (m_pMesh)
+	{
+		/*bool bIsVisible = true;
+		if (pCamera)
+		{
+		AABB bcBoundingCube = m_pMesh->GetBoundingCube();
+		bcBoundingCube.Update(&m_d3dxmtxWorld);
+		bIsVisible = pCamera->IsInFrustum(&bcBoundingCube); 
+		}
+		if (bIsVisible)*/ m_pMesh->Render(pd3dDeviceContext);
+	}
 }
 
 void ParticleObject::Update(float fTimeElapsed)

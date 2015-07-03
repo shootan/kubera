@@ -56,7 +56,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pInstancingShaders->BuildObjects(pd3dDevice);
 	printf("CreateAnimationShader \n");
 	m_pAnimationShaders = new CAnimationShader();
-	m_pAnimationShaders->CreateShader(pd3dDevice, 15);
+	m_pAnimationShaders->CreateShader(pd3dDevice, 100);
 	printf("CreateParticleShader \n");
 	m_pParticleShaders = new CParticleShader();
 	m_pParticleShaders->CreateShader(pd3dDevice, 300);
@@ -66,9 +66,9 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_nObjects = 20 + m_nIntanceObjects;
 
 	//정육면체 메쉬를 생성하고 객체에 연결한다.
-	//CCubeMesh *pMesh = new CCubeMesh(pd3dDevice, 15.0f, 15.0f, 15.0f);
-	//pHeroMesh = new CFBXMesh(pd3dDevice, L"Hero/Wizard101310.FBX");
 	printf("Load WarriorModel \n");
+
+	//워리어 메쉬
 	m_pWarriorMesh = new GFBX::Mesh();
 	GFBXMeshLoader::getInstance()->OnCreateDevice(pd3dDevice);
 	GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pWarriorMesh, L"Hero/Hero/knight2.FBX", pd3dDevice);
@@ -79,6 +79,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	printf("Success Load \n");
 	printf("Load WizardModel \n");
 
+	//위자드 메쉬
 	m_pWizardMesh = new GFBX::Mesh();
 	GFBXMeshLoader::getInstance()->OnCreateDevice(pd3dDevice);
 	GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pWizardMesh, L"Hero/Hero/Wizard2.FBX", pd3dDevice);
@@ -88,18 +89,31 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	printf("Success Load \n");
 
 	printf("Load Object");
-	CFBXMesh *pPlaneMesh = new CFBXMesh(pd3dDevice, L"imagefile/Plane4.FBX", 10);
-	pPlaneMesh->LoadTexture(pd3dDevice, L"imagefile/12.png");
+	//바닥 메쉬
+	GFBX::Mesh *pPlaneMesh = new GFBX::Mesh();
+	GFBXMeshLoader::getInstance()->LoadFBXMesh(pPlaneMesh, L"imagefile/Plane4.FBX", pd3dDevice);
+	pPlaneMesh->GetSubset(0)->SetUVTilling(10);
+	pPlaneMesh->OnCreateDevice(pd3dDevice);
+	for(int i=0; i<pPlaneMesh->GetSubsetCount(); i++)
+		pPlaneMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"imagefile/12.png");
 	printf(".");
-	CFBXMesh *pObstacleMesh = new CFBXMesh(pd3dDevice, L"tower/Tower1_303030.FBX");
-	pObstacleMesh->LoadTexture(pd3dDevice, L"Hero/micro_wizard_col.tif");
+	
+	//블루팀 넥서스 메쉬
+	GFBX::Mesh *pBlueNexusMesh = new GFBX::Mesh();
+	GFBXMeshLoader::getInstance()->LoadFBXMesh(pBlueNexusMesh, L"tower/Nexus.FBX", pd3dDevice);
+	pBlueNexusMesh->OnCreateDevice(pd3dDevice);
+	for(int i=0; i<pBlueNexusMesh->GetSubsetCount(); i++)
+		pBlueNexusMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"tower/Nexus.png");
 	printf(".");
-	CFBXMesh *pBlueNexusMesh = new CFBXMesh(pd3dDevice, L"tower/Nexus.FBX");
-	pBlueNexusMesh->LoadTexture(pd3dDevice, L"tower/Nexus.png");
+
+	//빨강팀 넥서스 메쉬
+	GFBX::Mesh *pRedNexusMesh = new GFBX::Mesh();
+	GFBXMeshLoader::getInstance()->LoadFBXMesh(pRedNexusMesh, L"tower/Nexus.FBX", pd3dDevice);
+	pRedNexusMesh->OnCreateDevice(pd3dDevice);
+	for(int i=0; i<pRedNexusMesh->GetSubsetCount(); i++)
+		pRedNexusMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"tower/Nexus2.png");
 	printf(".");
-	CFBXMesh *pRedNexusMesh = new CFBXMesh(pd3dDevice, L"tower/Nexus.FBX");
-	pRedNexusMesh->LoadTexture(pd3dDevice, L"tower/Nexus2.png");
-	printf(".");
+
 	//파티클 메쉬
 	m_pParticleMesh = new ParticleMesh(pd3dDevice);
 	m_pParticleMesh->Initialize(pd3dDevice, L"effect/star.dds");
@@ -111,6 +125,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pParticle3Mesh = new Particle3Mesh(pd3dDevice);
 	m_pParticle3Mesh->Initialize(pd3dDevice, L"effect/rocketlauncher_fx-2.tif");
 	printf(".");
+
 	//파티클 생성
 	for(int i=0; i<4; i++)
 		ParticleManager::sharedManager()->CreateParticle(D3DXVECTOR3(1200, 10, 0), m_pParticleMesh, WIZARD_SKILL_BODY);
@@ -118,10 +133,12 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 		ParticleManager::sharedManager()->CreateParticle(D3DXVECTOR3(1200, 10, 0), m_pParticle2Mesh, WIZARD_ATTACK);
 	for(int i=0; i<10; i++)
 		ParticleManager::sharedManager()->CreateParticle(D3DXVECTOR3(1200, 10, 0), m_pParticle3Mesh, WIZARD_SKILL_MISSILE);
+	
 	//히어로 생성
 	HeroManager::sharedManager()->CreateHero(m_pWarriorMesh, m_pWizardMesh, 10, 13, 10);
 	HeroManager::sharedManager()->m_pHero->SetScale(D3DXVECTOR3(0.1, 0.1, 0.1));
 
+	//바닥 생성
 	m_pPlane = new CGameObject();
 	m_pPlane->SetMesh(pPlaneMesh);
 
@@ -140,6 +157,8 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	}
 	pBoundBox[1]->SetPosition(D3DXVECTOR3(25,0,0));
 
+
+	//넥서스 2개 생성
 	m_pBlueNexus = new CGameObject();
 	m_pBlueNexus->SetMesh(pBlueNexusMesh);
 	m_pBlueNexus->SetPosition(D3DXVECTOR3(-550, 0, 0));
@@ -159,14 +178,18 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 
 	//pFBXMesh->Release();
 
- 	//삼각형 객체를 쉐이더 객체에 연결한다.
+ 	//애니메이션 쉐이더에 히어로 연결
  	m_pAnimationShaders->AddObject(HeroManager::sharedManager()->m_pHero);
-	m_pObjectShaders->AddObject(m_pPlane);
+
+	//오브젝트 쉐이더에 지형 넥서스 연결
+	m_pAnimationShaders->AddObject(m_pPlane);
 	for(int i=0; i<iObjectNum; i++)
 		m_pObjectShaders->AddObject(pBoundBox[i]);
-	m_pObjectShaders->AddObject(m_pBlueNexus);
-	m_pObjectShaders->AddObject(m_pRedNexus);
+	m_pAnimationShaders->AddObject(m_pBlueNexus);
+	m_pAnimationShaders->AddObject(m_pRedNexus);
 
+
+	//아더 플레이어 생성
 	OtherPlayerManager::sharedManager()->SetMesh(m_pWarriorMesh, m_pWizardMesh);
 	OtherPlayerManager::sharedManager()->CreateOtherPlayer(D3DXVECTOR3(1500, 0, 0), 10, 13, 10);
 	for(int i=0; i<MAX_OTHER_PLAYER;i++)
@@ -174,6 +197,8 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	
 	this->AddOtherPlayer(pd3dDevice);
 
+
+	//파티클 객체 쉐이더에 연결
 	for(int i=0; i<MAX_PARTICLE; i++)
 	{
 		if(ParticleManager::sharedManager()->m_pParticle[i] == NULL) continue;
@@ -380,12 +405,13 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 	GameCollision(HeroManager::sharedManager()->m_pHero, m_pRedNexus);
 }
 
-void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext, float fTimeElapsed)
+void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext, float fTimeElapsed, CCamera *pCamera)
 {
 	//쉐이더 객체 리스트의 각 쉐이더 객체를 렌더링한다.
 	
-	m_pObjectShaders->Render(pd3dDeviceContext);
-
+	//m_pObjectShaders->Render(pd3dDeviceContext);
+	//m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &pBoundBox[0]->m_d3dxmtxWorld);
+	//pBoundBox[0]->Render(pd3dDeviceContext);
 	
 	//m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &HeroManager::sharedManager()->m_pHero->m_d3dxmtxWorld);
 	//HeroManager::sharedManager()->m_pHero->Render(pd3dDeviceContext);
@@ -397,41 +423,70 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext, float fTimeElapsed)
 		m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->m_d3dxmtxWorld);
 		OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->Render(pd3dDeviceContext);
 	}*/
-	m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pPlane->m_d3dxmtxWorld);
-	m_pPlane->Render(pd3dDeviceContext);
 
-	//m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &pBoundBox[0]->m_d3dxmtxWorld);
-	//pBoundBox[0]->Render(pd3dDeviceContext);
-	m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pBlueNexus->m_d3dxmtxWorld);
-	m_pBlueNexus->Render(pd3dDeviceContext);
-	m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pRedNexus->m_d3dxmtxWorld);
-	m_pRedNexus->Render(pd3dDeviceContext);
-
-
-	m_pInstancingShaders->Render(pd3dDeviceContext);
+	m_pInstancingShaders->Render(pd3dDeviceContext, pCamera);
 
 	for(int i=0; i<MAX_MISSILE; i++)
-		MissileManager::sharedManager()->m_pMissile[i]->Render(pd3dDeviceContext);
+	{
+		//if(MissileManager::sharedManager()->m_pMissile[i]->IsVisible(pCamera))
+			MissileManager::sharedManager()->m_pMissile[i]->Render(pd3dDeviceContext, pCamera);
+	}
 	for(int i=0; i<MAX_TOWER; i++)
-		TowerManager::sharedManager()->m_pTower[i]->Render(pd3dDeviceContext);
+	{
+		//if(TowerManager::sharedManager()->m_pTower[i]->IsVisible(pCamera))
+			TowerManager::sharedManager()->m_pTower[i]->Render(pd3dDeviceContext, pCamera);
+	}
 	for(int i=0; i<872; i++)
-		ObstacleManager::sharedManager()->m_pObstacle[i]->Render(pd3dDeviceContext);
+	{
+		//if(ObstacleManager::sharedManager()->m_pObstacle[i]->IsVisible(pCamera))
+			ObstacleManager::sharedManager()->m_pObstacle[i]->Render(pd3dDeviceContext, pCamera);
+	}
   	for(int i=0; i<MAX_MINION; i++)
-  		MinionManager::sharedManager()->m_pMinion1[i]->Render(pd3dDeviceContext);
+	{
+		//if(MinionManager::sharedManager()->m_pMinion1[i]->IsVisible(pCamera))
+  			MinionManager::sharedManager()->m_pMinion1[i]->Render(pd3dDeviceContext, pCamera);
+	}
 	for(int i=0; i<MAX_DESTROY_TOWER; i++)
-		ObstacleManager::sharedManager()->m_pDestroyTower[i]->Render(pd3dDeviceContext);
+	{
+		//if(ObstacleManager::sharedManager()->m_pDestroyTower[i]->IsVisible(pCamera))
+			ObstacleManager::sharedManager()->m_pDestroyTower[i]->Render(pd3dDeviceContext, pCamera);
+	}
  
 	m_pAnimationShaders->Render(pd3dDeviceContext);
 
-	m_pAnimationShaders->UpdateShaderVariables(pd3dDeviceContext, &HeroManager::sharedManager()->m_pHero->m_d3dxmtxWorld);
-	HeroManager::sharedManager()->m_pHero->Render(pd3dDeviceContext, fTimeElapsed);
+	//if(HeroManager::sharedManager()->m_pHero->IsVisible(pCamera))
+	//{
+		m_pAnimationShaders->UpdateShaderVariables(pd3dDeviceContext, &HeroManager::sharedManager()->m_pHero->m_d3dxmtxWorld);
+		HeroManager::sharedManager()->m_pHero->Render(pd3dDeviceContext, fTimeElapsed, pCamera);
+	//}
+
+	//if(m_pPlane->IsVisible(pCamera))
+	//{
+		m_pAnimationShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pPlane->m_d3dxmtxWorld);
+		m_pPlane->Render(pd3dDeviceContext, pCamera);
+	//}
+
+	//if(m_pBlueNexus->IsVisible(pCamera))
+	//{
+		m_pAnimationShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pBlueNexus->m_d3dxmtxWorld);
+		m_pBlueNexus->Render(pd3dDeviceContext, pCamera);
+	//}
+
+	//if(m_pRedNexus->IsVisible(pCamera))
+	//{
+		m_pAnimationShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pRedNexus->m_d3dxmtxWorld);
+		m_pRedNexus->Render(pd3dDeviceContext, pCamera);
+	//}
 
 	for(int i=0; i<MAX_OTHER_PLAYER; i++)
 	{
 		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetVisible() != TRUE) continue;
 
-		m_pAnimationShaders->UpdateShaderVariables(pd3dDeviceContext, &OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->m_d3dxmtxWorld);
-		OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->Render(pd3dDeviceContext, fTimeElapsed);
+		//if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->IsVisible(pCamera))
+		//{
+			m_pAnimationShaders->UpdateShaderVariables(pd3dDeviceContext, &OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->m_d3dxmtxWorld);
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->Render(pd3dDeviceContext, fTimeElapsed, pCamera);
+		//}
 	}
 
 
@@ -440,14 +495,24 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext, float fTimeElapsed)
 	for(int i=0; i<MAX_PARTICLE; i++)
 	{
 		if(ParticleManager::sharedManager()->m_pParticle[i] == NULL) continue;
-		m_pParticleShaders->UpdateShaderVariables(pd3dDeviceContext, &ParticleManager::sharedManager()->m_pParticle[i]->m_d3dxmtxWorld);
-		ParticleManager::sharedManager()->m_pParticle[i]->Render(pd3dDeviceContext);
+
+		//if(ParticleManager::sharedManager()->m_pParticle[i]->IsVisible(pCamera))
+		//{
+			m_pParticleShaders->UpdateShaderVariables(pd3dDeviceContext, &ParticleManager::sharedManager()->m_pParticle[i]->m_d3dxmtxWorld);
+			ParticleManager::sharedManager()->m_pParticle[i]->Render(pd3dDeviceContext, pCamera);
+		//}
 	}
 	TurnOffAlphaBlending(pd3dDeviceContext, m_particleDisableBlendingState);
 
 	m_pParticleMesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
 	m_pParticle2Mesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
 	m_pParticle3Mesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
+	//m_pParticleMesh->SetCamVec(D3DXVECTOR3(m_Camera->GetPitch(), 0, 0), D3DXVECTOR3(0, 0, m_Camera->GetRoll()));
+	//m_pParticle2Mesh->SetCamVec(D3DXVECTOR3(m_Camera->GetPitch(), 0, 0), D3DXVECTOR3(0, 0, m_Camera->GetRoll()));
+	//m_pParticle3Mesh->SetCamVec(D3DXVECTOR3(m_Camera->GetPitch(), 0, 0), D3DXVECTOR3(0, 0, m_Camera->GetRoll()));
+	//m_pParticleMesh->SetCamVec(m_Camera->GetRightVector(), m_Camera->GetUpVector());
+	//m_pParticle2Mesh->SetCamVec(m_Camera->GetRightVector(), m_Camera->GetUpVector());
+	//m_pParticle3Mesh->SetCamVec(m_Camera->GetRightVector(), m_Camera->GetUpVector());
 }
 
 int CScene::GetMousePosX()

@@ -34,7 +34,7 @@ public:
 		return instance;
 	}
 public:
-	void CreateTower(D3DXVECTOR3 pos, CMesh* mesh, float boundx, float boundy, float boundz, int team)
+	void CreateTower(D3DXVECTOR3 pos, GFBX::Mesh* mesh, float boundx, float boundy, float boundz, int team)
 	{
 		for(int i=0; i<MAX_TOWER; i++)
 		{

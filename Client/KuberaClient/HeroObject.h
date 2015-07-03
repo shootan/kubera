@@ -3,7 +3,6 @@
 #include "astarclass.h"
 #include "ST.h"
 #include "MissileManager.h"
-#include "FBX\GFBXMesh.h"
 #include "ParticleManager.h"
 #include "OtherPlayerManager.h"
 
@@ -24,8 +23,6 @@ private:
 	BOOL m_bAstar;
 	BOOL m_bFindPath;
 
-	GFBX::Mesh *m_pAniMesh;
-
 	int m_iparticleNum;
 	BOOL m_bUseParticle;
 	BOOL m_bUseParticleMissile;
@@ -35,7 +32,7 @@ public:
 	~HeroObject();
 
 	virtual void Animate(float fTimeElapsed);
-	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext, float fTimeElapsed);
+	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext, float fTimeElapsed, CCamera *pCamera);
 	virtual void SetNewDestination ( D3DXVECTOR3 _pos );
 	virtual void Update(float fTimeElapsed);
 	bool InMotion();
@@ -48,7 +45,7 @@ public:
 
 	void SetState(int _state) { m_iState = _state;}
 
-	void SetAniMesh(GFBX::Mesh *pAniMesh);
+	//void SetAniMesh(GFBX::Mesh *pAniMesh);
 	 Vector3 GetDestination()
 	 {
 		 Vector3 p;

@@ -26,6 +26,9 @@ CGameFramework::CGameFramework()
 	m_pTxtHelper2 = NULL;
 
 	m_SendTick = 0;
+
+	m_pCamera = NULL;
+	m_pCameraMinimap = NULL;
 }
 
 CGameFramework::~CGameFramework()
@@ -273,7 +276,10 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			if (m_pd3dDepthStencilView) m_pd3dDepthStencilView->Release();
 
 			m_pDXGISwapChain->ResizeBuffers(2, m_nWndClientWidth, m_nWndClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
-			SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.0f, 1.0f);
+			//SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.0f, 1.0f);
+			m_pCamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.9f, 1.0f);
+			m_pCameraMinimap->SetViewport(m_pd3dDeviceContext, m_nWndClientWidth - m_nWndClientWidth/5 - 10, m_nWndClientHeight - m_nWndClientHeight/5 - 10, m_nWndClientWidth/5, m_nWndClientHeight/5, 0.0f, 0.1f);
+			
 
 			CreateRenderTargetDepthStencilView();
 
@@ -345,39 +351,29 @@ void CGameFramework::OnDestroy()
 void CGameFramework::BuildObjects()
 {
 	printf("SetCamera");
+	//씬생성
 	m_pScene = new CScene();
-	m_pScene->m_Camera = &m_vCamera;
+	//카메라 생성
+	m_pCamera = new CCamera();
 
-	//플레이어 객체를 생성한다.
-	//m_nPlayers = 1;
-	//m_ppPlayers = new CPlayer*[m_nPlayers];
-	//m_ppPlayers[0] = new CPlayer();
+	m_pCamera->CreateShaderVariables(m_pd3dDevice);
+	m_pCamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.9f, 1.0f);
 
-	////카메라 객체를 생성하고 뷰-포트를 설정한다. 
-	//CModelViewerCamera *pCamera = new CModelViewerCamera();
-	//pCamera->CreateShaderVariables(m_pd3dDevice);
-	D3D11_BUFFER_DESC bd;
-	ZeroMemory(&bd, sizeof(bd));
-	bd.Usage = D3D11_USAGE_DYNAMIC;
-	bd.ByteWidth = sizeof(VS_CB_VIEWPROJECTION_MATRIX);
-	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	m_pd3dDevice->CreateBuffer(&bd, NULL, &m_pd3dcbViewProjection);
-
-	SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.0f, 1.0f);
+	//SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.0f, 1.0f);
 	
 	////투영 변환 행렬을 생성한다. 
 	//pCamera->GenerateProjectionMatrix(1.0f, 500.0f, float(m_nWndClientWidth)/float(m_nWndClientHeight), 90.0f);
-	m_vCamera.SetProjParams((float)D3DXToRadian(90.0f), float(m_nWndClientWidth)/float(m_nWndClientHeight), 1.0f, 500.0f);
+	m_pCamera->SetProjParams((float)D3DXToRadian(90.0f), float(m_nWndClientWidth)/float(m_nWndClientHeight), 1.0f, 500.0f);
 
-	////카메라 변환 행렬을 생성한다. 
-	
-	//D3DXVECTOR3 d3dxvUp = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-	//pCamera->GenerateViewMatrix(d3dxvEyePosition, d3dxvLookAt, d3dxvUp);
-	////카메라 객체를 플레이어 객체에 설정한다. 
-	//m_ppPlayers[0]->SetCamera(pCamera);
-	//m_ppPlayers[0]->CreateShaderVariables(m_pd3dDevice);
+	m_pCameraMinimap = new CCamera();
+	m_pCameraMinimap->CreateShaderVariables(m_pd3dDevice);
+	m_pCameraMinimap->SetViewport(m_pd3dDeviceContext, m_nWndClientWidth - m_nWndClientWidth/5 - 10, m_nWndClientHeight - m_nWndClientHeight/5 - 10, m_nWndClientWidth/5, m_nWndClientHeight/5, 0.0f, 0.1f);
+	m_pCameraMinimap->SetProjParams((float)D3DXToRadian(90.0f), float(120)/float(80), 1.0f, 500.0f);
+	D3DXVECTOR3 d3dxvEyePosition = D3DXVECTOR3(0, 500, 0);
+	D3DXVECTOR3 d3dxvLookAt = D3DXVECTOR3(0, 0, 17);
+	m_pCameraMinimap->SetViewParams( &d3dxvEyePosition, &d3dxvLookAt );
 
+	m_pScene->m_Camera = m_pCamera;
 	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice);
 
 	m_DialogResourceManager.OnD3D11ResizedSwapChain( m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight );
@@ -433,32 +429,24 @@ void CGameFramework::FrameAdvance()
 	//m_pd3dDeviceContext->ClearDepthStencilView( m_pd3dDepthStencilView, D3D11_CLEAR_DEPTH, 1.0, 0 );
 	//후면버퍼를 전면버퍼로 프리젠트한다. 
 
-	D3DXMATRIX m_d3dxmtxView = *m_vCamera.GetViewMatrix();         
-	D3DXMATRIX m_d3dxmtxProjection = *m_vCamera.GetProjMatrix();   
-	m_vCamera.FrameMove(m_GameTimer.GetTimeElapsed());
-
-	D3D11_MAPPED_SUBRESOURCE d3dMappedResource;
-	/*상수 버퍼의 메모리 주소를 가져와서 카메라 변환 행렬과 투영 변환 행렬을 복사한다. 쉐이더에서 행렬의 행과 열이 바뀌는 것에 주의하라.*/
-	m_pd3dDeviceContext->Map(m_pd3dcbViewProjection, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
-	VS_CB_VIEWPROJECTION_MATRIX *pcbViewProjection = (VS_CB_VIEWPROJECTION_MATRIX *)d3dMappedResource.pData;
-	D3DXMatrixTranspose(&pcbViewProjection->m_d3dxmtxView, &m_d3dxmtxView);
-	D3DXMatrixTranspose(&pcbViewProjection->m_d3dxmtxProjection, &m_d3dxmtxProjection);
-	m_pd3dDeviceContext->Unmap(m_pd3dcbViewProjection, 0);
-
-	//상수 버퍼를 슬롯(VS_SLOT_VIEWPROJECTION_MATRIX)에 설정한다.
-	m_pd3dDeviceContext->VSSetConstantBuffers( VS_SLOT_VIEWPROJECTION_MATRIX, 1, &m_pd3dcbViewProjection);
-
-	//////////////////
+	
 
 	if(m_SendTick > 1)
 	{
 		this->SendHeroData();
 		m_SendTick  = 0;
 	}
-	
-	m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f);
+	m_pCamera->UpdateShaderVariables(m_pd3dDeviceContext);
+	m_pCamera->FrameMove(m_GameTimer.GetTimeElapsed());
+	m_pd3dDeviceContext->RSSetViewports(1, &m_pCamera->GetViewport());
+	m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f, m_pCamera);
 
 	RenderText();
+
+	m_pCameraMinimap->UpdateShaderVariables(m_pd3dDeviceContext);
+	m_pCameraMinimap->FrameMove(m_GameTimer.GetTimeElapsed());
+	m_pd3dDeviceContext->RSSetViewports(1, &m_pCameraMinimap->GetViewport());
+	m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f, m_pCameraMinimap);
 
 	m_pDXGISwapChain->Present(0, 0);
 
@@ -471,7 +459,11 @@ void CGameFramework::SetCameraPos()
 {
 	D3DXVECTOR3 d3dxvEyePosition = D3DXVECTOR3(m_CameraPosX, m_CameraZoom, m_CameraPosZ);
 	D3DXVECTOR3 d3dxvLookAt = D3DXVECTOR3(m_CameraPosX, 0.0f, m_CameraPosZ+17.0f);
-	m_vCamera.SetViewParams( &d3dxvEyePosition, &d3dxvLookAt );
+	//m_pCamera->SetPosition(d3dxvEyePosition);
+	//m_pCamera->SetLookAtPosition(d3dxvLookAt);
+	//m_pCamera->GenerateViewMatrix();
+	m_pCamera->SetViewParams( &d3dxvEyePosition, &d3dxvLookAt );
+	m_pCamera->CalculateFrustumPlanes();
 
 	if(m_CameraUpDown == 1)
 		m_CameraZoom += 1 * 3.0f;

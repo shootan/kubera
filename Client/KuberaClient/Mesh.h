@@ -3,8 +3,8 @@
 #include "Textureclass.h"
 #include <fbxsdk.h>
 #include <vector>
+#include "AABB.h"
 
-/*정점의 색상을 무작위로(Random) 설정하기 위해 사용한다. 각 정점의 색상은 난수(Random Number)를 생성하여 지정한다.*/ 
 #define RANDOM_COLOR D3DXCOLOR((rand() * 0xFFFFFF) / RAND_MAX)
 
 
@@ -26,14 +26,28 @@ public:
 
 
 	int m_nReferences;
+
 public:
-	void AddRef();
-	void Release();
+	void AddRef() { m_nReferences++; }
+	void Release() { if (--m_nReferences <= 0) delete this; }
+
+public:
+	/*각 정점의 위치 벡터를 픽킹을 위하여 저장한다(정점 버퍼를 DYNAMIC으로 생성하고 Map()을 하지 않아도 되도록).*/
+	D3DXVECTOR3 *m_pd3dxvPositions;
+	/*메쉬의 인덱스를 저장한다(인덱스 버퍼를 DYNAMIC으로 생성하고 Map()을 하지 않아도 되도록).*/ 
+	UINT *m_pnIndices; 
+	int CheckRayIntersection(D3DXVECTOR3 *pd3dxvRayPosition, D3DXVECTOR3 *pd3dxvRayDirection, MESHINTERSECTINFO *pd3dxIntersectInfo);
+	AABB GetBoundingCube() { return(m_bcBoundingCube); }
+
+protected:
+	AABB m_bcBoundingCube;  
 
 protected:
 	ID3D11Buffer **m_ppd3dVertexBuffers;
-	UINT m_nVertexBuffers;  //정점 버퍼의 갯수
-	UINT m_nVertexSlot;     //정점 버퍼를 연결할 슬롯 인덱스
+
+	UINT m_nSlot;
+	int m_nBuffers;
+
 	UINT *m_pnVertexStrides;
 	UINT *m_pnVertexOffsets;
 	UINT m_nVertices;
@@ -47,13 +61,6 @@ protected:
 	UINT m_nStartIndex;
 	int m_nBaseVertex;
 
-	//ID3D11Buffer *m_pd3dVertexBuffer; //정점데이터를 저장하기 위한 정점 버퍼 인터페이스 포인터 설정
-	//ID3D11Buffer *m_pd3dIndexBuffer;
-	///*정점 버퍼의 정점 개수, 정점의 바이트 수, 정점 데이터가 정점 버퍼의 어디에서부터 시작하는 가를 나타내는 변수를 선언한다.*/
-	//UINT m_nVertices;
-	//UINT m_nStride;
-	//UINT m_nOffset;
-
 	ID3D11RasterizerState *m_pd3dRasterizerState;
 	D3D11_PRIMITIVE_TOPOLOGY m_d3dPrimitiveTopology;
 
@@ -62,7 +69,9 @@ public:
 	virtual void CreateRasterizerState(ID3D11Device *pd3dDevice);
 
 	//정점 버퍼 배열에 인스턴스 데이터를 나타내는 정점 버퍼를 추가한다.
-	void AppendVertexBuffer(ID3D11Buffer *pd3dBuffer, UINT nStride=0, UINT nOffset=0);
+
+	void AssembleToVertexBuffer(int nBuffers=0, ID3D11Buffer **m_pd3dBuffers=NULL, UINT *pnBufferStrides=NULL, UINT *pnBufferOffsets=NULL);
+
 	virtual void RenderInstanced(ID3D11DeviceContext *pd3dDeviceContext, int nInstances=0, int nStartInstance=0);
 	virtual bool LoadTexture(ID3D11Device* pd3dDevice, WCHAR* filename){return 0;}
 	virtual void ReleaseTexture(){}

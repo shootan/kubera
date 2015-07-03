@@ -4,8 +4,6 @@ HeroObject::HeroObject(void)
 {
 	CGameObject::CGameObject();
 
-	m_pAniMesh = NULL;
-
 	m_iTag = HERO;
 	m_bMove = FALSE;
 	m_pTarget = NULL;
@@ -46,7 +44,7 @@ HeroObject::~HeroObject(void)
 }
 
 
-void HeroObject::Render(ID3D11DeviceContext *pd3dDeviceContext, float fTimeElapsed)
+void HeroObject::Render(ID3D11DeviceContext *pd3dDeviceContext, float fTimeElapsed, CCamera *pCamera)
 {
 	if(m_Visible != TRUE) return;
 
@@ -90,8 +88,24 @@ void HeroObject::Render(ID3D11DeviceContext *pd3dDeviceContext, float fTimeElaps
 
 	if(m_time > 180.0f) m_time = 0.0f;
 
-	if (m_pAniMesh) m_pAniMesh->Render(pd3dDeviceContext, m_time);
+	if (m_pAniMesh)
+	{
+		bool bIsVisible = true;
 
+		/*for(int i=0; i<m_pAniMesh->GetSubsetCount(); i++)
+		{
+			if (pCamera)
+			{
+				AABB bcBoundingCube = m_pAniMesh->GetSubset(i)->GetBoundingCube();
+				bcBoundingCube.Update(&m_d3dxmtxWorld);
+				bIsVisible = pCamera->IsInFrustum(&bcBoundingCube);
+
+				if (bIsVisible) break;
+			}
+		}
+
+		if (bIsVisible)*/ m_pAniMesh->Render(pd3dDeviceContext, m_time);
+	}
 }
 
 void HeroObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
@@ -492,9 +506,9 @@ void HeroObject::Animate(float fTimeElapsed)
 }
 
 
-void HeroObject::SetAniMesh(GFBX::Mesh *pAniMesh)
-{
-	//if (m_pAniMesh) m_pAniMesh->Release();
-	m_pAniMesh = pAniMesh;
-	//if (m_pAniMesh) m_pAniMesh->AddRef();
-}
+//void HeroObject::SetAniMesh(GFBX::Mesh *pAniMesh)
+//{
+//	//if (m_pAniMesh) m_pAniMesh->Release();
+//	m_pAniMesh = pAniMesh;
+//	//if (m_pAniMesh) m_pAniMesh->AddRef();
+//}

@@ -16,6 +16,7 @@
 #include "ParticleMesh.h"
 #include "Particle2Mesh.h"
 #include "Particle3Mesh.h"
+#include "Camera.h"
 
 class CScene
 {
@@ -39,10 +40,10 @@ private:
 	BOOL m_bRbutton;
 	BOOL m_bLbutton;
 
-	CFBXMesh *pHeroMesh;
+	
 	GFBX::Mesh *m_pWarriorMesh;
 	GFBX::Mesh *m_pWizardMesh;
-	CFBXMesh *pMinionDragonMesh;
+
 	ParticleMesh *m_pParticleMesh;
 	Particle3Mesh *m_pParticle2Mesh;
 	Particle3Mesh *m_pParticle3Mesh;
@@ -63,7 +64,7 @@ public:
 	CScene(void);
 	~CScene(void);
 
-	CModelViewerCamera* m_Camera;
+	CCamera* m_Camera;
 	ControlManager		m_Control;
 
 	bool OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
@@ -74,7 +75,7 @@ public:
 
 	bool ProcessInput();
 	void AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice);
-	void Render(ID3D11DeviceContext *pd3dDeviceContext, float fTimeElapsed);
+	void Render(ID3D11DeviceContext *pd3dDeviceContext, float fTimeElapsed, CCamera *pCamera);
 
 	int GetMousePosX();
 	int GetMousePosY();

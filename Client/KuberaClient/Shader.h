@@ -4,6 +4,7 @@
 #include "ObstacleObject.h"
 #include "MissileObject.h"
 #include "Mesh.h"
+#include "FBX/GFBXMeshLoader.h"
 #include "MissileManager.h"
 #include "ObstacleManager.h"
 #include "TowerManager.h"
@@ -58,6 +59,8 @@ protected:
 	int m_nObjects;
 	//쉐이더에서 렌더링할 게임 객체를 추가할 위치를 나타내는 인덱스를 선언한다. 
 	int m_nIndexToAdd;
+
+	CCamera *m_pCamera;
 };
 
 
@@ -137,24 +140,27 @@ public:
 
 	virtual void CreateShader(ID3D11Device *pd3dDevice, int nObjects);
 	virtual void CreateShaderVariables(ID3D11Device *pd3dDevice);
-	virtual void UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceContext);
+	virtual void UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceContext, CCamera *pCamera);
 
 	virtual void ReleaseObjects();
 	virtual void AnimateObjects(float fTimeElapsed);
-	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext);
+	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext, CCamera *pCamera);
 	virtual void BuildObjects(ID3D11Device *pd3dDevice);
 
 	virtual void AddObject(CGameObject *pObject); 
 
+	UINT m_nInstanceBufferStride;
+	UINT m_nInstanceBufferOffset;
+
 	//쉐이더에서 렌더링할 메쉬이다.
-	CMesh *m_pBush3Mesh;
-	CMesh *m_pRock2Mesh;
-	CMesh *m_pRock3Mesh;
-	CMesh *m_pMissileMesh;
-	CMesh *m_pBlueTowerMesh;
-	CMesh *m_pRedTowerMesh;
-	CMesh *m_pMinionMesh;
-	CMesh *m_pDestroyTowerMesh;
+	GFBX::Mesh *m_pBush3Mesh;
+	GFBX::Mesh *m_pRock2Mesh;
+	GFBX::Mesh *m_pRock3Mesh;
+	GFBX::Mesh *m_pMissileMesh;
+	GFBX::Mesh *m_pBlueTowerMesh;
+	GFBX::Mesh *m_pRedTowerMesh;
+	GFBX::Mesh *m_pMinionMesh;
+	GFBX::Mesh *m_pDestroyTowerMesh;
 
 	int m_nBush3Objects;
 	int m_nRock2Objects;
@@ -183,4 +189,7 @@ public:
 	ID3D11Buffer *m_pd3dcbInstanceColors;
 	UINT m_nColorBufferStride;
 	UINT m_nColorBufferOffset;
+
+public:
+	ID3D11Buffer *CreateInstanceBuffer(ID3D11Device *pd3dDevice, int nObjects, UINT nBufferStride, void *pBufferData);
 };

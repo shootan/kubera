@@ -45,7 +45,7 @@ public:
 		return instance;
 	}
 public:
-	void CreateMinion1(D3DXVECTOR3 pos, CMesh* mesh, float boundx, float boundy, float boundz)
+	void CreateMinion1(D3DXVECTOR3 pos, GFBX::Mesh* mesh, float boundx, float boundy, float boundz)
 	{
 		for(int i=0; i<MAX_MINION; i++)
 		{

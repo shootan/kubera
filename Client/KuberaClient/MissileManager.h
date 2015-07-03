@@ -32,7 +32,7 @@ public:
 		return instance;
 	}
 public:
-	void CreateMissile(D3DXVECTOR3 pos, CMesh* mesh)
+	void CreateMissile(D3DXVECTOR3 pos, GFBX::Mesh* mesh)
 	{
 		for(int i=0; i<MAX_MISSILE; i++)
 		{

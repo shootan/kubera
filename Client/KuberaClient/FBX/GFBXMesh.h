@@ -41,10 +41,12 @@ public:
 
 	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext);
 	virtual void CreateRasterizerState(ID3D11Device *pd3dDevice);
+	void ResetCULLNONECreateRasterizerState(ID3D11Device *pd3dDevice);
 	virtual void RenderInstanced(ID3D11DeviceContext *pd3dDeviceContext, int nInstances=0, int nStartInstance=0);
 	virtual bool LoadTexture(ID3D11Device* pd3dDevice, WCHAR* filename);
 	virtual void ReleaseTexture();
 
+	void SetUVTilling(int _tilenum);
 
 	CTextureclass* m_pTexture;
 
@@ -63,9 +65,11 @@ public:
 	Mesh();
 	virtual ~Mesh();
 
+public:
 	HRESULT OnCreateDevice(ID3D11Device* pd3dDevice);
 	HRESULT Render(ID3D11DeviceContext* pd3dImmediateContext);
 	HRESULT Render(ID3D11DeviceContext* pd3dImmediateContext, float t);
+	void RenderInstanced(ID3D11DeviceContext *pd3dDeviceContext, int nInstances=0, int nStartInstance=0);
 
 	MeshSubset* CreateSubset(ID3D11Device* pd3dDevice);
 	int GetSubsetCount() { return m_Subsets.size(); }

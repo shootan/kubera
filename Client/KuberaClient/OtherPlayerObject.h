@@ -28,7 +28,7 @@ public:
 	~OtherPlayerObject();
 
 	virtual void Animate(float fTimeElapsed);
-	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext, float fTimeElapsed);
+	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext, float fTimeElapsed, CCamera *pCamera);
 	virtual void SetNewDestination ( D3DXVECTOR3 _pos );
 	virtual void Update(float fTimeElapsed);
 	bool InMotion();

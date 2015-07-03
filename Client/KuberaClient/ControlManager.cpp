@@ -4,6 +4,7 @@ void ControlManager::TouchRightDown(float _x, float _y, HWND hWnd)
 {
 	D3DXVECTOR3 vRayDirection;
 	D3DXVECTOR3 vRayOrigin = *m_Camera->GetEyePt();
+	//D3DXVECTOR3 vRayOrigin = m_Camera->GetPosition();
 	this->CalculateScreenRayFromCoordinates( _x, _y, vRayDirection , hWnd );
 	D3DXVECTOR3 vGroundPlaneHit;
 
@@ -28,6 +29,7 @@ void ControlManager::TouchLeftDown(float _x, float _y , HWND hWnd)
 {
 	D3DXVECTOR3 vRayDirection;
 	D3DXVECTOR3 vRayOrigin = *m_Camera->GetEyePt();
+	//D3DXVECTOR3 vRayOrigin = m_Camera->GetPosition();
 	this->CalculateScreenRayFromCoordinates( _x, _y, vRayDirection , hWnd );
 
 	SetTarget(vRayDirection, vRayOrigin);
@@ -43,6 +45,7 @@ void ControlManager::CalculateScreenRayFromCoordinates( float x, float y, D3DXVE
 	RECT windowRect;
 	GetClientRect(hWnd, &windowRect);
 	const D3DXMATRIX* pmatProj = m_Camera->GetProjMatrix();
+	//const D3DXMATRIX* pmatProj = &m_Camera->GetProjectionMatrix();
 
 	//3DÁÂÇ¥·Î º¯°æ
 	D3DXVECTOR3 v;
@@ -54,6 +57,10 @@ void ControlManager::CalculateScreenRayFromCoordinates( float x, float y, D3DXVE
 	// Get the inverse view matrix
 	const D3DXMATRIX matView = *m_Camera->GetViewMatrix();
 	const D3DXMATRIX matWorld = *m_Camera->GetWorldMatrix();
+	//const D3DXMATRIX matView = m_Camera->GetViewMatrix();
+	//D3DXMATRIX mx;
+	//D3DXMatrixIdentity(&mx);
+	//const D3DXMATRIX matWorld =mx;
 	D3DXMATRIX mWorldView = matWorld * matView;
 	D3DXMATRIX m; 
 	D3DXMatrixInverse( &m, NULL, &mWorldView );

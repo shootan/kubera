@@ -20,9 +20,9 @@ MinionObject::~MinionObject(void)
 	CGameObject::~CGameObject();
 }
 
-void MinionObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
+void MinionObject::Render(ID3D11DeviceContext *pd3dDeviceContext, CCamera *pCamera)
 {
-	CGameObject::Render(pd3dDeviceContext);
+	CGameObject::Render(pd3dDeviceContext, pCamera);
 	//if(m_Visible != TRUE) return;
 
 	//if(m_iTag == OTHERPLAYER)

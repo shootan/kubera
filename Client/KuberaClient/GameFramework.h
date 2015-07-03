@@ -3,13 +3,7 @@
 #include "Timer.h"
 #include "Scene.h"
 #include "Network.h"
-
-
-struct VS_CB_VIEWPROJECTION_MATRIX
-{
-	D3DXMATRIX m_d3dxmtxView;         
-	D3DXMATRIX m_d3dxmtxProjection;   
-};
+#include "Camera.h"
 
 class CGameFramework
 {
@@ -26,8 +20,9 @@ private:
 	CScene *m_pScene;
 	_TCHAR m_pszBuffer[50];
 
-	CModelViewerCamera m_vCamera;
-	ID3D11Buffer *m_pd3dcbViewProjection;
+	CCamera *m_pCamera; 
+	CCamera *m_pCameraMinimap;
+
 	PlayerPacket m_MyHero;
 
 	float m_CameraPosX;

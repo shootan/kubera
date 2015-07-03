@@ -4,8 +4,11 @@
 CMesh::CMesh(ID3D11Device *pd3dDevice)
 {
 	m_ppd3dVertexBuffers = NULL;
-	m_nVertexSlot = 0;
-	m_nVertexBuffers = 0;
+	//m_nVertexSlot = 0;
+	//m_nVertexBuffers = 0;
+	m_nBuffers = 0;
+	m_nSlot = 0;
+
 	m_pnVertexStrides = NULL;
 	m_pnVertexOffsets = NULL;
 	m_nVertices = 0;
@@ -14,7 +17,7 @@ CMesh::CMesh(ID3D11Device *pd3dDevice)
 	m_d3dPrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 	m_pd3dIndexBuffer = NULL;
-	m_dxgiIndexFormat = DXGI_FORMAT_R16_UINT;
+	m_dxgiIndexFormat = DXGI_FORMAT_R32_UINT;
 	m_nIndexOffset = 0;
 	m_nIndices = 0;
 	m_nStartIndex = 0;
@@ -24,102 +27,118 @@ CMesh::CMesh(ID3D11Device *pd3dDevice)
 
 	m_nReferences = 0;
 
-	//
-	//m_nStride = sizeof(CVertex);
-	//m_nOffset = 0;
-	//m_d3dPrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	//m_nReferences = 1;
-	//m_pd3dRasterizerState = NULL;
+	m_bcBoundingCube.m_d3dxvMinimum = D3DXVECTOR3(-1, -1, -1); //D3DXVECTOR3(+FLT_MAX, +FLT_MAX, +FLT_MAX);
+	m_bcBoundingCube.m_d3dxvMaximum = D3DXVECTOR3(+1, +1, +1);//D3DXVECTOR3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+	m_pd3dxvPositions = NULL;
+	m_pnIndices = NULL;
 
 }
 
 CMesh::~CMesh(void)
 {
-	//if (m_pd3dVertexBuffer) m_pd3dVertexBuffer->Release();
-	//if (m_pd3dIndexBuffer) m_pd3dIndexBuffer->Release();
 	if (m_pd3dRasterizerState) m_pd3dRasterizerState->Release();
-
-	if (m_ppd3dVertexBuffers)
-	{
-		for (UINT i = 0; i < m_nVertexBuffers; i++) if (m_ppd3dVertexBuffers[i]) m_ppd3dVertexBuffers[i]->Release();
-		delete [] m_ppd3dVertexBuffers;
-	}
 	if (m_pd3dIndexBuffer) m_pd3dIndexBuffer->Release();
 
+	if (m_ppd3dVertexBuffers) delete [] m_ppd3dVertexBuffers;
 	if (m_pnVertexStrides) delete [] m_pnVertexStrides;
 	if (m_pnVertexOffsets) delete [] m_pnVertexOffsets;
+
+	if (m_pd3dxvPositions) delete [] m_pd3dxvPositions;
+	if (m_pnIndices) delete [] m_pnIndices;
 }
 
-
-
-void CMesh::AddRef() 
-{ 
-	m_nReferences++; 
-}
-
-void CMesh::Release() 
-{ 
-	m_nReferences--; 
-	if (m_nReferences == 0) delete this;
-}
-
-void CMesh::AppendVertexBuffer(ID3D11Buffer *pd3dBuffer, UINT nStride, UINT nOffset)
+int CMesh::CheckRayIntersection(D3DXVECTOR3 *pd3dxvRayPosition, D3DXVECTOR3 *pd3dxvRayDirection, MESHINTERSECTINFO *pd3dxIntersectInfo)
 {
-	//기존의 배열들 보다 하나 큰 배열을 생성하고 기존의 배열을 복사한 후 새로운 원소를 추가한다.
-	UINT *pnVertexStrides = new UINT[m_nVertexBuffers+1];
-	UINT *pnVertexOffsets = new UINT[m_nVertexBuffers+1];
-	for (UINT i = 0; i < m_nVertexBuffers; i++) 
-	{
-		pnVertexStrides[i] = m_pnVertexStrides[i];
-		pnVertexOffsets[i] = m_pnVertexOffsets[i];
-	}
-	delete [] m_pnVertexStrides;
-	delete [] m_pnVertexOffsets;
-	pnVertexStrides[m_nVertexBuffers] = nStride;
-	pnVertexOffsets[m_nVertexBuffers] = nOffset;
-	m_pnVertexStrides = pnVertexStrides;
-	m_pnVertexOffsets = pnVertexOffsets;
+	//모델 좌표계의 광선의 시작점(pd3dxvRayPosition)과 방향이 주어질 때 메쉬와의 충돌 검사를 한다.
+	int nIntersections = 0;
+	BYTE *pbPositions = (BYTE *)m_pd3dxvPositions + m_pnVertexOffsets[0];
 
-	//기존의 정점 배열들 보다 하나 큰 배열을 생성하고 기존의 배열을 복사한 후 새로운 원소를 추가한다.
-	ID3D11Buffer **ppd3dVertexBuffers = new ID3D11Buffer*[m_nVertexBuffers+1];
-	for (UINT i = 0; i < m_nVertexBuffers; i++)
-	{
-		ppd3dVertexBuffers[i] = m_ppd3dVertexBuffers[i];
-	}
-	delete [] m_ppd3dVertexBuffers;
-	ppd3dVertexBuffers[m_nVertexBuffers] = pd3dBuffer;
-	if (pd3dBuffer) pd3dBuffer->AddRef();
-	m_ppd3dVertexBuffers = ppd3dVertexBuffers;
+	int nOffset = (m_d3dPrimitiveTopology == D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST) ? 3 : 1;
+	//메쉬의 프리미티브(삼각형)들의 개수이다. 삼각형 리스트인 경우 (정점의 개수 / 3) 또는 (인덱스의 개수 / 3), 삼각형 스트립의 경우 (정점의 개수 - 2) 또는 (인덱스의 개수 - 2)이다.
+	int nPrimitives = (m_d3dPrimitiveTopology == D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST) ? (m_nVertices / 3) : (m_nVertices - 2);
+	if (m_nIndices > 0) nPrimitives = (m_d3dPrimitiveTopology == D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST) ? (m_nIndices / 3) : (m_nIndices - 2);
 
-	m_nVertexBuffers++;
+	D3DXVECTOR3 v0, v1, v2;
+	float fuHitBaryCentric, fvHitBaryCentric, fHitDistance, fNearHitDistance = FLT_MAX;
+	/*메쉬의 모든 프리미티브(삼각형)들에 대하여 픽킹 광선과의 충돌을 검사한다. 충돌하는 모든 삼각형을 찾아 광선의 시작점(실제로는 카메라 좌표계의 원점)에 가장 가까운 삼각형을 찾는다.*/
+	for (int i = 0; i < nPrimitives; i++)
+	{
+		v0 = *(D3DXVECTOR3 *)(pbPositions + ((m_pnIndices) ? (m_pnIndices[(i*nOffset)+0]) : ((i*nOffset)+0)) * m_pnVertexStrides[0]);
+		v1 = *(D3DXVECTOR3 *)(pbPositions + ((m_pnIndices) ? (m_pnIndices[(i*nOffset)+1]) : ((i*nOffset)+1)) * m_pnVertexStrides[0]);
+		v2 = *(D3DXVECTOR3 *)(pbPositions + ((m_pnIndices) ? (m_pnIndices[(i*nOffset)+2]) : ((i*nOffset)+2)) * m_pnVertexStrides[0]);
+		if (D3DXIntersectTri(&v0, &v1, &v2, pd3dxvRayPosition, pd3dxvRayDirection, &fuHitBaryCentric, &fvHitBaryCentric, &fHitDistance))
+		{
+			if (fHitDistance < fNearHitDistance) 
+			{
+				fNearHitDistance = fHitDistance; 
+				if (pd3dxIntersectInfo)
+				{
+					pd3dxIntersectInfo->m_dwFaceIndex = i;
+					pd3dxIntersectInfo->m_fU = fuHitBaryCentric;
+					pd3dxIntersectInfo->m_fV = fvHitBaryCentric;
+					pd3dxIntersectInfo->m_fDistance = fHitDistance;
+				}
+			}
+			nIntersections++;
+		}
+	}
+	return(nIntersections);
+}
+
+void CMesh::AssembleToVertexBuffer(int nBuffers, ID3D11Buffer **ppd3dBuffers, UINT *pnBufferStrides, UINT *pnBufferOffsets)
+{
+	ID3D11Buffer **ppd3dNewVertexBuffers = new ID3D11Buffer*[m_nBuffers+nBuffers];
+	UINT *pnNewVertexStrides = new UINT[m_nBuffers+nBuffers];
+	UINT *pnNewVertexOffsets = new UINT[m_nBuffers+nBuffers];
+
+	if (m_nBuffers > 0)
+	{
+		for (int i = 0; i < m_nBuffers; i++) 
+		{
+			ppd3dNewVertexBuffers[i] = m_ppd3dVertexBuffers[i];
+			pnNewVertexStrides[i] = m_pnVertexStrides[i];
+			pnNewVertexOffsets[i] = m_pnVertexOffsets[i];
+		}
+		if (m_ppd3dVertexBuffers) delete [] m_ppd3dVertexBuffers;
+		if (m_pnVertexStrides) delete [] m_pnVertexStrides;
+		if (m_pnVertexOffsets) delete [] m_pnVertexOffsets;
+	}
+
+	for (int i = 0; i < nBuffers; i++) 
+	{
+		ppd3dNewVertexBuffers[m_nBuffers+i] = ppd3dBuffers[i];
+		pnNewVertexStrides[m_nBuffers+i] = pnBufferStrides[i];
+		pnNewVertexOffsets[m_nBuffers+i] = pnBufferOffsets[i];
+	}
+
+	m_nBuffers += nBuffers;
+	m_ppd3dVertexBuffers = ppd3dNewVertexBuffers;
+	m_pnVertexStrides = pnNewVertexStrides;
+	m_pnVertexOffsets = pnNewVertexOffsets;
 }
 
 
 void CMesh::Render(ID3D11DeviceContext *pd3dDeviceContext)
 {
-	//if (m_pd3dVertexBuffer) pd3dDeviceContext->IASetVertexBuffers(0, 1, &m_pd3dVertexBuffer, &m_nStride, &m_nOffset);
-	//if (m_pd3dIndexBuffer) pd3dDeviceContext->IASetIndexBuffer(m_pd3dIndexBuffer, DXGI_FORMAT_R32_UINT, m_nOffset);
-	if (m_ppd3dVertexBuffers) pd3dDeviceContext->IASetVertexBuffers( m_nVertexSlot, m_nVertexBuffers, m_ppd3dVertexBuffers, m_pnVertexStrides, m_pnVertexOffsets);
-	if (m_pd3dIndexBuffer) pd3dDeviceContext->IASetIndexBuffer( m_pd3dIndexBuffer, m_dxgiIndexFormat, m_nIndexOffset);
-
+	pd3dDeviceContext->IASetVertexBuffers(m_nSlot, m_nBuffers, m_ppd3dVertexBuffers, m_pnVertexStrides, m_pnVertexOffsets);
+	pd3dDeviceContext->IASetIndexBuffer(m_pd3dIndexBuffer, m_dxgiIndexFormat, m_nIndexOffset);
 	pd3dDeviceContext->IASetPrimitiveTopology(m_d3dPrimitiveTopology);
-	//래스터라이저 상태를 디바이스 컨텍스트에 설정한다.
-	if (m_pd3dRasterizerState) pd3dDeviceContext->RSSetState(m_pd3dRasterizerState);
+	pd3dDeviceContext->RSSetState(m_pd3dRasterizerState);
 
-	//pd3dDeviceContext->Draw(m_nVertices, m_nOffset);
-	if (m_pd3dIndexBuffer) 
+	if (m_pd3dIndexBuffer)
 		pd3dDeviceContext->DrawIndexed(m_nIndices, m_nStartIndex, m_nBaseVertex);
 	else
 		pd3dDeviceContext->Draw(m_nVertices, m_nStartVertex);
-
 }
 
 void CMesh::RenderInstanced(ID3D11DeviceContext *pd3dDeviceContext, int nInstances, int nStartInstance)
 {
-	if (m_ppd3dVertexBuffers) pd3dDeviceContext->IASetVertexBuffers( m_nVertexSlot, m_nVertexBuffers, m_ppd3dVertexBuffers, m_pnVertexStrides, m_pnVertexOffsets);
-	if (m_pd3dIndexBuffer) pd3dDeviceContext->IASetIndexBuffer( m_pd3dIndexBuffer, m_dxgiIndexFormat, m_nIndexOffset);
-	pd3dDeviceContext->IASetPrimitiveTopology( m_d3dPrimitiveTopology);
-	if (m_pd3dRasterizerState) pd3dDeviceContext->RSSetState( m_pd3dRasterizerState);
+	//인스턴싱의 경우 입력 조립기에 메쉬의 정점 버퍼와 인스턴스 정점 버퍼가 연결된다.
+	pd3dDeviceContext->IASetVertexBuffers(m_nSlot, m_nBuffers, m_ppd3dVertexBuffers, m_pnVertexStrides, m_pnVertexOffsets);
+	pd3dDeviceContext->IASetIndexBuffer(m_pd3dIndexBuffer, m_dxgiIndexFormat, m_nIndexOffset);
+	pd3dDeviceContext->IASetPrimitiveTopology(m_d3dPrimitiveTopology);
+	pd3dDeviceContext->RSSetState(m_pd3dRasterizerState);
 
 	//객체들의 인스턴스들을 렌더링한다. 
 	if (m_pd3dIndexBuffer) 
@@ -195,10 +214,10 @@ CCubeMesh::CCubeMesh(ID3D11Device *pd3dDevice, float fWidth, float fHeight, floa
 	m_pnVertexOffsets = new UINT[1];
 	m_pnVertexOffsets[0] = 0;
 
-	m_nVertexSlot = 0;
+	m_nSlot = 0;
 
-	m_nVertexBuffers = 1;
-	m_ppd3dVertexBuffers = new ID3D11Buffer*[m_nVertexBuffers];
+	m_nBuffers = 1;
+	m_ppd3dVertexBuffers = new ID3D11Buffer*[m_nBuffers];
 
 	m_d3dPrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
 
@@ -284,15 +303,13 @@ void CCubeMesh::Render(ID3D11DeviceContext *pd3dDeviceContext)
 CFBXMesh::CFBXMesh(ID3D11Device *pd3dDevice, LPCWSTR filename) : CMesh(pd3dDevice)
 {
 	m_nVertices = 0;
-	//m_nStride = sizeof(FBXVertex);
-	//m_nOffset = 0;
 	m_pnVertexStrides = new UINT[1];
 	m_pnVertexStrides[0] = sizeof(FBXVertex);
 	m_pnVertexOffsets = new UINT[1];
 	m_pnVertexOffsets[0] = 0;
-	m_nVertexSlot = 0;
-	m_nVertexBuffers = 1;
-	m_ppd3dVertexBuffers = new ID3D11Buffer*[m_nVertexBuffers];
+	m_nSlot = 0;
+	m_nBuffers = 1;
+	m_ppd3dVertexBuffers = new ID3D11Buffer*[m_nBuffers];
 
 	m_d3dPrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
@@ -312,9 +329,9 @@ CFBXMesh::CFBXMesh(ID3D11Device *pd3dDevice, LPCWSTR filename, float UV) : CMesh
 	m_pnVertexStrides[0] = sizeof(FBXVertex);
 	m_pnVertexOffsets = new UINT[1];
 	m_pnVertexOffsets[0] = 0;
-	m_nVertexSlot = 0;
-	m_nVertexBuffers = 1;
-	m_ppd3dVertexBuffers = new ID3D11Buffer*[m_nVertexBuffers];
+	m_nSlot = 0;
+	m_nBuffers = 1;
+	m_ppd3dVertexBuffers = new ID3D11Buffer*[m_nBuffers];
 
 	m_d3dPrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 

@@ -437,7 +437,6 @@ protected:
     bool m_bDragSinceLastUpdate; // True if mouse drag has happened since last time FrameMove is called.
 
     D3DXMATRIX m_mCameraRotLast;
-
 };
 
 //--------------------------------------------------------------------------------------

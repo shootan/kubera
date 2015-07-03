@@ -1,6 +1,8 @@
 #pragma once
 #include "Mesh.h"
 #include "header.h"
+#include "FBX\GFBXMesh.h"
+#include "Camera.h"
 //#include "astarclass.h"
 
 
@@ -47,12 +49,16 @@ public:
 
 	D3DXMATRIX m_d3dxmtxWorld;         
 	CMesh *m_pMesh;
+	GFBX::Mesh *m_pAniMesh;
+
+	AABB m_bcMeshBoundingCube;
 	//Astar* m_pAstar;
 	//node_t* m_pBestWay;
 
 	void SetMesh(CMesh *pMesh);
+	void SetMesh(GFBX::Mesh *pMesh);
 	virtual void Animate(float fTimeElapsed){}
-	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext);
+	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext, CCamera *pCamera);
 	virtual void SetNewDestination ( D3DXVECTOR3 _pos ){}
 	virtual void Update(float fTimeElapsed){}
 
@@ -111,4 +117,11 @@ public:
 
 	D3DXVECTOR3 GetDirection() { return m_vWalkIncrement; }
 	void SetDirection(D3DXVECTOR3 _dir) { m_vWalkIncrement = _dir; }
+
+	//월드 좌표계의 픽킹 광선을 생성한다.
+	void GenerateRayForPicking(D3DXVECTOR3 *pd3dxvPickPosition, D3DXMATRIX *pd3dxmtxWorld, D3DXMATRIX *pd3dxmtxView, D3DXVECTOR3 *pd3dxvPickRayPosition, D3DXVECTOR3 *pd3dxvPickRayDirection);
+	//월드 좌표계의 픽킹 광선을 생성한다.
+	int PickObjectByRayIntersection(D3DXVECTOR3 *pd3dxvPickPosition, D3DXMATRIX *pd3dxmtxView, MESHINTERSECTINFO *pd3dxIntersectInfo);
+
+	bool IsVisible(CCamera *pCamera=NULL);
 };

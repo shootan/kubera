@@ -139,6 +139,9 @@
     <ClCompile Include="Particle3Mesh.cpp">
       <Filter>소스코드\Particle</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>소스코드</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
@@ -275,6 +278,10 @@
     </ClInclude>
     <ClInclude Include="Particle3Mesh.h">
       <Filter>소스코드\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="AABB.h" />
+    <ClInclude Include="Camera.h">
+      <Filter>소스코드</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

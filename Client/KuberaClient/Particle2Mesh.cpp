@@ -15,9 +15,9 @@ Particle2Mesh::Particle2Mesh(ID3D11Device *pd3dDevice) : CMesh(pd3dDevice)
 	m_pnVertexStrides[0] = sizeof(VertexType);
 	m_pnVertexOffsets = new UINT[1];
 	m_pnVertexOffsets[0] = 0;
-	m_nVertexSlot = 0;
-	m_nVertexBuffers = 1;
-	m_ppd3dVertexBuffers = new ID3D11Buffer*[m_nVertexBuffers];
+	m_nSlot = 0;
+	m_nBuffers = 1;
+	m_ppd3dVertexBuffers = new ID3D11Buffer*[m_nBuffers];
 
 
 	CreateRasterizerState(pd3dDevice);

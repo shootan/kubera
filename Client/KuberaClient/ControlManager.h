@@ -6,11 +6,12 @@
 #include "OtherPlayerManager.h"
 #include "HeroManager.h"
 #include "MinionManager.h"
+#include "Camera.h"
 
 class ControlManager 
 {
 public:
-	CModelViewerCamera*		m_Camera;
+	CCamera*		m_Camera;
 
 	//
 	void TouchRightDown(float _x, float _y , HWND hWnd);

@@ -42,7 +42,7 @@ void MissileObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
 
 }
 
-void MissileObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
+void MissileObject::Render(ID3D11DeviceContext *pd3dDeviceContext, CCamera *pCamera)
 {
 	if(m_Visible != TRUE) return;
 

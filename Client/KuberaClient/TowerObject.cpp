@@ -18,7 +18,7 @@ TowerObject::~TowerObject(void)
 	CGameObject::~CGameObject();
 }
 
-void TowerObject::Render(ID3D11DeviceContext *pd3dDeviceContext)
+void TowerObject::Render(ID3D11DeviceContext *pd3dDeviceContext, CCamera *pCamera)
 {
 	if(m_Visible != TRUE) return;
 

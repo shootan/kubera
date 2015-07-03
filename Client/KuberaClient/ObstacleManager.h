@@ -39,7 +39,7 @@ public:
 		return instance;
 	}
 public:
-	void CreateObstacle(D3DXVECTOR3 pos, CMesh* mesh, float boundx, float boundy, float boundz)
+	void CreateObstacle(D3DXVECTOR3 pos, GFBX::Mesh* mesh, float boundx, float boundy, float boundz)
 	{
 		for(int i=0; i<MAX_OBSTACLE; i++)
 		{
@@ -53,7 +53,7 @@ public:
 		}
 	}
 
-	void CreateDestroyTower(D3DXVECTOR3 pos, CMesh* mesh, float boundx, float boundy, float boundz)
+	void CreateDestroyTower(D3DXVECTOR3 pos, GFBX::Mesh* mesh, float boundx, float boundy, float boundz)
 	{
 		for(int i=0; i<MAX_DESTROY_TOWER; i++)
 		{
