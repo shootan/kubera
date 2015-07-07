@@ -658,7 +658,7 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	{
 		Information In = MapEditorManager::sharedManager()->GetTreeData(x);
 		ObstacleManager::sharedManager()->CreateObstacle(D3DXVECTOR3(In.x, 0, In.z), m_pBush3Mesh, 25, 25, 25);
-			if(x == m_nBush3Objects/2) 
+			//if(x == m_nBush3Objects/2) 
 				//printf("CreateTreeObject in Half \n");
 	}
 
@@ -677,7 +677,7 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	{
 		Information In = MapEditorManager::sharedManager()->GetRockData(x);
 		ObstacleManager::sharedManager()->CreateObstacle(D3DXVECTOR3(In.x, 0, In.z), m_pRock2Mesh, 25, 25, 25);
-		if(x == m_nRock2Objects/2) 
+		//if(x == m_nRock2Objects/2) 
 			//printf("CreateObject in Half \n");
 			
 	}

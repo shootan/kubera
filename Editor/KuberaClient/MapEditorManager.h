@@ -45,7 +45,7 @@ public:
 	void LoadMapData()
 	{
 		FILE *fp;
-		fopen_s(&fp, "qwe.txt", "r");
+		fopen_s(&fp, "aesr.txt", "r");
 
 		fscanf_s(fp, "%d", &RockSize);
 
@@ -97,6 +97,10 @@ public:
 				BlueTower.push_back(Info);
 			}
 		}
+
+		int q;
+
+		fscanf_s(fp, "%d", &q);
 
 		Information Info;
 		fscanf_s(fp, "%d", &Info.team);
