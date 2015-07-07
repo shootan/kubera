@@ -1,4 +1,14 @@
 #include "GameObject.h"
+#include "Shader.h"
+
+CMaterial::CMaterial()
+{
+	m_nReferences = 0;
+}
+
+CMaterial::~CMaterial()
+{
+}
 
 
 CGameObject::CGameObject(void)
@@ -39,12 +49,15 @@ CGameObject::CGameObject(void)
 	//m_pBestWay = NULL;
 	//m_bAstar = FALSE;
 	//m_bFindPath = FALSE;
+
+	m_pMaterial = NULL;
 }
 
 
 CGameObject::~CGameObject(void)
 {
 	if (m_pMesh) m_pMesh->Release();
+	if (m_pMaterial) m_pMaterial->Release();
 }
 
 void CGameObject::AddRef() 
@@ -84,6 +97,8 @@ void CGameObject::SetMesh(GFBX::Mesh *pMesh)
 
 void CGameObject::Render(ID3D11DeviceContext *pd3dDeviceContext, CCamera *pCamera)
 {
+	if (m_pMaterial) CMaterialShader::UpdateMaterialShaderVariable(pd3dDeviceContext, &m_pMaterial->m_Material);
+
 	if(m_Visible != TRUE) return;
 
 	if(m_iTag == OTHERPLAYER)
@@ -289,4 +304,11 @@ bool CGameObject::IsVisible(CCamera *pCamera)
 	if (pCamera) bIsVisible = pCamera->IsInFrustum(&bcBoundingCube);
 	
 	return(bIsVisible);
+}
+
+void CGameObject::SetMaterial(CMaterial *pMaterial)
+{
+	if (m_pMaterial) m_pMaterial->Release();
+	m_pMaterial = pMaterial;
+	if (m_pMaterial) m_pMaterial->AddRef();
 }

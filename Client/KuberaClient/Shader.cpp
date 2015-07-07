@@ -1,5 +1,5 @@
 #include "Shader.h"
-
+ID3D11Buffer *CMaterialShader::m_pd3dcbMaterial = NULL;
 
 CShader::CShader(void)
 {
@@ -358,8 +358,8 @@ void CAnimationShader::CreateShader(ID3D11Device *pd3dDevice, int nObjects)
 	/*IA 단계에 설정할 입력-레이아웃을 정의한다. 정점 버퍼의 한 원소가 CVertex 클래스의 멤버 변수(D3DXVECTOR3 즉, 실수 세 개)이므로 입력-레이아웃은 실수(32-비트) 3개로 구성되며 시멘틱이 “POSITION”이고 정점 데이터임을 표현한다.*/ 
 	D3D11_INPUT_ELEMENT_DESC d3dInputLayout[] =
 	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,    0, D3D11_INPUT_PER_VERTEX_DATA, 0 },   //pos 16  //weight 4 , bones 4 , normal 12 
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,        12, D3D11_INPUT_PER_VERTEX_DATA, 0 },		//texcoord 8, tanget 16 binormal 4
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,    0, D3D11_INPUT_PER_VERTEX_DATA, 0 },   
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,        12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,         24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,    32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,   44, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -495,6 +495,8 @@ CInstancingShader::CInstancingShader()
 
 	m_nInstanceBufferStride = 0;
 	m_nInstanceBufferOffset = 0;
+
+	m_pMaterial = NULL;
 }
 
 CInstancingShader::~CInstancingShader()
@@ -537,72 +539,79 @@ void CInstancingShader::ReleaseObjects()
 
 void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 {
+	m_pMaterial = new CMaterial();
+	m_pMaterial->AddRef();
+	m_pMaterial->m_Material.m_d3dxcDiffuse = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.0f);///D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	m_pMaterial->m_Material.m_d3dxcAmbient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.0f);///D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	m_pMaterial->m_Material.m_d3dxcSpecular = D3DXCOLOR(0.1f, 0.1f, 0.1f, 5.0f);// D3DXCOLOR(1.0f, 1.0f, 1.0f, 5.0f);
+	m_pMaterial->m_Material.m_d3dxcEmissive = D3DXCOLOR(0.0f, 0.0f, 0.2f, 1.0f);
+
 	m_nInstanceBufferStride = sizeof(D3DXMATRIX);
 	m_nInstanceBufferOffset = 0;
 
 	m_pBush3Mesh = new GFBX::Mesh();
 	GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pBush3Mesh, L"obstacle/bush3.FBX", pd3dDevice);
-	for(int i=0; i<m_pBush3Mesh->GetSubsetCount(); i++)
+	for(int j=0; j<m_pBush3Mesh->GetSubsetCount(); j++)
 	{
-		m_pBush3Mesh->GetSubset(i)->OnCreateDevice(pd3dDevice);
-		m_pBush3Mesh->GetSubset(i)->LoadTexture(pd3dDevice, L"obstacle/bush3.tif");
-		m_pBush3Mesh->GetSubset(i)->ResetCULLNONECreateRasterizerState(pd3dDevice);
+		m_pBush3Mesh->GetSubset(j)->OnCreateDevice(pd3dDevice);
+		m_pBush3Mesh->GetSubset(j)->LoadTexture(pd3dDevice, L"obstacle/bush3.tif");
+		m_pBush3Mesh->GetSubset(j)->ResetCULLNONECreateRasterizerState(pd3dDevice);
 	}
 
 	m_pRock2Mesh = new GFBX::Mesh();
 	GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pRock2Mesh, L"obstacle/Rock2.FBX", pd3dDevice);
-	for(int i=0; i<m_pRock2Mesh->GetSubsetCount(); i++)
+	for(int j=0; j<m_pRock2Mesh->GetSubsetCount(); j++)
 	{
-		m_pRock2Mesh->GetSubset(i)->OnCreateDevice(pd3dDevice);
-		m_pRock2Mesh->GetSubset(i)->LoadTexture(pd3dDevice, L"obstacle/Rock2.tif");
+		m_pRock2Mesh->GetSubset(j)->OnCreateDevice(pd3dDevice);
+		m_pRock2Mesh->GetSubset(j)->LoadTexture(pd3dDevice, L"obstacle/Rock2.tif");
 	}
 
 	m_pRock3Mesh = new GFBX::Mesh();
 	GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pRock3Mesh, L"obstacle/Rock3.FBX", pd3dDevice);
-	for(int i=0; i<m_pRock3Mesh->GetSubsetCount(); i++)
+	for(int j=0; j<m_pRock3Mesh->GetSubsetCount(); j++)
 	{
-		m_pRock3Mesh->GetSubset(i)->OnCreateDevice(pd3dDevice);
-		m_pRock3Mesh->GetSubset(i)->LoadTexture(pd3dDevice, L"obstacle/Rock3.tif");
+		m_pRock3Mesh->GetSubset(j)->OnCreateDevice(pd3dDevice);
+		m_pRock3Mesh->GetSubset(j)->LoadTexture(pd3dDevice, L"obstacle/Rock3.tif");
 	}
 
 	m_pMissileMesh = new GFBX::Mesh();
 	GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pMissileMesh, L"missile/Missile.FBX", pd3dDevice);
-	for(int i=0; i<m_pMissileMesh->GetSubsetCount(); i++)
+	for(int j=0; j<m_pMissileMesh->GetSubsetCount(); j++)
 	{
-		m_pMissileMesh->GetSubset(i)->OnCreateDevice(pd3dDevice);
-		m_pMissileMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"missile/Missile.png");
+		m_pMissileMesh->GetSubset(j)->OnCreateDevice(pd3dDevice);
+		m_pMissileMesh->GetSubset(j)->LoadTexture(pd3dDevice, L"missile/Missile.png");
 	}
 
 	m_pBlueTowerMesh = new GFBX::Mesh();
 	GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pBlueTowerMesh, L"tower/BlueHqTower.FBX", pd3dDevice);
-	for(int i=0; i<m_pBlueTowerMesh->GetSubsetCount(); i++)
+	for(int j=0; j<m_pBlueTowerMesh->GetSubsetCount(); j++)
 	{
-		m_pBlueTowerMesh->GetSubset(i)->OnCreateDevice(pd3dDevice);
-		m_pBlueTowerMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"tower/BlueHqTower.png");
+		m_pBlueTowerMesh->GetSubset(j)->OnCreateDevice(pd3dDevice);
+		m_pBlueTowerMesh->GetSubset(j)->LoadTexture(pd3dDevice, L"tower/BlueHqTower.png");
 	}
 
 	m_pRedTowerMesh = new GFBX::Mesh();
 	GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pRedTowerMesh, L"tower/RedHqTower.FBX", pd3dDevice);
-	for(int i=0; i<m_pRedTowerMesh->GetSubsetCount(); i++)
+	for(int j=0; j<m_pRedTowerMesh->GetSubsetCount(); j++)
 	{
-		m_pRedTowerMesh->GetSubset(i)->OnCreateDevice(pd3dDevice);
-		m_pRedTowerMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"tower/RedHqTower.png");
+		m_pRedTowerMesh->GetSubset(j)->OnCreateDevice(pd3dDevice);
+		m_pRedTowerMesh->GetSubset(j)->LoadTexture(pd3dDevice, L"tower/RedHqTower.png");
 	}
 
 	m_pMinionMesh = new GFBX::Mesh();
 	GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pMinionMesh, L"minion/Dragon7107.FBX", pd3dDevice);
-	for(int i=0; i<m_pMinionMesh->GetSubsetCount(); i++)
+	for(int j=0; j<m_pMinionMesh->GetSubsetCount(); j++)
 	{
-		m_pMinionMesh->GetSubset(i)->OnCreateDevice(pd3dDevice);
-		m_pMinionMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"minion/micro_dragon_col.tif");
+		m_pMinionMesh->GetSubset(j)->OnCreateDevice(pd3dDevice);
+		m_pMinionMesh->GetSubset(j)->LoadTexture(pd3dDevice, L"minion/micro_dragon_col.tif");
 	}
 
 	m_pDestroyTowerMesh = new GFBX::Mesh();
 	GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pDestroyTowerMesh, L"tower/DestroyedTower.FBX", pd3dDevice);
-	for(int i=0; i<m_pDestroyTowerMesh->GetSubsetCount(); i++)
+	for(int j=0; j<m_pDestroyTowerMesh->GetSubsetCount(); j++)
 	{
-		m_pDestroyTowerMesh->GetSubset(i)->OnCreateDevice(pd3dDevice);
-		m_pDestroyTowerMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"tower/DestroyedTower.png");
+		m_pDestroyTowerMesh->GetSubset(j)->OnCreateDevice(pd3dDevice);
+		m_pDestroyTowerMesh->GetSubset(j)->LoadTexture(pd3dDevice, L"tower/DestroyedTower.png");
 	}
 	/*m_pBush3Mesh = new CFBXMesh(pd3dDevice, L"obstacle/bush3.FBX");
 	m_pBush3Mesh->LoadTexture(pd3dDevice, L"obstacle/bush3.tif");
@@ -677,8 +686,8 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	}
 
 	m_pd3dcbBush3InstanceMatrices = CreateInstanceBuffer(pd3dDevice, m_nBush3Objects, m_nInstanceBufferStride, NULL);
-	for(int i=0; i<m_pBush3Mesh->GetSubsetCount(); i++)
-		m_pBush3Mesh->GetSubset(i)->AssembleToVertexBuffer(1, &m_pd3dcbBush3InstanceMatrices, &m_nInstanceBufferStride, &m_nInstanceBufferOffset);
+	for(int j=0; j<m_pBush3Mesh->GetSubsetCount(); j++)
+		m_pBush3Mesh->GetSubset(j)->AssembleToVertexBuffer(1, &m_pd3dcbBush3InstanceMatrices, &m_nInstanceBufferStride, &m_nInstanceBufferOffset);
 
 
 	for(int x = 0; x < Rock2x; x++)
@@ -695,8 +704,8 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 		m_ppObjects[i++] = ObstacleManager::sharedManager()->m_pObstacle[j];
 
 	m_pd3dcbRock2InstanceMatrices = CreateInstanceBuffer(pd3dDevice, m_nRock2Objects, m_nInstanceBufferStride, NULL);
-	for(int i=0; i<m_pRock2Mesh->GetSubsetCount(); i++)
-		m_pRock2Mesh->GetSubset(i)->AssembleToVertexBuffer(1, &m_pd3dcbRock2InstanceMatrices, &m_nInstanceBufferStride, &m_nInstanceBufferOffset);
+	for(int j=0; j<m_pRock2Mesh->GetSubsetCount(); j++)
+		m_pRock2Mesh->GetSubset(j)->AssembleToVertexBuffer(1, &m_pd3dcbRock2InstanceMatrices, &m_nInstanceBufferStride, &m_nInstanceBufferOffset);
 
 
 	for(int x = 0; x < Rock3x; x++)
@@ -711,8 +720,8 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 		m_ppObjects[i++] = ObstacleManager::sharedManager()->m_pObstacle[j];
 
 	m_pd3dcbRock3InstanceMatrices = CreateInstanceBuffer(pd3dDevice, m_nRock3Objects, m_nInstanceBufferStride, NULL);
-	for(int i=0; i<m_pRock3Mesh->GetSubsetCount(); i++)
-		m_pRock3Mesh->GetSubset(i)->AssembleToVertexBuffer(1, &m_pd3dcbRock3InstanceMatrices, &m_nInstanceBufferStride, &m_nInstanceBufferOffset);
+	for(int j=0; j<m_pRock3Mesh->GetSubsetCount(); j++)
+		m_pRock3Mesh->GetSubset(j)->AssembleToVertexBuffer(1, &m_pd3dcbRock3InstanceMatrices, &m_nInstanceBufferStride, &m_nInstanceBufferOffset);
 
 
 	MissileManager::sharedManager()->CreateMissile(D3DXVECTOR3(1200, 0, 0), m_pMissileMesh);
@@ -720,8 +729,8 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 		m_ppObjects[i++] = MissileManager::sharedManager()->m_pMissile[j];
 
 	m_pd3dcbMissileInstanceMatrices = CreateInstanceBuffer(pd3dDevice, m_nMissileObjects, m_nInstanceBufferStride, NULL);
-	for(int i=0; i<m_pMissileMesh->GetSubsetCount(); i++)
-		m_pMissileMesh->GetSubset(i)->AssembleToVertexBuffer(1, &m_pd3dcbMissileInstanceMatrices, &m_nInstanceBufferStride, &m_nInstanceBufferOffset);
+	for(int j=0; j<m_pMissileMesh->GetSubsetCount(); j++)
+		m_pMissileMesh->GetSubset(j)->AssembleToVertexBuffer(1, &m_pd3dcbMissileInstanceMatrices, &m_nInstanceBufferStride, &m_nInstanceBufferOffset);
 
 
 	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(-400.f + 15.f , 0, 165.f), m_pBlueTowerMesh, 30, 30, 30, BLUE_TEAM);
@@ -746,12 +755,12 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	}
 
 	m_pd3dcbBlueTowerInstanceMatrices = CreateInstanceBuffer(pd3dDevice, m_nBlueTowerObjects, m_nInstanceBufferStride, NULL);
-	for(int i=0; i<m_pBlueTowerMesh->GetSubsetCount(); i++)
-		m_pBlueTowerMesh->GetSubset(i)->AssembleToVertexBuffer(1, &m_pd3dcbBlueTowerInstanceMatrices, &m_nInstanceBufferStride, &m_nInstanceBufferOffset);
+	for(int j=0; j<m_pBlueTowerMesh->GetSubsetCount(); j++)
+		m_pBlueTowerMesh->GetSubset(j)->AssembleToVertexBuffer(1, &m_pd3dcbBlueTowerInstanceMatrices, &m_nInstanceBufferStride, &m_nInstanceBufferOffset);
 
 	m_pd3dcbRedTowerInstanceMatrices = CreateInstanceBuffer(pd3dDevice, m_nRedTowerObjects, m_nInstanceBufferStride, NULL);
-	for(int i=0; i<m_pRedTowerMesh->GetSubsetCount(); i++)
-		m_pRedTowerMesh->GetSubset(i)->AssembleToVertexBuffer(1, &m_pd3dcbRedTowerInstanceMatrices, &m_nInstanceBufferStride, &m_nInstanceBufferOffset);
+	for(int j=0; j<m_pRedTowerMesh->GetSubsetCount(); j++)
+		m_pRedTowerMesh->GetSubset(j)->AssembleToVertexBuffer(1, &m_pd3dcbRedTowerInstanceMatrices, &m_nInstanceBufferStride, &m_nInstanceBufferOffset);
 
 
 	//미니언 인스턴싱
@@ -763,8 +772,8 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
  	}
  
 	m_pd3dcbMinionInstanceMatrices = CreateInstanceBuffer(pd3dDevice, m_nMinionObjects, m_nInstanceBufferStride, NULL);
-	for(int i=0; i<m_pMinionMesh->GetSubsetCount(); i++)
-		m_pMinionMesh->GetSubset(i)->AssembleToVertexBuffer(1, &m_pd3dcbMinionInstanceMatrices, &m_nInstanceBufferStride, &m_nInstanceBufferOffset);
+	for(int j=0; j<m_pMinionMesh->GetSubsetCount(); j++)
+		m_pMinionMesh->GetSubset(j)->AssembleToVertexBuffer(1, &m_pd3dcbMinionInstanceMatrices, &m_nInstanceBufferStride, &m_nInstanceBufferOffset);
 
 
 	//부서진 타워 인스턴싱
@@ -774,8 +783,8 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 		m_ppObjects[i++] = ObstacleManager::sharedManager()->m_pDestroyTower[j];
 	
 	m_pd3dcbDestroyTowerInstanceMatrices = CreateInstanceBuffer(pd3dDevice, m_nDestroyTowerObjects, m_nInstanceBufferStride, NULL);
-	for(int i=0; i<m_pDestroyTowerMesh->GetSubsetCount(); i++)
-		m_pDestroyTowerMesh->GetSubset(i)->AssembleToVertexBuffer(1, &m_pd3dcbDestroyTowerInstanceMatrices, &m_nInstanceBufferStride, &m_nInstanceBufferOffset);
+	for(int j=0; j<m_pDestroyTowerMesh->GetSubsetCount(); j++)
+		m_pDestroyTowerMesh->GetSubset(j)->AssembleToVertexBuffer(1, &m_pd3dcbDestroyTowerInstanceMatrices, &m_nInstanceBufferStride, &m_nInstanceBufferOffset);
 
 }
 
@@ -853,6 +862,7 @@ ID3D11Buffer *CInstancingShader::CreateInstanceBuffer(ID3D11Device *pd3dDevice, 
 void CInstancingShader::UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceContext, CCamera *pCamera)
 {
 	CShader::UpdateShaderVariables(pd3dDeviceContext);
+	if (m_pMaterial) CMaterialShader::UpdateMaterialShaderVariable(pd3dDeviceContext, &m_pMaterial->m_Material);
 
 	D3D11_MAPPED_SUBRESOURCE d3dMappedResource;
 	pd3dDeviceContext->Map(m_pd3dcbBush3InstanceMatrices, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
@@ -1006,3 +1016,37 @@ void CInstancingShader::AddObject(CGameObject *pObject)
 	if (pObject) pObject->AddRef();
 }
 
+
+CMaterialShader::CMaterialShader()
+{
+}
+
+CMaterialShader::~CMaterialShader()
+{
+}
+
+void CMaterialShader::CreateMaterialShaderVariables(ID3D11Device *pd3dDevice)
+{
+	D3D11_BUFFER_DESC d3dBufferDesc;
+	ZeroMemory(&d3dBufferDesc, sizeof(D3D11_BUFFER_DESC));
+	d3dBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	d3dBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	d3dBufferDesc.ByteWidth = sizeof(MATERIAL);
+	pd3dDevice->CreateBuffer(&d3dBufferDesc, NULL, &m_pd3dcbMaterial);
+}
+
+void CMaterialShader::ReleaseMaterialShaderVariables()
+{
+	if (m_pd3dcbMaterial) m_pd3dcbMaterial->Release();
+}
+
+void CMaterialShader::UpdateMaterialShaderVariable(ID3D11DeviceContext *pd3dDeviceContext, MATERIAL *pMaterial)
+{
+	D3D11_MAPPED_SUBRESOURCE d3dMappedResource;
+	pd3dDeviceContext->Map(m_pd3dcbMaterial, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
+	MATERIAL *pcbMaterial = (MATERIAL *)d3dMappedResource.pData;
+	memcpy(pcbMaterial, pMaterial, sizeof(MATERIAL));
+	pd3dDeviceContext->Unmap(m_pd3dcbMaterial, 0);
+	pd3dDeviceContext->PSSetConstantBuffers(PS_SLOT_MATERIAL, 1, &m_pd3dcbMaterial);
+}

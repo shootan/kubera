@@ -7,7 +7,9 @@
 #define FRAME_BUFFER_HEIGHT		800
 #define VS_SLOT_VIEWPROJECTION_MATRIX	0x00
 #define VS_SLOT_WORLD_MATRIX			0x01
-
+//조명과 재질을 설정하기 위한 상수 버퍼의 슬롯 번호를 정의한다. 
+#define PS_SLOT_LIGHT			0x03
+#define PS_SLOT_MATERIAL		0x04
 
 
 

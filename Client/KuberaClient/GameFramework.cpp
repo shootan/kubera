@@ -350,6 +350,8 @@ void CGameFramework::OnDestroy()
 
 void CGameFramework::BuildObjects()
 {
+	CMaterialShader::CreateMaterialShaderVariables(m_pd3dDevice);
+
 	printf("SetCamera");
 	//¾À»ý¼º
 	m_pScene = new CScene();
@@ -370,6 +372,7 @@ void CGameFramework::BuildObjects()
 	m_pCameraMinimap->SetViewport(m_pd3dDeviceContext, m_nWndClientWidth - m_nWndClientWidth/5 - 10, m_nWndClientHeight - m_nWndClientHeight/5 - 10, m_nWndClientWidth/5, m_nWndClientHeight/5, 0.0f, 0.1f);
 	m_pCameraMinimap->SetProjParams((float)D3DXToRadian(90.0f), float(120)/float(80), 1.0f, 500.0f);
 	D3DXVECTOR3 d3dxvEyePosition = D3DXVECTOR3(0, 500, 0);
+	m_pCameraMinimap->m_CameraPos = d3dxvEyePosition;
 	D3DXVECTOR3 d3dxvLookAt = D3DXVECTOR3(0, 0, 17);
 	m_pCameraMinimap->SetViewParams( &d3dxvEyePosition, &d3dxvLookAt );
 
@@ -458,10 +461,8 @@ void CGameFramework::FrameAdvance()
 void CGameFramework::SetCameraPos()
 {
 	D3DXVECTOR3 d3dxvEyePosition = D3DXVECTOR3(m_CameraPosX, m_CameraZoom, m_CameraPosZ);
+	m_pCamera->m_CameraPos = d3dxvEyePosition;
 	D3DXVECTOR3 d3dxvLookAt = D3DXVECTOR3(m_CameraPosX, 0.0f, m_CameraPosZ+17.0f);
-	//m_pCamera->SetPosition(d3dxvEyePosition);
-	//m_pCamera->SetLookAtPosition(d3dxvLookAt);
-	//m_pCamera->GenerateViewMatrix();
 	m_pCamera->SetViewParams( &d3dxvEyePosition, &d3dxvLookAt );
 	m_pCamera->CalculateFrustumPlanes();
 

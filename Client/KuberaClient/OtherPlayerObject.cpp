@@ -1,5 +1,6 @@
 #include "OtherPlayerObject.h"
 #include "MissileManager.h"
+
 OtherPlayerObject::OtherPlayerObject(void)
 {
 	CGameObject::CGameObject();
@@ -30,6 +31,8 @@ OtherPlayerObject::~OtherPlayerObject(void)
 
 void OtherPlayerObject::Render(ID3D11DeviceContext *pd3dDeviceContext, float fTimeElapsed, CCamera *pCamera)
 {
+	//if (m_pMaterial) CMaterialShader::UpdateShaderVariable(pd3dDeviceContext, &m_pMaterial->m_Material);
+
 	if(m_Visible != TRUE) return;
 	if(m_pAniMesh == NULL) return;
 

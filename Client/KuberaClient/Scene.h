@@ -17,6 +17,7 @@
 #include "Particle2Mesh.h"
 #include "Particle3Mesh.h"
 #include "Camera.h"
+#include "Light.h"
 
 class CScene
 {
@@ -60,6 +61,11 @@ private:
 	CGameObject *m_pBlueNexus;
 	CGameObject *m_pRedNexus;
 
+
+	//조명
+	LIGHTS *m_pLights;
+	ID3D11Buffer *m_pd3dcbLights;
+
 public:
 	CScene(void);
 	~CScene(void);
@@ -100,9 +106,15 @@ public:
 	void SetMinionInfo(MinionInfo* _MI);
 	void OtherPlayerTargetSetting();
 
+	//블렌딩
 	ID3D11BlendState* m_particleEnableBlendingState;
 	ID3D11BlendState* m_particleDisableBlendingState;
 	void TurnOnAlphaBlending(ID3D11DeviceContext *pd3dDeviceContext, ID3D11BlendState* blendstate);
 	void TurnOffAlphaBlending(ID3D11DeviceContext *pd3dDeviceContext, ID3D11BlendState* blendstate);
 	HRESULT CreateBlend(ID3D11Device *pd3dDevice);
+
+	//조명
+	void CreateLightShaderVariables(ID3D11Device *pd3dDevice);
+	void UpdateLightShaderVariable(ID3D11DeviceContext *pd3dDeviceContext, LIGHTS *pLights);
+	void ReleaseLightShaderVariables();
 };

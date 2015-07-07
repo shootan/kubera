@@ -1,4 +1,5 @@
 #include "HeroObject.h"
+#include "Shader.h"
 
 HeroObject::HeroObject(void)
 {
@@ -46,6 +47,8 @@ HeroObject::~HeroObject(void)
 
 void HeroObject::Render(ID3D11DeviceContext *pd3dDeviceContext, float fTimeElapsed, CCamera *pCamera)
 {
+	if (m_pMaterial) CMaterialShader::UpdateMaterialShaderVariable(pd3dDeviceContext, &m_pMaterial->m_Material);
+
 	if(m_Visible != TRUE) return;
 
 	if(m_iTag == OTHERPLAYER)

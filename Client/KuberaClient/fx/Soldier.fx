@@ -5,6 +5,7 @@
 // 
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
+#include "Light.fx"
 
 //--------------------------------------------------------------------------------------
 // defines
@@ -134,8 +135,8 @@ PSSkinnedIn VSSkinnedmain(VSSkinnedIn input)
     //output.vPos = mul( vSkinned.Pos, m_matWorld );
 
 
-	output.Pos = mul( vSkinned.Pos, gmtxWorld );
-	output.Pos = mul( output.Pos, gmtxView );
+	output.vPos = mul( vSkinned.Pos, gmtxWorld ).xyz;
+	output.Pos = mul( float4(output.vPos, 1.0f), gmtxView );
 	output.Pos = mul( output.Pos, gmtxProjection );
 
     output.Norm = normalize( mul( vSkinned.Norm, (float3x3)gmtxWorld ) );
@@ -151,7 +152,9 @@ PSSkinnedIn VSSkinnedmain(VSSkinnedIn input)
 //--------------------------------------------------------------------------------------
 float4 PSSkinnedmain(PSSkinnedIn input) : SV_Target
 {    
-	float4 vDiffuse = g_txDiffuse.Sample( g_samLinear, input.Tex );
+	input.Norm = normalize(input.Norm);
+	float4 cIllumination = Lighting(input.vPos, input.Norm);
+	float4 vDiffuse = g_txDiffuse.Sample( g_samLinear, input.Tex ) * cIllumination;
 	
 	return vDiffuse;
 }

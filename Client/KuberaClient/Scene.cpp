@@ -32,6 +32,9 @@ CScene::CScene(void)
 
 	m_particleEnableBlendingState = 0;
 	m_particleDisableBlendingState = 0;
+
+	m_pLights = NULL;
+	m_pd3dcbLights = NULL;
 }
 
 
@@ -133,14 +136,22 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 		ParticleManager::sharedManager()->CreateParticle(D3DXVECTOR3(1200, 10, 0), m_pParticle2Mesh, WIZARD_ATTACK);
 	for(int i=0; i<10; i++)
 		ParticleManager::sharedManager()->CreateParticle(D3DXVECTOR3(1200, 10, 0), m_pParticle3Mesh, WIZARD_SKILL_MISSILE);
+
+	CMaterial *pMaterial = new CMaterial();
+	pMaterial->AddRef();
+	pMaterial->m_Material.m_d3dxcDiffuse = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.0f);//D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pMaterial->m_Material.m_d3dxcAmbient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.0f);//D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pMaterial->m_Material.m_d3dxcSpecular = D3DXCOLOR(0.1f, 0.1f, 0.1f, 5.0f);// D3DXCOLOR(1.0f, 1.0f, 1.0f, 5.0f);
+	pMaterial->m_Material.m_d3dxcEmissive = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 	
 	//히어로 생성
 	HeroManager::sharedManager()->CreateHero(m_pWarriorMesh, m_pWizardMesh, 10, 13, 10);
 	HeroManager::sharedManager()->m_pHero->SetScale(D3DXVECTOR3(0.1, 0.1, 0.1));
-
+	HeroManager::sharedManager()->m_pHero->SetMaterial(pMaterial);
 	//바닥 생성
 	m_pPlane = new CGameObject();
 	m_pPlane->SetMesh(pPlaneMesh);
+	m_pPlane->SetMaterial(pMaterial);
 
 	//충돌박스
 	int iObjectNum = 2;
@@ -165,6 +176,8 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pBlueNexus->SetBoundSize(50, 20, 50);
 	m_pBlueNexus->SetHP(2000);
 	m_pBlueNexus->SetID(175);
+	m_pBlueNexus->SetMaterial(pMaterial);
+	m_pBlueNexus->SetTeam(BLUE_TEAM);
 
 	m_pRedNexus = new CGameObject();
 	m_pRedNexus->SetMesh(pRedNexusMesh);
@@ -172,6 +185,8 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pRedNexus->SetBoundSize(50, 50, 50);
 	m_pRedNexus->SetHP(2000);
 	m_pRedNexus->SetID(176);
+	m_pRedNexus->SetMaterial(pMaterial);
+	m_pRedNexus->SetTeam(RED_TEAM);
 
 	HeroManager::sharedManager()->SetNexus(m_pRedNexus, m_pBlueNexus);
 
@@ -204,6 +219,9 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 		if(ParticleManager::sharedManager()->m_pParticle[i] == NULL) continue;
 		m_pParticleShaders->AddObject(ParticleManager::sharedManager()->m_pParticle[i]);
 	}
+
+	//조명 생성
+	CreateLightShaderVariables(pd3dDevice);
 }
 
 void CScene::ReleaseObjects()
@@ -228,6 +246,9 @@ void CScene::ReleaseObjects()
 		m_particleDisableBlendingState->Release();
 		m_particleDisableBlendingState = 0;
 	}
+
+	//조명
+	ReleaseLightShaderVariables();
 }
 
 bool CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
@@ -286,6 +307,14 @@ bool CScene::ProcessInput()
 
 void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 {
+	if(m_pLights && m_pd3dcbLights) 
+	{
+		m_pLights->m_d3dxvCameraPosition =  D3DXVECTOR4(m_Camera->m_CameraPos, 1.0f);
+
+		//히어로 조명
+		m_pLights->m_pLights[0].m_d3dxvPosition = HeroManager::sharedManager()->m_pHero->GetPosition() + D3DXVECTOR3(0, 100, 0);
+	}
+
 	HeroManager::sharedManager()->m_pHero->Animate(fTimeElapsed);
 	HeroManager::sharedManager()->m_pHero->Update(fTimeElapsed);
  
@@ -407,6 +436,8 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 
 void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext, float fTimeElapsed, CCamera *pCamera)
 {
+	// 조명
+	if(m_pLights && m_pd3dcbLights) UpdateLightShaderVariable(pd3dDeviceContext, m_pLights);
 	//쉐이더 객체 리스트의 각 쉐이더 객체를 렌더링한다.
 	
 	//m_pObjectShaders->Render(pd3dDeviceContext);
@@ -772,7 +803,7 @@ void CScene::OtherPlayerTargetSetting()
 	}
 }
 
-
+//블렌딩
 void CScene::TurnOnAlphaBlending(ID3D11DeviceContext *pd3dDeviceContext, ID3D11BlendState* blendstate)
 {
 	float blendFactor[4];
@@ -839,4 +870,88 @@ HRESULT CScene::CreateBlend(ID3D11Device *pd3dDevice)
 	}
 
 	return S_OK;
+}
+
+//조명
+void CScene::CreateLightShaderVariables(ID3D11Device *pd3dDevice)
+{
+	m_pLights = new LIGHTS;
+	::ZeroMemory(m_pLights, sizeof(LIGHTS));
+	//게임 월드 전체를 비추는 주변조명을 설정한다.
+	m_pLights->m_d3dxcGlobalAmbient = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.0f);
+
+	//3개의 조명(점 광원, 스팟 광원, 방향성 광원)을 설정한다.
+
+	for(int i=0; i<MAX_LIGHTS - 1; i++)
+	{
+		//m_pLights->m_pLights[i].m_bEnable = 1.0f;
+		//m_pLights->m_pLights[i].m_nType = POINT_LIGHT;
+		//m_pLights->m_pLights[i].m_fRange = 80.0f;
+		//m_pLights->m_pLights[i].m_d3dxcAmbient = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		//m_pLights->m_pLights[i].m_d3dxcDiffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+		//m_pLights->m_pLights[i].m_d3dxcSpecular = D3DXCOLOR(0.5f, 0.5f, 0.5f, 0.0f);
+		//m_pLights->m_pLights[i].m_d3dxvPosition = D3DXVECTOR3(-600.0f, 100.0f, 100.0f);
+		//m_pLights->m_pLights[i].m_d3dxvDirection = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		//m_pLights->m_pLights[i].m_d3dxvAttenuation = D3DXVECTOR3(1.0f, 0.01f, 0.001f);
+
+		m_pLights->m_pLights[i].m_bEnable = 1.0f;
+		m_pLights->m_pLights[i].m_nType = SPOT_LIGHT;
+		m_pLights->m_pLights[i].m_fRange = 100.0f;
+		m_pLights->m_pLights[i].m_d3dxcAmbient = D3DXCOLOR(0.01f, 0.01f, 0.01f, 1.0f);
+		m_pLights->m_pLights[i].m_d3dxcDiffuse = D3DXCOLOR(0.01f, 0.01f, 0.01f, 1.0f);
+		m_pLights->m_pLights[i].m_d3dxcSpecular = D3DXCOLOR(0.01f, 0.01f, 0.01f, 0.0f);
+		m_pLights->m_pLights[i].m_d3dxvPosition = D3DXVECTOR3(500.0f, 300.0f, 500.0f);
+		m_pLights->m_pLights[i].m_d3dxvDirection = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
+		m_pLights->m_pLights[i].m_d3dxvAttenuation = D3DXVECTOR3(1.0f, 0.01f, 0.0001f);
+		m_pLights->m_pLights[i].m_fFalloff = 20.0f;
+		m_pLights->m_pLights[i].m_fPhi = (float)cos(D3DXToRadian(40.0f));
+		m_pLights->m_pLights[i].m_fTheta = (float)cos(D3DXToRadian(20.0f));
+	}
+
+	m_pLights->m_pLights[MAX_LIGHTS - 1].m_bEnable = 1.0f;
+	m_pLights->m_pLights[MAX_LIGHTS - 1].m_nType = DIRECTIONAL_LIGHT;
+	m_pLights->m_pLights[MAX_LIGHTS - 1].m_d3dxcAmbient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.0f);
+	m_pLights->m_pLights[MAX_LIGHTS - 1].m_d3dxcDiffuse = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.0f);
+	m_pLights->m_pLights[MAX_LIGHTS - 1].m_d3dxcSpecular = D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.0f);
+	m_pLights->m_pLights[MAX_LIGHTS - 1].m_d3dxvDirection = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
+
+	//조명 배치
+	//본진기지 조명
+	if(HeroManager::sharedManager()->m_pHero->GetTeam() == RED_TEAM)
+		m_pLights->m_pLights[1].m_d3dxvPosition = m_pRedNexus->GetPosition() + D3DXVECTOR3(0, 80, 0);
+	else if(HeroManager::sharedManager()->m_pHero->GetTeam() == BLUE_TEAM)
+		m_pLights->m_pLights[1].m_d3dxvPosition = m_pBlueNexus->GetPosition() + D3DXVECTOR3(0, 80, 0);
+
+	//타워 조명
+	int j = 2;
+	for(int i = 0; i < MAX_TOWER; i++)
+	{
+		if(TowerManager::sharedManager()->m_pTower[i]->GetTeam() == HeroManager::sharedManager()->m_pHero->GetTeam())
+			m_pLights->m_pLights[j++].m_d3dxvPosition = TowerManager::sharedManager()->m_pTower[i]->GetPosition() + D3DXVECTOR3(0, 80, 0);
+	}
+
+	D3D11_BUFFER_DESC d3dBufferDesc;
+	ZeroMemory(&d3dBufferDesc, sizeof(d3dBufferDesc));
+	d3dBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	d3dBufferDesc.ByteWidth = sizeof(LIGHTS);
+	d3dBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	d3dBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	D3D11_SUBRESOURCE_DATA d3dBufferData;
+	ZeroMemory(&d3dBufferData, sizeof(D3D11_SUBRESOURCE_DATA));
+	d3dBufferData.pSysMem = m_pLights;
+	pd3dDevice->CreateBuffer(&d3dBufferDesc, &d3dBufferData, &m_pd3dcbLights);
+}
+void CScene::UpdateLightShaderVariable(ID3D11DeviceContext *pd3dDeviceContext, LIGHTS *pLights)
+{
+	D3D11_MAPPED_SUBRESOURCE d3dMappedResource;
+	pd3dDeviceContext->Map(m_pd3dcbLights, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
+	LIGHTS *pcbLight = (LIGHTS *)d3dMappedResource.pData;
+	memcpy(pcbLight, pLights, sizeof(LIGHTS));
+	pd3dDeviceContext->Unmap(m_pd3dcbLights, 0);
+	pd3dDeviceContext->PSSetConstantBuffers(PS_SLOT_LIGHT, 1, &m_pd3dcbLights);
+}
+void CScene::ReleaseLightShaderVariables()
+{
+	if (m_pLights) delete m_pLights;
+	if (m_pd3dcbLights) m_pd3dcbLights->Release();
 }

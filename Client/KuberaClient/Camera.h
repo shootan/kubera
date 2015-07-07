@@ -19,11 +19,10 @@ public:
 
 public:
 	ID3D11Buffer *m_pd3dcbCamera;
-	//뷰-포트를 나타내는 멤버 변수를 선언한다.
 	D3D11_VIEWPORT m_d3dViewport;
-	//절두체의 6개 평면(월드 좌표계)을 나타낸다.
 	D3DXPLANE m_d3dxFrustumPlanes[6];    
 
+	D3DXVECTOR3 m_CameraPos;
 public:
 	//절두체의 6개 평면을 계산한다.
 	void CalculateFrustumPlanes();

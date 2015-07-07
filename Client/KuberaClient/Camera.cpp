@@ -3,6 +3,7 @@
 
 CCamera::CCamera() 
 {
+	m_CameraPos = D3DXVECTOR3(0, 0, 0);
 }
 
 CCamera::~CCamera() 

@@ -283,6 +283,7 @@
     <ClInclude Include="Camera.h">
       <Filter>소스코드</Filter>
     </ClInclude>
+    <ClInclude Include="Light.h" />
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h">
@@ -306,6 +307,9 @@
       <Filter>shader</Filter>
     </None>
     <None Include="fx\particle.vs">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="fx\Light.fx">
       <Filter>shader</Filter>
     </None>
   </ItemGroup>

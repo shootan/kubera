@@ -1,3 +1,4 @@
+#include "Light.fx"
 
 cbuffer cbViewProjectionMatrix : register(b0)
 {
@@ -54,8 +55,8 @@ VS_INSTANCED_COLOR_OUTPUT VSInstancedDiffusedColor(VS_INSTANCED_COLOR_INPUT inpu
 //정점의 위치 벡터에 인스턴스의 위치 벡터(월드 좌표)를 더한다.
     //output.position = output.position + input.instancePos;
 
-    output.Pos = mul(float4(input.Pos, 1), input.mtxTransform);
-    output.Pos = mul(output.Pos, gmtxView);
+    output.vPos = mul(float4(input.Pos, 1), input.mtxTransform).xyz;
+    output.Pos = mul(float4(output.vPos, 1.0f), gmtxView);
     output.Pos = mul(output.Pos, gmtxProjection);
 
 	output.Norm = mul(input.Norm, (float3x3)input.mtxTransform);
@@ -70,9 +71,11 @@ VS_INSTANCED_COLOR_OUTPUT VSInstancedDiffusedColor(VS_INSTANCED_COLOR_INPUT inpu
 // 픽셀-쉐이더
 float4 PSInstancedDiffusedColor(VS_INSTANCED_COLOR_OUTPUT input) : SV_Target
 {
-	 float4 vDiffuse = g_txDiffuse.Sample( g_samLinear, input.Tex );
+	input.Norm = normalize(input.Norm);
+	float4 cIllumination = Lighting(input.vPos, input.Norm);
+	float4 vDiffuse = g_txDiffuse.Sample( g_samLinear, input.Tex ) * cIllumination;
 
-	 return vDiffuse;
+	return vDiffuse;
 
 
 }

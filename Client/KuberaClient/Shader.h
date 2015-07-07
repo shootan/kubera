@@ -63,7 +63,6 @@ protected:
 	CCamera *m_pCamera;
 };
 
-
 class CObjectShader : public CShader
 {
 public:
@@ -162,6 +161,8 @@ public:
 	GFBX::Mesh *m_pMinionMesh;
 	GFBX::Mesh *m_pDestroyTowerMesh;
 
+	CMaterial *m_pMaterial;
+
 	int m_nBush3Objects;
 	int m_nRock2Objects;
 	int m_nRock3Objects;
@@ -192,4 +193,19 @@ public:
 
 public:
 	ID3D11Buffer *CreateInstanceBuffer(ID3D11Device *pd3dDevice, int nObjects, UINT nBufferStride, void *pBufferData);
+};
+
+class CMaterialShader : public CShader
+{
+public:
+	CMaterialShader();
+	virtual ~CMaterialShader();
+
+	//재질을 설정하기 위한 상수 버퍼이다.
+	static ID3D11Buffer	 *m_pd3dcbMaterial;
+
+	static void CreateMaterialShaderVariables(ID3D11Device *pd3dDevice);
+	static void ReleaseMaterialShaderVariables();
+	//재질을 쉐이더 변수에 설정(연결)하기 위한 함수이다.
+	static void UpdateMaterialShaderVariable(ID3D11DeviceContext *pd3dDeviceContext, MATERIAL *pMaterial);
 };

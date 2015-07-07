@@ -3,7 +3,33 @@
 #include "header.h"
 #include "FBX\GFBXMesh.h"
 #include "Camera.h"
+
 //#include "astarclass.h"
+
+//재질의 색상을 나타내는 구조체이다.
+struct MATERIAL
+{
+	D3DXCOLOR m_d3dxcAmbient;
+	D3DXCOLOR m_d3dxcDiffuse;
+	D3DXCOLOR m_d3dxcSpecular; //(r,g,b,a=power)
+	D3DXCOLOR m_d3dxcEmissive;
+};
+
+class CMaterial
+{
+public:
+	CMaterial();
+	virtual ~CMaterial();
+
+private:
+	int m_nReferences;
+
+public:
+	void AddRef() { m_nReferences++; }
+	void Release() { if (--m_nReferences <= 0) delete this; }
+
+	MATERIAL m_Material;
+};
 
 
 class CGameObject
@@ -52,6 +78,12 @@ public:
 	GFBX::Mesh *m_pAniMesh;
 
 	AABB m_bcMeshBoundingCube;
+
+	//게임 객체는 하나의 재질을 가질 수 있다.
+	CMaterial *m_pMaterial;
+	void SetMaterial(CMaterial *pMaterial);
+
+
 	//Astar* m_pAstar;
 	//node_t* m_pBestWay;
 

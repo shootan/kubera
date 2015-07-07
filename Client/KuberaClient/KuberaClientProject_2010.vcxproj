@@ -368,6 +368,7 @@
   <ItemGroup>
     <None Include="fx\Effect.fx" />
     <None Include="fx\instance.fx" />
+    <None Include="fx\Light.fx" />
     <None Include="fx\particle.ps" />
     <None Include="fx\particle.vs" />
     <None Include="fx\Soldier.fx" />
@@ -438,6 +439,7 @@
     <ClInclude Include="FBX\Utilities.h" />
     <ClInclude Include="FBX\Vertex.h" />
     <ClInclude Include="HeroManager.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="OtherPlayerObject.h" />
     <ClInclude Include="GameFramework.h" />
     <ClInclude Include="GameObject.h" />
