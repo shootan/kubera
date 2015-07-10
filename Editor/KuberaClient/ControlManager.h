@@ -5,7 +5,6 @@
 #include "ST.h"
 #include "OtherPlayerManager.h"
 #include "HeroManager.h"
-#include "MinionManager.h"
 #include "Camera.h"
 
 class ControlManager 

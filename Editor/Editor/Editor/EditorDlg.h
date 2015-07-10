@@ -44,6 +44,8 @@ protected:
 	list<Information> Tower;
 	list<Information> Nexus;
 
+	int LastBuild;
+
 	// 
 	HICON m_hIcon;
 	CString m_str;

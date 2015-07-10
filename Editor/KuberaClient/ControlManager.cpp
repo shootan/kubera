@@ -118,23 +118,6 @@ void ControlManager::SetTarget(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRay
 		}
 	}
 
-	for(int i=0; i<MAX_MINION; i++)  //미니언 타겟 잡기
-	{
-		if(MinionManager::sharedManager()->m_pMinion1[i]->GetVisible() == FALSE) continue;
-		//if(MinionManager::sharedManager()->m_pMinion1[i]->GetVisible() == FALSE) continue;
-
-		D3DXVECTOR3 a = MinionManager::sharedManager()->m_pMinion1[i]->GetPosition();
-
-		float dist = INTersectRaySphere(vRayDirection, vRayOrigin, MinionManager::sharedManager()->m_pMinion1[i]->GetPosition(), 
-			MinionManager::sharedManager()->m_pMinion1[i]->GetBoundSizeX()*2);
-
-		if( dist > 0 )
-		{
-			HeroManager::sharedManager()->m_pHero->SetTarget(MinionManager::sharedManager()->m_pMinion1[i]);
-			HeroManager::sharedManager()->m_pHero->SetTargetID(MinionManager::sharedManager()->m_pMinion1[i]->GetID());
-			return;
-		}
-	}
 
 	float dist = INTersectRaySphere(vRayDirection, vRayOrigin, HeroManager::sharedManager()->RedNexus->GetPosition(), 
 		HeroManager::sharedManager()->RedNexus->GetBoundSizeX()*2);

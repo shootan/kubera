@@ -148,6 +148,8 @@ BOOL CEditorDlg::OnInitDialog()
 	m_Rect3.right = 1213;
 	m_Rect3.top = 7;
 	m_Rect3.bottom = 813;
+
+	LastBuild = 0;
 	
 	m_image.LoadDibPath("res/13.bmp");
 	m_image2.LoadDibPath("res/2.bmp");
@@ -357,30 +359,35 @@ void CEditorDlg::OnLButtonUp(UINT nFlags, CPoint point)
 		i.x = (float)p.x;
 		i.z = (float)p.y;
 		Rock.push_back(i);
+		LastBuild = m_BuildType;
 		break;
 	case 2:
 		i.team = m_TeamType;
 		i.x = (float)p.x;
 		i.z = (float)p.y;
 		Rock2.push_back(i);
+		LastBuild = m_BuildType;
 		break;
 	case 3:
 		i.team = m_TeamType;
 		i.x = (float)p.x;
 		i.z = (float)p.y;
 		Tree.push_back(i);
+		LastBuild = m_BuildType;
 		break;
 	case 4:
 		i.team = m_TeamType;
 		i.x = (float)p.x;
 		i.z = (float)p.y;
 		Tower.push_back(i);
+		LastBuild = m_BuildType;
 		break;
 	case 5:
 		i.team = m_TeamType;
 		i.x = (float)p.x;
 		i.z = (float)p.y;
 		Nexus.push_back(i);
+		LastBuild = m_BuildType;
 		break;
 	}
 	InvalidateRect(NULL, FALSE);
@@ -462,7 +469,28 @@ BOOL CEditorDlg::PreTranslateMessage(MSG* pMsg)
 	{
 		return TRUE;
 	}
-
+	if ((pMsg->message == WM_KEYDOWN) && (pMsg->wParam == VK_DELETE)) 
+	{
+		switch(LastBuild)
+		{
+		case 1:
+			Rock.pop_back();
+			break;
+		case 2:
+			Rock2.pop_back();
+			break;
+		case 3:
+			Tree.pop_back();
+			break;
+		case 4:
+			Tower.pop_back();
+			break;
+		case 5:
+			Nexus.pop_back();
+			break;
+		}
+		InvalidateRect(FALSE, NULL);
+	}
 	return CDialogEx::PreTranslateMessage(pMsg);
 }
 

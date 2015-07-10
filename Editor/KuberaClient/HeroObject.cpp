@@ -174,14 +174,14 @@ void HeroObject::Update(float fTimeElapsed)
 			Vector3 po;
 			if(m_ID % 2 == 0)
 			{
-				po.x = 510;
+				po.x = 380;
 				po.y = 0;
 				po.z = 0;
 			}
 			else
 			{
 				po.y = 0;
-				po.x = -510;
+				po.x = -380;
 				po.z = 0;
 			}
 			m_HP = 500.0f;

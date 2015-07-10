@@ -1,7 +1,6 @@
 #pragma once
 #include "header.h"
 #include "GameObject.h"
-#include "MinionObject.h"
 #include "HeroObject.h"
 #include "ObstacleObject.h"
 #include "Shader.h"
@@ -22,10 +21,6 @@
 class CScene
 {
 private:
-
-	MinionObject* m_pMinion[MAX_MINION*4];
-
-	CObjectShader *m_pObjectShaders;
 	CInstancingShader *m_pInstancingShaders;
 	CAnimationShader *m_pAnimationShaders;
 	CParticleShader *m_pParticleShaders;
@@ -49,9 +44,7 @@ private:
 	Particle3Mesh *m_pParticle2Mesh;
 	Particle3Mesh *m_pParticle3Mesh;
 
-	float m_fMinionRespawnTime;
 	float m_fMissileAttackTime;
-	int m_nMinionObjects;
 
 	CGameObject *m_pPlane;
 
@@ -82,7 +75,6 @@ public:
 	int GetMousePosY();
 
 	void AddOtherPlayer(ID3D11Device *pd3dDevice);
-	void AddMinion(ID3D11Device *pd3dDevice);
 
 	//
 	BOOL CheckCollisionAABBAxis( float c1, float w1, float c2, float w2);
@@ -97,8 +89,6 @@ public:
 
 	void SetOtherClient(PlayerStruct* _PI, int _Count);
 	void UpdateOtherClient(PlayerStruct* _PI, int _Count);
-
-	void SetMinionInfo(MinionInfo* _MI);
 	void OtherPlayerTargetSetting();
 
 	ID3D11BlendState* m_particleEnableBlendingState;

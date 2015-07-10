@@ -3,12 +3,6 @@
 Network::Network()
 {
 	ZeroMemory(PI, sizeof(PlayerStruct) * 10);
-	ZeroMemory(MI1, sizeof(MinionInfo)*40);
-	ZeroMemory(MI2, sizeof(MinionInfo)*40);
-	ZeroMemory(MI3, sizeof(MinionInfo)*40);
-	ZeroMemory(MI4, sizeof(MinionInfo)*40);
-
-	ZeroMemory(MI, sizeof(MinionInfo)*160);
 	m_bJoinPlayer = FALSE;
 	m_ClientCount = 0;
 	m_ID = 0;
@@ -152,49 +146,7 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 
 				break;
 			}
-		case MINIONDATA:
-			{
-				retval = recv(server->m_ConnectSock, (char*)&server->MI, sizeof(MinionInfo)*160, 0);
-				if(retval == SOCKET_ERROR)
-					break;
-				/*recv(server->m_ConnectSock,(char*)&Number, sizeof(int), 0);
-
-				switch(Number)
-				{
-				case 1:
-					retval = recv(server->m_ConnectSock, (char*)server->MI1, sizeof(MinionInfo)*40, 0);
-					break;
-				case 2:
-					retval = recv(server->m_ConnectSock, (char*)server->MI2, sizeof(MinionInfo)*40, 0);
-					break;
-				case 3:
-					retval = recv(server->m_ConnectSock, (char*)server->MI3, sizeof(MinionInfo)*40, 0);
-					break;
-				case 4:
-					retval = recv(server->m_ConnectSock, (char*)server->MI4, sizeof(MinionInfo)*40, 0);
-					break;
-				}*/
-			
-				/*retval = recv(server->m_ConnectSock, (char*)&Number, sizeof(int));
-
-				switch(Number)
-				{
-				case 1:
-					retval = recv(server->m_ConnectSock, (char*)server->MI1, sizeof(MinionInfo)*40, 0);
-					break;
-				case 2:
-					retval = recv(server->m_ConnectSock, (char*)server->MI2, sizeof(MinionInfo)*40, 0);
-					break;
-				case 3:
-					retval = recv(server->m_ConnectSock, (char*)server->MI3, sizeof(MinionInfo)*40, 0);
-					break;
-				case 4:
-					retval = recv(server->m_ConnectSock, (char*)server->MI4, sizeof(MinionInfo)*40, 0);
-					break;
-				}*/
-				
-
-			}
+		
 		}
 
 

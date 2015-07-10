@@ -1,5 +1,4 @@
 #include "GameFramework.h"
-#include "MinionManager.h"
 #include "MapEditorManager.h"
 
 CGameFramework::CGameFramework()
@@ -289,7 +288,6 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			break;
 		}
 	case WM_LBUTTONDOWN:
-		//MinionManager::sharedManager()->ChangeVisible();
 		break;
 	case WM_RBUTTONDOWN:
 	case WM_LBUTTONUP:
@@ -587,8 +585,6 @@ void CGameFramework::ExchangeInfo()
 {
  	if(Net.m_ClientCount != 0)
  	{
-		m_pScene->SetMinionInfo(Net.MI);
-
 		m_pScene->SetOtherClient(Net.PI, Net.m_ClientCount);
 		m_pScene->UpdateOtherClient(Net.PI, Net.m_ClientCount);
 	}	
@@ -627,16 +623,6 @@ void CGameFramework::RenderText()
 		{
 			int id = TowerManager::sharedManager()->m_pTower[i]->GetID();
 			swprintf(str, 255, L"Target : Tower [%d], HP : %.0f",id, TowerManager::sharedManager()->m_pTower[i]->GetHP());
-			m_pTxtHelper->DrawTextLine(str);
-			break;
-		}
-	}
-	for(int i=0; i<MAX_MINION; i++)
-	{
-		if(HeroManager::sharedManager()->m_pHero->GetTarget() == MinionManager::sharedManager()->m_pMinion1[i])
-		{
-			int id = MinionManager::sharedManager()->m_pMinion1[i]->GetID();
-			swprintf(str, 255, L"Target : Minion [%d]",id);
 			m_pTxtHelper->DrawTextLine(str);
 			break;
 		}

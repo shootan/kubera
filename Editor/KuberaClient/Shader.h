@@ -8,7 +8,6 @@
 #include "MissileManager.h"
 #include "ObstacleManager.h"
 #include "TowerManager.h"
-#include "MinionManager.h"
 
 struct VS_CB_WORLD_MATRIX
 {
@@ -159,7 +158,6 @@ public:
 	GFBX::Mesh *m_pMissileMesh;
 	GFBX::Mesh *m_pBlueTowerMesh;
 	GFBX::Mesh *m_pRedTowerMesh;
-	GFBX::Mesh *m_pMinionMesh;
 	GFBX::Mesh *m_pDestroyTowerMesh;
 
 	int m_nBush3Objects;
@@ -168,7 +166,6 @@ public:
 	int m_nMissileObjects;
 	int m_nBlueTowerObjects;
 	int m_nRedTowerObjects;
-	int m_nMinionObjects;
 	int m_nDestroyTowerObjects;
 
 	//월드 변환 행렬과 월드 변환 행렬을 위한 상수 버퍼이다.
@@ -182,7 +179,6 @@ public:
 	ID3D11Buffer *m_pd3dcbMissileInstanceMatrices;
 	ID3D11Buffer *m_pd3dcbBlueTowerInstanceMatrices;
 	ID3D11Buffer *m_pd3dcbRedTowerInstanceMatrices;
-	ID3D11Buffer *m_pd3dcbMinionInstanceMatrices;
 	ID3D11Buffer *m_pd3dcbDestroyTowerInstanceMatrices;
 
 	//인스턴싱으로 그릴 객체의 색상들의 배열을 저장할 상수 버퍼이다.

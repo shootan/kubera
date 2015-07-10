@@ -45,7 +45,7 @@ public:
 	void LoadMapData()
 	{
 		FILE *fp;
-		fopen_s(&fp, "aesr.txt", "r");
+		fopen_s(&fp, "Map5.txt", "r");
 
 		fscanf_s(fp, "%d", &RockSize);
 
