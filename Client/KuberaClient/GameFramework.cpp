@@ -43,7 +43,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 
 	//Direct3D 디바이스, 디바이스 컨텍스트, 스왑 체인 등을 생성하는 함수를 호출한다. 
 	if (!CreateDirect3DDisplay()) return(false); 
- 	char IP[30];
+ 	/*char IP[30];
   	printf("IP : ");
   	scanf("%s", IP);
   	Net.InitClient(IP, 9000);
@@ -51,9 +51,9 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
      while (Net.m_InitFinish)
      {
      	Sleep(100);
-     }
+     }*/
    	
- 	int herotype1 = Net.m_Type;
+ 	int herotype1 = 2;//Net.m_Type;
  	printf("Server Connect \n");
 
 	while(TRUE)
@@ -373,8 +373,9 @@ void CGameFramework::BuildObjects()
 	m_pCameraMinimap->SetProjParams((float)D3DXToRadian(90.0f), float(120)/float(80), 1.0f, 500.0f);
 	D3DXVECTOR3 d3dxvEyePosition = D3DXVECTOR3(0, 500, 0);
 	m_pCameraMinimap->m_CameraPos = d3dxvEyePosition;
-	D3DXVECTOR3 d3dxvLookAt = D3DXVECTOR3(0, 0, 17);
+	D3DXVECTOR3 d3dxvLookAt = D3DXVECTOR3(0, 0, 1);
 	m_pCameraMinimap->SetViewParams( &d3dxvEyePosition, &d3dxvLookAt );
+	m_pCameraMinimap->CalculateFrustumPlanes();
 
 	m_pScene->m_Camera = m_pCamera;
 	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice);
@@ -447,7 +448,7 @@ void CGameFramework::FrameAdvance()
 	RenderText();
 
 	m_pCameraMinimap->UpdateShaderVariables(m_pd3dDeviceContext);
-	m_pCameraMinimap->FrameMove(m_GameTimer.GetTimeElapsed());
+	//m_pCameraMinimap->FrameMove(m_GameTimer.GetTimeElapsed());
 	m_pd3dDeviceContext->RSSetViewports(1, &m_pCameraMinimap->GetViewport());
 	m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f, m_pCameraMinimap);
 

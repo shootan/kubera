@@ -95,7 +95,7 @@ void HeroObject::Render(ID3D11DeviceContext *pd3dDeviceContext, float fTimeElaps
 	{
 		bool bIsVisible = true;
 
-		/*for(int i=0; i<m_pAniMesh->GetSubsetCount(); i++)
+		for(int i=0; i<m_pAniMesh->GetSubsetCount(); i++)
 		{
 			if (pCamera)
 			{
@@ -107,7 +107,7 @@ void HeroObject::Render(ID3D11DeviceContext *pd3dDeviceContext, float fTimeElaps
 			}
 		}
 
-		if (bIsVisible)*/ m_pAniMesh->Render(pd3dDeviceContext, m_time);
+		if (bIsVisible) m_pAniMesh->Render(pd3dDeviceContext, m_time);
 	}
 }
 

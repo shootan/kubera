@@ -151,6 +151,11 @@ void CMesh::CreateRasterizerState(ID3D11Device *pd3dDevice)
 {
 }
 
+void CMesh::SetBoundingCube(D3DXVECTOR3 _boundsize)
+{
+	m_bcBoundingCube.m_d3dxvMinimum = -_boundsize/2;// D3DXVECTOR3(-1, -1, -1);
+	m_bcBoundingCube.m_d3dxvMaximum = +_boundsize/2;//D3DXVECTOR3(+1, +1, +1);
+}
 
 CTriangleMesh::CTriangleMesh(ID3D11Device *pd3dDevice) : CMesh(pd3dDevice)
 {

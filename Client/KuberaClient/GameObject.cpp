@@ -143,25 +143,31 @@ void CGameObject::Render(ID3D11DeviceContext *pd3dDeviceContext, CCamera *pCamer
 
 	if (m_pMesh)
 	{
-		/*bool bIsVisible = true;
+		bool bIsVisible = true;
 		if (pCamera)
 		{
 			AABB bcBoundingCube = m_pMesh->GetBoundingCube();
 			bcBoundingCube.Update(&m_d3dxmtxWorld);
 			bIsVisible = pCamera->IsInFrustum(&bcBoundingCube); 
 		}
-		if (bIsVisible)*/ m_pMesh->Render(pd3dDeviceContext);
+		if (bIsVisible) m_pMesh->Render(pd3dDeviceContext);
 	}
 	else if (m_pAniMesh)
 	{
-		/*bool bIsVisible = true;
-		if (pCamera)
+		bool bIsVisible = true;
+
+		for(int i=0; i<m_pAniMesh->GetSubsetCount(); i++)
 		{
-			AABB bcBoundingCube = m_pAniMesh->GetSubset(0)->GetBoundingCube();
-			bcBoundingCube.Update(&m_d3dxmtxWorld);
-			bIsVisible = pCamera->IsInFrustum(&bcBoundingCube); 
+			if (pCamera)
+			{
+				AABB bcBoundingCube = m_pAniMesh->GetSubset(i)->GetBoundingCube();
+				bcBoundingCube.Update(&m_d3dxmtxWorld);
+				bIsVisible = pCamera->IsInFrustum(&bcBoundingCube); 
+
+				if (bIsVisible) break;
+			}
 		}
-		if (bIsVisible)*/	m_pAniMesh->Render(pd3dDeviceContext);
+		if (bIsVisible)	m_pAniMesh->Render(pd3dDeviceContext);
 	}
 }
 

@@ -556,6 +556,7 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 		m_pBush3Mesh->GetSubset(j)->OnCreateDevice(pd3dDevice);
 		m_pBush3Mesh->GetSubset(j)->LoadTexture(pd3dDevice, L"obstacle/bush3.tif");
 		m_pBush3Mesh->GetSubset(j)->ResetCULLNONECreateRasterizerState(pd3dDevice);
+		m_pBush3Mesh->GetSubset(j)->SetBoundingCube(D3DXVECTOR3(25, 25, 25));
 	}
 
 	m_pRock2Mesh = new GFBX::Mesh();
@@ -564,6 +565,7 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	{
 		m_pRock2Mesh->GetSubset(j)->OnCreateDevice(pd3dDevice);
 		m_pRock2Mesh->GetSubset(j)->LoadTexture(pd3dDevice, L"obstacle/Rock2.tif");
+		m_pRock2Mesh->GetSubset(j)->SetBoundingCube(D3DXVECTOR3(25, 25, 25));
 	}
 
 	m_pRock3Mesh = new GFBX::Mesh();
@@ -572,6 +574,7 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	{
 		m_pRock3Mesh->GetSubset(j)->OnCreateDevice(pd3dDevice);
 		m_pRock3Mesh->GetSubset(j)->LoadTexture(pd3dDevice, L"obstacle/Rock3.tif");
+		m_pRock3Mesh->GetSubset(j)->SetBoundingCube(D3DXVECTOR3(25, 25, 25));
 	}
 
 	m_pMissileMesh = new GFBX::Mesh();
@@ -580,6 +583,7 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	{
 		m_pMissileMesh->GetSubset(j)->OnCreateDevice(pd3dDevice);
 		m_pMissileMesh->GetSubset(j)->LoadTexture(pd3dDevice, L"missile/Missile.png");
+		m_pMissileMesh->GetSubset(j)->SetBoundingCube(D3DXVECTOR3(25, 25, 25));
 	}
 
 	m_pBlueTowerMesh = new GFBX::Mesh();
@@ -588,6 +592,7 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	{
 		m_pBlueTowerMesh->GetSubset(j)->OnCreateDevice(pd3dDevice);
 		m_pBlueTowerMesh->GetSubset(j)->LoadTexture(pd3dDevice, L"tower/BlueHqTower.png");
+		m_pBlueTowerMesh->GetSubset(j)->SetBoundingCube(D3DXVECTOR3(30, 30, 30));
 	}
 
 	m_pRedTowerMesh = new GFBX::Mesh();
@@ -596,6 +601,7 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	{
 		m_pRedTowerMesh->GetSubset(j)->OnCreateDevice(pd3dDevice);
 		m_pRedTowerMesh->GetSubset(j)->LoadTexture(pd3dDevice, L"tower/RedHqTower.png");
+		m_pRedTowerMesh->GetSubset(j)->SetBoundingCube(D3DXVECTOR3(30, 30, 30));
 	}
 
 	m_pMinionMesh = new GFBX::Mesh();
@@ -612,30 +618,8 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	{
 		m_pDestroyTowerMesh->GetSubset(j)->OnCreateDevice(pd3dDevice);
 		m_pDestroyTowerMesh->GetSubset(j)->LoadTexture(pd3dDevice, L"tower/DestroyedTower.png");
+		m_pDestroyTowerMesh->GetSubset(j)->SetBoundingCube(D3DXVECTOR3(30, 30, 30));
 	}
-	/*m_pBush3Mesh = new CFBXMesh(pd3dDevice, L"obstacle/bush3.FBX");
-	m_pBush3Mesh->LoadTexture(pd3dDevice, L"obstacle/bush3.tif");
-
-	m_pRock2Mesh = new CFBXMesh(pd3dDevice, L"obstacle/Rock2.FBX");
-	m_pRock2Mesh->LoadTexture(pd3dDevice, L"obstacle/Rock2.tif");
-
-	m_pRock3Mesh = new CFBXMesh(pd3dDevice, L"obstacle/Rock3.FBX");
-	m_pRock3Mesh->LoadTexture(pd3dDevice, L"obstacle/Rock3.tif");
-
-	m_pMissileMesh = new CFBXMesh(pd3dDevice, L"missile/Missile.FBX");
-	m_pMissileMesh->LoadTexture(pd3dDevice, L"missile/Missile.png");
-
-	m_pBlueTowerMesh = new CFBXMesh(pd3dDevice, L"tower/BlueHqTower.FBX");
-	m_pBlueTowerMesh->LoadTexture(pd3dDevice, L"tower/BlueHqTower.png");
-
-	m_pRedTowerMesh = new CFBXMesh(pd3dDevice, L"tower/RedHqTower.FBX");
-	m_pRedTowerMesh->LoadTexture(pd3dDevice, L"tower/RedHqTower.png");
-
-	m_pMinionMesh = new CFBXMesh(pd3dDevice, L"minion/Dragon7107.FBX");
-	m_pMinionMesh->LoadTexture(pd3dDevice, L"minion/micro_dragon_col.tif");
-
-	m_pDestroyTowerMesh = new CFBXMesh(pd3dDevice, L"tower/DestroyedTower.FBX");
-	m_pDestroyTowerMesh->LoadTexture(pd3dDevice, L"tower/DestroyedTower.png");*/
 
 	int bush3x = 24, bush3z = 7, i = 0;  //위아래 100 픽셀
 	int bush3x1 = 5, bush3z1 = 10; //좌우 100픽셀
@@ -864,130 +848,159 @@ void CInstancingShader::UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceCon
 	CShader::UpdateShaderVariables(pd3dDeviceContext);
 	if (m_pMaterial) CMaterialShader::UpdateMaterialShaderVariable(pd3dDeviceContext, &m_pMaterial->m_Material);
 
+	int nBush3Instances = 0;
 	D3D11_MAPPED_SUBRESOURCE d3dMappedResource;
 	pd3dDeviceContext->Map(m_pd3dcbBush3InstanceMatrices, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
 	D3DXMATRIX *pcbWorldMatrix = (D3DXMATRIX *)d3dMappedResource.pData;
 	//인스턴싱 객체들의 월드 변환 행렬을 정점 버퍼에 쓴다.
 	for (int j = 0; j < m_nBush3Objects; j++) 
 	{
-		/*if(m_ppObjects[j])
+		if(m_ppObjects[j])
 		{
 			if (m_ppObjects[j]->IsVisible(pCamera))
-			{*/
-				pcbWorldMatrix[j] = m_ppObjects[j]->m_d3dxmtxWorld;
-			//}
-		//}
+			{
+				pcbWorldMatrix[nBush3Instances++] = m_ppObjects[j]->m_d3dxmtxWorld;
+			}
+		}
 	}
 	pd3dDeviceContext->Unmap(m_pd3dcbBush3InstanceMatrices, 0);
 
+	//메쉬의 인스턴스들을 렌더링한다.
+	if (m_pBush3Mesh) m_pBush3Mesh->RenderInstanced(pd3dDeviceContext, nBush3Instances, 0);
+
+	int nRock2Instances = 0;
 	pd3dDeviceContext->Map(m_pd3dcbRock2InstanceMatrices, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
 	pcbWorldMatrix = (D3DXMATRIX *)d3dMappedResource.pData;
 	//인스턴싱 객체들의 월드 변환 행렬을 정점 버퍼에 쓴다.
 	for (int j = 0; j < m_nRock2Objects; j++)
 	{
-		/*if(m_ppObjects[m_nBush3Objects + j])
+		if(m_ppObjects[m_nBush3Objects + j])
 		{
 			if (m_ppObjects[m_nBush3Objects + j]->IsVisible(pCamera))
-			{*/
-				pcbWorldMatrix[j] = m_ppObjects[m_nBush3Objects + j]->m_d3dxmtxWorld;
-			//}
-		//}
+			{
+				pcbWorldMatrix[nRock2Instances++] = m_ppObjects[m_nBush3Objects + j]->m_d3dxmtxWorld;
+			}
+		}
 	}
 	pd3dDeviceContext->Unmap(m_pd3dcbRock2InstanceMatrices, 0);
 
+	//메쉬의 인스턴스들을 렌더링한다.
+	if (m_pRock2Mesh) m_pRock2Mesh->RenderInstanced(pd3dDeviceContext, nRock2Instances, 0);
+
+	int nRock3Instances = 0;
 	pd3dDeviceContext->Map(m_pd3dcbRock3InstanceMatrices, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
 	pcbWorldMatrix = (D3DXMATRIX *)d3dMappedResource.pData;
 	//인스턴싱 객체들의 월드 변환 행렬을 정점 버퍼에 쓴다.
 	for (int j = 0; j < m_nRock3Objects; j++)
 	{
 
-		/*if(m_ppObjects[m_nBush3Objects + m_nRock2Objects + j])
+		if(m_ppObjects[m_nBush3Objects + m_nRock2Objects + j])
 		{
 			if (m_ppObjects[m_nBush3Objects + m_nRock2Objects + j]->IsVisible(pCamera))
-			{*/
-				pcbWorldMatrix[j] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + j]->m_d3dxmtxWorld;
-			//}
-		//}
+			{
+				pcbWorldMatrix[nRock3Instances++] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + j]->m_d3dxmtxWorld;
+			}
+		}
 	}
 	pd3dDeviceContext->Unmap(m_pd3dcbRock3InstanceMatrices, 0);
 
+	//메쉬의 인스턴스들을 렌더링한다.
+	if (m_pRock3Mesh) m_pRock3Mesh->RenderInstanced(pd3dDeviceContext, nRock3Instances, 0);
+
+	int nMissileInstances = 0;
 	pd3dDeviceContext->Map(m_pd3dcbMissileInstanceMatrices, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
 	pcbWorldMatrix = (D3DXMATRIX *)d3dMappedResource.pData;
 	//인스턴싱 객체들의 월드 변환 행렬을 정점 버퍼에 쓴다.
  	for (int j = 0; j < m_nMissileObjects; j++)
 	{
-		/*if(m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + j])
+		if(m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + j])
 		{
 			if (m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + j]->IsVisible(pCamera))
-			{*/
- 				pcbWorldMatrix[j] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + j]->m_d3dxmtxWorld;
-			//}
-		//}
+			{
+ 				pcbWorldMatrix[nMissileInstances++] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + j]->m_d3dxmtxWorld;
+			}
+		}
 	}
  	pd3dDeviceContext->Unmap(m_pd3dcbMissileInstanceMatrices, 0);
 
+	//메쉬의 인스턴스들을 렌더링한다.
+	if (m_pMissileMesh) m_pMissileMesh->RenderInstanced(pd3dDeviceContext, nMissileInstances, 0);
+
+	int nBlueTowerInstances = 0;
 	pd3dDeviceContext->Map(m_pd3dcbBlueTowerInstanceMatrices, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
 	pcbWorldMatrix = (D3DXMATRIX *)d3dMappedResource.pData;
 	//인스턴싱 객체들의 월드 변환 행렬을 정점 버퍼에 쓴다.
 	for (int j = 0; j < m_nBlueTowerObjects; j++)
 	{
-		/*if(m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + j])
+		if(m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + j])
 		{
 			if (m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + j]->IsVisible(pCamera))
-			{*/
-				pcbWorldMatrix[j] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + j]->m_d3dxmtxWorld;
-			//}
-		//}
+			{
+				pcbWorldMatrix[nBlueTowerInstances++] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + j]->m_d3dxmtxWorld;
+			}
+		}
 	}
 	pd3dDeviceContext->Unmap(m_pd3dcbBlueTowerInstanceMatrices, 0);
 
+	//메쉬의 인스턴스들을 렌더링한다.
+	if (m_pBlueTowerMesh) m_pBlueTowerMesh->RenderInstanced(pd3dDeviceContext, nBlueTowerInstances, 0);
+
+	int nRedTowerInstances = 0;
 	pd3dDeviceContext->Map(m_pd3dcbRedTowerInstanceMatrices, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
 	pcbWorldMatrix = (D3DXMATRIX *)d3dMappedResource.pData;
 	//인스턴싱 객체들의 월드 변환 행렬을 정점 버퍼에 쓴다.
 	for (int j = 0; j < m_nRedTowerObjects; j++)
 	{
-		/*if(m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + j])
+		if(m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + j])
 		{
 			if (m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + j]->IsVisible(pCamera))
-			{*/
-				pcbWorldMatrix[j] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + j]->m_d3dxmtxWorld;
-			//}
-		//}
+			{
+				pcbWorldMatrix[nRedTowerInstances++] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + j]->m_d3dxmtxWorld;
+			}
+		}
 	}
 	pd3dDeviceContext->Unmap(m_pd3dcbRedTowerInstanceMatrices, 0);
 
+	//메쉬의 인스턴스들을 렌더링한다.
+	if (m_pRedTowerMesh) m_pRedTowerMesh->RenderInstanced(pd3dDeviceContext, nRedTowerInstances, 0);
 
+	int nMinionInstances = 0;
   	pd3dDeviceContext->Map(m_pd3dcbMinionInstanceMatrices, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
   	pcbWorldMatrix = (D3DXMATRIX *)d3dMappedResource.pData;
   	//인스턴싱 객체들의 월드 변환 행렬을 정점 버퍼에 쓴다.
   	for (int j = 0; j < m_nMinionObjects; j++)
 	{
-		/*if(m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + m_nRedTowerObjects + j])
+		if(m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + m_nRedTowerObjects + j])
 		{
 			if (m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + m_nRedTowerObjects + j]->IsVisible(pCamera))
-			{*/
-  				pcbWorldMatrix[j] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + 
-		m_nRedTowerObjects + j]->m_d3dxmtxWorld;
-			//}
-		//}
+			{
+  				pcbWorldMatrix[nMinionInstances++] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + m_nRedTowerObjects + j]->m_d3dxmtxWorld;
+			}
+		}
 	}
   	pd3dDeviceContext->Unmap(m_pd3dcbMinionInstanceMatrices, 0);
 
+	//메쉬의 인스턴스들을 렌더링한다.
+	if (m_pMinionMesh) m_pMinionMesh->RenderInstanced(pd3dDeviceContext, nMinionInstances, 0);
+
+	int nDestroyTowerInstances = 0;
 	pd3dDeviceContext->Map(m_pd3dcbDestroyTowerInstanceMatrices, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
 	pcbWorldMatrix = (D3DXMATRIX *)d3dMappedResource.pData;
 	//인스턴싱 객체들의 월드 변환 행렬을 정점 버퍼에 쓴다.
 	for (int j = 0; j < m_nDestroyTowerObjects; j++)
 	{
-		/*if(m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + m_nRedTowerObjects + m_nMinionObjects + j])
+		if(m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + m_nRedTowerObjects + m_nMinionObjects + j])
 		{
 			if (m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + m_nRedTowerObjects + m_nMinionObjects + j]->IsVisible(pCamera))
-			{*/
-				pcbWorldMatrix[j] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + 
-		m_nRedTowerObjects + m_nMinionObjects + j]->m_d3dxmtxWorld;
-			//}
-		//}
+			{
+				pcbWorldMatrix[nDestroyTowerInstances++] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + m_nRedTowerObjects + m_nMinionObjects + j]->m_d3dxmtxWorld;
+			}
+		}
 	}
 	pd3dDeviceContext->Unmap(m_pd3dcbDestroyTowerInstanceMatrices, 0);
+
+	//메쉬의 인스턴스들을 렌더링한다.
+	if (m_pDestroyTowerMesh) m_pDestroyTowerMesh->RenderInstanced(pd3dDeviceContext, nDestroyTowerInstances, 0);
 
 
 }
@@ -997,16 +1010,6 @@ void CInstancingShader::Render(ID3D11DeviceContext *pd3dDeviceContext, CCamera *
 	CShader::Render(pd3dDeviceContext);
 
 	UpdateShaderVariables(pd3dDeviceContext, pCamera);
-
-	//메쉬의 인스턴스들을 렌더링한다.
-	if (m_pBush3Mesh) m_pBush3Mesh->RenderInstanced(pd3dDeviceContext, m_nBush3Objects, 0);
-	if (m_pRock2Mesh) m_pRock2Mesh->RenderInstanced(pd3dDeviceContext, m_nRock2Objects, 0);
-	if (m_pRock3Mesh) m_pRock3Mesh->RenderInstanced(pd3dDeviceContext, m_nRock3Objects, 0);
-	if (m_pMissileMesh) m_pMissileMesh->RenderInstanced(pd3dDeviceContext, m_nMissileObjects, 0);
-	if (m_pBlueTowerMesh) m_pBlueTowerMesh->RenderInstanced(pd3dDeviceContext, m_nBlueTowerObjects, 0);
-	if (m_pRedTowerMesh) m_pRedTowerMesh->RenderInstanced(pd3dDeviceContext, m_nRedTowerObjects, 0);
-	if (m_pMinionMesh) m_pMinionMesh->RenderInstanced(pd3dDeviceContext, m_nMinionObjects, 0);
-	if (m_pDestroyTowerMesh) m_pDestroyTowerMesh->RenderInstanced(pd3dDeviceContext, m_nDestroyTowerObjects, 0);
 }
 
 void CInstancingShader::AddObject(CGameObject *pObject) 

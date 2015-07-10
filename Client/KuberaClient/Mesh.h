@@ -38,6 +38,7 @@ public:
 	UINT *m_pnIndices; 
 	int CheckRayIntersection(D3DXVECTOR3 *pd3dxvRayPosition, D3DXVECTOR3 *pd3dxvRayDirection, MESHINTERSECTINFO *pd3dxIntersectInfo);
 	AABB GetBoundingCube() { return(m_bcBoundingCube); }
+	void SetBoundingCube(D3DXVECTOR3 _boundsize);
 
 protected:
 	AABB m_bcBoundingCube;  
