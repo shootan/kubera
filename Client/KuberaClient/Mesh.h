@@ -110,7 +110,7 @@ class CCubeMesh : public CMesh
 {
 public:
 	//직육면체의 가로, 세로, 높이의 크기를 지정하여 직육면체 메쉬를 생성한다.
-	CCubeMesh(ID3D11Device *pd3dDevice, float fWidth=2.0f, float fHeight=2.0f, float fDepth=2.0f);
+	CCubeMesh(ID3D11Device *pd3dDevice, float fWidth=2.0f, float fHeight=2.0f, float fDepth=2.0f, D3DXCOLOR d3dxColor = D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f));
 	virtual ~CCubeMesh();
 
 	virtual void CreateRasterizerState(ID3D11Device *pd3dDevice);

@@ -24,6 +24,10 @@ CScene::CScene(void)
 	m_fMissileAttackTime = 0.f;
 	m_nMinionObjects = 0;
 
+	//m_pNexusBox = NULL;
+	//m_pTowerBox = NULL;
+	//m_pPlayerBox = NULL;
+
 	m_pPlane = NULL;
 	m_pBlueNexus = NULL;
 	m_pRedNexus = NULL;
@@ -149,6 +153,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	for(int i=0; i<10; i++)
 		ParticleManager::sharedManager()->CreateParticle(D3DXVECTOR3(1200, 10, 0), m_pParticle3Mesh, WIZARD_SKILL_MISSILE);
 
+	//재질설정
 	CMaterial *pMaterial = new CMaterial();
 	pMaterial->AddRef();
 	pMaterial->m_Material.m_d3dxcDiffuse = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.0f);//D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
@@ -166,7 +171,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pPlane->SetMaterial(pMaterial);
 
 	//충돌박스
-	int iObjectNum = 2;
+	/*int iObjectNum = 2;
 	CCubeMesh *pBox[2];
 	pBoundBox[2];
 	pBox[0] = new CCubeMesh(pd3dDevice,HeroManager::sharedManager()->m_pHero->GetBoundSizeX(),
@@ -178,7 +183,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 		pBoundBox[i] = new CGameObject;
 		pBoundBox[i]->SetMesh(pBox[i]);
 	}
-	pBoundBox[1]->SetPosition(D3DXVECTOR3(25,0,0));
+	pBoundBox[1]->SetPosition(D3DXVECTOR3(25,0,0));*/
 
 
 	//넥서스 2개 생성
@@ -202,19 +207,18 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 
 	HeroManager::sharedManager()->SetNexus(m_pRedNexus, m_pBlueNexus);
 
-
 	//pFBXMesh->Release();
 
- 	//애니메이션 쉐이더에 히어로 연결
+ 	//애니메이션 쉐이더에 객체 연결
  	m_pAnimationShaders->AddObject(HeroManager::sharedManager()->m_pHero);
-
-	//오브젝트 쉐이더에 지형 넥서스 연결
 	m_pAnimationShaders->AddObject(m_pPlane);
-	for(int i=0; i<iObjectNum; i++)
-		m_pObjectShaders->AddObject(pBoundBox[i]);
 	m_pAnimationShaders->AddObject(m_pBlueNexus);
 	m_pAnimationShaders->AddObject(m_pRedNexus);
 
+
+	//오브젝트 쉐이더에 지형 넥서스 연결
+	/*for(int i=0; i<iObjectNum; i++)
+		m_pObjectShaders->AddObject(pBoundBox[i]);*/
 
 	//아더 플레이어 생성
 	OtherPlayerManager::sharedManager()->SetMesh(m_pWarriorMesh, m_pWizardMesh);
@@ -225,13 +229,75 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	this->AddOtherPlayer(pd3dDevice);
 
 
-	//파티클 객체 쉐이더에 연결
+	//파티클 쉐이더에 파티클 연결
 	for(int i=0; i<MAX_PARTICLE; i++)
 	{
 		if(ParticleManager::sharedManager()->m_pParticle[i] == NULL) continue;
 		m_pParticleShaders->AddObject(ParticleManager::sharedManager()->m_pParticle[i]);
 	}
 
+
+	//미니맵에 사용할 큐브 객체 생성
+	CCubeMesh* MyNexusBox = new CCubeMesh(pd3dDevice, 40, 10, 40, D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f));
+	CCubeMesh* YourNexusBox = new CCubeMesh(pd3dDevice, 40, 10, 40, D3DXCOLOR(1.0f, 0.0f, 0.0f, 0.0f));
+	for(int i=0;i<2; i++)
+		m_pNexusBox[i] = new CGameObject();
+	m_pNexusBox[0]->SetMesh(MyNexusBox);
+	m_pNexusBox[1]->SetMesh(YourNexusBox);
+	if(HeroManager::sharedManager()->m_pHero->GetTeam() == BLUE_TEAM)
+	{
+		m_pNexusBox[0]->SetPosition(m_pBlueNexus->GetPosition());
+		m_pNexusBox[1]->SetPosition(m_pRedNexus->GetPosition());
+	}
+	else if(HeroManager::sharedManager()->m_pHero->GetTeam() == RED_TEAM)
+	{
+		m_pNexusBox[0]->SetPosition(m_pRedNexus->GetPosition());
+		m_pNexusBox[1]->SetPosition(m_pBlueNexus->GetPosition());
+	}
+
+	CCubeMesh* MyTowerBox = new CCubeMesh(pd3dDevice, 25, 10, 25, D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f));
+	CCubeMesh* YourTowerBox = new CCubeMesh(pd3dDevice, 25, 10, 25, D3DXCOLOR(1.0f, 0.0f, 0.0f, 0.0f));
+	for(int i=0;i<MAX_TOWER;i++)
+		m_pTowerBox[i] = new CGameObject();
+	for(int i=0; i<MAX_TOWER; i++)
+	{
+		if(TowerManager::sharedManager()->m_pTower[i] == NULL) continue;
+
+		if(TowerManager::sharedManager()->m_pTower[i]->GetTeam() == HeroManager::sharedManager()->m_pHero->GetTeam())
+		{
+			m_pTowerBox[i]->SetMesh(MyTowerBox);
+			m_pTowerBox[i]->SetPosition(TowerManager::sharedManager()->m_pTower[i]->GetPosition());
+		}
+		else if(TowerManager::sharedManager()->m_pTower[i]->GetTeam() != HeroManager::sharedManager()->m_pHero->GetTeam())
+		{
+			m_pTowerBox[i]->SetMesh(YourTowerBox);
+			m_pTowerBox[i]->SetPosition(TowerManager::sharedManager()->m_pTower[i]->GetPosition());
+		}
+	}
+
+	CCubeMesh* MyPlayerBox = new CCubeMesh(pd3dDevice, 25, 10, 25, D3DXCOLOR(1.0f, 1.0f, 1.0f, 0.0f));
+	CCubeMesh* YourPlayerBox = new CCubeMesh(pd3dDevice, 25, 10, 25, D3DXCOLOR(1.0f, 0.0f, 0.0f, 0.0f));
+	for(int i=0; i<2;i++)
+		m_pPlayerBox[i] = new CGameObject();
+	m_pPlayerBox[0]->SetMesh(MyPlayerBox);
+	m_pPlayerBox[0]->SetPosition(HeroManager::sharedManager()->m_pHero->GetPosition());
+	m_pPlayerBox[1]->SetMesh(YourPlayerBox);
+	for(int i=0;i<MAX_OTHER_PLAYER;i++)
+	{
+		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i] == NULL) continue;
+		m_pPlayerBox[1]->SetPosition(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetPosition());
+	}
+	//오브젝트 쉐이더에 객체 연결
+	for(int i=0;i<2;i++)
+		m_pObjectShaders->AddObject(m_pNexusBox[i]);
+	for(int i=0;i<MAX_TOWER;i++)
+	{
+		if(TowerManager::sharedManager()->m_pTower[i] == NULL) continue;
+		m_pObjectShaders->AddObject(m_pTowerBox[i]);
+	}
+	for(int i=0;i<2;i++)
+		m_pObjectShaders->AddObject(m_pPlayerBox[i]);
+	
 	//조명 생성
 	CreateLightShaderVariables(pd3dDevice);
 }
@@ -349,6 +415,12 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 
 		ParticleManager::sharedManager()->m_pParticle[i]->Update(fTimeElapsed);
 	}
+	m_pPlayerBox[0]->SetPosition(HeroManager::sharedManager()->m_pHero->GetPosition());
+	for(int j=0; j<MAX_OTHER_PLAYER; j++)
+	{
+		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetVisible() != TRUE) continue;
+		m_pPlayerBox[1]->SetPosition(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetPosition());
+	}
 
 
 	for(int i=0;i<MAX_TOWER; i++)  //타워의 캐릭터 공격
@@ -400,7 +472,7 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 	}
 	
 	//플레이어 충돌박스 보이기
-	pBoundBox[0]->SetPosition(HeroManager::sharedManager()->m_pHero->GetPosition());
+	//pBoundBox[0]->SetPosition(HeroManager::sharedManager()->m_pHero->GetPosition());
 
 	//m_pHero->SetAstar(TRUE);
 		/*if(m_ppObjects[j]->GetTag() == HERO)
@@ -452,58 +524,75 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext, float fTimeElapsed, C
 	if(m_pLights && m_pd3dcbLights) UpdateLightShaderVariable(pd3dDeviceContext, m_pLights);
 	//쉐이더 객체 리스트의 각 쉐이더 객체를 렌더링한다.
 	
-	//m_pObjectShaders->Render(pd3dDeviceContext);
-	//m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &pBoundBox[0]->m_d3dxmtxWorld);
-	//pBoundBox[0]->Render(pd3dDeviceContext);
-	
-	//m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &HeroManager::sharedManager()->m_pHero->m_d3dxmtxWorld);
-	//HeroManager::sharedManager()->m_pHero->Render(pd3dDeviceContext);
-	
-	/*for(int i=0; i<MAX_OTHER_PLAYER; i++)
+	//오브젝트 쉐이더 렌더
+	if(pCamera->GetMode() == MINIMAP_CAMERA)
 	{
-		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetVisible() != TRUE) continue;
+		m_pObjectShaders->Render(pd3dDeviceContext);
+		for(int i=0;i<2;i++)
+		{
+			if(m_pNexusBox[i]->IsVisible(pCamera))
+				m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pNexusBox[i]->m_d3dxmtxWorld);
+			m_pNexusBox[i]->Render(pd3dDeviceContext, pCamera);
+		}
+		for(int i=0;i<MAX_TOWER;i++)
+		{
+			if(TowerManager::sharedManager()->m_pTower[i] == NULL) continue;
+			if(m_pTowerBox[i]->IsVisible(pCamera))
+				m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pTowerBox[i]->m_d3dxmtxWorld);
+			m_pTowerBox[i]->Render(pd3dDeviceContext, pCamera);
+		}
+		for(int i=0;i<2;i++)
+		{
+			if(m_pPlayerBox[i]->IsVisible(pCamera))
+				m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pPlayerBox[i]->m_d3dxmtxWorld);
+			m_pPlayerBox[i]->Render(pd3dDeviceContext, pCamera);
+		}
+	}
 
-		m_pObjectShaders->UpdateShaderVariables(pd3dDeviceContext, &OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->m_d3dxmtxWorld);
-		OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->Render(pd3dDeviceContext);
-	}*/
 
+	//인스턴싱 쉐이더 렌더
 	m_pInstancingShaders->Render(pd3dDeviceContext, pCamera);
 
 	for(int i=0; i<MAX_MISSILE; i++)
 		MissileManager::sharedManager()->m_pMissile[i]->Render(pd3dDeviceContext, pCamera);
 	
-	for(int i=0; i<MAX_TOWER; i++)
-		TowerManager::sharedManager()->m_pTower[i]->Render(pd3dDeviceContext, pCamera);
-
 	for(int i=0; i<872; i++)
 		ObstacleManager::sharedManager()->m_pObstacle[i]->Render(pd3dDeviceContext, pCamera);
 	
   	for(int i=0; i<MAX_MINION; i++)
   		MinionManager::sharedManager()->m_pMinion1[i]->Render(pd3dDeviceContext, pCamera);
 	
-	for(int i=0; i<MAX_DESTROY_TOWER; i++)
-		ObstacleManager::sharedManager()->m_pDestroyTower[i]->Render(pd3dDeviceContext, pCamera);
-	
+	if(pCamera->GetMode() == CAMERA)
+	{
+		for(int i=0; i<MAX_TOWER; i++)
+			TowerManager::sharedManager()->m_pTower[i]->Render(pd3dDeviceContext, pCamera);
 
+		for(int i=0; i<MAX_DESTROY_TOWER; i++)
+			ObstacleManager::sharedManager()->m_pDestroyTower[i]->Render(pd3dDeviceContext, pCamera);
+	}
+
+	//애니메이션 쉐이더 렌더
 	m_pAnimationShaders->Render(pd3dDeviceContext);
 
-	if(HeroManager::sharedManager()->m_pHero->IsVisible(pCamera))
-		m_pAnimationShaders->UpdateShaderVariables(pd3dDeviceContext, &HeroManager::sharedManager()->m_pHero->m_d3dxmtxWorld);
-	HeroManager::sharedManager()->m_pHero->Render(pd3dDeviceContext, fTimeElapsed, pCamera);
+	if(pCamera->GetMode() == CAMERA)
+	{
+		if(HeroManager::sharedManager()->m_pHero->IsVisible(pCamera))
+			m_pAnimationShaders->UpdateShaderVariables(pd3dDeviceContext, &HeroManager::sharedManager()->m_pHero->m_d3dxmtxWorld);
+		HeroManager::sharedManager()->m_pHero->Render(pd3dDeviceContext, fTimeElapsed, pCamera);
+
+		if(m_pBlueNexus->IsVisible(pCamera))
+			m_pAnimationShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pBlueNexus->m_d3dxmtxWorld);
+		m_pBlueNexus->Render(pd3dDeviceContext, pCamera);
+
+		if(m_pRedNexus->IsVisible(pCamera))
+			m_pAnimationShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pRedNexus->m_d3dxmtxWorld);
+		m_pRedNexus->Render(pd3dDeviceContext, pCamera);
+	}
 
 	if(m_pPlane->IsVisible(pCamera))
 		m_pAnimationShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pPlane->m_d3dxmtxWorld);
 	m_pPlane->Render(pd3dDeviceContext, pCamera);
 	
-
-	if(m_pBlueNexus->IsVisible(pCamera))
-		m_pAnimationShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pBlueNexus->m_d3dxmtxWorld);
-	m_pBlueNexus->Render(pd3dDeviceContext, pCamera);
-	
-
-	if(m_pRedNexus->IsVisible(pCamera))
-		m_pAnimationShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pRedNexus->m_d3dxmtxWorld);
-	m_pRedNexus->Render(pd3dDeviceContext, pCamera);
 	
 
 	for(int i=0; i<MAX_OTHER_PLAYER; i++)
@@ -878,16 +967,6 @@ void CScene::CreateLightShaderVariables(ID3D11Device *pd3dDevice)
 
 	for(int i=0; i<MAX_LIGHTS - 1; i++)
 	{
-		//m_pLights->m_pLights[i].m_bEnable = 1.0f;
-		//m_pLights->m_pLights[i].m_nType = POINT_LIGHT;
-		//m_pLights->m_pLights[i].m_fRange = 80.0f;
-		//m_pLights->m_pLights[i].m_d3dxcAmbient = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		//m_pLights->m_pLights[i].m_d3dxcDiffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-		//m_pLights->m_pLights[i].m_d3dxcSpecular = D3DXCOLOR(0.5f, 0.5f, 0.5f, 0.0f);
-		//m_pLights->m_pLights[i].m_d3dxvPosition = D3DXVECTOR3(-600.0f, 100.0f, 100.0f);
-		//m_pLights->m_pLights[i].m_d3dxvDirection = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		//m_pLights->m_pLights[i].m_d3dxvAttenuation = D3DXVECTOR3(1.0f, 0.01f, 0.001f);
-
 		m_pLights->m_pLights[i].m_bEnable = 1.0f;
 		m_pLights->m_pLights[i].m_nType = SPOT_LIGHT;
 		m_pLights->m_pLights[i].m_fRange = 370.0f;

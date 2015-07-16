@@ -153,8 +153,8 @@ void CMesh::CreateRasterizerState(ID3D11Device *pd3dDevice)
 
 void CMesh::SetBoundingCube(D3DXVECTOR3 _boundsize)
 {
-	m_bcBoundingCube.m_d3dxvMinimum = -_boundsize/2;// D3DXVECTOR3(-1, -1, -1);
-	m_bcBoundingCube.m_d3dxvMaximum = +_boundsize/2;//D3DXVECTOR3(+1, +1, +1);
+	m_bcBoundingCube.m_d3dxvMinimum = -_boundsize/2;
+	m_bcBoundingCube.m_d3dxvMaximum = +_boundsize/2;
 }
 
 CTriangleMesh::CTriangleMesh(ID3D11Device *pd3dDevice) : CMesh(pd3dDevice)
@@ -209,11 +209,9 @@ void CTriangleMesh::CreateRasterizerState(ID3D11Device *pd3dDevice)
 }
 
 
-CCubeMesh::CCubeMesh(ID3D11Device *pd3dDevice, float fWidth, float fHeight, float fDepth) : CMesh(pd3dDevice)
+CCubeMesh::CCubeMesh(ID3D11Device *pd3dDevice, float fWidth, float fHeight, float fDepth, D3DXCOLOR d3dxColor) : CMesh(pd3dDevice)
 {
 	m_nVertices = 8;
-	//m_nStride = sizeof(CDiffusedVertex);
-	//m_nOffset = 0;
 	m_pnVertexStrides = new UINT[1];
 	m_pnVertexStrides[0] = sizeof(CDiffusedVertex);
 	m_pnVertexOffsets = new UINT[1];
@@ -225,19 +223,20 @@ CCubeMesh::CCubeMesh(ID3D11Device *pd3dDevice, float fWidth, float fHeight, floa
 	m_ppd3dVertexBuffers = new ID3D11Buffer*[m_nBuffers];
 
 	m_d3dPrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+	m_dxgiIndexFormat = DXGI_FORMAT_R16_UINT;
 
 	float fx = fWidth*0.5f, fy = fHeight*0.5f, fz = fDepth*0.5f;
 	CDiffusedVertex pVertices[8];
 	int i = 0;
 
-	pVertices[0] = CDiffusedVertex(D3DXVECTOR3(-fx, -fy, -fz), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
-	pVertices[1] = CDiffusedVertex(D3DXVECTOR3(-fx, -fy, +fz), D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f));
-	pVertices[2] = CDiffusedVertex(D3DXVECTOR3(+fx, -fy, +fz), D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f));
-	pVertices[3] = CDiffusedVertex(D3DXVECTOR3(+fx, -fy, -fz), D3DXCOLOR(1.0f, 1.0f, 0.0f, 1.0f));
-	pVertices[4] = CDiffusedVertex(D3DXVECTOR3(-fx, +fy, -fz), D3DXCOLOR(1.0f, 0.0f, 1.0f, 1.0f));
-	pVertices[5] = CDiffusedVertex(D3DXVECTOR3(-fx, +fy, +fz), D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f));
-	pVertices[6] = CDiffusedVertex(D3DXVECTOR3(+fx, +fy, +fz), D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f));
-	pVertices[7] = CDiffusedVertex(D3DXVECTOR3(+fx, +fy, -fz), D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
+	pVertices[0] = CDiffusedVertex(D3DXVECTOR3(-fx, -fy, -fz), d3dxColor);
+	pVertices[1] = CDiffusedVertex(D3DXVECTOR3(-fx, -fy, +fz), d3dxColor);
+	pVertices[2] = CDiffusedVertex(D3DXVECTOR3(+fx, -fy, +fz), d3dxColor);
+	pVertices[3] = CDiffusedVertex(D3DXVECTOR3(+fx, -fy, -fz), d3dxColor);
+	pVertices[4] = CDiffusedVertex(D3DXVECTOR3(-fx, +fy, -fz), d3dxColor);
+	pVertices[5] = CDiffusedVertex(D3DXVECTOR3(-fx, +fy, +fz), d3dxColor);
+	pVertices[6] = CDiffusedVertex(D3DXVECTOR3(+fx, +fy, +fz), d3dxColor);
+	pVertices[7] = CDiffusedVertex(D3DXVECTOR3(+fx, +fy, -fz), d3dxColor);
 
 	D3D11_BUFFER_DESC d3dBufferDesc;
 	ZeroMemory(&d3dBufferDesc, sizeof(D3D11_BUFFER_DESC));
@@ -293,8 +292,8 @@ void CCubeMesh::CreateRasterizerState(ID3D11Device *pd3dDevice)
 	D3D11_RASTERIZER_DESC d3dRasterizerDesc;
 	ZeroMemory(&d3dRasterizerDesc, sizeof(D3D11_RASTERIZER_DESC));
 	//d3dRasterizerDesc.CullMode = D3D11_CULL_NONE;
-	d3dRasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
-	//d3dRasterizerDesc.FillMode = D3D11_FILL_SOLID;
+	//d3dRasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
+	d3dRasterizerDesc.FillMode = D3D11_FILL_SOLID;
 	d3dRasterizerDesc.CullMode = D3D11_CULL_BACK;
 	pd3dDevice->CreateRasterizerState(&d3dRasterizerDesc, &m_pd3dRasterizerState);
 }

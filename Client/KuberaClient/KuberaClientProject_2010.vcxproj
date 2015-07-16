@@ -372,6 +372,8 @@
     <None Include="fx\particle.ps" />
     <None Include="fx\particle.vs" />
     <None Include="fx\Soldier.fx" />
+    <None Include="fx\UI.ps" />
+    <None Include="fx\UI.vs" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="astarclass.cpp" />
@@ -412,6 +414,8 @@
     <ClCompile Include="Textureclass.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TowerObject.cpp" />
+    <ClCompile Include="UIClass.cpp" />
+    <ClCompile Include="UIObject.cpp" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
@@ -467,6 +471,8 @@
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TowerManager.h" />
     <ClInclude Include="TowerObject.h" />
+    <ClInclude Include="UIClass.h" />
+    <ClInclude Include="UIObject.h" />
     <ResourceCompile Include="KuberaClientProject.rc" />
   </ItemGroup>
   <ItemGroup>

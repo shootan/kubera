@@ -1,3 +1,6 @@
+#include "Light.fx"
+
+
 
 cbuffer cbViewProjectionMatrix : register(b0)
 {
@@ -11,23 +14,18 @@ cbuffer cbWorldMatrix : register(b1)
 };
 
 
-Texture2D	g_txDiffuse : register( t0 );
-SamplerState g_samLinear : register( s0 );
-
-
+//일반
 struct VS_INPUT
 {
-    float4 position		: POSITION;
-    float3 normal		: NORMAL;
-	float2 texcoord		: TEXCOORD0;
+    float3 position		: POSITION;
+	float4 color			: COLOR;
 };
 
 
 struct VS_OUTPUT
 {
     float4 position		: SV_POSITION;
-	float3 normal		: NORMAL;
-	float2 texcoord		: TEXCOORD0;
+	float4 color			: COLOR;
 
 };
 
@@ -35,13 +33,14 @@ struct VS_OUTPUT
 VS_OUTPUT VS(VS_INPUT input)
 {
     VS_OUTPUT output = (VS_OUTPUT)0;
-    output.position = mul(input.position, gmtxWorld);
+    output.position = mul(float4(input.position,1), gmtxWorld);
     output.position = mul(output.position, gmtxView);
     output.position = mul(output.position, gmtxProjection);
 
-	output.normal = mul(input.normal, (float3x3)gmtxWorld);
+	output.color = input.color;
 
-	output.texcoord = input.texcoord;
+	//output.normal = mul(input.normal, (float3x3)gmtxWorld);
+	//output.texcoord = input.texcoord;
 
     return output;
 }
@@ -49,10 +48,7 @@ VS_OUTPUT VS(VS_INPUT input)
 // 픽셀-쉐이더
 float4 PS( VS_OUTPUT output) : SV_Target
 {
-    float4 vDiffuse = g_txDiffuse.Sample( g_samLinear, output.texcoord );
-
-	return vDiffuse;
-//입력되는 정점의 색상을 그대로 출력한다. 
+	return output.color;
 }
 
 

@@ -2,7 +2,8 @@
 #include "header.h"
 #include "Mesh.h"
 
-
+#define CAMERA 1
+#define MINIMAP_CAMERA 2
 
 
 struct VS_CB_VIEWPROJECTION_MATRIX
@@ -18,11 +19,15 @@ public:
 	virtual ~CCamera();
 
 public:
+	D3DXMATRIX m_d3dxmtxView;
+	D3DXMATRIX m_d3dxmtxProjection;
+
 	ID3D11Buffer *m_pd3dcbCamera;
 	D3D11_VIEWPORT m_d3dViewport;
 	D3DXPLANE m_d3dxFrustumPlanes[6];    
 
 	D3DXVECTOR3 m_CameraPos;
+	int m_nCameraMode;
 public:
 	//절두체의 6개 평면을 계산한다.
 	void CalculateFrustumPlanes();
@@ -32,8 +37,12 @@ public:
 
 	void CreateShaderVariables(ID3D11Device *pd3dDevice);
 	void UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceContext);
+	void UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceContext, D3DXMATRIX orth);
 	//뷰-포트를 설정하는 멤버 함수를 선언한다.
 	void SetViewport(ID3D11DeviceContext *pd3dDeviceContext, DWORD xStart, DWORD yStart, DWORD nWidth, DWORD nHeight, float fMinZ=0.0f, float fMaxZ=1.0f);
 	D3D11_VIEWPORT GetViewport() { return(m_d3dViewport); }
+
+	void SetMode(int nMode) { m_nCameraMode = nMode; }
+	int GetMode() { return(m_nCameraMode); }
 
 };

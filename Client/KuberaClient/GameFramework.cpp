@@ -9,6 +9,8 @@ CGameFramework::CGameFramework()
 	m_pd3dRenderTargetView = NULL;
 	m_pd3dDepthStencilView = NULL;
 	m_pd3dDeviceContext = NULL;
+	m_depthStencilState = 0;
+	m_depthDisabledStencilState = 0;
 
 	m_nWndClientWidth = FRAME_BUFFER_WIDTH;
 	m_nWndClientHeight = FRAME_BUFFER_HEIGHT;
@@ -29,6 +31,13 @@ CGameFramework::CGameFramework()
 
 	m_pCamera = NULL;
 	m_pCameraMinimap = NULL;
+	m_pUICamera = NULL;
+
+	m_pUI = NULL;
+	m_pUIShaders = NULL;
+
+	m_UIEnableBlendingState = 0;
+	m_UIDisableBlendingState = 0;
 }
 
 CGameFramework::~CGameFramework()
@@ -134,6 +143,54 @@ bool CGameFramework::CreateRenderTargetDepthStencilView()
 	if (FAILED(hResult = m_pd3dDevice->CreateDepthStencilView(m_pd3dDepthStencilBuffer, &d3dDepthStencilViewDesc, &m_pd3dDepthStencilView))) return(false);
 
 	m_pd3dDeviceContext->OMSetRenderTargets(1, &m_pd3dRenderTargetView, m_pd3dDepthStencilView);
+
+	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
+	ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
+
+	// Set up the description of the stencil state.
+	depthStencilDesc.DepthEnable = true;
+	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+	depthStencilDesc.StencilEnable = true;
+	depthStencilDesc.StencilReadMask = 0xFF;
+	depthStencilDesc.StencilWriteMask = 0xFF;
+
+	// Stencil operations if pixel is front-facing.
+	depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	// Stencil operations if pixel is back-facing.
+	depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	// Create the depth stencil state.
+	m_pd3dDevice->CreateDepthStencilState(&depthStencilDesc, &m_depthStencilState);
+	m_pd3dDeviceContext->OMSetDepthStencilState(m_depthStencilState, 1);
+
+	D3D11_DEPTH_STENCIL_DESC depthDisabledStencilDesc;
+	ZeroMemory(&depthDisabledStencilDesc, sizeof(depthDisabledStencilDesc));
+	depthDisabledStencilDesc.DepthEnable = false;
+	depthDisabledStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthDisabledStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	depthDisabledStencilDesc.StencilEnable = true;
+	depthDisabledStencilDesc.StencilReadMask = 0xFF;
+	depthDisabledStencilDesc.StencilWriteMask = 0xFF;
+	depthDisabledStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	depthDisabledStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	depthDisabledStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	depthDisabledStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	m_pd3dDevice->CreateDepthStencilState(&depthDisabledStencilDesc, &m_depthDisabledStencilState);
+
+
 
 	return(true);
 
@@ -257,7 +314,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 
 LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-	m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+	//m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 	if(nMessageID != WM_MOUSEWHEEL)
 		m_CameraUpDown = 0;
 
@@ -276,10 +333,10 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			if (m_pd3dDepthStencilView) m_pd3dDepthStencilView->Release();
 
 			m_pDXGISwapChain->ResizeBuffers(2, m_nWndClientWidth, m_nWndClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
-			//SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.0f, 1.0f);
+
 			m_pCamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.9f, 1.0f);
 			m_pCameraMinimap->SetViewport(m_pd3dDeviceContext, m_nWndClientWidth - m_nWndClientWidth/5 - 10, m_nWndClientHeight - m_nWndClientHeight/5 - 10, m_nWndClientWidth/5, m_nWndClientHeight/5, 0.0f, 0.1f);
-			
+			m_pUICamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.0f, 0.1f);
 
 			CreateRenderTargetDepthStencilView();
 
@@ -343,6 +400,29 @@ void CGameFramework::OnDestroy()
 	if (m_pd3dDeviceContext) m_pd3dDeviceContext->Release();
 	if (m_pd3dDevice) m_pd3dDevice->Release();
 
+	if(m_depthStencilState)
+	{
+		m_depthStencilState->Release();
+		m_depthStencilState = 0;
+	}
+	if(m_depthDisabledStencilState)
+	{
+		m_depthDisabledStencilState->Release();
+		m_depthDisabledStencilState = 0;
+	}
+
+	if(m_UIEnableBlendingState)
+	{
+		m_UIEnableBlendingState->Release();
+		m_UIEnableBlendingState = 0;
+	}
+
+	if(m_UIDisableBlendingState)
+	{
+		m_UIDisableBlendingState->Release();
+		m_UIDisableBlendingState = 0;
+	}
+
 	m_DialogResourceManager.OnD3D11DestroyDevice();
 	SAFE_DELETE( m_pTxtHelper );
 	SAFE_DELETE( m_pTxtHelper2 );
@@ -350,34 +430,51 @@ void CGameFramework::OnDestroy()
 
 void CGameFramework::BuildObjects()
 {
+	CreateBlend(m_pd3dDevice);
 	CMaterialShader::CreateMaterialShaderVariables(m_pd3dDevice);
 
 	printf("SetCamera");
 	//씬생성
-	m_pScene = new CScene();
+	//m_pScene = new CScene();
 	//카메라 생성
 	m_pCamera = new CCamera();
 
 	m_pCamera->CreateShaderVariables(m_pd3dDevice);
 	m_pCamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.9f, 1.0f);
-
-	//SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.0f, 1.0f);
-	
 	////투영 변환 행렬을 생성한다. 
-	//pCamera->GenerateProjectionMatrix(1.0f, 500.0f, float(m_nWndClientWidth)/float(m_nWndClientHeight), 90.0f);
 	m_pCamera->SetProjParams((float)D3DXToRadian(90.0f), float(m_nWndClientWidth)/float(m_nWndClientHeight), 1.0f, 500.0f);
+	m_pCamera->SetMode(CAMERA);
 
 	m_pCameraMinimap = new CCamera();
 	m_pCameraMinimap->CreateShaderVariables(m_pd3dDevice);
-	m_pCameraMinimap->SetViewport(m_pd3dDeviceContext, m_nWndClientWidth - m_nWndClientWidth/5 - 10, m_nWndClientHeight - m_nWndClientHeight/5 - 10, m_nWndClientWidth/5, m_nWndClientHeight/5, 0.0f, 0.1f);
+	m_pCameraMinimap->SetViewport(m_pd3dDeviceContext, m_nWndClientWidth - m_nWndClientWidth/5 - 10, m_nWndClientHeight - m_nWndClientHeight/5 - 10, m_nWndClientWidth/5, m_nWndClientHeight/5, 0.3f, 0.4f);
 	m_pCameraMinimap->SetProjParams((float)D3DXToRadian(90.0f), float(120)/float(80), 1.0f, 500.0f);
 	D3DXVECTOR3 d3dxvEyePosition = D3DXVECTOR3(0, 500, 0);
 	m_pCameraMinimap->m_CameraPos = d3dxvEyePosition;
 	D3DXVECTOR3 d3dxvLookAt = D3DXVECTOR3(0, 0, 1);
 	m_pCameraMinimap->SetViewParams( &d3dxvEyePosition, &d3dxvLookAt );
 	m_pCameraMinimap->CalculateFrustumPlanes();
+	m_pCameraMinimap->SetMode(MINIMAP_CAMERA);
 
-	m_pScene->m_Camera = m_pCamera;
+	m_pUICamera = new CCamera();
+	m_pUICamera->CreateShaderVariables(m_pd3dDevice);
+	m_pUICamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.0f, 0.1f);
+	m_pUICamera->SetProjParams((float)D3DXToRadian(90.0f), float(120)/float(80), 1.0f, 500.0f);
+	m_pUICamera->SetViewParams( &D3DXVECTOR3(0, 0, -100), &D3DXVECTOR3(0, 0, 1) );
+	//UI를 위한 투영
+	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)m_nWndClientWidth, (float)m_nWndClientHeight, 1.0f, 500.0f);
+
+	m_pUI = new UIClass(m_pd3dDevice);
+	m_pUI->Initialize(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, L"UI/UI_skill.png",698, 187);
+	
+	m_pUIObjects = new UIObject();
+	m_pUIObjects->SetUI(m_pUI);
+
+	m_pUIShaders = new CUIShader();
+	m_pUIShaders->CreateShader(m_pd3dDevice, 10);
+	m_pUIShaders->AddObject(m_pUIObjects);
+
+	//m_pScene->m_Camera = m_pCamera;
 	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice);
 
 	m_DialogResourceManager.OnD3D11ResizedSwapChain( m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight );
@@ -414,43 +511,49 @@ void CGameFramework::FrameAdvance()
 	m_SendTick += 1;
 
 
-	this->ExchangeInfo();
-	m_pScene->OtherPlayerTargetSetting();
+	//this->ExchangeInfo();
+	//m_pScene->OtherPlayerTargetSetting();
 	
-	ProcessInput();
-	AnimateObjects();
+	//ProcessInput();
+	//AnimateObjects();
 
-	SetCameraPos();
+	//SetCameraPos();
 
 	float fClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; 
 	//렌더 타겟 뷰를 색상(RGB: 0.0f, 0.125f, 0.3f)으로 지운다. 
 	m_pd3dDeviceContext->ClearRenderTargetView(m_pd3dRenderTargetView, fClearColor);
 	if (m_pd3dDepthStencilView) m_pd3dDeviceContext->ClearDepthStencilView(m_pd3dDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-	//m_pd3dRenderTargetView = DXUTGetD3D11RenderTargetView();
-	//m_pd3dDeviceContext->ClearRenderTargetView( m_pd3dRenderTargetView, fClearColor );
-	//m_pd3dDepthStencilView = DXUTGetD3D11DepthStencilView();
-	//m_pd3dDeviceContext->ClearDepthStencilView( m_pd3dDepthStencilView, D3D11_CLEAR_DEPTH, 1.0, 0 );
 	//후면버퍼를 전면버퍼로 프리젠트한다. 
 
 	
 
-	if(m_SendTick > 1)
-	{
-		this->SendHeroData();
-		m_SendTick  = 0;
-	}
-	m_pCamera->UpdateShaderVariables(m_pd3dDeviceContext);
-	m_pCamera->FrameMove(m_GameTimer.GetTimeElapsed());
-	m_pd3dDeviceContext->RSSetViewports(1, &m_pCamera->GetViewport());
-	m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f, m_pCamera);
+	//if(m_SendTick > 1)
+	//{
+	//	this->SendHeroData();
+	//	m_SendTick  = 0;
+	//}
+	//m_pCamera->UpdateShaderVariables(m_pd3dDeviceContext);
+	//m_pCamera->FrameMove(m_GameTimer.GetTimeElapsed());
+	//m_pd3dDeviceContext->RSSetViewports(1, &m_pCamera->GetViewport());
+	//m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f, m_pCamera);
 
-	RenderText();
+	//RenderText();
 
-	m_pCameraMinimap->UpdateShaderVariables(m_pd3dDeviceContext);
-	//m_pCameraMinimap->FrameMove(m_GameTimer.GetTimeElapsed());
-	m_pd3dDeviceContext->RSSetViewports(1, &m_pCameraMinimap->GetViewport());
-	m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f, m_pCameraMinimap);
+	//m_pCameraMinimap->UpdateShaderVariables(m_pd3dDeviceContext);
+	////m_pCameraMinimap->FrameMove(m_GameTimer.GetTimeElapsed());
+	//m_pd3dDeviceContext->RSSetViewports(1, &m_pCameraMinimap->GetViewport());
+	//m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f, m_pCameraMinimap);
+
+	TurnZBufferOff();
+	//TurnOnAlphaBlending(m_pd3dDeviceContext, m_UIEnableBlendingState);
+	m_pUICamera->UpdateShaderVariables(m_pd3dDeviceContext, m_orthoMatrix);
+	m_pd3dDeviceContext->RSSetViewports(1, &m_pUICamera->GetViewport());
+	m_pUIShaders->Render(m_pd3dDeviceContext);
+	m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects->m_d3dxmtxWorld);
+	m_pUIObjects->Render(m_pd3dDeviceContext, m_nWndClientWidth/2 - 200, m_nWndClientHeight - 200);
+	//TurnOffAlphaBlending(m_pd3dDeviceContext, m_UIDisableBlendingState);
+	TurnZBufferOn();
 
 	m_pDXGISwapChain->Present(0, 0);
 
@@ -674,4 +777,87 @@ void CGameFramework::RenderText()
 	swprintf(str, 255, L"HERO HP : [ %.0f ]", HeroManager::sharedManager()->m_pHero->GetHP());
 	m_pTxtHelper->DrawTextLine(str);
 	m_pTxtHelper2->End();
+}
+
+void CGameFramework::TurnZBufferOn()
+{
+	m_pd3dDeviceContext->OMSetDepthStencilState(m_depthStencilState, 1);
+	return;
+}
+
+
+void CGameFramework::TurnZBufferOff()
+{
+	m_pd3dDeviceContext->OMSetDepthStencilState(m_depthDisabledStencilState, 1);
+	return;
+}
+
+
+//블렌딩
+void CGameFramework::TurnOnAlphaBlending(ID3D11DeviceContext *pd3dDeviceContext, ID3D11BlendState* blendstate)
+{
+	float blendFactor[4];
+
+
+	// Setup the blend factor.
+	blendFactor[0] = 0.0f;
+	blendFactor[1] = 0.0f;
+	blendFactor[2] = 0.0f;
+	blendFactor[3] = 1.0f;
+
+	// Turn on the alpha blending.
+	pd3dDeviceContext->OMSetBlendState(blendstate, blendFactor, 0xffffffff);
+
+	return;
+}
+
+void CGameFramework::TurnOffAlphaBlending(ID3D11DeviceContext *pd3dDeviceContext, ID3D11BlendState* blendstate)
+{
+	float blendFactor[4];
+
+
+	// Setup the blend factor.
+	blendFactor[0] = 0.0f;
+	blendFactor[1] = 0.0f;
+	blendFactor[2] = 0.0f;
+	blendFactor[3] = 1.0f;
+
+	// Turn off the alpha blending.
+	pd3dDeviceContext->OMSetBlendState(blendstate, blendFactor, 0xffffffff);
+
+	return;
+}
+
+HRESULT CGameFramework::CreateBlend(ID3D11Device *pd3dDevice)
+{
+	HRESULT result;
+	D3D11_BLEND_DESC blendStateDescription;
+	// Clear the blend state description.
+	ZeroMemory(&blendStateDescription, sizeof(D3D11_BLEND_DESC));
+
+	// Create an alpha enabled blend state description.
+	blendStateDescription.RenderTarget[0].BlendEnable = TRUE;
+	blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	blendStateDescription.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	blendStateDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blendStateDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blendStateDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	blendStateDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendStateDescription.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+
+	result = pd3dDevice->CreateBlendState(&blendStateDescription, &m_UIEnableBlendingState);
+	if(FAILED(result))
+	{
+		return false;
+	}
+
+	blendStateDescription.RenderTarget[0].BlendEnable = FALSE;
+
+	result = pd3dDevice->CreateBlendState(&blendStateDescription, &m_UIDisableBlendingState);
+	if(FAILED(result))
+	{
+		return false;
+	}
+
+	return S_OK;
 }

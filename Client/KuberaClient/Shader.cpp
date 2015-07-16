@@ -123,33 +123,13 @@ void CObjectShader::CreateShader(ID3D11Device *pd3dDevice, int nObjects)
 	D3D11_INPUT_ELEMENT_DESC d3dInputLayout[] =
 	{
 		{ "POSITION",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT,    0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 	UINT nElements = ARRAYSIZE(d3dInputLayout);
 	//파일 “Effect.fx”에서 정점-쉐이더의 시작 함수가 "VS"인 정점-쉐이더를 생성한다. 
 	CreateVertexShaderFromFile(pd3dDevice, L"fx/Effect.fx", "VS", "vs_4_0", &m_pd3dVertexShader, d3dInputLayout, nElements, &m_pd3dVertexLayout);
 	//파일 “Effect.fx”에서 픽셀-쉐이더의 시작 함수가 "PS"인 픽셀-쉐이더를 생성한다. 
 	CreatePixelShaderFromFile(pd3dDevice, L"fx/Effect.fx", "PS", "ps_4_0", &m_pd3dPixelShader);
-
-
-
-	// Create a sampler state
-	D3D11_SAMPLER_DESC SamDesc;
-	SamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	SamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	SamDesc.MipLODBias = 0.0f;
-	SamDesc.MaxAnisotropy = 1;
-	SamDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	SamDesc.BorderColor[0] = SamDesc.BorderColor[1] = SamDesc.BorderColor[2] = SamDesc.BorderColor[3] = 0;
-	SamDesc.MinLOD = 0;
-	SamDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	pd3dDevice->CreateSamplerState( &SamDesc, &m_pSamLinear );
-	DXUT_SetDebugName( m_pSamLinear, "Primary" );
-
-
 
 	//렌더링할 객체의 개수가 nObjects이므로 객체에 대한 포인터들의 배열을 정의한다.
 	m_nObjects = nObjects; 
@@ -167,16 +147,6 @@ void CObjectShader::CreateShader(ID3D11Device *pd3dDevice, int nObjects)
 void CObjectShader::Render(ID3D11DeviceContext *pd3dDeviceContext)
 {
 	CShader::Render(pd3dDeviceContext);
-
-	//for (int j = 0; j < m_nObjects; j++)
-	//{
-	//	if (m_ppObjects[j]) 
-	//	{
-	//		if(m_ppObjects[j]->GetVisible() != TRUE) continue;
-	//		UpdateShaderVariables(pd3dDeviceContext, &m_ppObjects[j]->m_d3dxmtxWorld);
-	//		m_ppObjects[j]->Render(pd3dDeviceContext);
-	//	}
-	//}
 }
 
 
@@ -201,6 +171,112 @@ void CObjectShader::ReleaseShaderVariables()
 }
 
 void CObjectShader::UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceContext, D3DXMATRIX *pd3dxmtxWorld)
+{
+	CShader::UpdateShaderVariables(pd3dDeviceContext);
+
+	//월드 변환 행렬을 상수 버퍼에 복사한다.
+	D3D11_MAPPED_SUBRESOURCE d3dMappedResource;
+	pd3dDeviceContext->Map(m_pd3dcbWorldMatrix, 0, D3D11_MAP_WRITE_DISCARD, 0, &d3dMappedResource);
+	VS_CB_WORLD_MATRIX *pcbWorldMatrix = (VS_CB_WORLD_MATRIX *)d3dMappedResource.pData;
+	D3DXMatrixTranspose(&pcbWorldMatrix->m_d3dxmtxWorld, pd3dxmtxWorld);
+	pd3dDeviceContext->Unmap(m_pd3dcbWorldMatrix, 0);
+
+	//상수 버퍼를 디바이스의 슬롯(VS_SLOT_WORLD_MATRIX)에 연결한다.
+	pd3dDeviceContext->VSSetConstantBuffers(VS_SLOT_WORLD_MATRIX, 1, &m_pd3dcbWorldMatrix);
+}
+
+CUIShader::CUIShader()
+{
+	CShader::CShader();
+
+	m_pd3dcbWorldMatrix = NULL;
+}
+
+CUIShader::~CUIShader()
+{
+	for (int j = 0; j < m_nObjects; j++) if (m_ppObjects[j]) m_ppObjects[j]->Release();
+	if (m_ppObjects) delete [] m_ppObjects;       
+
+	ReleaseShaderVariables();
+
+}
+
+void CUIShader::AddObject(CGameObject *pObject) 
+{ 
+	//쉐이더에 객체를 연결(설정)하고 참조 카운터를 1만큼 증가시킨다. 
+	if (m_ppObjects) m_ppObjects[m_nIndexToAdd++] = pObject; 
+	if (pObject) pObject->AddRef();
+}
+
+void CUIShader::CreateShader(ID3D11Device *pd3dDevice, int nObjects)
+{
+	/*IA 단계에 설정할 입력-레이아웃을 정의한다. 정점 버퍼의 한 원소가 CVertex 클래스의 멤버 변수(D3DXVECTOR3 즉, 실수 세 개)이므로 입력-레이아웃은 실수(32-비트) 3개로 구성되며 시멘틱이 “POSITION”이고 정점 데이터임을 표현한다.*/ 
+	D3D11_INPUT_ELEMENT_DESC d3dInputLayout[] =
+	{
+		{ "POSITION",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	};
+	UINT nElements = ARRAYSIZE(d3dInputLayout);
+	//파일 “Effect.fx”에서 정점-쉐이더의 시작 함수가 "VS"인 정점-쉐이더를 생성한다. 
+	CreateVertexShaderFromFile(pd3dDevice, L"fx/UI.vs", "TextureVertexShader", "vs_4_0", &m_pd3dVertexShader, d3dInputLayout, nElements, &m_pd3dVertexLayout);
+	//파일 “Effect.fx”에서 픽셀-쉐이더의 시작 함수가 "PS"인 픽셀-쉐이더를 생성한다. 
+	CreatePixelShaderFromFile(pd3dDevice, L"fx/UI.ps", "TexturePixelShader", "ps_4_0", &m_pd3dPixelShader);
+
+	// Create a sampler state
+	D3D11_SAMPLER_DESC SamDesc;
+	SamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	SamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	SamDesc.MipLODBias = 0.0f;
+	SamDesc.MaxAnisotropy = 1;
+	SamDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	SamDesc.BorderColor[0] = SamDesc.BorderColor[1] = SamDesc.BorderColor[2] = SamDesc.BorderColor[3] = 0;
+	SamDesc.MinLOD = 0;
+	SamDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	pd3dDevice->CreateSamplerState( &SamDesc, &m_pSamLinear );
+	DXUT_SetDebugName( m_pSamLinear, "Primary" );
+
+	//렌더링할 객체의 개수가 nObjects이므로 객체에 대한 포인터들의 배열을 정의한다.
+	m_nObjects = nObjects; 
+	if (m_nObjects > 0) 
+	{
+		m_ppObjects = new CGameObject*[m_nObjects]; 
+		for (int i = 0; i < m_nObjects; i++) m_ppObjects[i] = NULL;
+	}
+
+	CreateShaderVariables(pd3dDevice);
+
+}
+
+
+void CUIShader::Render(ID3D11DeviceContext *pd3dDeviceContext)
+{
+	CShader::Render(pd3dDeviceContext);
+}
+
+
+void CUIShader::CreateShaderVariables(ID3D11Device *pd3dDevice)
+{
+	CShader::CreateShaderVariables(pd3dDevice);
+
+	//월드 변환 행렬을 위한 상수 버퍼를 생성한다.
+	D3D11_BUFFER_DESC bd;
+	ZeroMemory(&bd, sizeof(bd));
+	bd.Usage = D3D11_USAGE_DYNAMIC;
+	bd.ByteWidth = sizeof(VS_CB_WORLD_MATRIX);
+	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	pd3dDevice->CreateBuffer(&bd, NULL, &m_pd3dcbWorldMatrix);
+} 
+
+void CUIShader::ReleaseShaderVariables()
+{
+	//월드 변환 행렬을 위한 상수 버퍼를 반환한다.
+	if (m_pd3dcbWorldMatrix) m_pd3dcbWorldMatrix->Release();
+}
+
+void CUIShader::UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceContext, D3DXMATRIX *pd3dxmtxWorld)
 {
 	CShader::UpdateShaderVariables(pd3dDeviceContext);
 
@@ -934,7 +1010,8 @@ void CInstancingShader::UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceCon
 	{
 		if(m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + j])
 		{
-			if (m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + j]->IsVisible(pCamera))
+			if (m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + j]->IsVisible(pCamera) 
+				&& pCamera->GetMode() == CAMERA)
 			{
 				pcbWorldMatrix[nBlueTowerInstances++] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + j]->m_d3dxmtxWorld;
 			}
@@ -953,7 +1030,8 @@ void CInstancingShader::UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceCon
 	{
 		if(m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + j])
 		{
-			if (m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + j]->IsVisible(pCamera))
+			if (m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + j]->IsVisible(pCamera) 
+				&& pCamera->GetMode() == CAMERA)
 			{
 				pcbWorldMatrix[nRedTowerInstances++] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + j]->m_d3dxmtxWorld;
 			}
@@ -991,7 +1069,7 @@ void CInstancingShader::UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceCon
 	{
 		if(m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + m_nRedTowerObjects + m_nMinionObjects + j])
 		{
-			if (m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + m_nRedTowerObjects + m_nMinionObjects + j]->IsVisible(pCamera))
+			if (m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + m_nRedTowerObjects + m_nMinionObjects + j]->IsVisible(pCamera) && pCamera->GetMode() == CAMERA)
 			{
 				pcbWorldMatrix[nDestroyTowerInstances++] = m_ppObjects[m_nBush3Objects + m_nRock2Objects + m_nRock3Objects + m_nMissileObjects + m_nBlueTowerObjects + m_nRedTowerObjects + m_nMinionObjects + j]->m_d3dxmtxWorld;
 			}

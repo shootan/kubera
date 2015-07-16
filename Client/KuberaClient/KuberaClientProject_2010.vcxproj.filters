@@ -32,6 +32,9 @@
     <Filter Include="소스코드\Particle">
       <UniqueIdentifier>{541d0645-5b77-4321-98af-e8c05d629098}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스코드\UI">
+      <UniqueIdentifier>{69c45420-de33-450c-8ac2-60aa4682d9fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="KuberaClientProject.cpp" />
@@ -141,6 +144,12 @@
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>소스코드</Filter>
+    </ClCompile>
+    <ClCompile Include="UIClass.cpp">
+      <Filter>소스코드\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIObject.cpp">
+      <Filter>소스코드\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -284,6 +293,12 @@
       <Filter>소스코드</Filter>
     </ClInclude>
     <ClInclude Include="Light.h" />
+    <ClInclude Include="UIClass.h">
+      <Filter>소스코드\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIObject.h">
+      <Filter>소스코드\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h">
@@ -310,6 +325,12 @@
       <Filter>shader</Filter>
     </None>
     <None Include="fx\Light.fx">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="fx\UI.ps">
+      <Filter>shader</Filter>
+    </None>
+    <None Include="fx\UI.vs">
       <Filter>shader</Filter>
     </None>
   </ItemGroup>

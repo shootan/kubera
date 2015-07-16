@@ -4,6 +4,9 @@
 #include "Scene.h"
 #include "Network.h"
 #include "Camera.h"
+#include "UIClass.h"
+#include "Shader.h"
+#include "UIObject.h"
 
 class CGameFramework
 {
@@ -22,6 +25,7 @@ private:
 
 	CCamera *m_pCamera; 
 	CCamera *m_pCameraMinimap;
+	CCamera *m_pUICamera;
 
 	PlayerPacket m_MyHero;
 
@@ -43,6 +47,11 @@ private:
 	ID3D11Texture2D *m_pd3dDepthStencilBuffer;
 	ID3D11DepthStencilView *m_pd3dDepthStencilView;
 
+	ID3D11DepthStencilState* m_depthStencilState;
+	ID3D11DepthStencilState* m_depthDisabledStencilState;
+
+	D3DXMATRIX m_orthoMatrix;
+
 	CDXUTTextHelper* m_pTxtHelper;
 	CDXUTTextHelper* m_pTxtHelper2;
 	CDXUTDialogResourceManager m_DialogResourceManager;
@@ -50,7 +59,11 @@ private:
 	// Network
 	Network Net;
 	float time;
-	
+
+	//UI
+	UIClass* m_pUI;
+	CUIShader *m_pUIShaders;
+	UIObject* m_pUIObjects;
 	
 public:
 	CGameFramework();
@@ -85,4 +98,14 @@ public:
 	void SetViewport(ID3D11DeviceContext *pd3dDeviceContext, DWORD xStart, DWORD yStart, DWORD nWidth, DWORD nHeight, float fMinZ=0.0f, float fMaxZ=1.0f);
 
 	void RenderText();
+
+	void TurnZBufferOn();
+	void TurnZBufferOff();
+
+	//ºí·»µù
+	ID3D11BlendState* m_UIEnableBlendingState;
+	ID3D11BlendState* m_UIDisableBlendingState;
+	void TurnOnAlphaBlending(ID3D11DeviceContext *pd3dDeviceContext, ID3D11BlendState* blendstate);
+	void TurnOffAlphaBlending(ID3D11DeviceContext *pd3dDeviceContext, ID3D11BlendState* blendstate);
+	HRESULT CreateBlend(ID3D11Device *pd3dDevice);
 };

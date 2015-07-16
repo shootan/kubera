@@ -150,7 +150,8 @@ void CGameObject::Render(ID3D11DeviceContext *pd3dDeviceContext, CCamera *pCamer
 			bcBoundingCube.Update(&m_d3dxmtxWorld);
 			bIsVisible = pCamera->IsInFrustum(&bcBoundingCube); 
 		}
-		if (bIsVisible) m_pMesh->Render(pd3dDeviceContext);
+		if (bIsVisible) 
+			m_pMesh->Render(pd3dDeviceContext);
 	}
 	else if (m_pAniMesh)
 	{
