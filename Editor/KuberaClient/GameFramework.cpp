@@ -375,11 +375,21 @@ void CGameFramework::BuildObjects()
 	m_pCameraMinimap->SetViewParams( &d3dxvEyePosition, &d3dxvLookAt );
 	
 	m_DialogResourceManager.OnD3D11ResizedSwapChain( m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight );
+
+	m_pUICamera = new CCamera();
+	m_pUICamera->CreateShaderVariables(_pd3device);
+	m_pUICamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.0f, 0.1f);
+	m_pUICamera->SetProjParams((float)D3DXToRadian(90.0f), float(120)/float(80), 1.0f, 500.0f);
+	m_pUICamera->SetViewParams( &D3DXVECTOR3(0, 0, -100), &D3DXVECTOR3(0, 0, 1) );
+	//UI를 위한 투영
+	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)m_nWndClientWidth, (float)m_nWndClientHeight, 1.0f, 500.0f);
+
+
 }
 
 void CGameFramework::BuildScene()
 {
-	LoadManager::sharedManager()->LoadObject(m_pd3dDevice);
+	//LoadManager::sharedManager()->LoadObject(m_pd3dDevice);
 	//씬생성
 	m_pScene = new CScene();
 	m_pScene->m_Camera = m_pCamera;
@@ -481,8 +491,6 @@ void CGameFramework::SetCameraPos()
 		m_CameraZoom = 1;
 	if(m_CameraZoom >= 100)
 		m_CameraZoom = 100;
-
-
 
 	if(m_CameraPosX <= -500)
 	{

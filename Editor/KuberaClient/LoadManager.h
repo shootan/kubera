@@ -68,7 +68,8 @@ public:
 		return instance;
 	}
 public:
-	void LoadObject(ID3D11Device *pd3dDevice)
+
+	void LoadShaderInstancing(ID3D11Device *pd3dDevice)
 	{
 		CreateBlend(pd3dDevice); //이펙트 블렌딩 설정
 
@@ -89,6 +90,44 @@ public:
 		m_nIntanceObjects = m_pInstancingShaders->GetObjectsNumber();
 		m_nObjects = 20 + m_nIntanceObjects;
 
+	}
+
+	HRESULT CreateBlend(ID3D11Device *pd3dDevice)
+	{
+		HRESULT result;
+		D3D11_BLEND_DESC blendStateDescription;
+		// Clear the blend state description.
+		ZeroMemory(&blendStateDescription, sizeof(D3D11_BLEND_DESC));
+
+		// Create an alpha enabled blend state description.
+		blendStateDescription.RenderTarget[0].BlendEnable = TRUE;
+		blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+		blendStateDescription.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+		blendStateDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+		blendStateDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+		blendStateDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+		blendStateDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		blendStateDescription.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+
+		result = pd3dDevice->CreateBlendState(&blendStateDescription, &m_particleEnableBlendingState);
+		if(FAILED(result))
+		{
+			return false;
+		}
+
+		blendStateDescription.RenderTarget[0].BlendEnable = FALSE;
+
+		result = pd3dDevice->CreateBlendState(&blendStateDescription, &m_particleDisableBlendingState);
+		if(FAILED(result))
+		{
+			return false;
+		}
+
+		return S_OK;
+	}
+
+	void LoadWarriorModel(ID3D11Device *pd3dDevice)
+	{
 		//정육면체 메쉬를 생성하고 객체에 연결한다.
 		printf("Load WarriorModel \n");
 
@@ -101,6 +140,11 @@ public:
 			m_pWarriorMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Hero/micro_knight.png");
 
 		printf("Success Load \n");
+		
+	}
+
+	void LoadWizardModel(ID3D11Device *pd3dDevice)
+	{
 		printf("Load WizardModel \n");
 
 		//위자드 메쉬
@@ -112,6 +156,10 @@ public:
 			m_pWizardMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Hero/micro_wizard_col.tif");
 		printf("Success Load \n");
 
+		
+	}
+	void LoadMesh(ID3D11Device *pd3dDevice)
+	{
 		printf("Load Object");
 		//바닥 메쉬
 		pPlaneMesh = new GFBX::Mesh();
@@ -138,6 +186,11 @@ public:
 			pRedNexusMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"tower/Nexus2.png");
 		printf(".");
 
+		
+	}
+
+	void LoadParticle(ID3D11Device *pd3dDevice)
+	{
 		//파티클 메쉬
 		m_pParticleMesh = new ParticleMesh(pd3dDevice);
 		m_pParticleMesh->Initialize(pd3dDevice, L"effect/star.dds");
@@ -174,39 +227,5 @@ public:
 		m_pRedNexus->SetBoundSize(50, 50, 50);
 		m_pRedNexus->SetHP(2000);
 		m_pRedNexus->SetID(176);
-	}
-
-	HRESULT CreateBlend(ID3D11Device *pd3dDevice)
-	{
-		HRESULT result;
-		D3D11_BLEND_DESC blendStateDescription;
-		// Clear the blend state description.
-		ZeroMemory(&blendStateDescription, sizeof(D3D11_BLEND_DESC));
-
-		// Create an alpha enabled blend state description.
-		blendStateDescription.RenderTarget[0].BlendEnable = TRUE;
-		blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
-		blendStateDescription.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
-		blendStateDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-		blendStateDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-		blendStateDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-		blendStateDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-		blendStateDescription.RenderTarget[0].RenderTargetWriteMask = 0x0f;
-
-		result = pd3dDevice->CreateBlendState(&blendStateDescription, &m_particleEnableBlendingState);
-		if(FAILED(result))
-		{
-			return false;
-		}
-
-		blendStateDescription.RenderTarget[0].BlendEnable = FALSE;
-
-		result = pd3dDevice->CreateBlendState(&blendStateDescription, &m_particleDisableBlendingState);
-		if(FAILED(result))
-		{
-			return false;
-		}
-
-		return S_OK;
 	}
 };

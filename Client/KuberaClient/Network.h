@@ -13,12 +13,7 @@ public:
 	WSADATA m_Wsa;
 	PlayerStruct PI[4];
 
-	MinionInfo	MI1[40];
-	MinionInfo	MI2[40];
-	MinionInfo	MI3[40];
-	MinionInfo	MI4[40];
 
-	MinionInfo	MI[160];
 
 	bool	m_bJoinPlayer;
 	int		m_ClientCount;

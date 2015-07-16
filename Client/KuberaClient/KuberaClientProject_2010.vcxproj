@@ -444,6 +444,8 @@
     <ClInclude Include="FBX\Vertex.h" />
     <ClInclude Include="HeroManager.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="LoadManager.h" />
+    <ClInclude Include="MapEditorManager.h" />
     <ClInclude Include="OtherPlayerObject.h" />
     <ClInclude Include="GameFramework.h" />
     <ClInclude Include="GameObject.h" />

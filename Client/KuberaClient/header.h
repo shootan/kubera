@@ -104,3 +104,9 @@ enum EFFECTTYPE
 {
 	EFFECTTYPE_NONE, WIZARD_SKILL_BODY, WIZARD_SKILL_MISSILE, WIZARD_ATTACK
 };
+
+struct Information
+{
+	int team;
+	float x, z;
+};
