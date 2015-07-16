@@ -126,6 +126,8 @@ BOOL CEditorDlg::OnInitDialog()
 // 	ScreenToClient(m_Rect1);
 
 	GetWindowRect(m_rect);
+	SetWindowPos(NULL, 0, 0, 1249, 750, SWP_SHOWWINDOW);
+	CenterWindow(GetDesktopWindow());
 	m_nScrollPos = 0;
 	m_nCurHeight = 0;
 
@@ -164,10 +166,10 @@ BOOL CEditorDlg::OnInitDialog()
 	m_BuildType = 0;
 	m_TeamType = 1;
 
-	m_RockImage.LoadDibPath("res/rock.bmp");
-	m_TowerImage.LoadDibPath("res/tower.bmp");
-	m_TreeImage.LoadDibPath("res/tree.bmp");
-	m_NexusImage.LoadDibPath("res/Nexus.bmp");
+	m_RockImage.LoadDibPath("res/rock1.bmp");
+	m_TowerImage.LoadDibPath("res/tower1.bmp");
+	m_TreeImage.LoadDibPath("res/tree1.bmp");
+	m_NexusImage.LoadDibPath("res/Nexus1.bmp");
 
 	SetTimer(1, 50, NULL);
 
@@ -277,23 +279,23 @@ void CEditorDlg::OnPaint()
 		// ¼¼ÆÃ
 		
 		SelectObject(dc, pen);
-		dc.MoveTo(0, lineY);
-		dc.LineTo(800,lineY);
+		dc.MoveTo(10, lineY);
+		dc.LineTo(1210,lineY);
 
-		dc.MoveTo(lineX, 0);
-		dc.LineTo(lineX,800);
+		dc.MoveTo(lineX, 10);
+		dc.LineTo(lineX,810);
 
 		SelectObject(dc, pen2);
-		dc.MoveTo(-m_nScrollPos, 410-m_nCurHeight);
-		dc.LineTo(1300-m_nScrollPos, 410-m_nCurHeight);
+		dc.MoveTo(10-m_nScrollPos, 410-m_nCurHeight);
+		dc.LineTo(1210-m_nScrollPos, 410-m_nCurHeight);
 
-		dc.MoveTo(610- m_nScrollPos, -m_nCurHeight);
+		dc.MoveTo(610- m_nScrollPos, 10-m_nCurHeight);
 		dc.LineTo(610- m_nScrollPos, 810-m_nCurHeight);
 
-		dc.FillSolidRect(0, 0, 6, 800, RGB(255,255,255));
-		dc.FillSolidRect(0, 0, 800, 6, RGB(255,255,255));
-		dc.FillSolidRect(713, 0, 800, 800, RGB(255,255,255));
-		dc.FillSolidRect(0, 443, 800, 800, RGB(255,255,255));
+		//dc.FillSolidRect(0, 0, 6, 800, RGB(255,255,255));
+		//dc.FillSolidRect(0, 0, 800, 6, RGB(255,255,255));
+		//dc.FillSolidRect(713, 0, 800, 800, RGB(255,255,255));
+	//	dc.FillSolidRect(0, 443, 800, 800, RGB(255,255,255));
 		
 		CDialogEx::OnPaint();
 	}
@@ -407,7 +409,7 @@ void CEditorDlg::OnRed()
 void CEditorDlg::OnRock()
 {
 	m_BuildType = 1;
-	m_image4.LoadDibPath("res/Rock.bmp");
+	m_image4.LoadDibPath("res/Rock1.bmp");
 
 	m_bClick = TRUE;
 }
@@ -415,7 +417,7 @@ void CEditorDlg::OnRock()
 void CEditorDlg::OnRock2()
 {
 	m_BuildType = 2;
-	m_image4.LoadDibPath("res/Rock.bmp");
+	m_image4.LoadDibPath("res/Rock1.bmp");
 	m_bClick = TRUE;
 }
 
@@ -423,20 +425,20 @@ void CEditorDlg::OnRock2()
 void CEditorDlg::OnTree()
 {
 	m_BuildType = 3;
-	m_image4.LoadDibPath("res/tree.bmp");
+	m_image4.LoadDibPath("res/tree1.bmp");
 	m_bClick = TRUE;
 }
 void CEditorDlg::OnTower()
 {
 	m_BuildType = 4;
-	m_image4.LoadDibPath("res/tower.bmp");
+	m_image4.LoadDibPath("res/tower1.bmp");
 	m_bClick = TRUE;
 }
 
 void CEditorDlg::OnNexus()
 {
 	m_BuildType = 5;
-	m_image4.LoadDibPath("res/Nexus.bmp");
+	m_image4.LoadDibPath("res/Nexus1.bmp");
 	m_bClick = TRUE;
 }
 
@@ -510,8 +512,8 @@ void CEditorDlg::OnSize(UINT nType, int cx, int cy)
    	si.cbSize = sizeof(SCROLLINFO);
    	si.fMask = SIF_ALL; // SIF_ALL = SIF_PAGE | SIF_RANGE | SIF_POS;
    	si.nMin = 0;
-   	si.nMax = 410;
-   	si.nPage = si.nMax/10;
+   	si.nMax = 150;
+   	si.nPage = si.nMax/8;
    	si.nPos = 0;
    	SetScrollInfo(SB_VERT, &si, TRUE); 
 
@@ -519,8 +521,8 @@ void CEditorDlg::OnSize(UINT nType, int cx, int cy)
 	si2.cbSize = sizeof(SCROLLINFO);
 	si2.fMask = SIF_ALL; // SIF_ALL = SIF_PAGE | SIF_RANGE | SIF_POS;
 	si2.nMin = 0;
-	si2.nMax = 550;
-	si2.nPage = si.nMax/10;
+	si2.nMax = 0;
+	si2.nPage = si.nMax;
 	si2.nPos = 0;
 	SetScrollInfo(SB_HORZ, &si2, TRUE); 
 

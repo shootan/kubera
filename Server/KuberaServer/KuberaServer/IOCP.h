@@ -15,7 +15,6 @@ public:
 	int save1;
 	int save2;
 	int DummyCount;
-	ArrangeData Arrange;
 
 	//리스트로 관리해줄 포인터
 	IOBuffer*	m_pNextBufferList;
@@ -50,7 +49,7 @@ public:
 
 	int GetNewId();
 
-	void ArrangeDataInfo(float _dt);
+	void ArrangeDataInfo(ArrangeData* _ar);
 
 	//OpCode
 	void OnInit(IOBuffer* _buff);

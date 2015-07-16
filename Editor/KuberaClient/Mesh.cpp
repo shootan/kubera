@@ -223,7 +223,6 @@ CCubeMesh::CCubeMesh(ID3D11Device *pd3dDevice, float fWidth, float fHeight, floa
 
 	float fx = fWidth*0.5f, fy = fHeight*0.5f, fz = fDepth*0.5f;
 	CDiffusedVertex pVertices[8];
-	int i = 0;
 
 	pVertices[0] = CDiffusedVertex(D3DXVECTOR3(-fx, -fy, -fz), D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
 	pVertices[1] = CDiffusedVertex(D3DXVECTOR3(-fx, -fy, +fz), D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f));

@@ -14,10 +14,7 @@ struct PNTVertex
 
 	bool operator==(const PNTVertex& rhs) const
 	{
-		uint32_t position;
-		uint32_t normal;
-		uint32_t uv;
-
+		
 		if (this->mPosition != rhs.mPosition)
 			return false;
 		if (this->mNormal != rhs.mNormal)

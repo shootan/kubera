@@ -716,13 +716,7 @@ void IOCPServer::SendPacket(IOBuffer* _buffer, int NetworkCode, void *_packet, i
 // 	}
 }
 
-void IOCPServer::ArrangeDataInfo(float _dt)
+void IOCPServer::ArrangeDataInfo(ArrangeData* _ar)
 {
- 	if(m_iClientCount < 1) return;
 
- 	//Arrange.SetTime(_dt, m_pNextBufferList);
-// 	Arrange.RegenMinion();
- //	Arrange.SetMinionPosition(_dt);
-	//Arrange.AttackData(m_pNextBufferList);
-// 	Arrange.CheckMinionLive();
 }

@@ -17,6 +17,7 @@
 #include "Particle3Mesh.h"
 #include "Camera.h"
 #include "MapEditorManager.h"
+#include "LoadManager.h"
 
 class CScene
 {
@@ -24,6 +25,10 @@ private:
 	CInstancingShader *m_pInstancingShaders;
 	CAnimationShader *m_pAnimationShaders;
 	CParticleShader *m_pParticleShaders;
+
+	ID3D11BlendState* m_particleEnableBlendingState;
+	ID3D11BlendState* m_particleDisableBlendingState;
+
 	int m_nShaders;
 
 	int m_nObjects;
@@ -74,8 +79,6 @@ public:
 	int GetMousePosX();
 	int GetMousePosY();
 
-	void AddOtherPlayer(ID3D11Device *pd3dDevice);
-
 	//
 	BOOL CheckCollisionAABBAxis( float c1, float w1, float c2, float w2);
 	BOOL CheckCollision(D3DXVECTOR3 c1, float w1, float h1, float d1, D3DXVECTOR3 c2, float w2, float h2, float d2);
@@ -91,8 +94,6 @@ public:
 	void UpdateOtherClient(PlayerStruct* _PI, int _Count);
 	void OtherPlayerTargetSetting();
 
-	ID3D11BlendState* m_particleEnableBlendingState;
-	ID3D11BlendState* m_particleDisableBlendingState;
 	void TurnOnAlphaBlending(ID3D11DeviceContext *pd3dDeviceContext, ID3D11BlendState* blendstate);
 	void TurnOffAlphaBlending(ID3D11DeviceContext *pd3dDeviceContext, ID3D11BlendState* blendstate);
 	HRESULT CreateBlend(ID3D11Device *pd3dDevice);

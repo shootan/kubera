@@ -1,5 +1,6 @@
 #include "GameFramework.h"
 #include "MapEditorManager.h"
+#include "LoadManager.h"
 
 CGameFramework::CGameFramework()
 {
@@ -220,6 +221,7 @@ bool CGameFramework::CreateDirect3DDisplay()
 	return(true);
 }
 
+
 void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
 	switch (nMessageID)
@@ -351,8 +353,7 @@ void CGameFramework::OnDestroy()
 void CGameFramework::BuildObjects()
 {
 	printf("SetCamera");
-	//纠积己
-	m_pScene = new CScene();
+	
 	//墨皋扼 积己
 	m_pCamera = new CCamera();
 
@@ -372,12 +373,19 @@ void CGameFramework::BuildObjects()
 	D3DXVECTOR3 d3dxvEyePosition = D3DXVECTOR3(0, 500, 0);
 	D3DXVECTOR3 d3dxvLookAt = D3DXVECTOR3(0, 0, 17);
 	m_pCameraMinimap->SetViewParams( &d3dxvEyePosition, &d3dxvLookAt );
-
-	m_pScene->m_Camera = m_pCamera;
-	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice);
-
+	
 	m_DialogResourceManager.OnD3D11ResizedSwapChain( m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight );
 }
+
+void CGameFramework::BuildScene()
+{
+	LoadManager::sharedManager()->LoadObject(m_pd3dDevice);
+	//纠积己
+	m_pScene = new CScene();
+	m_pScene->m_Camera = m_pCamera;
+	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice);
+}
+
 
 void CGameFramework::ReleaseObjects()
 {
@@ -408,7 +416,6 @@ void CGameFramework::FrameAdvance()
 {    
 	m_GameTimer.Tick(60);
 	m_SendTick += 1;
-
 
 	this->ExchangeInfo();
 	m_pScene->OtherPlayerTargetSetting();

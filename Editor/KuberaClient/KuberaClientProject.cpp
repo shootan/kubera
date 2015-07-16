@@ -16,7 +16,10 @@
 #include "HeroManager.h"
 #include "ParticleManager.h"
 #include "MapEditorManager.h"
+#include "LoadManager.h"
+#include "CCustomProgressBar.h"
 
+LoadManager* LoadManager::instance = NULL;
 ST* ST::instance = NULL;
 MissileManager* MissileManager::instance = NULL;
 ObstacleManager*  ObstacleManager::instance = NULL;
@@ -25,6 +28,7 @@ OtherPlayerManager*  OtherPlayerManager::instance = NULL;
 HeroManager*  HeroManager::instance = NULL;
 ParticleManager*  ParticleManager::instance = NULL;
 MapEditorManager* MapEditorManager::instance = NULL;
+
 //--------------------------------------------------------------------------------------
 // Global Variables
 //--------------------------------------------------------------------------------------
@@ -34,7 +38,7 @@ D3D_DRIVER_TYPE         g_driverType = D3D_DRIVER_TYPE_NULL;
 D3D_FEATURE_LEVEL       g_featureLevel = D3D_FEATURE_LEVEL_11_0;
 
 CGameFramework			g_GameFramework;
-
+CCustomProgressBar		g_ProgressBar;
 //--------------------------------------------------------------------------------------
 // Forward declarations
 //--------------------------------------------------------------------------------------
@@ -122,9 +126,23 @@ HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
     if( !g_hWnd )
         return E_FAIL;
 
+	
+
 	g_GameFramework.OnCreate(hInstance, g_hWnd);
 
-    ShowWindow( g_hWnd, nCmdShow );
+	
+
+	//UpdateWindow(g_hWnd);
+
+	//g_ProgressBar.Create(g_hWnd, 0, FALSE, 100, 100, 50, 50);
+	//g_ProgressBar.SetPercent(50);
+	
+
+	g_GameFramework.BuildScene();
+
+	ShowWindow( g_hWnd, nCmdShow );
+
+    
 
     return S_OK;
 }
@@ -141,9 +159,9 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
     {
         case WM_PAINT:
             hdc = BeginPaint( hWnd, &ps );
+			
             EndPaint( hWnd, &ps );
             break;
-
         case WM_DESTROY:
             PostQuitMessage( 0 );
             break;

@@ -55,6 +55,14 @@ struct Player{
 	Player*			m_pNext;
 };
 
+struct ObjectInfo{
+	int		m_Id;
+	int		m_Hp;
+	int		m_Damage;
+	int		m_Level;
+	Vector3 m_Pos;
+};
+
 struct IOBuffer{
 	SOCKET		m_ClientSock;
 	int			m_Id;
