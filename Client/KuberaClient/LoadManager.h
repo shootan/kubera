@@ -170,7 +170,10 @@ public:
 		pPlaneMesh->GetSubset(0)->SetUVTilling(10);
 		pPlaneMesh->OnCreateDevice(pd3dDevice);
 		for(int i=0; i<pPlaneMesh->GetSubsetCount(); i++)
+		{
 			pPlaneMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"imagefile/12.png");
+			pPlaneMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(1200, 0, 800));
+		}
 		printf(".");
 
 		//ºí·çÆÀ ³Ø¼­½º ¸Þ½¬
@@ -178,7 +181,10 @@ public:
 		GFBXMeshLoader::getInstance()->LoadFBXMesh(pBlueNexusMesh, L"tower/Nexus.FBX", pd3dDevice);
 		pBlueNexusMesh->OnCreateDevice(pd3dDevice);
 		for(int i=0; i<pBlueNexusMesh->GetSubsetCount(); i++)
+		{
 			pBlueNexusMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"tower/Nexus.png");
+			pBlueNexusMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(50, 50, 50));
+		}
 		printf(".");
 
 		//»¡°­ÆÀ ³Ø¼­½º ¸Þ½¬
@@ -186,7 +192,10 @@ public:
 		GFBXMeshLoader::getInstance()->LoadFBXMesh(pRedNexusMesh, L"tower/Nexus.FBX", pd3dDevice);
 		pRedNexusMesh->OnCreateDevice(pd3dDevice);
 		for(int i=0; i<pRedNexusMesh->GetSubsetCount(); i++)
+		{
 			pRedNexusMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"tower/Nexus2.png");
+			pRedNexusMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(50, 50, 50));
+		}
 		printf(".");
 
 		//³Ø¼­½º 2°³ »ý¼º

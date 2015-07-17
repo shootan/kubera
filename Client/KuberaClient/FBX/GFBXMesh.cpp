@@ -110,8 +110,6 @@ void MeshSubset::ReleaseTexture()
 
 HRESULT MeshSubset::CreateBuffers(ID3D11Device* pd3dDevice)
 {
-	HRESULT hr;
-
 	//정점 버퍼를 생성한다. 
 	D3D11_BUFFER_DESC d3dBufferDesc;
 	ZeroMemory(&d3dBufferDesc, sizeof(D3D11_BUFFER_DESC));

@@ -212,7 +212,6 @@ void Astar::insert_node(node_t* present) {
 void Astar::extend_child_node(node_t* node, int x, int y, int dest_x, int dest_y, int cur_direct ) {
 
 	node_t* old = NULL, *child = NULL;
-	int i;
 	int degree= node->degree+1;
 
 	if(old=is_open(x, y)) {

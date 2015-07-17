@@ -632,6 +632,7 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 		m_pBush3Mesh->GetSubset(j)->OnCreateDevice(pd3dDevice);
 		m_pBush3Mesh->GetSubset(j)->LoadTexture(pd3dDevice, L"obstacle/bush3.tif");
 		m_pBush3Mesh->GetSubset(j)->ResetCULLNONECreateRasterizerState(pd3dDevice);
+		m_pBush3Mesh->GetSubset(j)->SetBoundingCube(D3DXVECTOR3(25, 25, 25));
 	}
 
 	m_pRock2Mesh = new GFBX::Mesh();
@@ -640,6 +641,7 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	{
 		m_pRock2Mesh->GetSubset(j)->OnCreateDevice(pd3dDevice);
 		m_pRock2Mesh->GetSubset(j)->LoadTexture(pd3dDevice, L"obstacle/Rock2.tif");
+		m_pRock2Mesh->GetSubset(j)->SetBoundingCube(D3DXVECTOR3(25, 25, 25));
 	}
 
 	m_pRock3Mesh = new GFBX::Mesh();
@@ -648,6 +650,7 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	{
 		m_pRock3Mesh->GetSubset(j)->OnCreateDevice(pd3dDevice);
 		m_pRock3Mesh->GetSubset(j)->LoadTexture(pd3dDevice, L"obstacle/Rock3.tif");
+		m_pRock3Mesh->GetSubset(j)->SetBoundingCube(D3DXVECTOR3(25, 25, 25));
 	}
 
 	m_pMissileMesh = new GFBX::Mesh();
@@ -656,6 +659,7 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	{
 		m_pMissileMesh->GetSubset(j)->OnCreateDevice(pd3dDevice);
 		m_pMissileMesh->GetSubset(j)->LoadTexture(pd3dDevice, L"missile/Missile.png");
+		m_pMissileMesh->GetSubset(j)->SetBoundingCube(D3DXVECTOR3(25, 25, 25));
 	}
 
 	m_pBlueTowerMesh = new GFBX::Mesh();
@@ -664,6 +668,7 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	{
 		m_pBlueTowerMesh->GetSubset(j)->OnCreateDevice(pd3dDevice);
 		m_pBlueTowerMesh->GetSubset(j)->LoadTexture(pd3dDevice, L"tower/BlueHqTower.png");
+		m_pBlueTowerMesh->GetSubset(j)->SetBoundingCube(D3DXVECTOR3(30, 30, 30));
 	}
 
 	m_pRedTowerMesh = new GFBX::Mesh();
@@ -672,6 +677,7 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	{
 		m_pRedTowerMesh->GetSubset(j)->OnCreateDevice(pd3dDevice);
 		m_pRedTowerMesh->GetSubset(j)->LoadTexture(pd3dDevice, L"tower/RedHqTower.png");
+		m_pRedTowerMesh->GetSubset(j)->SetBoundingCube(D3DXVECTOR3(30, 30, 30));
 	}
 
 	m_pDestroyTowerMesh = new GFBX::Mesh();
@@ -680,6 +686,7 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 	{
 		m_pDestroyTowerMesh->GetSubset(j)->OnCreateDevice(pd3dDevice);
 		m_pDestroyTowerMesh->GetSubset(j)->LoadTexture(pd3dDevice, L"tower/DestroyedTower.png");
+		m_pDestroyTowerMesh->GetSubset(j)->SetBoundingCube(D3DXVECTOR3(30, 30, 30));
 	}
 	/*m_pBush3Mesh = new CFBXMesh(pd3dDevice, L"obstacle/bush3.FBX");
 	m_pBush3Mesh->LoadTexture(pd3dDevice, L"obstacle/bush3.tif");

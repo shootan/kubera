@@ -35,6 +35,9 @@
     <Filter Include="소스코드\UI">
       <UniqueIdentifier>{69c45420-de33-450c-8ac2-60aa4682d9fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스코드\Scene">
+      <UniqueIdentifier>{cc12df91-d56e-4bf0-b35f-ca17a0709ba8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="KuberaClientProject.cpp" />
@@ -42,9 +45,6 @@
       <Filter>소스코드</Filter>
     </ClCompile>
     <ClCompile Include="Timer.cpp">
-      <Filter>소스코드</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
       <Filter>소스코드</Filter>
     </ClCompile>
     <ClCompile Include="DXUT\Core\DXUT.cpp">
@@ -151,15 +151,18 @@
     <ClCompile Include="UIObject.cpp">
       <Filter>소스코드\Object</Filter>
     </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>소스코드\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadScene.cpp">
+      <Filter>소스코드\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFramework.h">
       <Filter>소스코드</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
-      <Filter>소스코드</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
       <Filter>소스코드</Filter>
     </ClInclude>
     <ClInclude Include="DXUT\Core\DXUT.h">
@@ -304,6 +307,12 @@
     </ClInclude>
     <ClInclude Include="MapEditorManager.h">
       <Filter>소스코드\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>소스코드\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadScene.h">
+      <Filter>소스코드\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

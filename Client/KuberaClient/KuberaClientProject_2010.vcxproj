@@ -395,6 +395,7 @@
     <ClCompile Include="FBX\GFBXSkeleton.cpp" />
     <ClCompile Include="FBX\MathHelper.cpp" />
     <ClCompile Include="FBX\Utilities.cpp" />
+    <ClCompile Include="LoadScene.cpp" />
     <ClCompile Include="OtherPlayerObject.cpp" />
     <ClCompile Include="GameFramework.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -445,6 +446,7 @@
     <ClInclude Include="HeroManager.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LoadManager.h" />
+    <ClInclude Include="LoadScene.h" />
     <ClInclude Include="MapEditorManager.h" />
     <ClInclude Include="OtherPlayerObject.h" />
     <ClInclude Include="GameFramework.h" />
