@@ -1,10 +1,14 @@
+#pragma once
 #include "stdafx.h"
 #include "ST.h"
+
+
 
 #define ROOTCOUNT 57
 class ArrangeData
 {
 private:
+	// ¾È¾¸
 	Vector3 Root1[ROOTCOUNT];
 	Vector3 Root2[ROOTCOUNT];
 	Vector3 Root3[ROOTCOUNT];
@@ -17,8 +21,6 @@ private:
 
 	Minion m_bMinion[160];
 
-	
-
 	float m_fRegenTime;
 	float m_fUnitTime;
 
@@ -28,17 +30,14 @@ private:
 	int RootTurn4[40];
 
 	int MinionCount;
-	
-
 	int MinionID[160];
 
 	float m_fWalkSpeed;
 
-	
-
-public:
-	ArrangeData();
-	~ArrangeData();
+	bool m_bMinionLive1;
+	bool m_bMinionLive2;
+	bool m_bMinionLive3;
+	bool m_bMinionLive4;
 
 	MinionInfo MI1[40];
 	MinionInfo MI2[40];
@@ -47,23 +46,30 @@ public:
 
 	MinionInfo MI[160];
 
-	bool m_bMinionLive1;
-	bool m_bMinionLive2;
-	bool m_bMinionLive3;
-	bool m_bMinionLive4;
+	Player* Playerlist;
 
 	void SetRoot();
 	void SetMinionPosition(float _dt);
 	void RegenMinion();
-	void SetTime(float _time, IOBuffer* _list);
+	
 
 	void SetRoot1();
 	void SetRoot2();
 	void SetRoot3();
 	void SetRoot4();
-	
+
 	void CheckMinionLive();
 
+	//
+	
+	
+
+public:
+	ArrangeData();
+	~ArrangeData();
+
+	
+	void SetTime(float _time, IOBuffer* _list);
 	int SetID();
 
 	void AttackData(IOBuffer* _list);

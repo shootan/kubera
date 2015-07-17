@@ -3,7 +3,7 @@
 #include "TowerObject.h"
 #include "Mesh.h"
 
-#define MAX_TOWER 10
+#define MAX_TOWER 50
 
 class TowerManager
 {
@@ -34,9 +34,10 @@ public:
 		return instance;
 	}
 public:
+	int size;
 	void CreateTower(D3DXVECTOR3 pos, GFBX::Mesh* mesh, float boundx, float boundy, float boundz, int team)
 	{
-		for(int i=0; i<MAX_TOWER; i++)
+		for(int i=0; i<size; i++)
 		{
 			if(m_pTower[i] != NULL) continue;
 			m_pTower[i] = new TowerObject();
@@ -50,6 +51,10 @@ public:
 		}
 	}
 
+	void SetTowerSize(int _size)
+	{
+		size = _size;
+	}
 	//void AddMissile(CGPoint _pos, Object_Enemy* _target, int _damage)
 	//{
 	//	for(int i=0; i<MAX_MISSILE; i++)

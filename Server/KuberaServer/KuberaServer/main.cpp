@@ -2,6 +2,7 @@
 #include "IOCP.h"
 #include "Timer.h"
 #include "ST.h"
+#include "ArrangeData.h"
 
 
 ST* ST::instance = NULL;
@@ -13,10 +14,10 @@ CTimer Timer;
 int main()
 {
 	Server.StartServer(9000);
-	Server.Arrange.SetRoot();
+	
+	ArrangeData AD;
+	Server.ArrangeDataInfo(&AD);
 
-	int count =  0;
-	float time = 0.0f;
 	
 	int si = sizeof(int);
 	int sss = sizeof(PlayerPacket);
@@ -27,18 +28,7 @@ int main()
 	while(1)
 	{
 		Timer.Tick(60);
-		//count ++;
-		//system("cls");
-		//Timer.GetFrameRate();
 
-		//printf("8: %d, 44 : %d   0 : %d, save1  : %d .\n", Server.Check8, Server.Check3000, Server.Check0, Server.save1);
-		
-		Server.ArrangeDataInfo(Timer.GetTimeElapsed());
-		//if(count > 1)
-		//{
-		//	Server.SendData(Timer.GetTimeElapsed());
-		//}
-		
 	}
 	return 0;
 }

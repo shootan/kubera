@@ -1,6 +1,6 @@
 #include "GameFramework.h"
-#include "MinionManager.h"
-
+#include "MapEditorManager.h"
+#include "LoadManager.h"
 
 CGameFramework::CGameFramework()
 {
@@ -68,7 +68,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
      {
      	Sleep(100);
      }*/
-   	
+   	MapEditorManager::sharedManager()->LoadMapData();
  	int herotype1 = 2;//Net.m_Type;
  	printf("Server Connect \n");
 
@@ -345,6 +345,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			m_pUICamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.0f, 0.1f);
 
 
+
 			//UI크기 및 배치 재설정
 			m_UIskillbarWidth = (m_nWndClientWidth*m_UIskillbarWidth) / m_nPrevWndClientWidth;
 			m_UIskillbarHeight = (m_nWndClientHeight*m_UIskillbarHeight) / m_nPrevWndClientHeight; 
@@ -377,7 +378,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			break;
 		}
 	case WM_LBUTTONDOWN:
-		//MinionManager::sharedManager()->ChangeVisible();
+		
 		break;
 	case WM_RBUTTONDOWN:
 	case WM_LBUTTONUP:
@@ -489,6 +490,7 @@ void CGameFramework::BuildObjects()
 	m_pCameraMinimap->CalculateFrustumPlanes();
 	m_pCameraMinimap->SetMode(MINIMAP_CAMERA);
 
+
 	m_pUICamera = new CCamera();
 	m_pUICamera->CreateShaderVariables(m_pd3dDevice);
 	m_pUICamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.0f, 0.1f);
@@ -514,6 +516,13 @@ void CGameFramework::BuildObjects()
 	m_pUIShaders->CreateShader(m_pd3dDevice, 10);
 	for(int i=0; i<MAX_UI; i++)
 		m_pUIShaders->AddObject(m_pUIObjects[i]);
+
+
+	LoadManager::sharedManager()->LoadShaderInstancing(m_pd3dDevice);
+	LoadManager::sharedManager()->LoadWarriorModel(m_pd3dDevice);
+	LoadManager::sharedManager()->LoadWizardModel(m_pd3dDevice);
+	LoadManager::sharedManager()->LoadParticle(m_pd3dDevice);
+	LoadManager::sharedManager()->LoadMesh(m_pd3dDevice);
 
 	m_pScene->m_Camera = m_pCamera;
 	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice);
@@ -578,13 +587,15 @@ void CGameFramework::FrameAdvance()
 	m_pCamera->FrameMove(m_GameTimer.GetTimeElapsed());
 	m_pd3dDeviceContext->RSSetViewports(1, &m_pCamera->GetViewport());
 	m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f, m_pCamera);
-	
+
 	RenderText();
-	
+
+
 	m_pCameraMinimap->UpdateShaderVariables(m_pd3dDeviceContext);
 	//m_pCameraMinimap->FrameMove(m_GameTimer.GetTimeElapsed());
 	m_pd3dDeviceContext->RSSetViewports(1, &m_pCameraMinimap->GetViewport());
 	m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f, m_pCameraMinimap);
+
 
 	TurnZBufferOff();
 	TurnOnAlphaBlending(m_pd3dDeviceContext, m_UIEnableBlendingState);
@@ -741,7 +752,6 @@ void CGameFramework::ExchangeInfo()
 {
  	if(Net.m_ClientCount != 0)
  	{
-		m_pScene->SetMinionInfo(Net.MI);
 
 		m_pScene->SetOtherClient(Net.PI, Net.m_ClientCount);
 		m_pScene->UpdateOtherClient(Net.PI, Net.m_ClientCount);
@@ -776,6 +786,7 @@ void CGameFramework::RenderText()
 	WCHAR str[255];
 	for(int i=0; i<MAX_TOWER; i++)
 	{
+		if(TowerManager::sharedManager()->m_pTower[i] == NULL) continue;
 		if(HeroManager::sharedManager()->m_pHero->GetTarget() == TowerManager::sharedManager()->m_pTower[i])
 		{
 			int id = TowerManager::sharedManager()->m_pTower[i]->GetID();
@@ -784,16 +795,7 @@ void CGameFramework::RenderText()
 			break;
 		}
 	}
-	for(int i=0; i<MAX_MINION; i++)
-	{
-		if(HeroManager::sharedManager()->m_pHero->GetTarget() == MinionManager::sharedManager()->m_pMinion1[i])
-		{
-			int id = MinionManager::sharedManager()->m_pMinion1[i]->GetID();
-			swprintf(str, 255, L"Target : Minion [%d]",id);
-			m_pTxtHelper->DrawTextLine(str);
-			break;
-		}
-	}
+	
 	for(int i=0; i<MAX_OTHER_PLAYER; i++)
 	{
 		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetVisible() != TRUE) continue;
