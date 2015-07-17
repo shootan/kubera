@@ -46,9 +46,6 @@ public:
 	CGameObject *m_pBlueNexus;
 	CGameObject *m_pRedNexus;
 	CCubeMesh *pBox[2];
-
-	ID3D11BlendState* m_particleEnableBlendingState;
-	ID3D11BlendState* m_particleDisableBlendingState;
 	
 private:
 	LoadManager()
@@ -72,8 +69,6 @@ public:
 
 	void LoadShaderInstancing(ID3D11Device *pd3dDevice)
 	{
-		CreateBlend(pd3dDevice); //이펙트 블렌딩 설정
-
 		
 		//이 쉐이더 객체에 대한 포인터들의 배열을 정의한다.
 		m_pObjectShaders = new CObjectShader();
@@ -93,40 +88,6 @@ public:
 		m_nIntanceObjects = m_pInstancingShaders->GetObjectsNumber();
 		m_nObjects = 20 + m_nIntanceObjects;
 
-	}
-
-	HRESULT CreateBlend(ID3D11Device *pd3dDevice)
-	{
-		HRESULT result;
-		D3D11_BLEND_DESC blendStateDescription;
-		// Clear the blend state description.
-		ZeroMemory(&blendStateDescription, sizeof(D3D11_BLEND_DESC));
-
-		// Create an alpha enabled blend state description.
-		blendStateDescription.RenderTarget[0].BlendEnable = TRUE;
-		blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
-		blendStateDescription.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
-		blendStateDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-		blendStateDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-		blendStateDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-		blendStateDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-		blendStateDescription.RenderTarget[0].RenderTargetWriteMask = 0x0f;
-
-		result = pd3dDevice->CreateBlendState(&blendStateDescription, &m_particleEnableBlendingState);
-		if(FAILED(result))
-		{
-			return false;
-		}
-
-		blendStateDescription.RenderTarget[0].BlendEnable = FALSE;
-
-		result = pd3dDevice->CreateBlendState(&blendStateDescription, &m_particleDisableBlendingState);
-		if(FAILED(result))
-		{
-			return false;
-		}
-
-		return S_OK;
 	}
 
 	void LoadWarriorModel(ID3D11Device *pd3dDevice)

@@ -17,18 +17,27 @@ HeroObject::HeroObject(void)
 	m_bFindPath = FALSE;
 	m_bDeathAnimation = FALSE;
 	m_iPrevState = 0;
-	//m_HP = 300.0;
-	m_Damage = 50.0f;
 
 	m_time = 0.0f;
-
-	m_fWalkSpeed = 25.0f;
 
 	m_iparticleNum = 500;
 	m_bUseParticle = FALSE;
 	m_bWarriorAttack = TRUE;
 	m_bUseParticleMissile = FALSE;
 	m_bUseParticleAttack = FALSE;
+
+	//초기 정보값
+	m_Level = 1;			//레벨1
+	m_HP = 100;				//hp 100
+	m_Defence = 3;			//방어력 3
+	m_fWalkSpeed = 15.f;	//스피드 15
+	m_Damage = 10.f;		//데미지 10
+	m_SkillDamage = 20;		//스킬데미지 20
+	m_Exp = 10;				//필요 경험치 10
+	m_Speed_Level = 1;		//스피드 레벨 1
+	m_Defence_Level = 1;	//방어력 레벨 1
+	m_Damage_Level = 1;		//데미지 레벨 1
+
 
 	node_t* temp;
 
@@ -356,22 +365,6 @@ void HeroObject::Animate(float fTimeElapsed)
 			return;
 		}
 		m_fAttackTime += fTimeElapsed;
-
-		/*
-		for(int i=0; i<MAX_MISSILE; i++)
-		{
-			if(MissileManager::sharedManager()->m_pMissile[i]->GetUsed() == TRUE) continue;
-
-			if(m_fAttackTime >= 1.0f)
-			{
-				MissileManager::sharedManager()->m_pMissile[i]->SetPosition(m_Pos + D3DXVECTOR3(0 , BoundsizeY *2/3, 0));
-				MissileManager::sharedManager()->m_pMissile[i]->SetUsed(TRUE);
-				MissileManager::sharedManager()->m_pMissile[i]->SetTarget(m_pTarget);
-				MissileManager::sharedManager()->m_pMissile[i]->SetAttacker(this);
-
-				m_fAttackTime = 0.f;
-			}
-		}*/
 	}
 	else if(m_iState == MOVE)
 	{
@@ -509,9 +502,18 @@ void HeroObject::Animate(float fTimeElapsed)
 }
 
 
-//void HeroObject::SetAniMesh(GFBX::Mesh *pAniMesh)
-//{
-//	//if (m_pAniMesh) m_pAniMesh->Release();
-//	m_pAniMesh = pAniMesh;
-//	//if (m_pAniMesh) m_pAniMesh->AddRef();
-//}
+void HeroObject::CharacterInfo()
+{
+	//초기 정보값
+	m_Level = 1;			//레벨1
+	m_HP = 100;				//hp 100
+	m_Defence = 3;			//방어력 3
+	m_fWalkSpeed = 15.f;	//스피드 15
+	m_Damage = 10.f;		//데미지 10
+	m_SkillDamage = 20;		//스킬데미지 20
+	m_Exp = 10;				//필요 경험치 10
+	m_Speed_Level = 1;		//스피드 레벨 1
+	m_Defence_Level = 1;	//방어력 레벨 1
+	m_Damage_Level = 1;		//데미지 레벨 1
+
+}

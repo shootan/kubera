@@ -27,6 +27,17 @@ private:
 	BOOL m_bUseParticle;
 	BOOL m_bUseParticleMissile;
 	BOOL m_bUseParticleAttack;
+
+	//Á¤º¸
+	int m_Level;
+	int m_Defence;
+	int m_SkillDamage;
+	int m_Exp;
+	int m_Speed_Level;
+	int m_Defence_Level;
+	int m_Damage_Level;
+
+
 public:
 	HeroObject();
 	~HeroObject();
@@ -40,19 +51,17 @@ public:
 	void SetAstar(BOOL _astar) {m_bAstar = _astar;}
 	BOOL GetAstar() { return m_bAstar; }
 
-	
-	
-
 	void SetState(int _state) { m_iState = _state;}
 
-	//void SetAniMesh(GFBX::Mesh *pAniMesh);
-	 Vector3 GetDestination()
-	 {
-		 Vector3 p;
-		 p.x = m_vDestination.x;
-		 p.y = m_vDestination.y;
-		 p.z = m_vDestination.z; 
-		 return p;
-	 }
+	void CharacterInfo();
+
+	Vector3 GetDestination()
+	{
+		Vector3 p;
+		p.x = m_vDestination.x;
+		p.y = m_vDestination.y;
+		p.z = m_vDestination.z; 
+		return p;
+	}
 
 };

@@ -762,13 +762,13 @@ void CGameFramework::SendHeroData()
 {
 	if(Net.m_ID != 0)
 	{
-		HeroInfo.PI.m_Pos = HeroManager::sharedManager()->m_pHero->GetPos();
+		HeroInfo.PI.m_Data.m_Pos = HeroManager::sharedManager()->m_pHero->GetPos();
 		HeroInfo.PI.m_iState = HeroManager::sharedManager()->m_pHero->GetState();
 		HeroInfo.PI.m_iTargetID = HeroManager::sharedManager()->m_pHero->GetTargetID();
 		HeroInfo.PI.m_ID = Net.m_ID;
-		HeroInfo.PI.m_HP = HeroManager::sharedManager()->m_pHero->GetHP();
-		HeroInfo.PI.m_Damage = HeroManager::sharedManager()->m_pHero->GetDamage();
-		HeroInfo.PI.m_Rot = HeroManager::sharedManager()->m_pHero->GetRot();
+		HeroInfo.PI.m_Data.m_HP = HeroManager::sharedManager()->m_pHero->GetHP();
+		HeroInfo.PI.m_Data.m_Damage = HeroManager::sharedManager()->m_pHero->GetDamage();
+		HeroInfo.PI.m_Data.m_Rot = HeroManager::sharedManager()->m_pHero->GetRot();
 		HeroInfo.PI.m_Type = HeroManager::sharedManager()->m_pHero->GetType();
 		HeroInfo.size = sizeof(PlayerPacket);
 

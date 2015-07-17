@@ -24,16 +24,16 @@ CGameObject::CGameObject(void)
 	m_Rot = 1.0f;
 	m_axis = 2;
 	m_vWalkIncrement = D3DXVECTOR3(0,0,0);
-
 	m_vFacingDirection= D3DXVECTOR3(0,0,1);
 
 	m_nReferences = 1;
 
+	m_HP = 0.f;
+	m_Damage = 0.f;
 	m_Visible = TRUE;
-	
 	m_fWalkSpeed = 0.1f;
 	m_iTag = NONE;
-
+	m_iTargetID = 0;
 	m_iState = IDLE;
 	m_iTeam = NONE_TEAM;
 
@@ -43,12 +43,6 @@ CGameObject::CGameObject(void)
 
 	m_pTarget = NULL;
 	m_bSelected = FALSE;
-
-	m_iTargetID = 0;
-	//m_pAstar = NULL;
-	//m_pBestWay = NULL;
-	//m_bAstar = FALSE;
-	//m_bFindPath = FALSE;
 
 	m_pMaterial = NULL;
 }

@@ -51,6 +51,7 @@ CScene::~CScene(void)
 void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 {
 	m_Control.m_Camera = m_Camera;
+	CreateBlend(pd3dDevice);
 	
 	//이 쉐이더 객체에 대한 포인터들의 배열을 정의한다.
 	m_pObjectShaders = LoadManager::sharedManager()->m_pObjectShaders;
@@ -571,13 +572,13 @@ void CScene::SetOtherClient(PlayerStruct* _PI, int _Count)
 		{
 			if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetID() != 0) continue;
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetID(_PI[i].PI.m_ID);
-			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetPos(_PI[i].PI.m_Pos);
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetPos(_PI[i].PI.m_Data.m_Pos);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetState(_PI[i].PI.m_iState);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetTargetID(_PI[i].PI.m_iTargetID);
-			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetHP(_PI[i].PI.m_HP);
-			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetDamage(_PI[i].PI.m_Damage);
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetHP(_PI[i].PI.m_Data.m_HP);
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetDamage(_PI[i].PI.m_Data.m_Damage);
 
-			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Rot);
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Data.m_Rot);
 
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetType(_PI[i].PI.m_Type);
 			if(_PI[i].PI.m_Type == 1)
@@ -609,15 +610,15 @@ void CScene::UpdateOtherClient(PlayerStruct* _PI, int _Count)
 		{
 			if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetID() != _PI[i].PI.m_ID) continue;
 			D3DXVECTOR3 q;
-			q.x = _PI[i].PI.m_Pos.x;
-			q.y = _PI[i].PI.m_Pos.y;
-			q.z = _PI[i].PI.m_Pos.z;
+			q.x = _PI[i].PI.m_Data.m_Pos.x;
+			q.y = _PI[i].PI.m_Data.m_Pos.y;
+			q.z = _PI[i].PI.m_Data.m_Pos.z;
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetNewDestination(q);
-			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Rot);
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Data.m_Rot);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetState(_PI[i].PI.m_iState);
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetTargetID(_PI[i].PI.m_iTargetID);
-			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetHP(_PI[i].PI.m_HP);
-			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetDamage(_PI[i].PI.m_Damage);
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetHP(_PI[i].PI.m_Data.m_HP);
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetDamage(_PI[i].PI.m_Data.m_Damage);
 			break;
 		}
 	}
