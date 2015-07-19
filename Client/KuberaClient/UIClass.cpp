@@ -3,8 +3,6 @@
 
 UIClass::UIClass(ID3D11Device *pd3dDevice) : CMesh(pd3dDevice)
 {
-	//m_vertexBuffer = 0;
-	//m_indexBuffer = 0;
 	m_pTexture = 0;
 
 	m_nVertices = 0;
@@ -27,7 +25,7 @@ UIClass::~UIClass()
 }
 
 
-bool UIClass::Initialize(ID3D11Device* device, int screenWidth, int screenHeight, WCHAR* textureFilename, int bitmapWidth, int bitmapHeight)
+bool UIClass::Initialize(ID3D11Device* device, int screenWidth, int screenHeight, WCHAR* textureFilename, float bitmapWidth, float bitmapHeight)
 {
 	bool result;
 
@@ -92,7 +90,7 @@ void UIClass::Shutdown()
 }
 
 
-bool UIClass::Render(ID3D11DeviceContext* deviceContext, int positionX, int positionY)
+bool UIClass::Render(ID3D11DeviceContext* deviceContext, float positionX, float positionY)
 {
 	bool result;
 
@@ -236,7 +234,7 @@ void UIClass::ShutdownBuffers()
 }
 
 
-bool UIClass::UpdateBuffers(ID3D11DeviceContext* deviceContext, int positionX, int positionY)
+bool UIClass::UpdateBuffers(ID3D11DeviceContext* deviceContext, float positionX, float positionY)
 {
 	float left, right, top, bottom;
 	VertexType* vertices;

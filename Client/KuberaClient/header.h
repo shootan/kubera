@@ -3,8 +3,8 @@
 
 
 
-#define FRAME_BUFFER_WIDTH		1200
-#define FRAME_BUFFER_HEIGHT		800
+#define FRAME_BUFFER_WIDTH		900
+#define FRAME_BUFFER_HEIGHT		600
 #define VS_SLOT_VIEWPROJECTION_MATRIX	0x00
 #define VS_SLOT_WORLD_MATRIX			0x01
 //조명과 재질을 설정하기 위한 상수 버퍼의 슬롯 번호를 정의한다. 
@@ -39,15 +39,22 @@ struct Vector3
 	float x, y, z;
 };
 
+struct Info{
+	int		m_Level;
+	Vector3 m_Pos;
+	float	m_Rot;
+	float	m_HP;
+	float	m_Damage;
+	float	m_Defence;
+	float	m_Speed;
+};
+
 struct PlayerInfo{
 	int		m_ID;
 	int		m_iState;
 	int		m_iTargetID;
 	int		m_Type;
-	Vector3 m_Pos;
-	float	m_HP;
-	float	m_Rot;
-	float	m_Damage;
+	Info	m_Data;
 };
 
 struct PlayerPacket
@@ -110,3 +117,4 @@ struct Information
 	int team;
 	float x, z;
 };
+

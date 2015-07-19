@@ -43,6 +43,7 @@ protected:
 	int			m_ID;
 	float		m_HP;
 	float		m_Damage;
+	float		m_fWalkSpeed;
 	BOOL		m_Visible;
 	int			m_iTag;
 	int			m_iState;
@@ -59,8 +60,6 @@ protected:
 	D3DXVECTOR3 m_vDestination;
 	D3DXVECTOR3 m_vWalkIncrement;
 	D3DXVECTOR3 m_vFacingDirection;
-
-	float		m_fWalkSpeed;
 
 	float BoundsizeX, BoundsizeY, BoundsizeZ;
 

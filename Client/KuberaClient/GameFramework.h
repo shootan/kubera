@@ -9,6 +9,8 @@
 #include "UIObject.h"
 #include "LoadScene.h"
 
+#define MAX_UI 4
+
 class CGameFramework
 {
 private:
@@ -17,6 +19,8 @@ private:
 
 	int m_nWndClientWidth;
 	int m_nWndClientHeight;
+	int m_nPrevWndClientWidth;
+	int m_nPrevWndClientHeight;
 
 	PlayerPacket HeroInfo;
 
@@ -63,10 +67,14 @@ private:
 	float time;
 
 	//UI
-	UIClass* m_pUI;
+	UIClass* m_pUI[MAX_UI];
 	CUIShader *m_pUIShaders;
-	UIObject* m_pUIObjects;
-	
+	UIObject* m_pUIObjects[MAX_UI];
+
+	float m_UIskillbarWidth, m_UIskillbarHeight;
+	float m_UIMinimapWidth, m_UIMinimapHeight;
+	float m_UIInfoWidth, m_UIInfoHeight;
+	float m_UIScoreWidth, m_UIScoreHeight;
 public:
 	CGameFramework();
 	~CGameFramework();
