@@ -7,6 +7,7 @@
 #include "UIClass.h"
 #include "Shader.h"
 #include "UIObject.h"
+#include "LoadScene.h"
 
 class CGameFramework
 {
@@ -21,6 +22,7 @@ private:
 
 	CTimer m_GameTimer;
 	CScene *m_pScene;
+	LoadScene *m_pLoadScene;
 	_TCHAR m_pszBuffer[50];
 
 	CCamera *m_pCamera; 

@@ -249,30 +249,30 @@ bool CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 			break;
 		}
 	case WM_LBUTTONDOWN:
-		m_MousePosX = (INT)LOWORD(lParam); 
-		m_MousePosY = (INT)HIWORD(lParam);
-		m_Control.TouchLeftDown((float)m_MousePosX, (float)m_MousePosY, hWnd);
-		m_bLbutton = TRUE;
+		//m_MousePosX = (INT)LOWORD(lParam); 
+		//m_MousePosY = (INT)HIWORD(lParam);
+		//m_Control.TouchLeftDown((float)m_MousePosX, (float)m_MousePosY, hWnd);
+		//m_bLbutton = TRUE;
 		break;
 	case WM_RBUTTONDOWN:
-		m_MousePosX = (INT)LOWORD(lParam); 
-		m_MousePosY = (INT)HIWORD(lParam);
-		m_Control.TouchRightDown((float)m_MousePosX, (float)m_MousePosY, hWnd);
-		m_bRbutton = TRUE;
+		//m_MousePosX = (INT)LOWORD(lParam); 
+		//m_MousePosY = (INT)HIWORD(lParam);
+		//m_Control.TouchRightDown((float)m_MousePosX, (float)m_MousePosY, hWnd);
+		//m_bRbutton = TRUE;
 		break;
 	case WM_RBUTTONUP:
-		m_bRbutton = FALSE;
+		//m_bRbutton = FALSE;
 		
 		break;
 	case WM_LBUTTONUP:
-		m_bLbutton = FALSE;
+		//m_bLbutton = FALSE;
 		break;
 	case WM_MOUSEMOVE:
-		m_MousePosX = (INT)LOWORD(lParam); 
-		m_MousePosY = (INT)HIWORD(lParam);
+		//m_MousePosX = (INT)LOWORD(lParam); 
+	//	m_MousePosY = (INT)HIWORD(lParam);
 
-		if(m_bRbutton == TRUE)
-			m_Control.TouchRightDown((float)m_MousePosX, (float)m_MousePosY, hWnd);
+	//	if(m_bRbutton == TRUE)
+	//		m_Control.TouchRightDown((float)m_MousePosX, (float)m_MousePosY, hWnd);
 		//OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
 		break;
 	case WM_KEYDOWN:

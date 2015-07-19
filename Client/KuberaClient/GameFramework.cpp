@@ -433,9 +433,11 @@ void CGameFramework::BuildObjects()
 	CreateBlend(m_pd3dDevice);
 	CMaterialShader::CreateMaterialShaderVariables(m_pd3dDevice);
 
+	m_pLoadScene = new LoadScene();
+	m_pLoadScene->SetSize(m_nWndClientWidth, m_nWndClientHeight);
+
 	printf("SetCamera");
-	//씬생성
-	m_pScene = new CScene();
+	
 	//카메라 생성
 	m_pCamera = new CCamera();
 
@@ -456,30 +458,26 @@ void CGameFramework::BuildObjects()
 	m_pCameraMinimap->CalculateFrustumPlanes();
 	m_pCameraMinimap->SetMode(MINIMAP_CAMERA);
 
-// 	m_pUICamera = new CCamera();
-// 	m_pUICamera->CreateShaderVariables(m_pd3dDevice);
-// 	m_pUICamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.0f, 0.1f);
-// 	m_pUICamera->SetProjParams((float)D3DXToRadian(90.0f), float(120)/float(80), 1.0f, 500.0f);
-// 	m_pUICamera->SetViewParams( &D3DXVECTOR3(0, 0, -100), &D3DXVECTOR3(0, 0, 1) );
+	LoadManager::sharedManager()->LoadUIShader(m_pd3dDevice);
+	m_pUIShaders = LoadManager::sharedManager()->m_pUIShaders;
+ 	m_pUICamera = new CCamera();
+ 	m_pUICamera->CreateShaderVariables(m_pd3dDevice);
+ 	m_pUICamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.0f, 0.1f);
+ 	m_pUICamera->SetProjParams((float)D3DXToRadian(90.0f), float(120)/float(80), 1.0f, 500.0f);
+ 	m_pUICamera->SetViewParams( &D3DXVECTOR3(0, 0, -100), &D3DXVECTOR3(0, 0, 1) );
 // 	//UI를 위한 투영
-// 	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)m_nWndClientWidth, (float)m_nWndClientHeight, 1.0f, 500.0f);
-// 
-// 	m_pUI = new UIClass(m_pd3dDevice);
-// 	m_pUI->Initialize(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, L"UI/UI_skill.png",698, 187);
-// 	
-// 	m_pUIObjects = new UIObject();
-// 	m_pUIObjects->SetUI(m_pUI);
-// 
-// 	m_pUIShaders = new CUIShader();
-// 	m_pUIShaders->CreateShader(m_pd3dDevice, 10);
-// 	m_pUIShaders->AddObject(m_pUIObjects);
-	LoadManager::sharedManager()->LoadShaderInstancing(m_pd3dDevice);
-	LoadManager::sharedManager()->LoadWarriorModel(m_pd3dDevice);
-	LoadManager::sharedManager()->LoadWizardModel(m_pd3dDevice);
-	LoadManager::sharedManager()->LoadParticle(m_pd3dDevice);
-	LoadManager::sharedManager()->LoadMesh(m_pd3dDevice);
-	m_pScene->m_Camera = m_pCamera;
-	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice);
+ 	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)m_nWndClientWidth, (float)m_nWndClientHeight, 1.0f, 500.0f);
+ 
+ //	m_pUI = new UIClass(m_pd3dDevice);
+ //	m_pUI->Initialize(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, L"UI/	UI_Skill.png",m_nWndClientWidth-500, m_nWndClientHeight-500);
+ 	
+ //	m_pUIObjects = new UIObject();
+ //	m_pUIObjects->SetUI(m_pUI);
+	
+	m_pLoadScene->BuildObject(m_pd3dDevice);
+	
+	//씬생성
+	
 
 	m_DialogResourceManager.OnD3D11ResizedSwapChain( m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight );
 }
@@ -514,50 +512,78 @@ void CGameFramework::FrameAdvance()
 	m_GameTimer.Tick(60);
 	m_SendTick += 1;
 
-
-	this->ExchangeInfo();
-	m_pScene->OtherPlayerTargetSetting();
-	
-	ProcessInput();
-	AnimateObjects();
-
-	SetCameraPos();
-
-	float fClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; 
-	//렌더 타겟 뷰를 색상(RGB: 0.0f, 0.125f, 0.3f)으로 지운다. 
-	m_pd3dDeviceContext->ClearRenderTargetView(m_pd3dRenderTargetView, fClearColor);
-	if (m_pd3dDepthStencilView) m_pd3dDeviceContext->ClearDepthStencilView(m_pd3dDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
-
-	//후면버퍼를 전면버퍼로 프리젠트한다. 
-
-	
-
-	if(m_SendTick > 1)
+	if(m_pLoadScene->GetInfo() < 30)
 	{
-		this->SendHeroData();
-		m_SendTick  = 0;
+		TurnZBufferOff();
+
+		m_pUICamera->UpdateShaderVariables(m_pd3dDeviceContext, m_orthoMatrix);
+		m_pd3dDeviceContext->RSSetViewports(1, &m_pUICamera->GetViewport());
+
+		m_pUIShaders->Render(m_pd3dDeviceContext);
+		m_pLoadScene->LoadData(m_pd3dDevice, m_pd3dDeviceContext);
+
+		TurnZBufferOn();
+
+		if (m_pLoadScene->GetInfo() == 30)
+		{
+			m_pScene = new CScene();
+			m_pScene->m_Camera = m_pCamera;
+			if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice);
+		}
 	}
-	m_pCamera->UpdateShaderVariables(m_pd3dDeviceContext);
-	m_pCamera->FrameMove(m_GameTimer.GetTimeElapsed());
-	m_pd3dDeviceContext->RSSetViewports(1, &m_pCamera->GetViewport());
-	m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f, m_pCamera);
+	
+	if(m_pLoadScene->GetInfo() == 30)
+	{
 
-	RenderText();
+		this->ExchangeInfo();
+		m_pScene->OtherPlayerTargetSetting();
 
-	m_pCameraMinimap->UpdateShaderVariables(m_pd3dDeviceContext);
-	//m_pCameraMinimap->FrameMove(m_GameTimer.GetTimeElapsed());
-	m_pd3dDeviceContext->RSSetViewports(1, &m_pCameraMinimap->GetViewport());
-	m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f, m_pCameraMinimap);
+		ProcessInput();
+		AnimateObjects();
 
-	//TurnZBufferOff();
-	////TurnOnAlphaBlending(m_pd3dDeviceContext, m_UIEnableBlendingState);
-	//m_pUICamera->UpdateShaderVariables(m_pd3dDeviceContext, m_orthoMatrix);
-	//m_pd3dDeviceContext->RSSetViewports(1, &m_pUICamera->GetViewport());
-	//m_pUIShaders->Render(m_pd3dDeviceContext);
-	//m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects->m_d3dxmtxWorld);
-	//m_pUIObjects->Render(m_pd3dDeviceContext, m_nWndClientWidth/2 - 200, m_nWndClientHeight - 200);
-	////TurnOffAlphaBlending(m_pd3dDeviceContext, m_UIDisableBlendingState);
-	//TurnZBufferOn();
+		SetCameraPos();
+
+		float fClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; 
+		//렌더 타겟 뷰를 색상(RGB: 0.0f, 0.125f, 0.3f)으로 지운다. 
+		m_pd3dDeviceContext->ClearRenderTargetView(m_pd3dRenderTargetView, fClearColor);
+		if (m_pd3dDepthStencilView) m_pd3dDeviceContext->ClearDepthStencilView(m_pd3dDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+		//후면버퍼를 전면버퍼로 프리젠트한다. 
+
+
+
+		if(m_SendTick > 1)
+		{
+			this->SendHeroData();
+			m_SendTick  = 0;
+		}
+		m_pCamera->UpdateShaderVariables(m_pd3dDeviceContext);
+		m_pCamera->FrameMove(m_GameTimer.GetTimeElapsed());
+		m_pd3dDeviceContext->RSSetViewports(1, &m_pCamera->GetViewport());
+		m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f, m_pCamera);
+
+		RenderText();
+
+		m_pCameraMinimap->UpdateShaderVariables(m_pd3dDeviceContext);
+		//m_pCameraMinimap->FrameMove(m_GameTimer.GetTimeElapsed());
+		m_pd3dDeviceContext->RSSetViewports(1, &m_pCameraMinimap->GetViewport());
+		m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f, m_pCameraMinimap);
+
+		//TurnZBufferOff();
+
+		//TurnOnAlphaBlending(m_pd3dDeviceContext, m_UIEnableBlendingState);
+		//m_pUICamera->UpdateShaderVariables(m_pd3dDeviceContext, m_orthoMatrix);
+		//m_pd3dDeviceContext->RSSetViewports(1, &m_pUICamera->GetViewport());
+
+		//m_pUIShaders->Render(m_pd3dDeviceContext);
+
+		//m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects->m_d3dxmtxWorld);
+		//m_pUIObjects->Render(m_pd3dDeviceContext, 0, 0);
+		//TurnOffAlphaBlending(m_pd3dDeviceContext, m_UIDisableBlendingState);
+	//	TurnZBufferOn();
+	}
+	
+
 
 	m_pDXGISwapChain->Present(0, 0);
 

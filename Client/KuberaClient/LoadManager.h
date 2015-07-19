@@ -25,6 +25,7 @@ public:
 	CAnimationShader *m_pAnimationShaders;
 	CParticleShader *m_pParticleShaders;
 	CObjectShader *m_pObjectShaders;
+	CUIShader *m_pUIShaders;
 	int m_nShaders;
 
 	int m_nObjects;
@@ -69,8 +70,12 @@ public:
 		return instance;
 	}
 public:
-
-	void LoadShaderInstancing(ID3D11Device *pd3dDevice)
+	void LoadUIShader(ID3D11Device* pd3Device)
+	{
+		m_pUIShaders = new CUIShader();
+		m_pUIShaders->CreateShader(pd3Device, 40);
+	}
+	void LoadShaderInstancing1(ID3D11Device *pd3dDevice)
 	{
 		CreateBlend(pd3dDevice); //이펙트 블렌딩 설정
 
@@ -78,21 +83,38 @@ public:
 		//이 쉐이더 객체에 대한 포인터들의 배열을 정의한다.
 		m_pObjectShaders = new CObjectShader();
 		m_pObjectShaders->CreateShader(pd3dDevice, 100);
+		
+
+		
+	}
+
+	void LoadShaderInstancing2(ID3D11Device *pd3dDevice)
+	{
+		
 		printf("CreateInstancingShader\n");
 		m_pInstancingShaders = new CInstancingShader();
 		m_pInstancingShaders->CreateShader(pd3dDevice, 10);
 		m_pInstancingShaders->BuildObjects(pd3dDevice);
-		printf("CreateAnimationShader \n");
-		m_pAnimationShaders = new CAnimationShader();
-		m_pAnimationShaders->CreateShader(pd3dDevice, 100);
-		printf("CreateParticleShader \n");
-		m_pParticleShaders = new CParticleShader();
-		m_pParticleShaders->CreateShader(pd3dDevice, 300);
-
+		
 		//게임 객체에 대한 포인터들의 배열을 정의한다.
 		m_nIntanceObjects = m_pInstancingShaders->GetObjectsNumber();
 		m_nObjects = 20 + m_nIntanceObjects;
+	}
 
+	void LoadShaderInstancing3(ID3D11Device *pd3dDevice)
+	{
+		printf("CreateAnimationShader \n");
+		m_pAnimationShaders = new CAnimationShader();
+		m_pAnimationShaders->CreateShader(pd3dDevice, 100);
+	}
+
+	void LoadShaderInstancing4(ID3D11Device *pd3dDevice)
+	{
+		
+		printf("CreateParticleShader \n");
+		m_pParticleShaders = new CParticleShader();
+		m_pParticleShaders->CreateShader(pd3dDevice, 300);
+		
 	}
 
 	HRESULT CreateBlend(ID3D11Device *pd3dDevice)
