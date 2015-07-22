@@ -663,8 +663,26 @@ void CEditorDlg::OnSave()
 	CString str;
 	if( dlg.DoModal() == IDOK )
 	{
+
 		FILE *fp;
 		fopen_s(&fp, (CStringA)dlg.GetPathName(), "w");
+
+		fprintf(fp, "%d\n", Tower.size());//저장 하기전 저장할 갯수를 저장
+
+		for(iterList = Tower.begin(); iterList!= Tower.end(); iterList++)
+		{
+			fprintf(fp, "%d %f %f\n", iterList->team, iterList->x, iterList->z);
+
+		}
+
+		fprintf(fp, "%d\n", Nexus.size());//저장 하기전 저장할 갯수를 저장
+
+		for(iterList = Nexus.begin(); iterList!= Nexus.end(); iterList++)
+		{
+			fprintf(fp, "%d %f %f\n", iterList->team, iterList->x, iterList->z);
+
+		}
+
 		fprintf(fp, "%d\n", Rock.size());//저장 하기전 저장할 갯수를 저장
 
 		for(iterList = Rock.begin(); iterList!= Rock.end(); iterList++)
@@ -689,21 +707,7 @@ void CEditorDlg::OnSave()
 
 		}
 
-		fprintf(fp, "%d\n", Tower.size());//저장 하기전 저장할 갯수를 저장
-
-		for(iterList = Tower.begin(); iterList!= Tower.end(); iterList++)
-		{
-			fprintf(fp, "%d %f %f\n", iterList->team, iterList->x, iterList->z);
-
-		}
-
-		fprintf(fp, "%d\n", Nexus.size());//저장 하기전 저장할 갯수를 저장
-
-		for(iterList = Nexus.begin(); iterList!= Nexus.end(); iterList++)
-		{
-			fprintf(fp, "%d %f %f\n", iterList->team, iterList->x, iterList->z);
-
-		}
+		
 
 		fclose(fp);
 	}
@@ -727,6 +731,28 @@ void CEditorDlg::OnLoad()
 	{
 		FILE *fp;
 		fopen_s(&fp, (CStringA)dlg.GetPathName(), "r");
+
+		fscanf_s(fp, "%d", &size);
+
+		for(int i=0; i<size; i++)
+		{
+			Information Info;
+			fscanf_s(fp, "%d", &Info.team);
+			fscanf_s(fp, "%f", &Info.x);
+			fscanf_s(fp, "%f", &Info.z);
+			Tower.push_back(Info);
+		}
+
+		fscanf_s(fp, "%d", &size);
+
+		for(int i=0; i<size; i++)
+		{
+			Information Info;
+			fscanf_s(fp, "%d", &Info.team);
+			fscanf_s(fp, "%f", &Info.x);
+			fscanf_s(fp, "%f", &Info.z);
+			Nexus.push_back(Info);
+		}
 
 		fscanf_s(fp, "%d", &size);
 		
@@ -761,27 +787,7 @@ void CEditorDlg::OnLoad()
 			Tree.push_back(Info);
 		}
 
-		fscanf_s(fp, "%d", &size);
-
-		for(int i=0; i<size; i++)
-		{
-			Information Info;
-			fscanf_s(fp, "%d", &Info.team);
-			fscanf_s(fp, "%f", &Info.x);
-			fscanf_s(fp, "%f", &Info.z);
-			Tower.push_back(Info);
-		}
-
-		fscanf_s(fp, "%d", &size);
-
-		for(int i=0; i<size; i++)
-		{
-			Information Info;
-			fscanf_s(fp, "%d", &Info.team);
-			fscanf_s(fp, "%f", &Info.x);
-			fscanf_s(fp, "%f", &Info.z);
-			Nexus.push_back(Info);
-		}
+		
 		
 		fclose(fp);
 	}

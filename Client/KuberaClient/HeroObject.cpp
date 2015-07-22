@@ -189,14 +189,14 @@ void HeroObject::Update(float fTimeElapsed)
 			Vector3 po;
 			if(m_ID % 2 == 0)
 			{
-				po.x = 410;
+				po.x = 390;
 				po.y = 0;
 				po.z = 0;
 			}
 			else
 			{
 				po.y = 0;
-				po.x = -410;
+				po.x = -390;
 				po.z = 0;
 			}
 			m_HP = m_Level * 100;
@@ -290,7 +290,7 @@ void HeroObject::Update(float fTimeElapsed)
 
 void HeroObject::Animate(float fTimeElapsed)
 {
-	m_time += fTimeElapsed * 2.0f;
+	m_time += fTimeElapsed * 1.0f;
 
 	//printf(" %.3f \n", m_time);
 

@@ -12,6 +12,7 @@ public:
 	D3DXVECTOR3 m_vPos;
 	float m_HP;
 	int m_Type;
+	int m_Team;
 
 private:
 	HeroManager()
@@ -41,6 +42,12 @@ public:
 	{
 		m_pHero = new HeroObject();
 		
+		if(m_Team == 1)
+			m_vPos = D3DXVECTOR3(390, 0, 0);
+		if(m_Team == 2)
+			m_vPos = D3DXVECTOR3(-390, 0, 0);
+
+		m_pHero->SetTeam(m_Team);
 		m_pHero->SetPosition(m_vPos);
 		m_pHero->SetID(m_iID);
 		m_pHero->SetBoundSize(boundx, boundy, boundz);
@@ -55,13 +62,10 @@ public:
 		{
 			m_pHero->SetMesh(_wizard);
 		}
-
-		if(m_iID % 2 == 0)
-			HeroManager::sharedManager()->m_pHero->SetTeam(RED_TEAM);
-		else
-			HeroManager::sharedManager()->m_pHero->SetTeam(BLUE_TEAM);
+		
 	}
 
+	void SetTeam(int _team) {m_Team = _team;}
 	void SetNexus(CGameObject* _red, CGameObject* _blue) { RedNexus= _red; BlueNexus = _blue; }
 	void SetID(int _id){ m_iID = _id; }
 	void SetStartPos(D3DXVECTOR3 _v) { m_vPos = _v; }

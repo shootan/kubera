@@ -726,7 +726,7 @@ void AttackData(IOBuffer* _list)
 				{
 					if(Buffer->m_pPlayer->m_PI->PI.m_iTargetID == Buffer2->m_Id)
 					{
-						Buffer2->m_pPlayer->m_PI->PI.m_HP -= Buffer->m_pPlayer->m_PI->PI.m_Damage;
+						Buffer2->m_pPlayer->m_PI->PI.m_Data.m_HP -= Buffer->m_pPlayer->m_PI->PI.m_Data.m_Damage;
 					}
 					Buffer2 = Buffer2->m_pNext;
 				}
@@ -741,7 +741,7 @@ void AttackData(IOBuffer* _list)
 				{
 					if(Buffer->m_pPlayer->m_PI->PI.m_iTargetID == Buffer2->m_Id)
 					{
-						Buffer2->m_pPlayer->m_PI->PI.m_HP -= Buffer->m_pPlayer->m_PI->PI.m_Damage;
+						Buffer2->m_pPlayer->m_PI->PI.m_Data.m_HP -= Buffer->m_pPlayer->m_PI->PI.m_Data.m_Damage;
 					}
 					Buffer2 = Buffer2->m_pNext;
 				}

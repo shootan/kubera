@@ -91,6 +91,12 @@ public:
 	int GetMousePosX();
 	int GetMousePosY();
 
+	void SetMousePos()
+	{
+		m_MousePosX = 450;
+		m_MousePosY = 400;
+	}
+
 	void AddOtherPlayer(ID3D11Device *pd3dDevice);
 
 	//

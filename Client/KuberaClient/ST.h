@@ -6,14 +6,20 @@ class ST
 {
 private:
 	ST()
-	{;}
-
+	{
+		m_bVisible =FALSE;
+		m_bSelected = FALSE;
+		m_bStart = FALSE;
+	}
 public:
 	~ST()
 	{
 		delete instance;
 	}
 
+	BOOL m_bVisible;
+	BOOL m_bSelected;
+	BOOL m_bStart;
 public:
 	static ST* instance;
 	static ST* sharedManager()

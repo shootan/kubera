@@ -29,15 +29,22 @@ typedef enum OPCODE
 	OP_DISCONNECT
 } OPCODE;
 
+struct Info{
+	int		m_Level;
+	Vector3 m_Pos;
+	float	m_Rot;
+	float	m_HP;
+	float	m_Damage;
+	float	m_Defence;
+	float	m_Speed;
+};
+
 struct PlayerInfo{
 	int		m_ID;
 	int		m_iState;
 	int		m_iTargetID;
 	int		m_Type;
-	Vector3 m_Pos;
-	float	m_HP;
-	float	m_Rot;
-	float	m_Damage;
+	Info	m_Data;
 };
 
 
@@ -111,3 +118,10 @@ enum NETWORKCODE
 {
 	NETNONE, HERODATA, HEROCOUNT, INITCLIENT, MINIONDATA, HEROCHOOSE
 };
+
+struct Information
+{
+	int team;
+	float x, z;
+};
+

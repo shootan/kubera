@@ -44,7 +44,40 @@ public:
 	void LoadMapData()
 	{
 		FILE *fp;
-		fopen_s(&fp, "Map5.txt", "r");
+		fopen_s(&fp, "Map.txt", "r");
+
+		fscanf_s(fp, "%d", &TowerSize);
+
+		for(int i=0; i<TowerSize; i++)
+		{
+			Information Info;
+			fscanf_s(fp, "%d", &Info.team);
+			fscanf_s(fp, "%f", &Info.x);
+			fscanf_s(fp, "%f", &Info.z);
+			if(Info.team == 1)
+			{
+				RedTower.push_back(Info);
+			}
+			if(Info.team == 2)
+			{
+				BlueTower.push_back(Info);
+			}
+		}
+
+		int q;
+
+		fscanf_s(fp, "%d", &q);
+
+		Information Info;
+		fscanf_s(fp, "%d", &Info.team);
+		fscanf_s(fp, "%f", &Info.x);
+		fscanf_s(fp, "%f", &Info.z);
+		Nexus.push_back(Info);
+
+		fscanf_s(fp, "%d", &Info.team);
+		fscanf_s(fp, "%f", &Info.x);
+		fscanf_s(fp, "%f", &Info.z);
+		Nexus.push_back(Info);
 
 		fscanf_s(fp, "%d", &RockSize);
 
@@ -79,38 +112,7 @@ public:
 			Tree.push_back(Info);
 		}
 
-		fscanf_s(fp, "%d", &TowerSize);
-
-		for(int i=0; i<TowerSize; i++)
-		{
-			Information Info;
-			fscanf_s(fp, "%d", &Info.team);
-			fscanf_s(fp, "%f", &Info.x);
-			fscanf_s(fp, "%f", &Info.z);
-			if(Info.team == 1)
-			{
-				RedTower.push_back(Info);
-			}
-			if(Info.team == 2)
-			{
-				BlueTower.push_back(Info);
-			}
-		}
-
-		int q;
-
-		fscanf_s(fp, "%d", &q);
-
-		Information Info;
-		fscanf_s(fp, "%d", &Info.team);
-		fscanf_s(fp, "%f", &Info.x);
-		fscanf_s(fp, "%f", &Info.z);
-		Nexus.push_back(Info);
-
-		fscanf_s(fp, "%d", &Info.team);
-		fscanf_s(fp, "%f", &Info.x);
-		fscanf_s(fp, "%f", &Info.z);
-		Nexus.push_back(Info);
+		
 
 		fclose(fp);
 	}

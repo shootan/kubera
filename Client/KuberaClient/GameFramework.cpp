@@ -35,6 +35,7 @@ CGameFramework::CGameFramework()
 	m_pCamera = NULL;
 	m_pCameraMinimap = NULL;
 	m_pUICamera = NULL;
+	m_pSelectCamera = NULL;
 
 	//m_pUI = NULL;
 	m_pUIShaders = NULL;
@@ -77,45 +78,18 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
      	Sleep(100);
      }*/
    	MapEditorManager::sharedManager()->LoadMapData();
- 	int herotype1 = 2;//Net.m_Type;
  	printf("Server Connect \n");
-
-	while(TRUE)
-	{
-		if(herotype1 == 0)
-		{
-			printf(" \n\nHero 선택( 1. 워리어, 2. 위자드 ) : ");
-
-			scanf("%d", &herotype1);
-		}
-		
-		if(herotype1 == 1 || herotype1 == 2)
-		{
-			printf("Character Selected \n");
-			break;
-		}
-	}
 	
-
 	//렌더링할 객체(게임 월드 객체)를 생성한다. 
 
 	HeroManager::sharedManager()->SetID(Net.m_ID);
-	HeroManager::sharedManager()->SetType(herotype1);
-	HeroManager::sharedManager()->SetStartPos(D3DXVECTOR3(Net.m_Pos.x, Net.m_Pos.y, Net.m_Pos.z));
-	//HeroManager::sharedManager()->SetHP(Net.m_HP);
+	
 	printf("SetData \n");
-	if(Net.m_ID%2 == 0) //초기 시작 카메리위치 설정
-	{
-		m_CameraPosX = 500.f;
-		m_CameraPosZ = -10.f;
-	}
-	else
-	{
-		m_CameraPosX = -500.f;
-		m_CameraPosZ = -10.f;
-	}
+	
+	m_CameraPosX = 390.f;
+	m_CameraPosZ = -10.f;
+	
 	BuildObjects();
-
 
 	time = 0.0f;
 
@@ -352,7 +326,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 
 			m_pCamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.9f, 1.0f);
 			m_pUICamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.0f, 0.1f);
-
+			m_pSelectCamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.9f, 1.0f);
 
 
 			//UI크기 및 배치 재설정
@@ -433,7 +407,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 
 		break;
 	case WM_KEYUP:
-		OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+		//OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 		break;
 	case WM_MOUSEWHEEL:
 		if (((short) HIWORD(wParam))/120 > 0 )
@@ -494,9 +468,11 @@ void CGameFramework::BuildObjects()
 	CreateBlend(m_pd3dDevice);
 	CMaterialShader::CreateMaterialShaderVariables(m_pd3dDevice);
 
+	m_pLoadScene = new LoadScene();
+	m_pLoadScene->SetSize(m_nWndClientWidth, m_nWndClientHeight);
+
 	printf("SetCamera");
-	//씬생성
-	m_pScene = new CScene();
+	
 	//카메라 생성
 	m_pCamera = new CCamera();
 
@@ -505,6 +481,12 @@ void CGameFramework::BuildObjects()
 	////투영 변환 행렬을 생성한다. 
 	m_pCamera->SetProjParams((float)D3DXToRadian(90.0f), float(m_nWndClientWidth)/float(m_nWndClientHeight), 1.0f, 500.0f);
 	m_pCamera->SetMode(CAMERA);
+
+	m_pSelectCamera = new CCamera();
+	m_pSelectCamera->CreateShaderVariables(m_pd3dDevice);
+	m_pSelectCamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.9f, 1.0f);
+	m_pSelectCamera->SetProjParams((float)D3DXToRadian(90.0f), float(m_nWndClientWidth)/float(m_nWndClientHeight), 1.0f, 500.0f);
+	m_pSelectCamera->SetViewParams( &D3DXVECTOR3(10, 0, -40), &D3DXVECTOR3(0, 0, 1) );
 
 	m_pCameraMinimap = new CCamera();
 	m_pCameraMinimap->CreateShaderVariables(m_pd3dDevice);
@@ -517,7 +499,8 @@ void CGameFramework::BuildObjects()
 	m_pCameraMinimap->CalculateFrustumPlanes();
 	m_pCameraMinimap->SetMode(MINIMAP_CAMERA);
 
-
+	LoadManager::sharedManager()->LoadUIShader(m_pd3dDevice);
+	m_pUIShaders = LoadManager::sharedManager()->m_pUIShaders;
 	m_pUICamera = new CCamera();
 	m_pUICamera->CreateShaderVariables(m_pd3dDevice);
 	m_pUICamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.0f, 0.1f);
@@ -526,6 +509,17 @@ void CGameFramework::BuildObjects()
 	//UI를 위한 투영
 	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)m_nWndClientWidth, (float)m_nWndClientHeight, 1.0f, 500.0f);
 
+ 
+ //	m_pUI = new UIClass(m_pd3dDevice);
+ //	m_pUI->Initialize(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, L"UI/	UI_Skill.png",m_nWndClientWidth-500, m_nWndClientHeight-500);
+ 	
+ //	m_pUIObjects = new UIObject();
+ //	m_pUIObjects->SetUI(m_pUI);
+	
+	m_pLoadScene->BuildObject(m_pd3dDevice);
+	
+	//씬생성
+	
 	for(int i=0; i<MAX_UI; i++)
 		m_pUI[i] = new UIClass(m_pd3dDevice);
 	m_pUI[0]->Initialize(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, L"UI/UI_skill_black.png",m_UIskillbarWidth, m_UIskillbarHeight); //스킬바
@@ -543,20 +537,6 @@ void CGameFramework::BuildObjects()
 		m_pUIObjects[i]->SetUI(m_pUI[i]);
 	}
 
-	m_pUIShaders = new CUIShader();
-	m_pUIShaders->CreateShader(m_pd3dDevice, 10);
-	for(int i=0; i<MAX_UI; i++)
-		m_pUIShaders->AddObject(m_pUIObjects[i]);
-
-
-	LoadManager::sharedManager()->LoadShaderInstancing(m_pd3dDevice);
-	LoadManager::sharedManager()->LoadWarriorModel(m_pd3dDevice);
-	LoadManager::sharedManager()->LoadWizardModel(m_pd3dDevice);
-	LoadManager::sharedManager()->LoadParticle(m_pd3dDevice);
-	LoadManager::sharedManager()->LoadMesh(m_pd3dDevice);
-
-	m_pScene->m_Camera = m_pCamera;
-	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice);
 
 	m_DialogResourceManager.OnD3D11ResizedSwapChain( m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight );
 }
@@ -591,77 +571,133 @@ void CGameFramework::FrameAdvance()
 	m_GameTimer.Tick(60);
 	m_SendTick += 1;
 
+	if(!LoadManager::sharedManager()->LoadFinish)
+	{
+		TurnZBufferOff();
 
-	this->ExchangeInfo();
-	m_pScene->OtherPlayerTargetSetting();
-	
-	ProcessInput();
-	AnimateObjects();
+		m_pUICamera->UpdateShaderVariables(m_pd3dDeviceContext, m_orthoMatrix);
+		m_pd3dDeviceContext->RSSetViewports(1, &m_pUICamera->GetViewport());
 
-	SetCameraPos();
+		m_pUIShaders->Render(m_pd3dDeviceContext);
+		m_pLoadScene->LoadData(m_pd3dDevice, m_pd3dDeviceContext);
+
 
 	float fClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f }; 
 	//렌더 타겟 뷰를 색상(RGB: 0.0f, 0.125f, 0.3f)으로 지운다. 
 	m_pd3dDeviceContext->ClearRenderTargetView(m_pd3dRenderTargetView, fClearColor);
 	if (m_pd3dDepthStencilView) m_pd3dDeviceContext->ClearDepthStencilView(m_pd3dDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-	//후면버퍼를 전면버퍼로 프리젠트한다. 
+		TurnZBufferOn();
 
-	
-
-	if(m_SendTick > 1)
-	{
-		this->SendHeroData();
-		m_SendTick  = 0;
+		if (m_pLoadScene->GetInfo() == 49)
+		{
+ 			m_pSelectScene = new SelectScene();
+ 			m_pSelectScene->m_pCamera = m_pSelectCamera;
+ 			if (m_pSelectScene) m_pSelectScene->BuildObject(m_pd3dDevice);
+ 			LoadManager::sharedManager()->LoadFinish = TRUE;
+			delete m_pLoadScene;
+			printf("LoadFinish \n");
+ 			return;
+		}
 	}
-	m_pCamera->UpdateShaderVariables(m_pd3dDeviceContext);
-	m_pCamera->FrameMove(m_GameTimer.GetTimeElapsed());
-	m_pd3dDeviceContext->RSSetViewports(1, &m_pCamera->GetViewport());
-	m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f, m_pCamera);
+ 	
+ 	if(LoadManager::sharedManager()->LoadFinish && !ST::sharedManager()->m_bStart)
+ 	{
+		float fClearColor[4] = { 0.0f, 0, 0, 1.0f }; 
+		//렌더 타겟 뷰를 색상(RGB: 0.0f, 0.125f, 0.3f)으로 지운다. 
+		m_pd3dDeviceContext->ClearRenderTargetView(m_pd3dRenderTargetView, fClearColor);
+		if (m_pd3dDepthStencilView) m_pd3dDeviceContext->ClearDepthStencilView(m_pd3dDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+		m_pSelectCamera->UpdateShaderVariables(m_pd3dDeviceContext);
+		//m_pSelectCamera->FrameMove(m_GameTimer.GetTimeElapsed());
+		m_pd3dDeviceContext->RSSetViewports(1, &m_pSelectCamera->GetViewport());
+		m_pSelectScene->AnimateObject(m_GameTimer.GetTimeElapsed());
+		m_pSelectScene->RenderObject(m_pd3dDeviceContext, m_GameTimer.GetTimeElapsed(), m_pSelectCamera);
+ 		if (ST::sharedManager()->m_bSelected == TRUE)
+		{
+ 			m_pScene = new CScene();
+ 			m_pScene->m_Camera = m_pCamera;
+ 			if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice);
+ 			ST::sharedManager()->m_bStart = TRUE;
+			printf("SelectFinish \n");
+ 			return;
+ 		}
+ 	}
 
-	RenderText();
+	if(ST::sharedManager()->m_bStart == TRUE)
+	//if(LoadManager::sharedManager()->LoadFinish)
+	{
+
+		this->ExchangeInfo();
+		m_pScene->OtherPlayerTargetSetting();
+
+		ProcessInput();
+		AnimateObjects();
+
+		SetCameraPos();
+
+		float fClearColor[4] = { 0, 0, 0, 1.0f }; 
+		//렌더 타겟 뷰를 색상(RGB: 0.0f, 0.125f, 0.3f)으로 지운다. 
+		m_pd3dDeviceContext->ClearRenderTargetView(m_pd3dRenderTargetView, fClearColor);
+		if (m_pd3dDepthStencilView) m_pd3dDeviceContext->ClearDepthStencilView(m_pd3dDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+		//후면버퍼를 전면버퍼로 프리젠트한다. 
+
+		if(m_SendTick > 1)
+		{
+			this->SendHeroData();
+			m_SendTick  = 0;
+ 		}
+
+		m_pCamera->UpdateShaderVariables(m_pd3dDeviceContext);
+		m_pCamera->FrameMove(m_GameTimer.GetTimeElapsed());
+		m_pd3dDeviceContext->RSSetViewports(1, &m_pCamera->GetViewport());
+		m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f, m_pCamera);
+
+		RenderText();
+
+		m_pCameraMinimap->UpdateShaderVariables(m_pd3dDeviceContext);
+		//m_pCameraMinimap->FrameMove(m_GameTimer.GetTimeElapsed());
+		m_pd3dDeviceContext->RSSetViewports(1, &m_pCameraMinimap->GetViewport());
+		m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f, m_pCameraMinimap);
+
+		//ui렌더
+		TurnZBufferOff();
+		TurnOnAlphaBlending(m_pd3dDeviceContext, m_UIEnableBlendingState);
+		m_pUICamera->UpdateShaderVariables(m_pd3dDeviceContext, m_orthoMatrix);
+		m_pd3dDeviceContext->RSSetViewports(1, &m_pUICamera->GetViewport());
+		m_pUIShaders->Render(m_pd3dDeviceContext);
+
+		m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[0]->m_d3dxmtxWorld);
+		m_pUIObjects[0]->Render(m_pd3dDeviceContext, m_nWndClientWidth/2 - m_UIskillbarWidth/2, m_nWndClientHeight - m_UIskillbarHeight);
+
+		m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[1]->m_d3dxmtxWorld);
+		m_pUIObjects[1]->Render(m_pd3dDeviceContext, m_nWndClientWidth - m_UIMinimapWidth, m_nWndClientHeight - m_UIMinimapHeight);
+
+		m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[2]->m_d3dxmtxWorld);
+		m_pUIObjects[2]->Render(m_pd3dDeviceContext, 0, m_nWndClientHeight - m_UIInfoHeight);
+
+		m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[3]->m_d3dxmtxWorld);
+		m_pUIObjects[3]->Render(m_pd3dDeviceContext, m_nWndClientWidth - m_UIScoreWidth, 0);
+		TurnOffAlphaBlending(m_pd3dDeviceContext, m_UIDisableBlendingState);
+
+		m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[4]->m_d3dxmtxWorld);
+		m_pUIObjects[4]->Render(m_pd3dDeviceContext, m_UIInfoWidth/2 + m_UIInfoWidth/20, m_nWndClientHeight - m_UIInfoHeight + m_UIInfoHeight/3 - m_SwordHeight/2);
+
+		m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[5]->m_d3dxmtxWorld);
+		m_pUIObjects[5]->Render(m_pd3dDeviceContext, m_UIInfoWidth/2 + m_UIInfoWidth/20, m_nWndClientHeight - m_UIInfoHeight/2 - m_ShielHeight/2);
+
+		m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[6]->m_d3dxmtxWorld);
+		m_pUIObjects[6]->Render(m_pd3dDeviceContext, m_UIInfoWidth/2 + m_UIInfoWidth/20, m_nWndClientHeight - m_UIInfoHeight + m_UIInfoHeight*2/3 - m_BootsHeight/2);
+
+		m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[7]->m_d3dxmtxWorld);
+		m_pUIObjects[7]->Render(m_pd3dDeviceContext, m_nWndClientWidth/2 - m_HpbarRWidth/2 , m_nWndClientHeight - m_UIskillbarHeight + m_UIskillbarHeight*2/3 + m_HpbarRHeight/2);
+
+		m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[8]->m_d3dxmtxWorld);
+		m_pUIObjects[8]->Render(m_pd3dDeviceContext, m_nWndClientWidth/2 - m_HpbarRWidth/2 , m_nWndClientHeight - m_UIskillbarHeight + m_UIskillbarHeight*2/3 + m_HpbarGHeight/2);
+		TurnZBufferOn();
 
 
-	m_pCameraMinimap->UpdateShaderVariables(m_pd3dDeviceContext);
-	//m_pCameraMinimap->FrameMove(m_GameTimer.GetTimeElapsed());
-	m_pd3dDeviceContext->RSSetViewports(1, &m_pCameraMinimap->GetViewport());
-	m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f, m_pCameraMinimap);
-
-	//UI 렌더
-	TurnZBufferOff();
-	TurnOnAlphaBlending(m_pd3dDeviceContext, m_UIEnableBlendingState);
-	m_pUICamera->UpdateShaderVariables(m_pd3dDeviceContext, m_orthoMatrix);
-	m_pd3dDeviceContext->RSSetViewports(1, &m_pUICamera->GetViewport());
-	m_pUIShaders->Render(m_pd3dDeviceContext);
-	
-	m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[0]->m_d3dxmtxWorld);
-	m_pUIObjects[0]->Render(m_pd3dDeviceContext, m_nWndClientWidth/2 - m_UIskillbarWidth/2, m_nWndClientHeight - m_UIskillbarHeight);
-
-	m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[1]->m_d3dxmtxWorld);
-	m_pUIObjects[1]->Render(m_pd3dDeviceContext, m_nWndClientWidth - m_UIMinimapWidth, m_nWndClientHeight - m_UIMinimapHeight);
-
-	m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[2]->m_d3dxmtxWorld);
-	m_pUIObjects[2]->Render(m_pd3dDeviceContext, 0, m_nWndClientHeight - m_UIInfoHeight);
-
-	m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[3]->m_d3dxmtxWorld);
-	m_pUIObjects[3]->Render(m_pd3dDeviceContext, m_nWndClientWidth - m_UIScoreWidth, 0);
-	TurnOffAlphaBlending(m_pd3dDeviceContext, m_UIDisableBlendingState);
-
-	m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[4]->m_d3dxmtxWorld);
-	m_pUIObjects[4]->Render(m_pd3dDeviceContext, m_UIInfoWidth/2 + m_UIInfoWidth/20, m_nWndClientHeight - m_UIInfoHeight + m_UIInfoHeight/3 - m_SwordHeight/2);
-
-	m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[5]->m_d3dxmtxWorld);
-	m_pUIObjects[5]->Render(m_pd3dDeviceContext, m_UIInfoWidth/2 + m_UIInfoWidth/20, m_nWndClientHeight - m_UIInfoHeight/2 - m_ShielHeight/2);
-
-	m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[6]->m_d3dxmtxWorld);
-	m_pUIObjects[6]->Render(m_pd3dDeviceContext, m_UIInfoWidth/2 + m_UIInfoWidth/20, m_nWndClientHeight - m_UIInfoHeight + m_UIInfoHeight*2/3 - m_BootsHeight/2);
-
-	m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[7]->m_d3dxmtxWorld);
-	m_pUIObjects[7]->Render(m_pd3dDeviceContext, m_nWndClientWidth/2 - m_HpbarRWidth/2 , m_nWndClientHeight - m_UIskillbarHeight + m_UIskillbarHeight*2/3 + m_HpbarRHeight/2);
-
-	m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[8]->m_d3dxmtxWorld);
-	m_pUIObjects[8]->Render(m_pd3dDeviceContext, m_nWndClientWidth/2 - m_HpbarRWidth/2 , m_nWndClientHeight - m_UIskillbarHeight + m_UIskillbarHeight*2/3 + m_HpbarGHeight/2);
-	TurnZBufferOn();
+	}
 
 	m_pDXGISwapChain->Present(0, 0);
 
