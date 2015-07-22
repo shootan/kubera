@@ -8,7 +8,7 @@ LoadScene::LoadScene()
 
 LoadScene::~LoadScene()
 {
-
+	int a;
 }
 
 void LoadScene::LoadData(ID3D11Device *m_pd3dDevice, ID3D11DeviceContext* m_pd3dDeviceContext)
@@ -18,32 +18,32 @@ void LoadScene::LoadData(ID3D11Device *m_pd3dDevice, ID3D11DeviceContext* m_pd3d
 	for(int i=0; i<m_Count; i++)
 	{
 		m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_ButtonImageObject[i]->m_d3dxmtxWorld);
-		m_ButtonImageObject[i]->Render(m_pd3dDeviceContext, 5+(i*17), 675);
+		m_ButtonImageObject[i]->Render(m_pd3dDeviceContext, 5+(i*17), 558);
 	}
   	switch(m_Count)
   	{
-  	case 2:
+  	case 7:
   		LoadManager::sharedManager()->LoadShaderInstancing1(m_pd3dDevice);
   		break;
-	case 4:
+	case 10:
 		LoadManager::sharedManager()->LoadShaderInstancing2(m_pd3dDevice);
 		break;
-	case 5:
+	case 15:
 		LoadManager::sharedManager()->LoadShaderInstancing3(m_pd3dDevice);
 		break;
-	case 8:
+	case 19:
 		LoadManager::sharedManager()->LoadShaderInstancing4(m_pd3dDevice);
 		break;
-  	case 16:
+  	case 24:
   		LoadManager::sharedManager()->LoadWarriorModel(m_pd3dDevice);
   		break;
-  	case 21:
+  	case 34:
   		LoadManager::sharedManager()->LoadWizardModel(m_pd3dDevice);
   		break;
-  	case 26:
+  	case 41:
   		LoadManager::sharedManager()->LoadParticle(m_pd3dDevice);
   		break;
-  	case 29:
+  	case 48:
   		LoadManager::sharedManager()->LoadMesh(m_pd3dDevice);
   		break;
   	}
@@ -59,10 +59,10 @@ void LoadScene::BuildObject(ID3D11Device *m_pd3dDevice)
 	m_pUIShaders = LoadManager::sharedManager()->m_pUIShaders;
 	m_pUIShaders->AddObject(m_BackImageObject);
 
-	for(int i=0; i<30; i++)
+	for(int i=0; i<50; i++)
 	{
 		m_ButtonImage[i] = new UIClass(m_pd3dDevice);
-		m_ButtonImage[i]->Initialize(m_pd3dDevice, m_Width, m_Height, L"UI/bar1.png",11, 35);
+		m_ButtonImage[i]->Initialize(m_pd3dDevice, m_Width, m_Height, L"UI/bar1.png",15, 3);
 		m_ButtonImageObject[i] = new UIObject();
 		m_ButtonImageObject[i]->SetUI(m_ButtonImage[i]);
 		m_pUIShaders->AddObject(m_ButtonImageObject[i]);

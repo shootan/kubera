@@ -411,6 +411,7 @@
     <ClCompile Include="ParticleMesh.cpp" />
     <ClCompile Include="ParticleObject.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SelectScene.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Textureclass.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -469,6 +470,7 @@
     <ClInclude Include="ParticleObject.h" />
     <CLInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="SelectScene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ST.h" />
     <ClInclude Include="Textureclass.h" />

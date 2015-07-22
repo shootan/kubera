@@ -14,8 +14,8 @@ private:
 	int m_Height;
 	UIClass* m_BackImage;
 	UIObject* m_BackImageObject;
-	UIClass* m_ButtonImage[30];
-	UIObject* m_ButtonImageObject[30];
+	UIClass* m_ButtonImage[50];
+	UIObject* m_ButtonImageObject[50];
 	CUIShader* m_pUIShaders;
 
 

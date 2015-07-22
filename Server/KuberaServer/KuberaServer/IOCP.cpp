@@ -75,8 +75,8 @@ BOOL IOCPServer::InitThread()
 	SYSTEM_INFO si; 
 	GetSystemInfo(&si); 
 
-	// (CPU 개수* 2)개의작업자스레드생성 
-	for(int i=0; i < (int)si.dwNumberOfProcessors*2; ++i) 
+	// (CPU 개수* 1)개의작업자스레드생성 
+	for(int i=0; i < (int)si.dwNumberOfProcessors*1; ++i) 
 	{ 
 		m_hWorkerThread = (HANDLE)_beginthreadex(NULL, 0, WorkerThread, this, 0, &ThreadID); 
 		if(m_hWorkerThread == NULL) 

@@ -88,6 +88,7 @@
   <ItemGroup>
     <ClInclude Include="ArrangeData.h" />
     <ClInclude Include="IOCP.h" />
+    <ClInclude Include="MapEditorManager.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="ST.h" />
     <ClInclude Include="stdafx.h" />

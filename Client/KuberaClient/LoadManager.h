@@ -48,10 +48,11 @@ public:
 	CGameObject *m_pRedNexus;
 	CCubeMesh *pBox[2];
 	
+	BOOL LoadFinish;
 private:
 	LoadManager()
 	{
-
+		LoadFinish = FALSE;
 	}
 public:
 	~LoadManager()
@@ -70,7 +71,7 @@ public:
 	void LoadUIShader(ID3D11Device* pd3Device)
 	{
 		m_pUIShaders = new CUIShader();
-		m_pUIShaders->CreateShader(pd3Device, 40);
+		m_pUIShaders->CreateShader(pd3Device, 80);
 	}
 	void LoadShaderInstancing1(ID3D11Device *pd3dDevice)
 	{

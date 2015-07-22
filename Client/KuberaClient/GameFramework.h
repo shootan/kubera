@@ -8,6 +8,8 @@
 #include "Shader.h"
 #include "UIObject.h"
 #include "LoadScene.h"
+#include "SelectScene.h"
+#include "ST.h"
 
 #define MAX_UI 4
 
@@ -26,12 +28,14 @@ private:
 
 	CTimer m_GameTimer;
 	CScene *m_pScene;
+	SelectScene *m_pSelectScene;
 	LoadScene *m_pLoadScene;
 	_TCHAR m_pszBuffer[50];
 
 	CCamera *m_pCamera; 
 	CCamera *m_pCameraMinimap;
 	CCamera *m_pUICamera;
+	CCamera *m_pSelectCamera;
 
 	PlayerPacket m_MyHero;
 

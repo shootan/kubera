@@ -34,6 +34,7 @@ CGameFramework::CGameFramework()
 	m_pCamera = NULL;
 	m_pCameraMinimap = NULL;
 	m_pUICamera = NULL;
+	m_pSelectCamera = NULL;
 
 	//m_pUI = NULL;
 	m_pUIShaders = NULL;
@@ -69,45 +70,18 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
      	Sleep(100);
      }*/
    	MapEditorManager::sharedManager()->LoadMapData();
- 	int herotype1 = 2;//Net.m_Type;
  	printf("Server Connect \n");
-
-	while(TRUE)
-	{
-		if(herotype1 == 0)
-		{
-			printf(" \n\nHero 선택( 1. 워리어, 2. 위자드 ) : ");
-
-			scanf("%d", &herotype1);
-		}
-		
-		if(herotype1 == 1 || herotype1 == 2)
-		{
-			printf("Character Selected \n");
-			break;
-		}
-	}
 	
-
 	//렌더링할 객체(게임 월드 객체)를 생성한다. 
 
 	HeroManager::sharedManager()->SetID(Net.m_ID);
-	HeroManager::sharedManager()->SetType(herotype1);
-	HeroManager::sharedManager()->SetStartPos(D3DXVECTOR3(Net.m_Pos.x, Net.m_Pos.y, Net.m_Pos.z));
-	//HeroManager::sharedManager()->SetHP(Net.m_HP);
+	
 	printf("SetData \n");
-	if(Net.m_ID%2 == 0) //초기 시작 카메리위치 설정
-	{
-		m_CameraPosX = 500.f;
-		m_CameraPosZ = -10.f;
-	}
-	else
-	{
-		m_CameraPosX = -500.f;
-		m_CameraPosZ = -10.f;
-	}
+	
+	m_CameraPosX = 390.f;
+	m_CameraPosZ = -10.f;
+	
 	BuildObjects();
-
 
 	time = 0.0f;
 
@@ -343,7 +317,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 
 			m_pCamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.9f, 1.0f);
 			m_pUICamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.0f, 0.1f);
-
+			m_pSelectCamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.9f, 1.0f);
 
 
 			//UI크기 및 배치 재설정
@@ -407,7 +381,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 
 		break;
 	case WM_KEYUP:
-		OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+		//OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 		break;
 	case WM_MOUSEWHEEL:
 		if (((short) HIWORD(wParam))/120 > 0 )
@@ -480,6 +454,12 @@ void CGameFramework::BuildObjects()
 	////투영 변환 행렬을 생성한다. 
 	m_pCamera->SetProjParams((float)D3DXToRadian(90.0f), float(m_nWndClientWidth)/float(m_nWndClientHeight), 1.0f, 500.0f);
 	m_pCamera->SetMode(CAMERA);
+
+	m_pSelectCamera = new CCamera();
+	m_pSelectCamera->CreateShaderVariables(m_pd3dDevice);
+	m_pSelectCamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.9f, 1.0f);
+	m_pSelectCamera->SetProjParams((float)D3DXToRadian(90.0f), float(m_nWndClientWidth)/float(m_nWndClientHeight), 1.0f, 500.0f);
+	m_pSelectCamera->SetViewParams( &D3DXVECTOR3(10, 0, -40), &D3DXVECTOR3(0, 0, 1) );
 
 	m_pCameraMinimap = new CCamera();
 	m_pCameraMinimap->CreateShaderVariables(m_pd3dDevice);
@@ -560,7 +540,7 @@ void CGameFramework::FrameAdvance()
 	m_GameTimer.Tick(60);
 	m_SendTick += 1;
 
-	if(m_pLoadScene->GetInfo() < 30)
+	if(!LoadManager::sharedManager()->LoadFinish)
 	{
 		TurnZBufferOff();
 
@@ -572,15 +552,42 @@ void CGameFramework::FrameAdvance()
 
 		TurnZBufferOn();
 
-		if (m_pLoadScene->GetInfo() == 30)
+		if (m_pLoadScene->GetInfo() == 49)
 		{
-			m_pScene = new CScene();
-			m_pScene->m_Camera = m_pCamera;
-			if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice);
+ 			m_pSelectScene = new SelectScene();
+ 			m_pSelectScene->m_pCamera = m_pSelectCamera;
+ 			if (m_pSelectScene) m_pSelectScene->BuildObject(m_pd3dDevice);
+ 			LoadManager::sharedManager()->LoadFinish = TRUE;
+			delete m_pLoadScene;
+			printf("LoadFinish \n");
+ 			return;
 		}
 	}
-	
-	if(m_pLoadScene->GetInfo() == 30)
+ 	
+ 	if(LoadManager::sharedManager()->LoadFinish && !ST::sharedManager()->m_bStart)
+ 	{
+		float fClearColor[4] = { 0.0f, 0, 0, 1.0f }; 
+		//렌더 타겟 뷰를 색상(RGB: 0.0f, 0.125f, 0.3f)으로 지운다. 
+		m_pd3dDeviceContext->ClearRenderTargetView(m_pd3dRenderTargetView, fClearColor);
+		if (m_pd3dDepthStencilView) m_pd3dDeviceContext->ClearDepthStencilView(m_pd3dDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+		m_pSelectCamera->UpdateShaderVariables(m_pd3dDeviceContext);
+		//m_pSelectCamera->FrameMove(m_GameTimer.GetTimeElapsed());
+		m_pd3dDeviceContext->RSSetViewports(1, &m_pSelectCamera->GetViewport());
+		m_pSelectScene->AnimateObject(m_GameTimer.GetTimeElapsed());
+		m_pSelectScene->RenderObject(m_pd3dDeviceContext, m_GameTimer.GetTimeElapsed(), m_pSelectCamera);
+ 		if (ST::sharedManager()->m_bSelected == TRUE)
+		{
+ 			m_pScene = new CScene();
+ 			m_pScene->m_Camera = m_pCamera;
+ 			if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice);
+ 			ST::sharedManager()->m_bStart = TRUE;
+			printf("SelectFinish \n");
+ 			return;
+ 		}
+ 	}
+
+	if(ST::sharedManager()->m_bStart == TRUE)
+	//if(LoadManager::sharedManager()->LoadFinish)
 	{
 
 		this->ExchangeInfo();
@@ -591,14 +598,12 @@ void CGameFramework::FrameAdvance()
 
 		SetCameraPos();
 
-		float fClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; 
+		float fClearColor[4] = { 0, 0, 0, 1.0f }; 
 		//렌더 타겟 뷰를 색상(RGB: 0.0f, 0.125f, 0.3f)으로 지운다. 
 		m_pd3dDeviceContext->ClearRenderTargetView(m_pd3dRenderTargetView, fClearColor);
 		if (m_pd3dDepthStencilView) m_pd3dDeviceContext->ClearDepthStencilView(m_pd3dDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 		//후면버퍼를 전면버퍼로 프리젠트한다. 
-
-
 
 		if(m_SendTick > 1)
 		{
