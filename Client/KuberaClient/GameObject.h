@@ -43,6 +43,7 @@ protected:
 	int			m_ID;
 	float		m_HP;
 	float		m_Damage;
+	int			m_Defense;
 	float		m_fWalkSpeed;
 	BOOL		m_Visible;
 	int			m_iTag;
@@ -113,6 +114,12 @@ public:
 
 	float GetDamage() {return m_Damage;}
 	void SetDamage(float _damage) { m_Damage = _damage; }
+
+	int GetDefense() { return m_Defense;}
+	void SetDefense(int _defense) { m_Defense = _defense; }
+
+	float GetSpeed() { return m_fWalkSpeed; }
+	void SetSpeed(float _speed) { m_fWalkSpeed = _speed; } 
 
 	void SetAttackDamage(float _damage) { m_HP -= _damage; }
 

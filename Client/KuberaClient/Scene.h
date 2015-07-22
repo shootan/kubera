@@ -61,6 +61,7 @@ private:
 	CGameObject *m_pNexusBox[2];
 	CGameObject *m_pTowerBox[MAX_TOWER];
 	CGameObject *m_pPlayerBox[2];
+	CGameObject *m_pMinionBox[MAX_MINION];
 
 	CGameObject *m_pBlueNexus;
 	CGameObject *m_pRedNexus;

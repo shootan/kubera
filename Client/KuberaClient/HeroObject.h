@@ -30,7 +30,6 @@ private:
 
 	//정보
 	int m_Level;
-	int m_Defence;
 	int m_SkillDamage;
 	int m_Exp;
 	int m_Speed_Level;
@@ -53,7 +52,15 @@ public:
 
 	void SetState(int _state) { m_iState = _state;}
 
-	void CharacterInfo();
+
+	//레벨 업에 따른 캐릭터 정보
+	void UpdateCharacterInfo(int _Level);
+	void LevelUp();
+	void DamageUp(float _damage);
+	void SpeedUp(float _speed);
+	void DefenseUp(float _defense);
+
+	int GetLevel() { return m_Level;}
 
 	Vector3 GetDestination()
 	{

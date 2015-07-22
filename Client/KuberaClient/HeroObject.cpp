@@ -29,10 +29,10 @@ HeroObject::HeroObject(void)
 	//초기 정보값
 	m_Level = 1;			//레벨1
 	m_HP = 100;				//hp 100
-	m_Defence = 3;			//방어력 3
+	m_Defense = 3;			//방어력 3
 	m_fWalkSpeed = 15.f;	//스피드 15
 	m_Damage = 10.f;		//데미지 10
-	m_SkillDamage = 20;		//스킬데미지 20
+	m_SkillDamage = 20 + m_Damage;		//스킬데미지 20
 	m_Exp = 10;				//필요 경험치 10
 	m_Speed_Level = 1;		//스피드 레벨 1
 	m_Defence_Level = 1;	//방어력 레벨 1
@@ -173,13 +173,16 @@ bool HeroObject::InMotion()
 void HeroObject::Update(float fTimeElapsed)
 {
 	if(m_Visible == FALSE) return;
+
+	LevelUp(); //레벨업 할시 들어오는 함수
+
 	if(m_iPrevState != m_iState)
 	{
 		m_time = 1.1f;
 		m_iPrevState = m_iState;
 	}
 
-	if(m_HP < 1.0f)
+	if(m_HP <= 0.0f)
 	{
 		if(m_bDeathAnimation)
 		{
@@ -196,7 +199,7 @@ void HeroObject::Update(float fTimeElapsed)
 				po.x = -410;
 				po.z = 0;
 			}
-			m_HP = 500.0f;
+			m_HP = m_Level * 100;
 			this->SetPos(po);
 			m_bDeathAnimation = FALSE;
 			return;
@@ -502,18 +505,31 @@ void HeroObject::Animate(float fTimeElapsed)
 }
 
 
-void HeroObject::CharacterInfo()
+void HeroObject::LevelUp()
 {
-	//초기 정보값
-	m_Level = 1;			//레벨1
-	m_HP = 100;				//hp 100
-	m_Defence = 3;			//방어력 3
-	m_fWalkSpeed = 15.f;	//스피드 15
-	m_Damage = 10.f;		//데미지 10
-	m_SkillDamage = 20;		//스킬데미지 20
-	m_Exp = 10;				//필요 경험치 10
-	m_Speed_Level = 1;		//스피드 레벨 1
-	m_Defence_Level = 1;	//방어력 레벨 1
-	m_Damage_Level = 1;		//데미지 레벨 1
+	if(m_Exp <= 0)
+	{
+		m_Level += 1;
+		UpdateCharacterInfo(m_Level);
+	}
+}
 
+void HeroObject::UpdateCharacterInfo(int _Level)
+{
+	m_HP = _Level * 100;  //초기 100 부터 100씩 증가
+	m_Exp = _Level * 10;  //초기 10 부터 10씩 증가
+}
+
+void HeroObject::DamageUp(float _damage)
+{
+	m_Damage = _damage * 5 + 5;    //초기10 부터 5씩증가 
+	m_Speed_Level = 20 + m_Damage;
+}
+void HeroObject::SpeedUp(float _speed)
+{
+	m_fWalkSpeed = _speed * 3 + 12;  //초기 15 부터 3씩증가
+}
+void HeroObject::DefenseUp(float _defense)
+{
+	m_Defense = _defense * 3;  //초기 3부터 3씩 증가
 }

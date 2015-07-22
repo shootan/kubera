@@ -28,6 +28,7 @@ CGameFramework::CGameFramework()
 
 	m_pTxtHelper = NULL;
 	m_pTxtHelper2 = NULL;
+	m_pCharacterInfo = NULL;
 
 	m_SendTick = 0;
 
@@ -45,6 +46,13 @@ CGameFramework::CGameFramework()
 	m_UIMinimapWidth= 197.6573f, m_UIMinimapHeight = 234.375f;
 	m_UIInfoWidth = 197.6573f, m_UIInfoHeight = 156.25f;
 	m_UIScoreWidth = 131.7715f, m_UIScoreHeight = 78.125f;
+
+	m_SwordWidth = 20, m_SwordHeight = 20;
+	m_ShielWidth = 20, m_ShielHeight = 20;
+	m_BootsWidth = 20, m_BootsHeight = 20;
+
+	m_HpbarRWidth = 250, m_HpbarRHeight = 15;
+	m_HpbarGWidth = 250, m_HpbarGHeight = 15;
 }
 
 CGameFramework::~CGameFramework()
@@ -279,6 +287,7 @@ bool CGameFramework::CreateDirect3DDisplay()
 	m_DialogResourceManager.OnD3D11CreateDevice( m_pd3dDevice, m_pd3dDeviceContext );
 	m_pTxtHelper = new CDXUTTextHelper( m_pd3dDevice, m_pd3dDeviceContext, &m_DialogResourceManager, 20 );
 	m_pTxtHelper2 = new CDXUTTextHelper( m_pd3dDevice, m_pd3dDeviceContext, &m_DialogResourceManager, 20 );
+	m_pCharacterInfo = new CDXUTTextHelper(m_pd3dDevice, m_pd3dDeviceContext, &m_DialogResourceManager, 20);
 
 	return(true);
 }
@@ -356,6 +365,18 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			m_UIScoreWidth = (m_nWndClientWidth*m_UIScoreWidth) / m_nPrevWndClientWidth;
 			m_UIScoreHeight = (m_nWndClientHeight*m_UIScoreHeight) / m_nPrevWndClientHeight; 
 
+			m_SwordWidth = (m_nWndClientWidth*m_SwordWidth) / m_nPrevWndClientWidth;
+			m_SwordHeight = (m_nWndClientHeight*m_SwordHeight) / m_nPrevWndClientHeight; 
+			m_ShielWidth = (m_nWndClientWidth*m_ShielWidth) / m_nPrevWndClientWidth;
+			m_ShielHeight = (m_nWndClientHeight*m_ShielHeight) / m_nPrevWndClientHeight; 
+			m_BootsWidth = (m_nWndClientWidth*m_BootsWidth) / m_nPrevWndClientWidth;
+			m_BootsHeight = (m_nWndClientHeight*m_BootsHeight) / m_nPrevWndClientHeight; 
+
+			m_HpbarRWidth = (m_nWndClientWidth*m_HpbarRWidth) / m_nPrevWndClientWidth;
+			m_HpbarRHeight = (m_nWndClientHeight*m_HpbarRHeight) / m_nPrevWndClientHeight; 
+			m_HpbarGWidth = (m_nWndClientWidth*m_HpbarGWidth) / m_nPrevWndClientWidth * HeroManager::sharedManager()->m_pHero->GetHP()/HeroManager::sharedManager()->m_pHero->GetLevel() * 100;
+			m_HpbarGHeight = (m_nWndClientHeight*m_HpbarGHeight) / m_nPrevWndClientHeight; 
+
 			m_nPrevWndClientWidth = m_nWndClientWidth;
 			m_nPrevWndClientHeight = m_nWndClientHeight;
 
@@ -368,6 +389,11 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			m_pUI[1]->SetBitmapWH(m_UIMinimapWidth, m_UIMinimapHeight);
 			m_pUI[2]->SetBitmapWH(m_UIInfoWidth, m_UIInfoHeight);
 			m_pUI[3]->SetBitmapWH(m_UIScoreWidth, m_UIScoreHeight);
+			m_pUI[4]->SetBitmapWH(m_SwordWidth, m_SwordHeight);
+			m_pUI[5]->SetBitmapWH(m_ShielWidth, m_ShielHeight);
+			m_pUI[6]->SetBitmapWH(m_BootsWidth, m_BootsHeight);
+			m_pUI[7]->SetBitmapWH(m_HpbarRWidth, m_HpbarRHeight);
+			m_pUI[8]->SetBitmapWH(m_HpbarGWidth, m_HpbarGHeight);
 			D3DXMatrixOrthoLH(&m_orthoMatrix, (float)m_nWndClientWidth, (float)m_nWndClientHeight, 1.0f, 500.0f);
 
 			m_pCameraMinimap->SetViewport(m_pd3dDeviceContext,m_nWndClientWidth - m_UIMinimapWidth  + m_UIMinimapWidth/7, m_nWndClientHeight - m_UIMinimapHeight + m_UIMinimapHeight/13, m_UIMinimapWidth - m_UIMinimapWidth/7 , m_UIMinimapHeight, 0.3f, 0.4f);
@@ -460,6 +486,7 @@ void CGameFramework::OnDestroy()
 	m_DialogResourceManager.OnD3D11DestroyDevice();
 	SAFE_DELETE( m_pTxtHelper );
 	SAFE_DELETE( m_pTxtHelper2 );
+	SAFE_DELETE( m_pCharacterInfo );
 }
 
 void CGameFramework::BuildObjects()
@@ -505,7 +532,11 @@ void CGameFramework::BuildObjects()
 	m_pUI[1]->Initialize(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, L"UI/UI_Map_black.png",m_UIMinimapWidth, m_UIMinimapHeight); //미니맵
 	m_pUI[2]->Initialize(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, L"UI/UI_Info_black.png",m_UIInfoWidth, m_UIInfoHeight); //캐릭터창
 	m_pUI[3]->Initialize(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, L"UI/UI_Score_black.png",m_UIScoreWidth, m_UIScoreHeight); //킬,데스창
-
+	m_pUI[4]->Initialize(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, L"UI/Sword.png",m_SwordWidth, m_SwordHeight); //검
+	m_pUI[5]->Initialize(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, L"UI/Shield.png",m_ShielWidth, m_ShielHeight); //방패
+	m_pUI[6]->Initialize(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, L"UI/Boots.png",m_BootsWidth, m_BootsHeight); //신발
+	m_pUI[7]->Initialize(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, L"UI/Hp_Bar_Red.png",m_HpbarRWidth, m_HpbarRHeight); //hp바 빨간색
+	m_pUI[8]->Initialize(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, L"UI/Hp_Bar_Green1.png",m_HpbarGWidth, m_HpbarGHeight); //hp바 초록색
 	for(int i=0; i<MAX_UI; i++)
 	{
 		m_pUIObjects[i] = new UIObject();
@@ -569,7 +600,7 @@ void CGameFramework::FrameAdvance()
 
 	SetCameraPos();
 
-	float fClearColor[4] = { 0.0f, 0.125f, 0.3f, 1.0f }; 
+	float fClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f }; 
 	//렌더 타겟 뷰를 색상(RGB: 0.0f, 0.125f, 0.3f)으로 지운다. 
 	m_pd3dDeviceContext->ClearRenderTargetView(m_pd3dRenderTargetView, fClearColor);
 	if (m_pd3dDepthStencilView) m_pd3dDeviceContext->ClearDepthStencilView(m_pd3dDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
@@ -596,7 +627,7 @@ void CGameFramework::FrameAdvance()
 	m_pd3dDeviceContext->RSSetViewports(1, &m_pCameraMinimap->GetViewport());
 	m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f, m_pCameraMinimap);
 
-
+	//UI 렌더
 	TurnZBufferOff();
 	TurnOnAlphaBlending(m_pd3dDeviceContext, m_UIEnableBlendingState);
 	m_pUICamera->UpdateShaderVariables(m_pd3dDeviceContext, m_orthoMatrix);
@@ -615,6 +646,21 @@ void CGameFramework::FrameAdvance()
 	m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[3]->m_d3dxmtxWorld);
 	m_pUIObjects[3]->Render(m_pd3dDeviceContext, m_nWndClientWidth - m_UIScoreWidth, 0);
 	TurnOffAlphaBlending(m_pd3dDeviceContext, m_UIDisableBlendingState);
+
+	m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[4]->m_d3dxmtxWorld);
+	m_pUIObjects[4]->Render(m_pd3dDeviceContext, m_UIInfoWidth/2 + m_UIInfoWidth/20, m_nWndClientHeight - m_UIInfoHeight + m_UIInfoHeight/3 - m_SwordHeight/2);
+
+	m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[5]->m_d3dxmtxWorld);
+	m_pUIObjects[5]->Render(m_pd3dDeviceContext, m_UIInfoWidth/2 + m_UIInfoWidth/20, m_nWndClientHeight - m_UIInfoHeight/2 - m_ShielHeight/2);
+
+	m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[6]->m_d3dxmtxWorld);
+	m_pUIObjects[6]->Render(m_pd3dDeviceContext, m_UIInfoWidth/2 + m_UIInfoWidth/20, m_nWndClientHeight - m_UIInfoHeight + m_UIInfoHeight*2/3 - m_BootsHeight/2);
+
+	m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[7]->m_d3dxmtxWorld);
+	m_pUIObjects[7]->Render(m_pd3dDeviceContext, m_nWndClientWidth/2 - m_HpbarRWidth/2 , m_nWndClientHeight - m_UIskillbarHeight + m_UIskillbarHeight*2/3 + m_HpbarRHeight/2);
+
+	m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_pUIObjects[8]->m_d3dxmtxWorld);
+	m_pUIObjects[8]->Render(m_pd3dDeviceContext, m_nWndClientWidth/2 - m_HpbarRWidth/2 , m_nWndClientHeight - m_UIskillbarHeight + m_UIskillbarHeight*2/3 + m_HpbarGHeight/2);
 	TurnZBufferOn();
 
 	m_pDXGISwapChain->Present(0, 0);
@@ -622,6 +668,10 @@ void CGameFramework::FrameAdvance()
 	m_GameTimer.GetFrameRate(m_pszBuffer+8, 37);
 	::SetWindowText(m_hWnd, m_pszBuffer);
 
+	float a = HeroManager::sharedManager()->m_pHero->GetHP()/HeroManager::sharedManager()->m_pHero->GetLevel() * 100;
+	int b = HeroManager::sharedManager()->m_pHero->GetDefense();
+	float c = HeroManager::sharedManager()->m_pHero->GetSpeed();
+	int d = HeroManager::sharedManager()->m_pHero->GetLevel();
 }
 
 void CGameFramework::SetCameraPos()
@@ -795,6 +845,19 @@ void CGameFramework::RenderText()
 			break;
 		}
 	}
+
+	for(int i=0; i<MAX_MINION; i++)
+	{
+		if(MinionManager::sharedManager()->m_pMinion[i] == NULL ) continue;
+		if(HeroManager::sharedManager()->m_pHero->GetTarget() == MinionManager::sharedManager()->m_pMinion[i])
+		{
+			int id = MinionManager::sharedManager()->m_pMinion[i]->GetID();
+			swprintf(str, 255, L"Target : Minion [%d], HP : %.0f",id, MinionManager::sharedManager()->m_pMinion[i]->GetHP());
+			m_pTxtHelper->DrawTextLine(str);
+			break;
+		}
+
+	}
 	
 	for(int i=0; i<MAX_OTHER_PLAYER; i++)
 	{
@@ -830,6 +893,13 @@ void CGameFramework::RenderText()
 	swprintf(str, 255, L"HERO HP : [ %.0f ]", HeroManager::sharedManager()->m_pHero->GetHP());
 	m_pTxtHelper->DrawTextLine(str);
 	m_pTxtHelper2->End();
+
+	m_pCharacterInfo->Begin();
+	m_pCharacterInfo->SetInsertionPos(m_UIInfoWidth/2 + m_UIInfoWidth/20 + m_SwordWidth, m_nWndClientHeight - m_UIInfoHeight + m_UIInfoHeight/3 - m_SwordHeight/2);
+	m_pCharacterInfo->SetForegroundColor( D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f));
+	swprintf(str, 255, L" : %.0f\n : %.0f\n : %.0f", HeroManager::sharedManager()->m_pHero->GetDamage(),HeroManager::sharedManager()->m_pHero->GetDefense(),HeroManager::sharedManager()->m_pHero->GetSpeed());
+	m_pCharacterInfo->DrawTextLine(str);
+	m_pCharacterInfo->End();
 }
 
 void CGameFramework::TurnZBufferOn()
@@ -856,7 +926,7 @@ void CGameFramework::TurnOnAlphaBlending(ID3D11DeviceContext *pd3dDeviceContext,
 	blendFactor[0] = 0.0f;
 	blendFactor[1] = 0.0f;
 	blendFactor[2] = 0.0f;
-	blendFactor[3] = 1.0f;
+	blendFactor[3] = 0.0f;
 
 	// Turn on the alpha blending.
 	pd3dDeviceContext->OMSetBlendState(blendstate, blendFactor, 0xffffffff);
@@ -873,7 +943,7 @@ void CGameFramework::TurnOffAlphaBlending(ID3D11DeviceContext *pd3dDeviceContext
 	blendFactor[0] = 0.0f;
 	blendFactor[1] = 0.0f;
 	blendFactor[2] = 0.0f;
-	blendFactor[3] = 1.0f;
+	blendFactor[3] = 0.0f;
 
 	// Turn off the alpha blending.
 	pd3dDeviceContext->OMSetBlendState(blendstate, blendFactor, 0xffffffff);
@@ -913,4 +983,12 @@ HRESULT CGameFramework::CreateBlend(ID3D11Device *pd3dDevice)
 	}
 
 	return S_OK;
+}
+
+void CGameFramework::SetUIUpdate()
+{
+	//캐릭터 Hp바
+	m_HpbarGWidth *= HeroManager::sharedManager()->m_pHero->GetHP()/HeroManager::sharedManager()->m_pHero->GetLevel() * 100; 
+	m_pUI[8]->SetBitmapWH(m_HpbarGWidth, m_HpbarGHeight);
+
 }

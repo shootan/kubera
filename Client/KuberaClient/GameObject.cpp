@@ -30,6 +30,7 @@ CGameObject::CGameObject(void)
 
 	m_HP = 0.f;
 	m_Damage = 0.f;
+	m_Defense = 0;
 	m_Visible = TRUE;
 	m_fWalkSpeed = 0.1f;
 	m_iTag = NONE;

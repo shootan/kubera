@@ -8,7 +8,7 @@
 #include "Shader.h"
 #include "UIObject.h"
 
-#define MAX_UI 4
+#define MAX_UI 9
 
 class CGameFramework
 {
@@ -58,6 +58,8 @@ private:
 
 	CDXUTTextHelper* m_pTxtHelper;
 	CDXUTTextHelper* m_pTxtHelper2;
+	CDXUTTextHelper* m_pCharacterInfo;
+
 	CDXUTDialogResourceManager m_DialogResourceManager;
 
 	// Network
@@ -69,10 +71,17 @@ private:
 	CUIShader *m_pUIShaders;
 	UIObject* m_pUIObjects[MAX_UI];
 
-	float m_UIskillbarWidth, m_UIskillbarHeight;
-	float m_UIMinimapWidth, m_UIMinimapHeight;
-	float m_UIInfoWidth, m_UIInfoHeight;
-	float m_UIScoreWidth, m_UIScoreHeight;
+	float m_UIskillbarWidth, m_UIskillbarHeight; //스킬바 UI
+	float m_UIMinimapWidth, m_UIMinimapHeight;   //미니맵 UI
+	float m_UIInfoWidth, m_UIInfoHeight;			//캐릭터 정보창 UI
+	float m_UIScoreWidth, m_UIScoreHeight;		//점수판 UI
+
+	float m_SwordWidth, m_SwordHeight; //특성 아이콘
+	float m_ShielWidth, m_ShielHeight;
+	float m_BootsWidth, m_BootsHeight;
+
+	float m_HpbarRWidth, m_HpbarRHeight; //hp바
+	float m_HpbarGWidth, m_HpbarGHeight;
 public:
 	CGameFramework();
 	~CGameFramework();
@@ -116,4 +125,7 @@ public:
 	void TurnOnAlphaBlending(ID3D11DeviceContext *pd3dDeviceContext, ID3D11BlendState* blendstate);
 	void TurnOffAlphaBlending(ID3D11DeviceContext *pd3dDeviceContext, ID3D11BlendState* blendstate);
 	HRESULT CreateBlend(ID3D11Device *pd3dDevice);
+
+	//UI
+	void SetUIUpdate();
 };

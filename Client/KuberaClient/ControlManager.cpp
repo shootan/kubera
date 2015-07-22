@@ -88,7 +88,7 @@ void ControlManager::SetTarget(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRay
 	{
 		if(TowerManager::sharedManager()->m_pTower[i] == NULL) continue;
 		//if(TowerManager::sharedManager()->m_pTower[i]->GetSelected() == TRUE) continue;
-		if(TowerManager::sharedManager()->m_pTower[i]->GetHP() < 1.0f) continue;
+		if(TowerManager::sharedManager()->m_pTower[i]->GetHP() <= 0.0f) continue;
 
 		float dist = INTersectRaySphere(vRayDirection, vRayOrigin, TowerManager::sharedManager()->m_pTower[i]->GetPosition(), 
 			TowerManager::sharedManager()->m_pTower[i]->GetBoundSizeX()*2);
@@ -101,6 +101,21 @@ void ControlManager::SetTarget(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRay
 			return;
 		}
 		//TowerManager::sharedManager()->m_pTower[i]->SetSelected(FALSE);
+	}
+
+	for(int i=0; i<MAX_MINION; i++) //미니언 타겟 잡기
+	{
+		if(MinionManager::sharedManager()->m_pMinion[i] == NULL) continue;
+
+		float dist = INTersectRaySphere(vRayDirection, vRayOrigin, MinionManager::sharedManager()->m_pMinion[i]->GetPosition(), 
+			MinionManager::sharedManager()->m_pMinion[i]->GetBoundSizeX()*2);
+
+		if( dist > 0 )
+		{
+			HeroManager::sharedManager()->m_pHero->SetTarget(MinionManager::sharedManager()->m_pMinion[i]);
+			HeroManager::sharedManager()->m_pHero->SetTargetID(MinionManager::sharedManager()->m_pMinion[i]->GetID());
+			return;
+		}
 	}
 
 	for(int i=0; i<MAX_OTHER_PLAYER; i++)  //다른 플레이어 타겟 잡기

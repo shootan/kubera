@@ -3,7 +3,6 @@
 #include <vector>
 
 using namespace std;
-#define MAX_MINION 160
 
 class MapEditorManager
 {

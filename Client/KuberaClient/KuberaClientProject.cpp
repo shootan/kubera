@@ -17,6 +17,7 @@
 #include "ParticleManager.h"
 #include "MapEditorManager.h"
 #include "LoadManager.h"
+#include "MinionManager.h"
 
 ST* ST::instance = NULL;
 MissileManager* MissileManager::instance = NULL;
@@ -27,6 +28,7 @@ HeroManager*  HeroManager::instance = NULL;
 ParticleManager*  ParticleManager::instance = NULL;
 MapEditorManager* MapEditorManager::instance = NULL;
 LoadManager* LoadManager::instance = NULL;
+MinionManager* MinionManager::instance = NULL;
 //--------------------------------------------------------------------------------------
 // Global Variables
 //--------------------------------------------------------------------------------------
