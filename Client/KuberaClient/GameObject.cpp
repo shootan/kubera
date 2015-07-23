@@ -145,6 +145,9 @@ void CGameObject::Render(ID3D11DeviceContext *pd3dDeviceContext, CCamera *pCamer
 			bcBoundingCube.Update(&m_d3dxmtxWorld);
 			bIsVisible = pCamera->IsInFrustum(&bcBoundingCube); 
 		}
+		else
+			bIsVisible = true;
+
 		if (bIsVisible) 
 			m_pMesh->Render(pd3dDeviceContext);
 	}
@@ -162,6 +165,8 @@ void CGameObject::Render(ID3D11DeviceContext *pd3dDeviceContext, CCamera *pCamer
 
 				if (bIsVisible) break;
 			}
+			else
+				bIsVisible = true;
 		}
 		if (bIsVisible)	m_pAniMesh->Render(pd3dDeviceContext);
 	}

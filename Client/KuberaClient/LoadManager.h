@@ -23,6 +23,7 @@ class LoadManager
 public:
 	CInstancingShader *m_pInstancingShaders;
 	CAnimationShader *m_pAnimationShaders;
+	CAnimationShader *m_pAnimationShaders_NoLight;
 	CParticleShader *m_pParticleShaders;
 	CObjectShader *m_pObjectShaders;
 	CUIShader *m_pUIShaders;
@@ -101,7 +102,10 @@ public:
 	{
 		printf("CreateAnimationShader \n");
 		m_pAnimationShaders = new CAnimationShader();
-		m_pAnimationShaders->CreateShader(pd3dDevice, 100);
+		m_pAnimationShaders->CreateShader(pd3dDevice, 100, TRUE);
+
+		m_pAnimationShaders_NoLight = new CAnimationShader();
+		m_pAnimationShaders_NoLight->CreateShader(pd3dDevice, 100, FALSE);
 	}
 
 	void LoadShaderInstancing4(ID3D11Device *pd3dDevice)

@@ -114,6 +114,8 @@ void HeroObject::Render(ID3D11DeviceContext *pd3dDeviceContext, float fTimeElaps
 
 				if (bIsVisible) break;
 			}
+			else
+				bIsVisible = true;
 		}
 
 		if (bIsVisible) m_pAniMesh->Render(pd3dDeviceContext, m_time);
