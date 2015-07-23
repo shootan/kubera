@@ -369,6 +369,7 @@
     <None Include="fx\Effect.fx" />
     <None Include="fx\instance.fx" />
     <None Include="fx\Light.fx" />
+    <None Include="fx\NoLightAni.fx" />
     <None Include="fx\particle.ps" />
     <None Include="fx\particle.vs" />
     <None Include="fx\Soldier.fx" />

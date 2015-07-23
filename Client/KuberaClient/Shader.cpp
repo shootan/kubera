@@ -430,7 +430,7 @@ void CAnimationShader::AddObject(CGameObject *pObject)
 	if (pObject) pObject->AddRef();
 }
 
-void CAnimationShader::CreateShader(ID3D11Device *pd3dDevice, int nObjects)
+void CAnimationShader::CreateShader(ID3D11Device *pd3dDevice, int nObjects, BOOL _light)
 {
 	/*IA 단계에 설정할 입력-레이아웃을 정의한다. 정점 버퍼의 한 원소가 CVertex 클래스의 멤버 변수(D3DXVECTOR3 즉, 실수 세 개)이므로 입력-레이아웃은 실수(32-비트) 3개로 구성되며 시멘틱이 “POSITION”이고 정점 데이터임을 표현한다.*/ 
 	D3D11_INPUT_ELEMENT_DESC d3dInputLayout[] =
@@ -444,10 +444,19 @@ void CAnimationShader::CreateShader(ID3D11Device *pd3dDevice, int nObjects)
 		{ "WEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,        60, D3D11_INPUT_PER_VERTEX_DATA, 0 }, 
 	};
 	UINT nElements = ARRAYSIZE(d3dInputLayout);
-	//파일 “Effect.fx”에서 정점-쉐이더의 시작 함수가 "VS"인 정점-쉐이더를 생성한다. 
-	CreateVertexShaderFromFile(pd3dDevice, L"fx/Soldier.fx", "VSSkinnedmain", "vs_4_0", &m_pd3dVertexShader, d3dInputLayout, nElements, &m_pd3dVertexLayout);
-	//파일 “Effect.fx”에서 픽셀-쉐이더의 시작 함수가 "PS"인 픽셀-쉐이더를 생성한다. 
-	CreatePixelShaderFromFile(pd3dDevice, L"fx/Soldier.fx", "PSSkinnedmain", "ps_4_0_level_9_1", &m_pd3dPixelShader);
+	if(_light)
+	{
+		//파일 “Effect.fx”에서 정점-쉐이더의 시작 함수가 "VS"인 정점-쉐이더를 생성한다. 
+		CreateVertexShaderFromFile(pd3dDevice, L"fx/Soldier.fx", "VSSkinnedmain", "vs_4_0", &m_pd3dVertexShader, d3dInputLayout, nElements, &m_pd3dVertexLayout);
+		//파일 “Effect.fx”에서 픽셀-쉐이더의 시작 함수가 "PS"인 픽셀-쉐이더를 생성한다. 
+		CreatePixelShaderFromFile(pd3dDevice, L"fx/Soldier.fx", "PSSkinnedmain", "ps_4_0_level_9_1", &m_pd3dPixelShader);
+	}
+	else
+	{
+		CreateVertexShaderFromFile(pd3dDevice, L"fx/NoLightAni.fx", "VSSkinnedmain", "vs_4_0", &m_pd3dVertexShader, d3dInputLayout, nElements, &m_pd3dVertexLayout);
+		CreatePixelShaderFromFile(pd3dDevice, L"fx/NoLightAni.fx", "PSSkinnedmain", "ps_4_0_level_9_1", &m_pd3dPixelShader);
+	}
+	
 
 
 

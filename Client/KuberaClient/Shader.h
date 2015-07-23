@@ -137,7 +137,7 @@ public:
 	~CAnimationShader();
 
 	//쉐이더를 생성하는 함수를 선언한다. nObjects는 쉐이더가 렌더링할 객체의 개수이다.
-	virtual void CreateShader(ID3D11Device *pd3dDevice, int nObjects);
+	virtual void CreateShader(ID3D11Device *pd3dDevice, int nObjects, BOOL _light);
 	virtual void CreateShaderVariables(ID3D11Device *pd3dDevice);
 	virtual void ReleaseShaderVariables();
 	virtual void UpdateShaderVariables(ID3D11DeviceContext *pd3dDeviceContext, D3DXMATRIX *pd3dxmtxWorld);

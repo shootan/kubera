@@ -83,7 +83,9 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	//렌더링할 객체(게임 월드 객체)를 생성한다. 
 
 	HeroManager::sharedManager()->SetID(Net.m_ID);
-	
+	HeroManager::sharedManager()->SetTeam(1);
+	HeroManager::sharedManager()->SetType(2);
+
 	printf("SetData \n");
 	
 	m_CameraPosX = 390.f;
@@ -304,7 +306,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 
 LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-	//m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+	if(m_pScene) m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+
 	if(nMessageID != WM_MOUSEWHEEL)
 		m_CameraUpDown = 0;
 
@@ -349,7 +352,9 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 
 				m_HpbarRWidth = (m_nWndClientWidth*m_HpbarRWidth) / m_nPrevWndClientWidth;
 				m_HpbarRHeight = (m_nWndClientHeight*m_HpbarRHeight) / m_nPrevWndClientHeight; 
+
 				m_HpbarGWidth = (m_nWndClientWidth*m_HpbarGWidth) / m_nPrevWndClientWidth * HeroManager::sharedManager()->m_pHero->GetHP()/HeroManager::sharedManager()->m_pHero->GetLevel() * 100;
+
 				m_HpbarGHeight = (m_nWndClientHeight*m_HpbarGHeight) / m_nPrevWndClientHeight; 
 
 				m_nPrevWndClientWidth = m_nWndClientWidth;
@@ -386,29 +391,35 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 	case WM_LBUTTONUP:
 	case WM_RBUTTONUP:
 	case WM_MOUSEMOVE:
-		OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
+		//OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
 		break;
 	case WM_KEYDOWN:
-		if(ST::sharedManager()->m_bStart)
-		{
-			switch (wParam) 
-			{
-			case VK_SPACE:
-				if(HeroManager::sharedManager()->m_pHero != NULL)
-				{
-					m_CameraPosX = HeroManager::sharedManager()->m_pHero->GetPos().x;
-					m_CameraPosZ = HeroManager::sharedManager()->m_pHero->GetPos().z-10;
-				}			
-				break;
-			case VK_UP:
-				HeroManager::sharedManager()->m_pHero->SetState(DEATH);
-				break;
 
-			case VK_DOWN:
+		switch (wParam) 
+		{
+		case VK_SPACE:
+			if(HeroManager::sharedManager()->m_pHero != NULL)
+			{
+				m_CameraPosX = HeroManager::sharedManager()->m_pHero->GetPos().x;
+				m_CameraPosZ = HeroManager::sharedManager()->m_pHero->GetPos().z-10;
+			}
+			ST::sharedManager()->m_bSelected = TRUE;
+			break;
+		case VK_UP:
+			if(HeroManager::sharedManager()->m_pHero != NULL)
+			{
+				HeroManager::sharedManager()->m_pHero->SetState(DEATH);
+			}
+			break;
+
+		case VK_DOWN:
+			if(HeroManager::sharedManager()->m_pHero != NULL)
+			{
 				HeroManager::sharedManager()->m_pHero->SetState(SKILL1);
-				break;
-			} 
-		}
+			}
+			break;
+		} 
+
 		break;
 	case WM_KEYUP:
 		//OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
@@ -420,7 +431,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			m_CameraUpDown = 1;
 		break;
 	}
-	return(0);
+	return TRUE;
 }
 
 //다음 함수는 응용 프로그램이 종료될 때 호출된다는 것에 유의하라. 
@@ -490,7 +501,8 @@ void CGameFramework::BuildObjects()
 	m_pSelectCamera->CreateShaderVariables(m_pd3dDevice);
 	m_pSelectCamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.9f, 1.0f);
 	m_pSelectCamera->SetProjParams((float)D3DXToRadian(90.0f), float(m_nWndClientWidth)/float(m_nWndClientHeight), 1.0f, 500.0f);
-	m_pSelectCamera->SetViewParams( &D3DXVECTOR3(10, 0, -40), &D3DXVECTOR3(0, 0, 1) );
+	m_pSelectCamera->SetViewParams( &D3DXVECTOR3(0, 30, -40), &D3DXVECTOR3(0, 0, 1) );
+	m_pSelectCamera->m_CameraPos = D3DXVECTOR3(0, 30, -40);
 
 	m_pCameraMinimap = new CCamera();
 	m_pCameraMinimap->CreateShaderVariables(m_pd3dDevice);
@@ -512,17 +524,6 @@ void CGameFramework::BuildObjects()
 	m_pUICamera->SetViewParams( &D3DXVECTOR3(0, 0, -10), &D3DXVECTOR3(0, 0, 1) );
 	//UI를 위한 투영
 	D3DXMatrixOrthoLH(&m_orthoMatrix, (float)m_nWndClientWidth, (float)m_nWndClientHeight, 1.0f, 500.0f);
-
- 
- //	m_pUI = new UIClass(m_pd3dDevice);
- //	m_pUI->Initialize(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight, L"UI/	UI_Skill.png",m_nWndClientWidth-500, m_nWndClientHeight-500);
- 	
- //	m_pUIObjects = new UIObject();
- //	m_pUIObjects->SetUI(m_pUI);
-	
-	m_pLoadScene->BuildObject(m_pd3dDevice);
-	
-	//씬생성
 	
 	for(int i=0; i<MAX_UI; i++)
 		m_pUI[i] = new UIClass(m_pd3dDevice);
@@ -541,7 +542,7 @@ void CGameFramework::BuildObjects()
 		m_pUIObjects[i]->SetUI(m_pUI[i]);
 	}
 
-
+	m_pLoadScene->BuildObject(m_pd3dDevice);
 	m_DialogResourceManager.OnD3D11ResizedSwapChain( m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight );
 }
 
@@ -578,7 +579,7 @@ void CGameFramework::FrameAdvance()
 	if(!LoadManager::sharedManager()->LoadFinish)
 	{
 		float fClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f }; 
-		//렌더 타겟 뷰를 색상(RGB: 0.0f, 0.125f, 0.3f)으로 지운다. 
+
 		m_pd3dDeviceContext->ClearRenderTargetView(m_pd3dRenderTargetView, fClearColor);
 		if (m_pd3dDepthStencilView) m_pd3dDeviceContext->ClearDepthStencilView(m_pd3dDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
@@ -598,6 +599,7 @@ void CGameFramework::FrameAdvance()
  			m_pSelectScene->m_pCamera = m_pSelectCamera;
  			if (m_pSelectScene) m_pSelectScene->BuildObject(m_pd3dDevice);
  			LoadManager::sharedManager()->LoadFinish = TRUE;
+
 			delete m_pLoadScene;
 			printf("LoadFinish \n");
  			return;
@@ -607,9 +609,9 @@ void CGameFramework::FrameAdvance()
  	if(LoadManager::sharedManager()->LoadFinish && !ST::sharedManager()->m_bStart)
  	{
 		float fClearColor[4] = { 0.0f, 0, 0, 1.0f }; 
-		//렌더 타겟 뷰를 색상(RGB: 0.0f, 0.125f, 0.3f)으로 지운다. 
 		m_pd3dDeviceContext->ClearRenderTargetView(m_pd3dRenderTargetView, fClearColor);
 		if (m_pd3dDepthStencilView) m_pd3dDeviceContext->ClearDepthStencilView(m_pd3dDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
 		m_pSelectCamera->UpdateShaderVariables(m_pd3dDeviceContext);
 		//m_pSelectCamera->FrameMove(m_GameTimer.GetTimeElapsed());
 		m_pd3dDeviceContext->RSSetViewports(1, &m_pSelectCamera->GetViewport());
@@ -639,7 +641,6 @@ void CGameFramework::FrameAdvance()
 		SetCameraPos();
 
 		float fClearColor[4] = { 0, 0, 0, 1.0f }; 
-		//렌더 타겟 뷰를 색상(RGB: 0.0f, 0.125f, 0.3f)으로 지운다. 
 		m_pd3dDeviceContext->ClearRenderTargetView(m_pd3dRenderTargetView, fClearColor);
 		if (m_pd3dDepthStencilView) m_pd3dDeviceContext->ClearDepthStencilView(m_pd3dDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
@@ -707,10 +708,12 @@ void CGameFramework::FrameAdvance()
 	m_GameTimer.GetFrameRate(m_pszBuffer+8, 37);
 	::SetWindowText(m_hWnd, m_pszBuffer);
 
+
 // 	float a = HeroManager::sharedManager()->m_pHero->GetHP()/HeroManager::sharedManager()->m_pHero->GetLevel() * 100;
 // 	int b = HeroManager::sharedManager()->m_pHero->GetDefense();
 // 	float c = HeroManager::sharedManager()->m_pHero->GetSpeed();
 // 	int d = HeroManager::sharedManager()->m_pHero->GetLevel();
+
 }
 
 void CGameFramework::SetCameraPos()

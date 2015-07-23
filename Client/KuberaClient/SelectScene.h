@@ -21,10 +21,6 @@ private:
 	HeroObject *m_pWarrior;
 	HeroObject *m_pWizard;
 
-	LIGHTS *m_pLights;
-	ID3D11Buffer *m_pd3dcbLights;
-
-
 public:
 	SelectScene();
 	~SelectScene();
@@ -32,9 +28,5 @@ public:
 	void BuildObject(ID3D11Device *m_pd3dDevice);
 	void AnimateObject(float _dt);
 	void RenderObject(ID3D11DeviceContext*pd3dDeviceContext, float fTimeElapsed, CCamera *pCamera);
-
-	void CreateLightShaderVariables(ID3D11Device *pd3dDevice);
-	void UpdateLightShaderVariable(ID3D11DeviceContext *pd3dDeviceContext, LIGHTS *pLights);
-	void ReleaseLightShaderVariables();
 	
 };
