@@ -18,7 +18,7 @@ void LoadScene::LoadData(ID3D11Device *m_pd3dDevice, ID3D11DeviceContext* m_pd3d
 	for(int i=0; i<m_Count; i++)
 	{
 		m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_ButtonImageObject[i]->m_d3dxmtxWorld);
-		m_ButtonImageObject[i]->Render(m_pd3dDeviceContext, 5+(i*17), 558);
+		m_ButtonImageObject[i]->Render(m_pd3dDeviceContext, (i*17), 558);
 	}
   	switch(m_Count)
   	{

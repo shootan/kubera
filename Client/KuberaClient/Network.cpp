@@ -170,7 +170,7 @@ BOOL Network::SendData(PlayerPacket* _pi)
 BOOL Network::SendType(int _type)
 {
 	int retval = 0;
-	int header = HEROCHOOSE;
+	int header = SELECT_CHAR;
 	int p = sizeof(PlayerPacket);
 	retval = send(m_ConnectSock, (char*)&header, sizeof(int), 0);
 	if(retval == SOCKET_ERROR)
