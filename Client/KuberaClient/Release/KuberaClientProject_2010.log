@@ -1,71 +1,16 @@
-﻿빌드 시작: 2015-07-25 오후 2:14:24
+﻿빌드 시작: 2015-07-25 오후 2:52:48
      1>2 노드의 "C:\Users\유지헌\Documents\GitHub\kubera\Client\KuberaClient\KuberaClientProject_2010.vcxproj" 프로젝트(build 대상)입니다.
      1>InitializeBuildStatus:
          "AlwaysCreate"이(가) 지정되었기 때문에 "Release\KuberaClientProject.unsuccessfulbuild"을(를) 만들고 있습니다.
        ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I"C:\Program Files\Autodesk\FBX\FBX SDK\2015.1\include" /IDXUT\Core /IDXUT\Optional /Zi /nologo /W4 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _WINDOWS /D D3DXFX_LARGEADDRESS_HANDLE /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /arch:SSE2 /fp:fast /Zc:wchar_t /Zc:forScope /openmp- /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt Scene.cpp  
-         Scene.cpp
-     1>c:\users\유지헌\documents\github\kubera\client\kuberaclient\fbx\Vertex.h(17): warning C4101: 'position' :참조되지 않은 지역 변수입니다.
-     1>c:\users\유지헌\documents\github\kubera\client\kuberaclient\fbx\Vertex.h(19): warning C4101: 'uv' :참조되지 않은 지역 변수입니다.
-     1>c:\users\유지헌\documents\github\kubera\client\kuberaclient\fbx\Vertex.h(18): warning C4101: 'normal' :참조되지 않은 지역 변수입니다.
-     1>c:\users\유지헌\documents\github\kubera\client\kuberaclient\UIClass.h(31): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-     1>c:\users\유지헌\documents\github\kubera\client\kuberaclient\UIClass.h(31): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+         모든 출력이 최신 상태입니다.
        ResourceCompile:
          모든 출력이 최신 상태입니다.
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\유지헌\Documents\GitHub\kubera\Client\KuberaClient\Release\KuberaClientProject.exe" /INCREMENTAL:NO /NOLOGO d3d11.lib d3dcompiler.lib d3dx11d.lib d3dx9d.lib dxerr.lib dxguid.lib winmm.lib comctl32.lib "libfbxsdk-md.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Release\KuberaClientProject.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\유지헌\Documents\GitHub\kubera\Client\KuberaClient\Release\KuberaClientProject.pdb" /SUBSYSTEM:WINDOWS /LARGEADDRESSAWARE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\유지헌\Documents\GitHub\kubera\Client\KuberaClient\Release\KuberaClientProject.lib" /MACHINE:X86 Release\KuberaClientProject.res
-         Release\astarclass.obj
-         Release\Camera.obj
-         Release\ControlManager.obj
-         Release\DXUT.obj
-         Release\DXUTDevice11.obj
-         Release\DXUTDevice9.obj
-         Release\DXUTmisc.obj
-         Release\DXUTcamera.obj
-         Release\DXUTgui.obj
-         Release\DXUTres.obj
-         Release\DXUTsettingsdlg.obj
-         Release\SDKmesh.obj
-         Release\SDKmisc.obj
-         Release\GFBXBone.obj
-         Release\GFBXMesh.obj
-         Release\GFBXMeshLoader.obj
-         Release\GFBXSkeleton.obj
-         Release\MathHelper.obj
-         Release\Utilities.obj
-         Release\LoadScene.obj
-         Release\OtherPlayerObject.obj
-         Release\GameFramework.obj
-         Release\GameObject.obj
-         Release\HeroObject.obj
-         Release\KuberaClientProject.obj
-         Release\Mesh.obj
-         Release\MinionObject.obj
-         Release\MissileObject.obj
-         Release\Network.obj
-         Release\ObstacleObject.obj
-         Release\Particle2Mesh.obj
-         Release\Particle3Mesh.obj
-         Release\ParticleMesh.obj
-         Release\ParticleObject.obj
-         Release\Scene.obj
-         Release\SelectScene.obj
-         Release\Shader.obj
-         Release\Textureclass.obj
-         Release\Timer.obj
-         Release\TowerObject.obj
-         Release\UIClass.obj
-         Release\UIObject.obj  
-         코드를 생성하고 있습니다.
-     1>c:\users\유지헌\documents\github\kubera\client\kuberaclient\astarclass.cpp(217): warning C4706: 조건식 내에 할당이 있습니다.
-     1>c:\users\유지헌\documents\github\kubera\client\kuberaclient\astarclass.cpp(228): warning C4706: 조건식 내에 할당이 있습니다.
-     1>c:\users\유지헌\documents\github\kubera\client\kuberaclient\heroobject.cpp(47): warning C4700: 초기화되지 않은 'temp' 지역 변수를 사용했습니다.
-     1>c:\users\유지헌\documents\github\kubera\client\kuberaclient\gameframework.cpp(6): warning C4789: 메모리 복사 대상이 너무 작습니다.
-     1>c:\users\유지헌\documents\github\kubera\client\kuberaclient\heroobject.cpp(243): warning C4700: 초기화되지 않은 'temp' 지역 변수를 사용했습니다.
-         코드를 생성했습니다.
+         모든 출력이 최신 상태입니다.
          KuberaClientProject_2010.vcxproj -> C:\Users\유지헌\Documents\GitHub\kubera\Client\KuberaClient\Release\KuberaClientProject.exe
        Manifest:
-         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\Users\유지헌\Documents\GitHub\kubera\Client\KuberaClient\Release\KuberaClientProject.exe;#1" /manifest Release\KuberaClientProject.exe.intermediate.manifest "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\Include\Manifest\dpiaware.manifest"
+         모든 출력이 최신 상태입니다.
        FinalizeBuildStatus:
          "Release\KuberaClientProject.unsuccessfulbuild" 파일을 삭제하고 있습니다.
          "Release\KuberaClientProject.lastbuildstate"에 연결(touching)하고 있습니다.
@@ -73,4 +18,4 @@
 
 빌드했습니다.
 
-경과 시간: 00:00:36.16
+경과 시간: 00:00:00.82

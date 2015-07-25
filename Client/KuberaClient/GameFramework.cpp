@@ -287,6 +287,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
 	if(m_pScene) m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+
 	if(nMessageID != WM_MOUSEWHEEL)
 		m_CameraUpDown = 0;
 
@@ -310,16 +311,15 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			m_pUICamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.0f, 0.1f);
 			m_pSelectCamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.9f, 1.0f);
 
-
 			if(ST::sharedManager()->m_bStart == TRUE)
 			{
 				//UI크기 및 배치 재설정
+
 				D3DXMatrixOrthoLH(&m_orthoMatrix, (float)m_nWndClientWidth, (float)m_nWndClientHeight, 1.0f, 500.0f);
 
 				m_pCameraMinimap->SetViewport(m_pd3dDeviceContext,m_nWndClientWidth - m_pScene->GetMinimapUIWidth()  + m_pScene->GetMinimapUIWidth()/7, m_nWndClientHeight - m_pScene->GetMinimapUIHeight() + m_pScene->GetMinimapUIHeight()/13, m_pScene->GetMinimapUIWidth() - m_pScene->GetMinimapUIWidth()/7 , m_pScene->GetMinimapUIHeight(), 0.3f, 0.4f);
 			}
 			
-
 			CreateRenderTargetDepthStencilView();
 
 			m_DialogResourceManager.OnD3D11ResizedSwapChain( m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight );
@@ -335,9 +335,11 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 		//OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
 		break;
 	case WM_KEYDOWN:
+
 		switch (wParam) 
 		{
 		case VK_SPACE:
+
 			ST::sharedManager()->m_bSelected = TRUE;
 			if(HeroManager::sharedManager()->m_pHero != NULL && ST::sharedManager()->m_bStart == TRUE)
 			{
@@ -345,7 +347,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 				m_CameraPosZ = HeroManager::sharedManager()->m_pHero->GetPos().z-10;
 			}			
 			break;
-		} 
+		}
 	case WM_KEYUP:
 		//OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 		break;
@@ -356,7 +358,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			m_CameraUpDown = 1;
 		break;
 	}
-	return(0);
+	return TRUE;
 }
 
 //다음 함수는 응용 프로그램이 종료될 때 호출된다는 것에 유의하라. 
@@ -467,6 +469,7 @@ void CGameFramework::FrameAdvance()
 	if(!LoadManager::sharedManager()->LoadFinish)
 	{
 		float fClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f }; 
+
 		m_pd3dDeviceContext->ClearRenderTargetView(m_pd3dRenderTargetView, fClearColor);
 		if (m_pd3dDepthStencilView) m_pd3dDeviceContext->ClearDepthStencilView(m_pd3dDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
