@@ -37,6 +37,7 @@ public:
 	void err_quit(char *msg);
 
 	BOOL SendData(int _header, void* _packet, int _size);
+	BOOL SendHeader(int _header);
 	BOOL SendType(int _type);
 
 

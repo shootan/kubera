@@ -341,7 +341,11 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 		{
 		case VK_SPACE:
 
-			ST::sharedManager()->m_bSelected = TRUE;
+			//ST::sharedManager()->m_bSelected = TRUE;
+			if(LoadManager::sharedManager()->LoadFinish && !ST::sharedManager()->m_bStart)
+			{
+				ST::sharedManager()->Net->SendHeader(READY_GAME);
+			}
 			if(HeroManager::sharedManager()->m_pHero != NULL && ST::sharedManager()->m_bStart == TRUE)
 			{
 				m_CameraPosX = HeroManager::sharedManager()->m_pHero->GetPos().x;

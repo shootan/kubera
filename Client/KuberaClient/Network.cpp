@@ -181,3 +181,13 @@ BOOL Network::SendType(int _type)
 
 	return TRUE;
 }
+
+BOOL Network::SendHeader(int _header)
+{
+	int retval = 0;
+	retval = send(m_ConnectSock, (char*)&_header, sizeof(int), 0);
+	if(retval == SOCKET_ERROR)
+		return FALSE;
+
+	return TRUE;
+}

@@ -489,7 +489,7 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 		
 		memcpy(&p, _buff->m_RecvBuf+ HEADERSIZE, sizeof(int));
 		play = m_pPlayerList;
-
+		printf("%d번, 워리어선택 \n", _buff->m_Id);
 		while(play != NULL)
 		{
 			if(_buff->m_Id == play->m_Id)
@@ -506,7 +506,7 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 		
 		memcpy(&p, _buff->m_RecvBuf+ HEADERSIZE, sizeof(int));
 		play = m_pPlayerList;
-
+		printf("%d번, 위자드선택 \n", _buff->m_Id);
 		while(play != NULL)
 		{
 			if(_buff->m_Id == play->m_Id)
@@ -520,6 +520,7 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 
 	case READY_GAME:
 		_buff->m_Header = Header;
+		printf("게임 준비 \n");
 
 		break;
 	}
@@ -628,16 +629,15 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 // 
 // 		if(count > 1)
 // 		{
-			Buffer = m_pNextBufferList;
-			while (Buffer != NULL)
-			{
-				if( _buff->m_Id != Buffer->m_Id)
-				{
-					int Header = START_GAME;
-					int retval = send(Buffer->m_ClientSock, (char*)&Header, sizeof(int), 0);
-				}
-				Buffer = Buffer->m_pNext;
-			}
+		Buffer = m_pNextBufferList;
+		while (Buffer != NULL)
+		{
+
+			int Header = START_GAME;
+			int retval = send(Buffer->m_ClientSock, (char*)&Header, sizeof(int), 0);
+
+			Buffer = Buffer->m_pNext;
+		}
 		//}
 		break;
 	}
