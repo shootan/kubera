@@ -1026,11 +1026,11 @@ bool GFBXMeshLoader::CopyToTargetMesh(GFBX::MeshSubset* targetMesh)
 	if (!targetMesh)
 		return false;
 
-	if (mMaterialLookUp.size() > 0)
-	{
-		targetMesh->m_texDiffuseName = mMaterialLookUp[0]->mDiffuseMapName;
-		targetMesh->m_texNormalName = mMaterialLookUp[0]->mNormalMapName;
-	}
+	//if (mMaterialLookUp.size() > 0)
+	//{
+	//	targetMesh->m_texDiffuseName = mMaterialLookUp[0]->mDiffuseMapName;
+	//	targetMesh->m_texNormalName = mMaterialLookUp[0]->mNormalMapName;
+	//}
 	
 	//assert(mTriangleCount == mTriangles.size());
 	//for (unsigned int i = 0; i < mTriangleCount; ++i)

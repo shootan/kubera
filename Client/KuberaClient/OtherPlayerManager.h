@@ -3,12 +3,10 @@
 #include "OtherPlayerObject.h"
 #include "Mesh.h"
 
-#define MAX_OTHER_PLAYER 4
-
 class OtherPlayerManager
 {
 public:
-	OtherPlayerObject* m_pOtherPlayer[MAX_OTHER_PLAYER];
+	OtherPlayerObject* m_pOtherPlayer;
 	GFBX::Mesh *m_pWizardMesh;
 	GFBX::Mesh *m_pWarriorMesh;
 
@@ -19,9 +17,8 @@ public:
 	}
 	~OtherPlayerManager()
 	{
-		for(int i=0; i<MAX_OTHER_PLAYER; i++)
-			m_pOtherPlayer[i]->Release();
 
+		m_pOtherPlayer->Release();
 		delete instance;
 	}
 public:
@@ -36,16 +33,13 @@ public:
 public:
 	void CreateOtherPlayer(D3DXVECTOR3 pos, float boundx, float boundy, float boundz)
 	{
-		for(int i=0; i<MAX_OTHER_PLAYER; i++)
-		{
-			if(m_pOtherPlayer[i] != NULL) continue;
-			m_pOtherPlayer[i] = new OtherPlayerObject();
-			//m_pOtherPlayer[i]->SetAniMesh(mesh);
-			m_pOtherPlayer[i]->SetPosition(pos);
-			//m_pTower[i]->SetP(pos.x, pos.y, pos.z);
-			m_pOtherPlayer[i]->SetBoundSize(boundx, boundy, boundz);
-			m_pOtherPlayer[i]->SetScale(D3DXVECTOR3(0.1, 0.1, 0.1));
-		}
+		m_pOtherPlayer = new OtherPlayerObject();
+		//m_pOtherPlayer->SetAniMesh(mesh);
+		m_pOtherPlayer->SetPosition(pos);
+		//m_pTower[i]->SetP(pos.x, pos.y, pos.z);
+		m_pOtherPlayer->SetBoundSize(boundx, boundy, boundz);
+		m_pOtherPlayer->SetScale(D3DXVECTOR3(0.1, 0.1, 0.1));
+		
 	}
 
 	void SetMesh(GFBX::Mesh* _warrior, GFBX::Mesh* _wizard)

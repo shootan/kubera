@@ -13,6 +13,7 @@ LoadScene::~LoadScene()
 
 void LoadScene::LoadData(ID3D11Device *m_pd3dDevice, ID3D11DeviceContext* m_pd3dDeviceContext)
 {
+	m_pUIShaders->Render(m_pd3dDeviceContext);
 	m_pUIShaders->UpdateShaderVariables(m_pd3dDeviceContext, &m_BackImageObject->m_d3dxmtxWorld);
 	m_BackImageObject->Render(m_pd3dDeviceContext, 0, 0);
 	for(int i=0; i<m_Count; i++)
@@ -37,9 +38,15 @@ void LoadScene::LoadData(ID3D11Device *m_pd3dDevice, ID3D11DeviceContext* m_pd3d
   	case 24:
   		LoadManager::sharedManager()->LoadWarriorModel(m_pd3dDevice);
   		break;
-  	case 34:
+  	case 29:
   		LoadManager::sharedManager()->LoadWizardModel(m_pd3dDevice);
   		break;
+	case 34:
+		LoadManager::sharedManager()->LoadBearModel(m_pd3dDevice);
+		LoadManager::sharedManager()->LoadTurtleModel(m_pd3dDevice);
+		LoadManager::sharedManager()->LoadLichkingModel(m_pd3dDevice);
+		LoadManager::sharedManager()->LoadTestModel(m_pd3dDevice);
+		break;
   	case 41:
   		LoadManager::sharedManager()->LoadParticle(m_pd3dDevice);
   		break;
@@ -56,7 +63,7 @@ void LoadScene::BuildObject(ID3D11Device *m_pd3dDevice)
 	m_BackImage->Initialize(m_pd3dDevice, m_Width, m_Height, L"UI/BackImage.png",m_Width, m_Height);
 	m_BackImageObject =  new UIObject();
 	m_BackImageObject->SetUI(m_BackImage);
-	m_pUIShaders = LoadManager::sharedManager()->m_pUIShaders;
+	m_pUIShaders = LoadManager::sharedManager()->m_pUIShaders_Loading;
 	m_pUIShaders->AddObject(m_BackImageObject);
 
 	for(int i=0; i<50; i++)
