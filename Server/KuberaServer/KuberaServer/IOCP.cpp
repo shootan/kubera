@@ -339,7 +339,7 @@ void IOCPServer::OnInit(IOBuffer* _buff)
 		if( _buff->m_Id != Buffer->m_Id)
 		{
 			int Header = CLIENT_CONNECT;
-			int retval = send(_buff->m_ClientSock, &Header, sizeof(int), 0);
+			int retval = send(_buff->m_ClientSock, (char*)&Header, sizeof(int), 0);
 		}
 		Buffer = Buffer->m_pNext;
 	}
@@ -417,6 +417,9 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 	//	printf("¾îµð³Ä4\n");
 	}
 	int Header = 0;
+	int p = 0;
+	PlayerPacket pl;
+	Player* play;
 
 	memcpy(&Header, _buff->m_RecvBuf, sizeof(int));
 
@@ -425,17 +428,17 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 	{
 	case HERODATA:
 		_buff->m_Header = Header;
-		PlayerPacket p;
-		memcpy(&p, _buff->m_RecvBuf+ HEADERSIZE, sizeof(PlayerPacket));
+		
+		memcpy(&pl, _buff->m_RecvBuf+ HEADERSIZE, sizeof(PlayerPacket));
 
-		Player* play;
+		
 		play = m_pPlayerList;
 
 		while(play != NULL)
 		{
 			if(_buff->m_Id == play->m_Id)
 			{
-				play->m_PI = &p;
+				play->m_PI = &pl;
 				break;
 			}
 			play = play->m_pNext;
@@ -451,7 +454,6 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 		_buff->m_Header = Header;
 		int p;
 		memcpy(&p, _buff->m_RecvBuf+ HEADERSIZE, sizeof(int));
-		Player* play;
 		play = m_pPlayerList;
 
 		while(play != NULL)
@@ -467,9 +469,8 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 
 	case SELECT_TEAM_BLUE:
 		_buff->m_Header = Header;
-		int p;
+	
 		memcpy(&p, _buff->m_RecvBuf+ HEADERSIZE, sizeof(int));
-		Player* play;
 		play = m_pPlayerList;
 
 		while(play != NULL)
@@ -485,9 +486,8 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 
 	case SELECT_CHAR_WARIOR:
 		_buff->m_Header = Header;
-		int p;
+		
 		memcpy(&p, _buff->m_RecvBuf+ HEADERSIZE, sizeof(int));
-		Player* play;
 		play = m_pPlayerList;
 
 		while(play != NULL)
@@ -503,9 +503,8 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 
 	case SELECT_CHAR_WIZARD:
 		_buff->m_Header = Header;
-		int p;
+		
 		memcpy(&p, _buff->m_RecvBuf+ HEADERSIZE, sizeof(int));
-		Player* play;
 		play = m_pPlayerList;
 
 		while(play != NULL)
@@ -564,7 +563,7 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 				char* Buffer = new char[Size];
 				*(int*)Buffer = HERODATA;
 				memcpy(Buffer+HEADERSIZE, &play->m_PI, sizeof(PlayerPacket));
-				int retval = send(_buffer->m_ClientSock, Buffer, Size, 0);
+				int retval = send(_buff->m_ClientSock, Buffer, Size, 0);
 			}
 			play = play->m_pNext;
 		}
@@ -577,7 +576,7 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 			if( _buff->m_Id != Buffer->m_Id)
 			{
 				int Header = CLIENT_CONNECT;
-				int retval = send(Buffer->m_ClientSock, &Header, sizeof(int), 0);
+				int retval = send(Buffer->m_ClientSock, (char*)&Header, sizeof(int), 0);
 			}
 			Buffer = Buffer->m_pNext;
 		}
@@ -594,7 +593,7 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 				char* Buffer = new char[Size];
 				*(int*)Buffer = SELECT_TEAM;
 				memcpy(Buffer+HEADERSIZE, &play->m_Team, sizeof(int));
-				int retval = send(_buffer->m_ClientSock, Buffer, Size, 0);
+				int retval = send(_buff->m_ClientSock, Buffer, Size, 0);
 				
 			}
 			Buffer = Buffer->m_pNext;
@@ -611,7 +610,7 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 				char* Buffer = new char[Size];
 				*(int*)Buffer = SELECT_CHAR;
 				memcpy(Buffer+HEADERSIZE, &play->m_Char, sizeof(int));
-				int retval = send(_buffer->m_ClientSock, Buffer, Size, 0);
+				int retval = send(_buff->m_ClientSock, Buffer, Size, 0);
 
 			}
 			Buffer = Buffer->m_pNext;
@@ -619,27 +618,27 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 		break;
 
 	case READY_GAME:
-		Buffer = m_pNextBufferList;
-		int count = 0;
-		while(Buffer != NULL)
-		{
-			count++;
-			Buffer = Buffer->m_pNext;
-		}
-
-		if(count > 1)
-		{
+// 		Buffer = m_pNextBufferList;
+// 		int count = 0;
+// 		while(Buffer != NULL)
+// 		{
+// 			count++;
+// 			Buffer = Buffer->m_pNext;
+// 		}
+// 
+// 		if(count > 1)
+// 		{
 			Buffer = m_pNextBufferList;
 			while (Buffer != NULL)
 			{
 				if( _buff->m_Id != Buffer->m_Id)
 				{
-					int Header = CLIENT_CONNECT;
-					int retval = send(Buffer->m_ClientSock, &Header, sizeof(int), 0);
+					int Header = START_GAME;
+					int retval = send(Buffer->m_ClientSock, (char*)&Header, sizeof(int), 0);
 				}
 				Buffer = Buffer->m_pNext;
 			}
-		}
+		//}
 		break;
 	}
 

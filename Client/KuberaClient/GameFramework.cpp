@@ -48,16 +48,16 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 
 	//Direct3D 디바이스, 디바이스 컨텍스트, 스왑 체인 등을 생성하는 함수를 호출한다. 
 	if (!CreateDirect3DDisplay()) return(false); 
-//  	char IP[30];
-//   	printf("IP : ");
-//   	scanf("%s", IP);
-// 	Net.InitClient(IP, 9000);
-// 	ST::sharedManager()->Net = Net;	
-// 
-// 	while (!Net.m_InitFinish)
-// 	{
-// 		Sleep(100);
-// 	}
+  	char IP[30];
+   	printf("IP : ");
+   	scanf("%s", IP);
+ 	Net.InitClient(IP, 9000);
+ 	ST::sharedManager()->Net = &Net;	
+ 
+ 	while (!Net.m_InitFinish)
+ 	{
+ 		Sleep(100);
+ 	}
 	MapEditorManager::sharedManager()->LoadMapData();
 	printf("Server Connect \n");
 
@@ -361,12 +361,20 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 				HeroManager::sharedManager()->m_pHero->SetState(SKILL1);
 			}
 			break;
-		case 1:
-			int eeee;
+		case '1':
+			if(LoadManager::sharedManager()->LoadFinish && !ST::sharedManager()->m_bStart)
+			{
+				int Cha = 1;
+				ST::sharedManager()->Net->SendData(SELECT_CHAR_WARIOR, &Cha, sizeof(int));
+			}
 			break;
 
-		case 2:
-			int cccc;
+		case '2':
+			if(LoadManager::sharedManager()->LoadFinish && !ST::sharedManager()->m_bStart)
+			{
+				int Cha = 2;
+				ST::sharedManager()->Net->SendData(SELECT_CHAR_WIZARD, &Cha, sizeof(int));
+			}
 			break;
 		} 
 		break;
@@ -743,7 +751,7 @@ void CGameFramework::SendHeroData()
 		HeroInfo.PI.m_Type = HeroManager::sharedManager()->m_pHero->GetType();
 		HeroInfo.size = sizeof(PlayerPacket);
 
-		Net.SendData(&HeroInfo);
+		Net.SendData(HERODATA, &HeroInfo, sizeof(PlayerPacket));
 	}
 }
 

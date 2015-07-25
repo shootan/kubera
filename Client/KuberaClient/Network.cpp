@@ -1,5 +1,5 @@
 #include "Network.h"
-
+#include "ST.h"
 Network::Network()
 {
 	ZeroMemory(&PI, sizeof(PlayerPacket));
@@ -9,6 +9,7 @@ Network::Network()
 	m_ID = 0;
 	m_Type = 0;
 	m_InitFinish = TRUE;
+	OtherChar = 0;
 }
 
 Network::~Network()
@@ -133,6 +134,12 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 
 				break;
 			}
+		case START_GAME:
+			ST::sharedManager()->m_bSelected = TRUE;
+			break;
+
+		case SELECT_CHAR:
+			retval = recv(server->m_ConnectSock, (char*)&server->OtherChar, sizeof(int),0);
 		
 		}
 
@@ -141,17 +148,23 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 	return 0;
 }
 
-BOOL Network::SendData(PlayerPacket* _pi)
+BOOL Network::SendData(int _header, void* _packet, int _size)
 {
 	int retval = 0;
-	int p = sizeof(PlayerPacket);
 	
-	retval = send(m_ConnectSock, (char*)_pi, sizeof(PlayerPacket), 0);
+	int adq = reinterpret_cast<unsigned char *>(_packet)[0];
+	int Size = sizeof(int) + _size;
+	char* Buffer = new char[Size];
+	*(int*)Buffer = _header;
+	memcpy(Buffer+sizeof(int), _packet, Size);
+	retval = send(m_ConnectSock, Buffer, Size, 0);
 	if(retval == SOCKET_ERROR)
 		return FALSE;
 
 	return TRUE;
 }
+
+
 
 BOOL Network::SendType(int _type)
 {

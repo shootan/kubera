@@ -12,6 +12,8 @@ public:
 	SOCKET m_ConnectSock;
 	WSADATA m_Wsa;
 	PlayerPacket PI;
+	int			OtherChar;
+
 
 
 
@@ -34,7 +36,7 @@ public:
 	void err_display(char *msg);
 	void err_quit(char *msg);
 
-	BOOL SendData(PlayerPacket* PI);
+	BOOL SendData(int _header, void* _packet, int _size);
 	BOOL SendType(int _type);
 
 
