@@ -1,7 +1,6 @@
 #pragma once
 #include "header.h"
 #include "GameObject.h"
-
 #include "HeroObject.h"
 #include "ObstacleObject.h"
 #include "Shader.h"
@@ -18,6 +17,10 @@
 #include "Particle3Mesh.h"
 #include "Camera.h"
 #include "Light.h"
+#include "UIObject.h"
+#include "UIClass.h"
+
+#define MAX_UI 17
 
 class CScene
 {
@@ -71,6 +74,38 @@ private:
 	LIGHTS *m_pLights;
 	ID3D11Buffer *m_pd3dcbLights;
 
+	//UI
+	UIClass* m_pUI[MAX_UI];
+	CUIShader *m_pUIShaders;
+	UIObject* m_pUIObjects[MAX_UI];
+
+	float m_UIskillbarWidth, m_UIskillbarHeight; //스킬바 UI
+	float m_UIMinimapWidth, m_UIMinimapHeight;   //미니맵 UI
+	float m_UIInfoWidth, m_UIInfoHeight;			//캐릭터 정보창 UI
+	float m_UIScoreWidth, m_UIScoreHeight;		//점수판 UI
+
+	float m_SwordWidth, m_SwordHeight; //특성 아이콘
+	float m_ShielWidth, m_ShielHeight;
+	float m_BootsWidth, m_BootsHeight;
+
+	float m_HpbarRWidth, m_HpbarRHeight; //hp바
+	float m_HpbarGWidth, m_HpbarGHeight;
+
+	float m_CharacterFaceWidth , m_CharacterFaceHeight; //캐릭터 정보창 얼굴
+
+	float m_Skillq_buttonWidth, m_Skillq_buttonHeight; //스킬 버튼
+	float m_Skillw_buttonWidth, m_Skillw_buttonHeight; //스킬 버튼
+	float m_Skille_buttonWidth, m_Skille_buttonHeight; //스킬 버튼
+	float m_Skillr_buttonWidth, m_Skillr_buttonHeight; //스킬 버튼
+
+	float m_UpgradeSwordWidth, m_UpgradeSwordHeight;
+	float m_UpgradeShieldWidth, m_UpgradeShieldHeight;
+	float m_UpgradeBootsWidth, m_UpgradeBootsHeight;
+
+	int m_nWndClientWidth;
+	int m_nWndClientHeight;
+	int m_nPrevWndClientWidth;
+	int m_nPrevWndClientHeight;
 public:
 	CScene(void);
 	~CScene(void);
@@ -126,4 +161,10 @@ public:
 	void CreateLightShaderVariables(ID3D11Device *pd3dDevice);
 	void UpdateLightShaderVariable(ID3D11DeviceContext *pd3dDeviceContext, LIGHTS *pLights);
 	void ReleaseLightShaderVariables();
+
+	//ui
+	void CreateUI(ID3D11Device *pd3dDevice,int  _wndWidth,int  _wndHeight);
+	void RenderUI(ID3D11DeviceContext *pd3dDeviceContext, int _wndWidth, int _wndHeight);
+	float GetMinimapUIWidth() {return m_UIMinimapWidth;}
+	float GetMinimapUIHeight() {return m_UIMinimapHeight;}
 };

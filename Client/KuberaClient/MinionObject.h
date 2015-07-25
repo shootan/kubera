@@ -19,6 +19,9 @@ private:
 	BOOL m_bUseParticleAttack;
 
 	D3DXVECTOR3 m_vWayPoint;  //처음 생성 지점
+
+	int m_Level;
+
 public:
 	MinionObject();
 	~MinionObject();
@@ -27,6 +30,8 @@ public:
 	virtual void Render(ID3D11DeviceContext *pd3dDeviceContext, float fTimeElapsed, CCamera *pCamera);
 	virtual void SetNewDestination ( D3DXVECTOR3 _pos );
 	virtual void Update(float fTimeElapsed);
+
+	void SetWatchTarget(D3DXVECTOR3 _pos);
 
 	void SetWayPoint(D3DXVECTOR3 _v) { m_vWayPoint = _v; }
 	D3DXVECTOR3 GetWayPoint() { return m_vWayPoint; }

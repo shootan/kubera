@@ -118,24 +118,21 @@ void ControlManager::SetTarget(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRay
 		}
 	}
 
-	for(int i=0; i<MAX_OTHER_PLAYER; i++)  //다른 플레이어 타겟 잡기
+	//다른 플레이어 타겟 잡기
+	
+	float dist = INTersectRaySphere(vRayDirection, vRayOrigin, OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetPosition(), 
+		OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetBoundSizeX()*2);
+
+	if( dist > 0 )
 	{
-		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetVisible() != TRUE) continue;
-
-		float dist = INTersectRaySphere(vRayDirection, vRayOrigin, OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetPosition(), 
-			OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetBoundSizeX()*2);
-
-		if( dist > 0 )
-		{
-			HeroManager::sharedManager()->m_pHero->SetTarget(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]);
-			HeroManager::sharedManager()->m_pHero->SetTargetID(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetID());
-			return;
-		}
+		HeroManager::sharedManager()->m_pHero->SetTarget(OtherPlayerManager::sharedManager()->m_pOtherPlayer);
+		HeroManager::sharedManager()->m_pHero->SetTargetID(OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetID());
+		return;
 	}
-
 	
 
-	float dist = INTersectRaySphere(vRayDirection, vRayOrigin, HeroManager::sharedManager()->RedNexus->GetPosition(), 
+	//넥서스 타겟
+	dist = INTersectRaySphere(vRayDirection, vRayOrigin, HeroManager::sharedManager()->RedNexus->GetPosition(), 
 		HeroManager::sharedManager()->RedNexus->GetBoundSizeX()*2);
 	if(dist> 0)
 	{

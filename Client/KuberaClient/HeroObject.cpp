@@ -28,7 +28,7 @@ HeroObject::HeroObject(void)
 
 	//초기 정보값
 	m_Level = 1;			//레벨1
-	m_HP = 100;				//hp 100
+	m_HP = 100.f;				//hp 100
 	m_Defense = 3;			//방어력 3
 	m_fWalkSpeed = 15.f;	//스피드 15
 	m_Damage = 10.f;		//데미지 10
@@ -292,7 +292,7 @@ void HeroObject::Update(float fTimeElapsed)
 
 void HeroObject::Animate(float fTimeElapsed)
 {
-	m_time += fTimeElapsed * 1.0f;
+	m_time += fTimeElapsed * 2.0f;
 
 	//printf(" %.3f \n", m_time);
 
@@ -470,12 +470,9 @@ void HeroObject::Animate(float fTimeElapsed)
 						if(ParticleManager::sharedManager()->m_pParticle[i]->GetType() == WIZARD_SKILL_MISSILE)
 						{
 							ParticleManager::sharedManager()->m_pParticle[i]->SetUsed(TRUE);
-							for(int j=0;j<MAX_OTHER_PLAYER; j++)
-							{
-								if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetVisible() != TRUE) continue;
-								ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]);
-								break;
-							}
+	
+							ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(OtherPlayerManager::sharedManager()->m_pOtherPlayer);
+							
 							if(ParticleManager::sharedManager()->m_pParticle[i]->GetTarget() == NULL)
 								ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(this);
 							D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );

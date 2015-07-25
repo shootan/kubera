@@ -26,16 +26,25 @@ public:
 	CAnimationShader *m_pAnimationShaders_NoLight;
 	CParticleShader *m_pParticleShaders;
 	CObjectShader *m_pObjectShaders;
-	CUIShader *m_pUIShaders;
+	CUIShader *m_pUIShaders_Loading;
+	CUIShader *m_pUIShaders_Game;
 	int m_nShaders;
 
 	int m_nObjects;
 	int m_nIntanceObjects;
 	int m_nAnimationObjects;
 
+	//히어로 메쉬
 	GFBX::Mesh *m_pWarriorMesh;
 	GFBX::Mesh *m_pWizardMesh;
+	GFBX::Mesh *m_pLichkingMesh;
+	GFBX::Mesh *m_pTestMesh;
+	//몬스터 메쉬
+	GFBX::Mesh *m_pBearMesh;
+	GFBX::Mesh *m_pTurtleMesh;
+	//바닥 메쉬
 	GFBX::Mesh *pPlaneMesh;
+	//넥서스메쉬
 	GFBX::Mesh *pBlueNexusMesh;
 	GFBX::Mesh *pRedNexusMesh;
 	ParticleMesh *m_pParticleMesh;
@@ -71,8 +80,11 @@ public:
 public:
 	void LoadUIShader(ID3D11Device* pd3Device)
 	{
-		m_pUIShaders = new CUIShader();
-		m_pUIShaders->CreateShader(pd3Device, 80);
+		m_pUIShaders_Loading = new CUIShader();
+		m_pUIShaders_Loading->CreateShader(pd3Device, 80);
+
+		m_pUIShaders_Game = new CUIShader();
+		m_pUIShaders_Game->CreateShader(pd3Device, 80);
 	}
 	void LoadShaderInstancing1(ID3D11Device *pd3dDevice)
 	{
@@ -128,8 +140,10 @@ public:
 		GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pWarriorMesh, L"Hero/Hero/knight2.FBX", pd3dDevice);
 		m_pWarriorMesh->OnCreateDevice(pd3dDevice);
 		for(int i=0; i<m_pWarriorMesh->GetSubsetCount(); i++)
+		{
+			m_pWarriorMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(10, 13, 10));
 			m_pWarriorMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Hero/micro_knight.png");
-
+		}
 		printf("Success Load \n");
 		
 	}
@@ -144,11 +158,81 @@ public:
 		GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pWizardMesh, L"Hero/Hero/Wizard2.FBX", pd3dDevice);
 		m_pWizardMesh->OnCreateDevice(pd3dDevice);
 		for(int i=0; i<m_pWizardMesh->GetSubsetCount(); i++)
+		{
+			m_pWizardMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(10, 13, 10));
 			m_pWizardMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Hero/micro_wizard_col.tif");
+		}
 		printf("Success Load \n");
-
-		
 	}
+
+	void LoadBearModel(ID3D11Device *pd3dDevice)
+	{
+		printf("Load BearModel \n");
+
+		//코뿔소 메쉬
+		m_pBearMesh = new GFBX::Mesh();
+		GFBXMeshLoader::getInstance()->OnCreateDevice(pd3dDevice);
+		GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pBearMesh, L"Monster/bear.FBX", pd3dDevice);
+		m_pBearMesh->OnCreateDevice(pd3dDevice);
+		for(int i=0; i<m_pBearMesh->GetSubsetCount(); i++)
+		{
+			m_pBearMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(50, 10, 25));
+			m_pBearMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Monster/bear.tif");
+		}
+		printf("Success Load \n");
+	}
+
+	void LoadTurtleModel(ID3D11Device *pd3dDevice)
+	{
+		printf("Load TurtleModel \n");
+
+		//코뿔소 메쉬
+		m_pTurtleMesh = new GFBX::Mesh();
+		GFBXMeshLoader::getInstance()->OnCreateDevice(pd3dDevice);
+		GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pTurtleMesh, L"Monster/turtle/turtle3.FBX", pd3dDevice);
+		m_pTurtleMesh->OnCreateDevice(pd3dDevice);
+		for(int i=0; i<m_pTurtleMesh->GetSubsetCount(); i++)
+		{
+			m_pTurtleMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(50, 10, 25));
+			m_pTurtleMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Monster/turtle/turtle.tif");
+		}
+		printf("Success Load \n");
+	}
+
+	void LoadLichkingModel(ID3D11Device *pd3dDevice)
+	{
+		printf("Load TurtleModel \n");
+
+		//코뿔소 메쉬
+		m_pLichkingMesh = new GFBX::Mesh();
+		GFBXMeshLoader::getInstance()->OnCreateDevice(pd3dDevice);
+		GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pLichkingMesh, L"Monster/lichking2.FBX", pd3dDevice);
+		m_pLichkingMesh->OnCreateDevice(pd3dDevice);
+		for(int i=0; i<m_pLichkingMesh->GetSubsetCount(); i++)
+		{
+			m_pLichkingMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(50, 10, 25));
+			m_pLichkingMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Monster/lichking.tif");
+		}
+		printf("Success Load \n");
+	}
+
+	void LoadTestModel(ID3D11Device *pd3dDevice)
+	{
+		printf("Load TurtleModel \n");
+
+		//코뿔소 메쉬
+		m_pTestMesh = new GFBX::Mesh();
+		GFBXMeshLoader::getInstance()->OnCreateDevice(pd3dDevice);
+		GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pTestMesh, L"Monster/angel2.FBX", pd3dDevice);
+		m_pTestMesh->OnCreateDevice(pd3dDevice);
+		for(int i=0; i<m_pTestMesh->GetSubsetCount(); i++)
+		{
+			m_pTestMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(50, 10, 25));
+			m_pTestMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Monster/angel.tif");
+		}
+		printf("Success Load \n");
+	}
+
 	void LoadMesh(ID3D11Device *pd3dDevice)
 	{
 		printf("Load Object");

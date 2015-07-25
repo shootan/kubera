@@ -174,6 +174,7 @@ void MinionObject::Animate(float fTimeElapsed)
 	}
 	else if(m_iState == ATTACK)
 	{
+		SetWatchTarget(m_pTarget->GetPosition());
 		if(ST::sharedManager()->GetDistance(m_Pos, m_pTarget->GetPosition()) >  m_pTarget->GetBoundSizeX()/2 + this->GetBoundSizeX()/2)
 		{//타겟과의 거리가 멀어지면 무브
 			m_iState = MOVE;
@@ -209,4 +210,28 @@ void MinionObject::Animate(float fTimeElapsed)
 	{
 
 	}
+}
+
+
+void MinionObject::SetWatchTarget(D3DXVECTOR3 _pos)
+{
+	m_vDestination.x = _pos.x;
+	m_vDestination.y = _pos.y;
+	m_vDestination.z = _pos.z;       
+	m_vWalkIncrement = m_vDestination - m_Pos;
+	D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
+	//m_bFindPath = FALSE;
+
+
+	//// Calculate the rotation angle before. Next, change the walk direction into 
+	//// an increment by multiplying by speed.
+	float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
+	D3DXVECTOR3 cross;
+	D3DXVec3Cross( &cross, &m_vWalkIncrement, &m_vFacingDirection );
+	fAngle = acosf( fAngle );
+	if ( cross.y >  0.0f ) {
+		fAngle *=-1.0f;
+	}
+	fAngle /= D3DX_PI;
+	this->SetRotation(2, 1/fAngle);
 }
