@@ -63,12 +63,6 @@ struct PlayerPacket
 	PlayerInfo	PI;
 };
 
-struct PlayerStruct
-{
-	BOOL		Use;
-	PlayerInfo	PI;
-};
-
 enum TAG
 {
 	NONE, HERO, OTHERPLAYER, MINION, OBSTACLE, PLANE, HERO_BOUND, OBSTACLE_BOUND, TOWER, MISSILE, EFFECT

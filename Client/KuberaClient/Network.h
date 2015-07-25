@@ -11,7 +11,7 @@ class Network
 public:
 	SOCKET m_ConnectSock;
 	WSADATA m_Wsa;
-	PlayerStruct PI[4];
+	PlayerPacket PI;
 
 
 

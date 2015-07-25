@@ -2,7 +2,7 @@
 
 Network::Network()
 {
-	ZeroMemory(PI, sizeof(PlayerStruct) * 10);
+	ZeroMemory(&PI, sizeof(PlayerPacket));
 
 	m_bJoinPlayer = FALSE;
 	m_ClientCount = 0;
@@ -91,7 +91,11 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 	int Number = 0;
 	char Buf[BUFSIZE];
 	int Count = 0;
-	int Header = 0;
+	int Header = CLIENT_CONNECT;
+	retval = send(server->m_ConnectSock, (char*)&Header, sizeof(int), 0);
+
+	server->m_InitFinish = TRUE;
+
 	while(TRUE)
 	{
 		/////////////////////////////// 헤더 받아서 ㅇㅋ?
@@ -102,13 +106,13 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 
 		switch(Header)
 		{
+		case CLIENT_CONNECT:
+
+			break;
 		case INITCLIENT:
 			{
-				retval = recv(server->m_ConnectSock, (char*)&server->m_ID, sizeof(int), 0);
-				retval = recv(server->m_ConnectSock, (char*)&server->m_Pos, sizeof(Vector3), 0);
-				retval = recv(server->m_ConnectSock, (char*)&server->m_HP, sizeof(float), 0);
-				retval = recv(server->m_ConnectSock, (char*)&server->m_Type, sizeof(int), 0);
-				server->m_InitFinish = FALSE;
+				
+				
 				break;
 			}
 		case HERODATA:
@@ -117,26 +121,8 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 				if(retval == SOCKET_ERROR)
 					break;
 
-				for(int i=0; i<4; i++)
-				{
-					if(server->PI[i].PI.m_ID == p.PI.m_ID)
-					{
-						server->PI[i].PI = p.PI;
-						break;
-					}
-
-					if(i == 3)
-					{
-						for(int j=0; j<4; j++)
-						{
-							if(server->PI[j].PI.m_ID == 0)
-							{
-								server->PI[j].PI = p.PI;
-								break;
-							}
-						}
-					}
-				}
+				server->PI = p;
+		
 				break;
 			}
 		case HEROCOUNT:

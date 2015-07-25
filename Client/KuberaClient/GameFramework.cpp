@@ -68,18 +68,19 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 
 	//Direct3D 디바이스, 디바이스 컨텍스트, 스왑 체인 등을 생성하는 함수를 호출한다. 
 	if (!CreateDirect3DDisplay()) return(false); 
- 	/*char IP[30];
-  	printf("IP : ");
-  	scanf("%s", IP);
-  	Net.InitClient(IP, 9000);
- 
-     while (Net.m_InitFinish)
-     {
-     	Sleep(100);
-     }*/
-   	MapEditorManager::sharedManager()->LoadMapData();
- 	printf("Server Connect \n");
-	
+//  	char IP[30];
+//   	printf("IP : ");
+//   	scanf("%s", IP);
+// 	Net.InitClient(IP, 9000);
+// 	ST::sharedManager()->Net = Net;	
+// 
+// 	while (!Net.m_InitFinish)
+// 	{
+// 		Sleep(100);
+// 	}
+	MapEditorManager::sharedManager()->LoadMapData();
+	printf("Server Connect \n");
+
 	//렌더링할 객체(게임 월드 객체)를 생성한다. 
 
 	HeroManager::sharedManager()->SetID(Net.m_ID);
@@ -417,6 +418,13 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			{
 				HeroManager::sharedManager()->m_pHero->SetState(SKILL1);
 			}
+			break;
+		case 1:
+			int eeee;
+			break;
+
+		case 2:
+			int cccc;
 			break;
 		} 
 
@@ -900,17 +908,16 @@ void CGameFramework::RenderText()
 		}
 
 	}
-	
-	for(int i=0; i<MAX_OTHER_PLAYER; i++)
-	{
-		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetVisible() != TRUE) continue;
 
-		if(HeroManager::sharedManager()->m_pHero->GetTarget() == OtherPlayerManager::sharedManager()->m_pOtherPlayer[i])
+
+	if(OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetVisible()== TRUE)
+	{
+		if(HeroManager::sharedManager()->m_pHero->GetTarget() == OtherPlayerManager::sharedManager()->m_pOtherPlayer)
 		{
 			int id = OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetID();
 			swprintf(str, 255, L"Target : OtherPlayer [%d], HP : %.0f",id, OtherPlayerManager::sharedManager()->m_pOtherPlayer[i]->GetHP());
 			m_pTxtHelper->DrawTextLine(str);
-			break;
+
 		}
 	}
 

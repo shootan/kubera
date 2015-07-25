@@ -11,7 +11,7 @@
 #include <d3dx9math.h>
 
 // BUFSIZE
-#define BUFSIZE 1024*4
+#define BUFSIZE 1024
 #define MAXPLAYER 30
 #define HEADERSIZE sizeof(int)
 struct Vector3
@@ -56,6 +56,8 @@ struct PlayerPacket
 
 struct Player{
 	int m_Id;
+	int m_Char;
+	int m_Team;
 	BOOL m_Connect;
 	float	m_AttackTime;
 	PlayerPacket*	m_PI;
@@ -81,6 +83,7 @@ struct IOBuffer{
 	int			m_iSendbytesCount;
 	int			m_MinionCount;
 	int			m_ReconnectCount;
+	int			m_Header;
 	BOOL		m_bSendFinish;
 	WSABUF		m_Wsabuf;
 	WSABUF		m_SendWsabuf;
@@ -116,7 +119,8 @@ struct MinionPacket
 
 enum NETWORKCODE
 {
-	NETNONE, HERODATA, HEROCOUNT, INITCLIENT, MINIONDATA, HEROCHOOSE
+	NETNONE, HERODATA, HEROCOUNT, INITCLIENT, CLIENT_CONNECT, CONNECT_SUCCESS,SELECT_TEAM_RED, SELECT_TEAM_BLUE,
+	SELECT_TEAM, SELECT_CHAR_WARIOR, SELECT_CHAR_WIZARD, SELECT_CHAR, READY_GAME, START_GAME
 };
 
 struct Information

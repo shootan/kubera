@@ -1,7 +1,7 @@
 
 #pragma once
 #include "header.h"
-
+#include "Network.h"
 class ST
 {
 private:
@@ -10,6 +10,7 @@ private:
 		m_bVisible =FALSE;
 		m_bSelected = FALSE;
 		m_bStart = FALSE;
+		Net = NULL;
 	}
 public:
 	~ST()
@@ -20,6 +21,8 @@ public:
 	BOOL m_bVisible;
 	BOOL m_bSelected;
 	BOOL m_bStart;
+
+	Network* Net;
 public:
 	static ST* instance;
 	static ST* sharedManager()
