@@ -344,7 +344,7 @@ void HeroObject::Animate(float fTimeElapsed)
 						if(ParticleManager::sharedManager()->m_pParticle[i]->GetType() == WIZARD_ATTACK)
 						{
 							D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
-							ParticleManager::sharedManager()->m_pParticle[i]->SetPosition(m_Pos + D3DXVECTOR3(0 , BoundsizeY *2/3, 0) + m_vWalkIncrement*20);
+							ParticleManager::sharedManager()->m_pParticle[i]->SetPosition(m_Pos + D3DXVECTOR3(0 , BoundsizeY *2/3, 0) + m_vWalkIncrement*15);
 							ParticleManager::sharedManager()->m_pParticle[i]->SetUsed(TRUE);
 							ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(m_pTarget);
 							ParticleManager::sharedManager()->m_pParticle[i]->SetAttacker(this);
@@ -471,13 +471,13 @@ void HeroObject::Animate(float fTimeElapsed)
 						{
 							ParticleManager::sharedManager()->m_pParticle[i]->SetUsed(TRUE);
 	
-							ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(OtherPlayerManager::sharedManager()->m_pOtherPlayer);
+							//ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(OtherPlayerManager::sharedManager()->m_pOtherPlayer);
 							
 							if(ParticleManager::sharedManager()->m_pParticle[i]->GetTarget() == NULL)
 								ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(this);
 							D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
 							ParticleManager::sharedManager()->m_pParticle[i]->SetDirection(m_vWalkIncrement);
-							ParticleManager::sharedManager()->m_pParticle[i]->SetPosition(D3DXVECTOR3(m_Pos.x, m_Pos.y + 10, m_Pos.z) + m_vWalkIncrement * 30);
+							ParticleManager::sharedManager()->m_pParticle[i]->SetPosition(D3DXVECTOR3(m_Pos.x, m_Pos.y + 10, m_Pos.z) + m_vWalkIncrement * 15);
 							ParticleManager::sharedManager()->m_pParticle[i]->SetAttacker(this);
 							m_bUseParticleMissile = TRUE;
 							break;

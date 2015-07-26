@@ -14,20 +14,23 @@ MinionObject::MinionObject(void)
 	m_PrevState = IDLE;
 	m_iTargetID = 0;
 	m_iTeam = NONE_TEAM;
-
+	m_iType = 0;
 
 	m_fAttackTime = 0.0f;
 	m_Time = 0.0f;
 
-	m_fWalkSpeed = 15.0f;
+	m_Level = 1;
+	m_fWalkSpeed = 10.0f;
 	m_HP = 50.f;
-	m_Damage = 10.f;
+	m_Damage = 5.f;
 	m_Defense = 3;
 
 	m_iparticleNum = 500;
 	m_bUseParticle = FALSE;
 	m_bUseParticleMissile = FALSE;
 	m_bUseParticleAttack = FALSE;
+
+	m_bDeathAnimation = FALSE;
 
 	m_vWayPoint = D3DXVECTOR3(0 , 0, 0);
 }
@@ -155,13 +158,25 @@ void MinionObject::Update(float fTimeElapsed)
 	else
 	{
 		if(ST::sharedManager()->GetDistance(HeroManager::sharedManager()->m_pHero->GetPosition(), m_Pos) < 50 &&
-			ST::sharedManager()->GetDistance(m_vWayPoint, HeroManager::sharedManager()->m_pHero->GetPosition()) <= 100) //히어로 타겟잡기
+			ST::sharedManager()->GetDistance(m_vWayPoint, HeroManager::sharedManager()->m_pHero->GetPosition()) <= 100 &&
+			!m_bDeathAnimation ) //히어로 타겟잡기
 		{
 			m_pTarget = HeroManager::sharedManager()->m_pHero;
 			m_iState = MOVE;
 			SetNewDestination(m_pTarget->GetPosition());
 		}
 	}
+
+	if(m_HP <= 0.0f)
+	{
+		if(!m_bDeathAnimation)
+		{
+			m_HP = m_Level * 50;
+			m_iState = DEATH;
+			m_bDeathAnimation = TRUE;
+		}
+	}
+
 }
 
 void MinionObject::Animate(float fTimeElapsed)
@@ -170,7 +185,17 @@ void MinionObject::Animate(float fTimeElapsed)
 
 	if(m_iState == IDLE)
 	{
-
+		switch(m_iType)
+		{
+		case CLEFT:
+			if(m_Time < 7.7f) m_Time = 7.7f;
+			if(m_Time > 14.3f) m_Time = 7.7f;
+			break;
+		case TURTLE:
+			if(m_Time < 0.1f) m_Time = 0.1f;
+			if(m_Time > 8.4f) m_Time = 0.1f;
+			break;
+		}
 	}
 	else if(m_iState == ATTACK)
 	{
@@ -179,6 +204,35 @@ void MinionObject::Animate(float fTimeElapsed)
 		{//타겟과의 거리가 멀어지면 무브
 			m_iState = MOVE;
 			SetNewDestination(m_pTarget->GetPosition());
+			/*switch(m_iType)
+			{
+			case CLEFT:
+				if(m_Time > 40.6f && m_Time < 41.6f)
+				{
+					m_iState = MOVE;
+					SetNewDestination(m_pTarget->GetPosition());
+				}
+				break;
+			case TURTLE:
+				if(m_Time > 30.8f)
+				{
+					m_iState = MOVE;
+					SetNewDestination(m_pTarget->GetPosition());
+				}
+				break;
+			}*/
+		}
+
+		switch(m_iType)
+		{
+		case CLEFT:
+			if(m_Time < 38.5f) m_Time = 38.5f;
+			if(m_Time > 41.6f) m_Time = 38.5f;
+			break;
+		case TURTLE:
+			if(m_Time < 29.4f) m_Time = 29.4f;
+			if(m_Time > 31.8f) m_Time = 29.4f;
+			break;
 		}
 	}
 	else if(m_iState == MOVE)
@@ -190,7 +244,19 @@ void MinionObject::Animate(float fTimeElapsed)
 		if(m_pTarget)  //타겟이 있을경우
 		{
 			if(finished <= m_pTarget->GetBoundSizeX()/2 + this->GetBoundSizeX()/2)
-				m_iState = ATTACK;
+			{
+				switch(m_iType)
+				{
+				case CLEFT:
+					if(m_Time > 2.7f)
+						m_iState = ATTACK;
+					break;
+				case TURTLE:
+					if(m_Time > 17.0f)
+						m_iState = ATTACK;
+					break;
+				}
+			}
 		}
 		else  //타겟이 없을 경우 웨이포인트로
 		{
@@ -200,11 +266,45 @@ void MinionObject::Animate(float fTimeElapsed)
 				m_iState = IDLE;
 			}
 		}
+
+		switch(m_iType)
+		{
+		case CLEFT:
+			if(m_Time < 0.1f) m_Time = 0.1f;
+			if(m_Time > 2.7f) m_Time = 0.1f;
+			break;
+		case TURTLE:
+			if(m_Time < 15.5f) m_Time = 15.5f;
+			if(m_Time > 17.0f) m_Time = 15.5f;
+			break;
+		}
 	}
 	else if(m_iState == DEATH)
 	{
-		m_iState = IDLE;
-		SetPosition(m_vWayPoint);
+		switch(m_iType)
+		{
+		case CLEFT:
+			if(m_Time < 20.0f) m_Time = 20.0f;
+			if(m_Time > 25.0f) m_Time = 20.0f;
+			if(m_Time > 24.8f && m_Time < 25.0f)
+			{
+				m_iState = IDLE;
+				SetPosition(m_vWayPoint);
+				m_bDeathAnimation = FALSE;
+				m_pTarget = NULL;
+			}
+			break;
+		case TURTLE:
+			if(m_Time < 37.5f) m_Time = 37.5f;
+			if(m_Time > 45.5f)
+			{
+				m_iState = IDLE;
+				SetPosition(m_vWayPoint);
+				m_bDeathAnimation = FALSE;
+				m_pTarget = NULL;
+			}
+			break;
+		}
 	}
 	else if(m_iState == SKILL1)
 	{

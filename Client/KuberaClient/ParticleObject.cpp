@@ -1,4 +1,5 @@
 #include "ParticleObject.h"
+#include "MinionManager.h"
 
 ParticleObject::ParticleObject(void)
 {
@@ -130,7 +131,24 @@ void ParticleObject::Update(float fTimeElapsed)
 
 		if(m_pTarget->GetTag() != EFFECT)
 		{
-			if (ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) <= 5.f)
+			for(int i=0;i<MAX_MINION; i++) //미니언 스킬 적중 처리
+			{
+				if(MinionManager::sharedManager()->m_pMinion[i] == NULL) continue;
+
+				if (ST::sharedManager()->GetDistance(this->GetPos(), MinionManager::sharedManager()->m_pMinion[i]->GetPos()) <= 5.f)
+				{
+					MinionManager::sharedManager()->m_pMinion[i]->SetAttackDamage(m_pAttacker->GetDamage());
+					m_Pos = D3DXVECTOR3(1200, 0, 0);
+					m_bUsed = FALSE;
+				}
+				else if (ST::sharedManager()->GetDistance(this->GetPos(), m_pAttacker->GetPos()) >= 100.f)
+				{
+					m_pTarget = NULL;
+					m_Pos = D3DXVECTOR3(1200, 0, 0);
+					m_bUsed = FALSE;
+				}
+			}
+			/*if (ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) <= 5.f)
 			{
 				m_pTarget->SetAttackDamage(m_pAttacker->GetDamage());
 				m_pTarget = NULL;
@@ -142,7 +160,7 @@ void ParticleObject::Update(float fTimeElapsed)
 				m_pTarget = NULL;
 				m_Pos = D3DXVECTOR3(1200, 0, 0);
 				m_bUsed = FALSE;
-			}
+			}*/
 		}
 	}
 	else if(m_iType == WIZARD_ATTACK)
