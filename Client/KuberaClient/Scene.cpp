@@ -682,9 +682,8 @@ void CScene::AddOtherPlayer(ID3D11Device *pd3dDevice)
 	//}
 }
 
-void CScene::SetOtherClient(PlayerStruct* _PI, int _Count)
+void CScene::SetOtherClient(PlayerPacket _PI)
 {
-	_Count -= 1;
 
 	//for(int i=0; i<_Count; i++)
 	//{
@@ -721,10 +720,8 @@ void CScene::SetOtherClient(PlayerStruct* _PI, int _Count)
 	//}
 }
 
-void CScene::UpdateOtherClient(PlayerStruct* _PI, int _Count)
+void CScene::UpdateOtherClient(PlayerPacket _PI)
 {
-	_Count -= 1;
-
 	/*for(int i=0; i<_Count; i++)
 	{
 		if(_PI[i].Use != TRUE) continue;

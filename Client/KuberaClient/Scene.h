@@ -145,8 +145,8 @@ public:
 
 	// net
 
-	void SetOtherClient(PlayerStruct* _PI, int _Count);
-	void UpdateOtherClient(PlayerStruct* _PI, int _Count);
+	void SetOtherClient(PlayerPacket _PI);
+	void UpdateOtherClient(PlayerPacket _PI);
 
 	void OtherPlayerTargetSetting();
 

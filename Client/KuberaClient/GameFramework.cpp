@@ -48,18 +48,19 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 
 	//Direct3D 디바이스, 디바이스 컨텍스트, 스왑 체인 등을 생성하는 함수를 호출한다. 
 	if (!CreateDirect3DDisplay()) return(false); 
- 	/*char IP[30];
-  	printf("IP : ");
-  	scanf("%s", IP);
-  	Net.InitClient(IP, 9000);
+  	char IP[30];
+   	printf("IP : ");
+   	scanf("%s", IP);
+ 	Net.InitClient(IP, 9000);
+ 	ST::sharedManager()->Net = &Net;	
  
-     while (Net.m_InitFinish)
-     {
-     	Sleep(100);
-     }*/
-   	MapEditorManager::sharedManager()->LoadMapData();
- 	printf("Server Connect \n");
-	
+ 	while (!Net.m_InitFinish)
+ 	{
+ 		Sleep(100);
+ 	}
+	MapEditorManager::sharedManager()->LoadMapData();
+	printf("Server Connect \n");
+
 	//렌더링할 객체(게임 월드 객체)를 생성한다. 
 
 	HeroManager::sharedManager()->SetID(Net.m_ID);
@@ -340,14 +341,48 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 		{
 		case VK_SPACE:
 
-			ST::sharedManager()->m_bSelected = TRUE;
+			//ST::sharedManager()->m_bSelected = TRUE;
+			if(LoadManager::sharedManager()->LoadFinish && !ST::sharedManager()->m_bStart)
+			{
+				ST::sharedManager()->Net->SendHeader(READY_GAME);
+			}
 			if(HeroManager::sharedManager()->m_pHero != NULL && ST::sharedManager()->m_bStart == TRUE)
 			{
 				m_CameraPosX = HeroManager::sharedManager()->m_pHero->GetPos().x;
 				m_CameraPosZ = HeroManager::sharedManager()->m_pHero->GetPos().z-10;
 			}			
 			break;
-		}
+		case VK_UP:
+			if(HeroManager::sharedManager()->m_pHero != NULL)
+			{
+				HeroManager::sharedManager()->m_pHero->SetState(DEATH);
+			}
+			break;
+
+		case VK_DOWN:
+			if(HeroManager::sharedManager()->m_pHero != NULL)
+			{
+				HeroManager::sharedManager()->m_pHero->SetState(SKILL1);
+			}
+			break;
+		case '1':
+			if(LoadManager::sharedManager()->LoadFinish && !ST::sharedManager()->m_bStart)
+			{
+				int Cha = 1;
+				ST::sharedManager()->Net->SendData(SELECT_CHAR_WARIOR, &Cha, sizeof(int));
+			}
+			break;
+
+		case '2':
+			if(LoadManager::sharedManager()->LoadFinish && !ST::sharedManager()->m_bStart)
+			{
+				int Cha = 2;
+				ST::sharedManager()->Net->SendData(SELECT_CHAR_WIZARD, &Cha, sizeof(int));
+			}
+			break;
+		} 
+		break;
+
 	case WM_KEYUP:
 		//OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 		break;
@@ -701,8 +736,8 @@ void CGameFramework::ExchangeInfo()
  	if(Net.m_ClientCount != 0)
  	{
 
-		m_pScene->SetOtherClient(Net.PI, Net.m_ClientCount);
-		m_pScene->UpdateOtherClient(Net.PI, Net.m_ClientCount);
+		m_pScene->SetOtherClient(Net.PI);
+		m_pScene->UpdateOtherClient(Net.PI);
 	}	
 }
 
@@ -720,7 +755,7 @@ void CGameFramework::SendHeroData()
 		HeroInfo.PI.m_Type = HeroManager::sharedManager()->m_pHero->GetType();
 		HeroInfo.size = sizeof(PlayerPacket);
 
-		Net.SendData(&HeroInfo);
+		Net.SendData(HERODATA, &HeroInfo, sizeof(PlayerPacket));
 	}
 }
 
@@ -756,7 +791,7 @@ void CGameFramework::RenderText()
 		}
 
 	}
-	
+
 
 	if(HeroManager::sharedManager()->m_pHero->GetTarget() == OtherPlayerManager::sharedManager()->m_pOtherPlayer)
 	{

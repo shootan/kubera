@@ -63,11 +63,6 @@ struct PlayerPacket
 	PlayerInfo	PI;
 };
 
-struct PlayerStruct
-{
-	BOOL		Use;
-	PlayerInfo	PI;
-};
 
 enum TAG
 {

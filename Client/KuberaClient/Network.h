@@ -11,7 +11,9 @@ class Network
 public:
 	SOCKET m_ConnectSock;
 	WSADATA m_Wsa;
-	PlayerStruct PI[4];
+	PlayerPacket PI;
+	int			OtherChar;
+
 
 
 
@@ -34,7 +36,8 @@ public:
 	void err_display(char *msg);
 	void err_quit(char *msg);
 
-	BOOL SendData(PlayerPacket* PI);
+	BOOL SendData(int _header, void* _packet, int _size);
+	BOOL SendHeader(int _header);
 	BOOL SendType(int _type);
 
 
