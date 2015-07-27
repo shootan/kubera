@@ -1,0 +1,16 @@
+cleft (걷기, 맞을때, 공격, 죽음, 기본)
+
+//if(m_time < 0.1f) m_time = 0.1f;
+//if(m_time > 2.7f) m_time = 0.1f; // 걷기
+
+//if(m_time < 30.7f) m_time = 30.7f;
+//if(m_time > 32.8f) m_time = 30.7f; // 맞을때
+
+//if(m_time < 38.5f) m_time = 38.5f;
+//if(m_time > 41.6f) m_time = 38.5f; // 공격
+
+//if(m_time < 7.7f) m_time = 7.7f;
+//if(m_time > 14.3f) m_time = 7.7f; // 기본
+
+//if(m_time < 20.0f) m_time = 20.0f;
+//if(m_time > 24.8f) m_time = 20.0f; // 죽을때

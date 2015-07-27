@@ -141,10 +141,15 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	//미니언 생성
 	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(100, 0, 0), LoadManager::sharedManager()->m_pTestMesh, 50, 10, 25);
 	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(-100, 0, 0), LoadManager::sharedManager()->m_pLichkingMesh, 50, 10, 25);
-	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(-400, 0, 160), LoadManager::sharedManager()->m_pBearMesh, 50, 10, 25);
-	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(-400, 0, -160), LoadManager::sharedManager()->m_pBearMesh, 50, 10, 25);
-	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(400, 0, 160), LoadManager::sharedManager()->m_pBearMesh, 50, 10, 25);
+	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(-400, 0, 160), LoadManager::sharedManager()->m_pCleftMesh, 50, 10, 25);
+	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(-400, 0, -160), LoadManager::sharedManager()->m_pTurtleMesh, 50, 10, 25);
+	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(400, 0, 160), LoadManager::sharedManager()->m_pCleftMesh, 50, 10, 25);
 	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(400, 0, -160), LoadManager::sharedManager()->m_pTurtleMesh, 50, 10, 25);
+
+	MinionManager::sharedManager()->m_pMinion[2]->SetType(CLEFT);
+	MinionManager::sharedManager()->m_pMinion[3]->SetType(TURTLE);
+	MinionManager::sharedManager()->m_pMinion[4]->SetType(CLEFT);
+	MinionManager::sharedManager()->m_pMinion[5]->SetType(TURTLE);
 	for(int i=0; i< MAX_MINION; i++)
 	{
 		if(MinionManager::sharedManager()->m_pMinion[i] == NULL) continue;

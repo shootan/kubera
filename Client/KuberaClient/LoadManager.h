@@ -40,7 +40,7 @@ public:
 	GFBX::Mesh *m_pLichkingMesh;
 	GFBX::Mesh *m_pTestMesh;
 	//몬스터 메쉬
-	GFBX::Mesh *m_pBearMesh;
+	GFBX::Mesh *m_pCleftMesh;
 	GFBX::Mesh *m_pTurtleMesh;
 	//바닥 메쉬
 	GFBX::Mesh *pPlaneMesh;
@@ -165,19 +165,19 @@ public:
 		printf("Success Load \n");
 	}
 
-	void LoadBearModel(ID3D11Device *pd3dDevice)
+	void LoadCleftModel(ID3D11Device *pd3dDevice)
 	{
 		printf("Load BearModel \n");
 
 		//코뿔소 메쉬
-		m_pBearMesh = new GFBX::Mesh();
+		m_pCleftMesh = new GFBX::Mesh();
 		GFBXMeshLoader::getInstance()->OnCreateDevice(pd3dDevice);
-		GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pBearMesh, L"Monster/bear.FBX", pd3dDevice);
-		m_pBearMesh->OnCreateDevice(pd3dDevice);
-		for(int i=0; i<m_pBearMesh->GetSubsetCount(); i++)
+		GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pCleftMesh, L"Monster/cleft/cleft.FBX", pd3dDevice);
+		m_pCleftMesh->OnCreateDevice(pd3dDevice);
+		for(int i=0; i<m_pCleftMesh->GetSubsetCount(); i++)
 		{
-			m_pBearMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(50, 10, 25));
-			m_pBearMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Monster/bear.tif");
+			m_pCleftMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(50, 10, 25));
+			m_pCleftMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Monster/cleft/cleft.tif");
 		}
 		printf("Success Load \n");
 	}
@@ -186,7 +186,7 @@ public:
 	{
 		printf("Load TurtleModel \n");
 
-		//코뿔소 메쉬
+		//거북이 메쉬
 		m_pTurtleMesh = new GFBX::Mesh();
 		GFBXMeshLoader::getInstance()->OnCreateDevice(pd3dDevice);
 		GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pTurtleMesh, L"Monster/turtle/turtle3.FBX", pd3dDevice);

@@ -18,6 +18,8 @@ private:
 	BOOL m_bUseParticleMissile;
 	BOOL m_bUseParticleAttack;
 
+	BOOL m_bDeathAnimation;
+
 	D3DXVECTOR3 m_vWayPoint;  //처음 생성 지점
 
 	int m_Level;
