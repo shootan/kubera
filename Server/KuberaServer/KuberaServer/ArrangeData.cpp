@@ -1,4 +1,5 @@
 #include "ArrangeData.h"
+#include "MapEditorManager.h"
 
 ArrangeData::ArrangeData()
 {
@@ -753,4 +754,78 @@ void AttackData(IOBuffer* _list)
 		Buffer = Buffer->m_pNext;
 		//LeaveCriticalSection(&m_BufferListLock);
 	}
+}
+
+void ArrangeData::UpdateMonster()
+{
+
+}
+
+void ArrangeData::SetObjectInfo()
+{
+	MonsterInfo[0].m_Damage = 10.0f;
+	MonsterInfo[0].m_Hp = 50.0f;
+	MonsterInfo[0].m_Id = 20;
+	MonsterInfo[0].m_Level = 1;
+	Vector3 p;
+	p.x = 100;
+	p.y = 0;
+	p.z = 0;
+	MonsterInfo[0].m_Pos = p;
+	MonsterInfo[0].m_Defence = 3;
+
+	MonsterInfo[1].m_Damage = 10.0f;
+	MonsterInfo[1].m_Hp = 50.0f;
+	MonsterInfo[1].m_Id = 20;
+	MonsterInfo[1].m_Level = 1;
+	
+	p.x = -100;
+	p.y = 0;
+	p.z = 0;
+	MonsterInfo[1].m_Pos = p;
+	MonsterInfo[1].m_Defence = 3;
+
+	MonsterInfo[2].m_Damage = 10.0f;
+	MonsterInfo[2].m_Hp = 50.0f;
+	MonsterInfo[2].m_Id = 20;
+	MonsterInfo[2].m_Level = 1;
+	
+	p.x = -400;
+	p.y = 0;
+	p.z = 160;
+	MonsterInfo[2].m_Pos = p;
+	MonsterInfo[2].m_Defence = 3;
+
+	MonsterInfo[3].m_Damage = 10.0f;
+	MonsterInfo[3].m_Hp = 50.0f;
+	MonsterInfo[3].m_Id = 20;
+	MonsterInfo[3].m_Level = 1;
+	
+	p.x = -400;
+	p.y = 0;
+	p.z = -160;
+	MonsterInfo[3].m_Pos = p;
+	MonsterInfo[3].m_Defence = 3;
+
+	MonsterInfo[4].m_Damage = 10.0f;
+	MonsterInfo[4].m_Hp = 50.0f;
+	MonsterInfo[4].m_Id = 20;
+	MonsterInfo[4].m_Level = 1;
+	
+	p.x = 400;
+	p.y = 0;
+	p.z = 160;
+	MonsterInfo[4].m_Pos = p;
+	MonsterInfo[4].m_Defence = 3;
+
+	MonsterInfo[5].m_Damage = 10.0f;
+	MonsterInfo[5].m_Hp = 50.0f;
+	MonsterInfo[5].m_Id = 20;
+	MonsterInfo[5].m_Level = 1;
+	
+	p.x = 400;
+	p.y = 0;
+	p.z = -160;
+	MonsterInfo[5].m_Pos = p;
+	MonsterInfo[5].m_Defence = 3;
 }

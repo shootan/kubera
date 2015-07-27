@@ -22,6 +22,7 @@ MinionObject::MinionObject(void)
 	m_Level = 1;
 	m_fWalkSpeed = 10.0f;
 	m_HP = 50.f;
+
 	m_Damage = 5.f;
 	m_Defense = 3;
 
