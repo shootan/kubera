@@ -42,6 +42,7 @@ public:
 	//몬스터 메쉬
 	GFBX::Mesh *m_pCleftMesh;
 	GFBX::Mesh *m_pTurtleMesh;
+	GFBX::Mesh *m_pGolemMesh;
 	//바닥 메쉬
 	GFBX::Mesh *pPlaneMesh;
 	//넥서스메쉬
@@ -103,11 +104,11 @@ public:
 		printf("CreateInstancingShader\n");
 		m_pInstancingShaders = new CInstancingShader();
 		m_pInstancingShaders->CreateShader(pd3dDevice, 10);
-		m_pInstancingShaders->BuildObjects(pd3dDevice);
+		//m_pInstancingShaders->BuildObjects(pd3dDevice);
 		
 		//게임 객체에 대한 포인터들의 배열을 정의한다.
 		m_nIntanceObjects = m_pInstancingShaders->GetObjectsNumber();
-		m_nObjects = 20 + m_nIntanceObjects;
+		m_nObjects = m_nIntanceObjects;
 	}
 
 	void LoadShaderInstancing3(ID3D11Device *pd3dDevice)
@@ -195,6 +196,23 @@ public:
 		{
 			m_pTurtleMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(50, 10, 25));
 			m_pTurtleMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Monster/turtle/turtle.tif");
+		}
+		printf("Success Load \n");
+	}
+
+	void LoadGolemModel(ID3D11Device *pd3dDevice)
+	{
+		printf("Load TurtleModel \n");
+
+		//거북이 메쉬
+		m_pGolemMesh = new GFBX::Mesh();
+		GFBXMeshLoader::getInstance()->OnCreateDevice(pd3dDevice);
+		GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pGolemMesh, L"Monster/golem/golem2.FBX", pd3dDevice);
+		m_pGolemMesh->OnCreateDevice(pd3dDevice);
+		for(int i=0; i<m_pGolemMesh->GetSubsetCount(); i++)
+		{
+			m_pGolemMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(50, 10, 25));
+			m_pGolemMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Monster/golem/golem.tif");
 		}
 		printf("Success Load \n");
 	}

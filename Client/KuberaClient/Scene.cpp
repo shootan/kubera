@@ -78,6 +78,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	//이 쉐이더 객체에 대한 포인터들의 배열을 정의한다.
 	m_pObjectShaders = LoadManager::sharedManager()->m_pObjectShaders;
 	m_pInstancingShaders = LoadManager::sharedManager()->m_pInstancingShaders;
+	m_pInstancingShaders->BuildObjects(pd3dDevice);
 	m_pAnimationShaders = LoadManager::sharedManager()->m_pAnimationShaders;
 	m_pParticleShaders = LoadManager::sharedManager()->m_pParticleShaders;
 
@@ -139,7 +140,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pAnimationShaders->AddObject(OtherPlayerManager::sharedManager()->m_pOtherPlayer);
 
 	//미니언 생성
-	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(100, 0, 0), LoadManager::sharedManager()->m_pTestMesh, 50, 10, 25);
+	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(100, 0, 0), LoadManager::sharedManager()->m_pGolemMesh, 50, 10, 25);
 	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(-100, 0, 0), LoadManager::sharedManager()->m_pLichkingMesh, 50, 10, 25);
 	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(-400, 0, 160), LoadManager::sharedManager()->m_pCleftMesh, 50, 10, 25);
 	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(-400, 0, -160), LoadManager::sharedManager()->m_pTurtleMesh, 50, 10, 25);
@@ -575,7 +576,7 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext, float fTimeElapsed, C
 	for(int i=0; i<MAX_MISSILE; i++)
 		MissileManager::sharedManager()->m_pMissile[i]->Render(pd3dDeviceContext, pCamera);
 	
-	for(int i=0; i<872; i++)
+	for(int i=0; i<MapEditorManager::sharedManager()->GetTreeSize() + MapEditorManager::sharedManager()->GetRockSize() + MapEditorManager::sharedManager()->GetRock2Size(); i++)
 		ObstacleManager::sharedManager()->m_pObstacle[i]->Render(pd3dDeviceContext, pCamera);
 	
   	

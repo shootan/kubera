@@ -697,26 +697,7 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 		m_pDestroyTowerMesh->GetSubset(j)->LoadTexture(pd3dDevice, L"tower/DestroyedTower.png");
 		m_pDestroyTowerMesh->GetSubset(j)->SetBoundingCube(D3DXVECTOR3(30, 30, 30));
 	}
-	/*m_pBush3Mesh = new CFBXMesh(pd3dDevice, L"obstacle/bush3.FBX");
-	m_pBush3Mesh->LoadTexture(pd3dDevice, L"obstacle/bush3.tif");
 
-	m_pRock2Mesh = new CFBXMesh(pd3dDevice, L"obstacle/Rock2.FBX");
-	m_pRock2Mesh->LoadTexture(pd3dDevice, L"obstacle/Rock2.tif");
-
-	m_pRock3Mesh = new CFBXMesh(pd3dDevice, L"obstacle/Rock3.FBX");
-	m_pRock3Mesh->LoadTexture(pd3dDevice, L"obstacle/Rock3.tif");
-
-	m_pMissileMesh = new CFBXMesh(pd3dDevice, L"missile/Missile.FBX");
-	m_pMissileMesh->LoadTexture(pd3dDevice, L"missile/Missile.png");
-
-	m_pBlueTowerMesh = new CFBXMesh(pd3dDevice, L"tower/BlueHqTower.FBX");
-	m_pBlueTowerMesh->LoadTexture(pd3dDevice, L"tower/BlueHqTower.png");
-
-	m_pRedTowerMesh = new CFBXMesh(pd3dDevice, L"tower/RedHqTower.FBX");
-	m_pRedTowerMesh->LoadTexture(pd3dDevice, L"tower/RedHqTower.png");
-
-	m_pDestroyTowerMesh = new CFBXMesh(pd3dDevice, L"tower/DestroyedTower.FBX");
-	m_pDestroyTowerMesh->LoadTexture(pd3dDevice, L"tower/DestroyedTower.png");*/
 	int i=0;
 
 	printf("CreateShader \n");
@@ -807,16 +788,7 @@ void CInstancingShader::BuildObjects(ID3D11Device *pd3dDevice)
 		TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(In.x, 0, In.z), m_pBlueTowerMesh, 30, 30, 30, BLUE_TEAM);
 	}
 
-// 	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(-400.f + 15.f , 0, 165.f), m_pBlueTowerMesh, 30, 30, 30, BLUE_TEAM);
-// 	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(-50.f - 15.f, 0, 165.f), m_pBlueTowerMesh, 30, 30, 30, BLUE_TEAM);
-// 	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(50.f + 15.f, 0, 165.f), m_pRedTowerMesh, 30, 30, 30, RED_TEAM);
-// 	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(400.f - 15.f, 0, 165.f), m_pRedTowerMesh, 30, 30, 30, RED_TEAM);
-// 	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(-400.f + 15.f, 0, -165.f), m_pBlueTowerMesh, 30, 30, 30, BLUE_TEAM);
-// 	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(-50.f - 15.f, 0, -165.f), m_pBlueTowerMesh, 30, 30, 30, BLUE_TEAM);
-// 	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(50.f + 15.f, 0, -165.f), m_pRedTowerMesh, 30, 30, 30, RED_TEAM);
-// 	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(400.f - 15.f, 0, -165.f), m_pRedTowerMesh, 30, 30, 30, RED_TEAM);
-// 	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(-275.f, 0, -10.f), m_pBlueTowerMesh, 30, 30, 30, BLUE_TEAM);
-// 	TowerManager::sharedManager()->CreateTower(D3DXVECTOR3(275.f, 0, 10.f), m_pRedTowerMesh, 30, 30, 30, RED_TEAM);
+
 	for(int j=0; j<m_nBlueTowerObjects+m_nRedTowerObjects; j++)
 	{
 		if(TowerManager::sharedManager()->m_pTower[j]->GetTeam() == BLUE_TEAM)

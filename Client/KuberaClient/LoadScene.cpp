@@ -44,6 +44,7 @@ void LoadScene::LoadData(ID3D11Device *m_pd3dDevice, ID3D11DeviceContext* m_pd3d
 	case 34:
 		LoadManager::sharedManager()->LoadCleftModel(m_pd3dDevice);
 		LoadManager::sharedManager()->LoadTurtleModel(m_pd3dDevice);
+		LoadManager::sharedManager()->LoadGolemModel(m_pd3dDevice);
 		LoadManager::sharedManager()->LoadLichkingModel(m_pd3dDevice);
 		LoadManager::sharedManager()->LoadTestModel(m_pd3dDevice);
 		break;

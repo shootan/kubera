@@ -352,7 +352,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 				m_CameraPosZ = HeroManager::sharedManager()->m_pHero->GetPos().z-10;
 			}			
 			break;
-		case VK_UP:
+		/*case VK_UP:
 			if(HeroManager::sharedManager()->m_pHero != NULL)
 			{
 				HeroManager::sharedManager()->m_pHero->SetState(DEATH);
@@ -364,12 +364,13 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			{
 				HeroManager::sharedManager()->m_pHero->SetState(SKILL1);
 			}
-			break;
+			break;*/
 		case '1':
 			if(LoadManager::sharedManager()->LoadFinish && !ST::sharedManager()->m_bStart)
 			{
 				int Cha = 1;
 				ST::sharedManager()->Net->SendData(SELECT_CHAR_WARIOR, &Cha, sizeof(int));
+				HeroManager::sharedManager()->SetType(Cha);
 			}
 			break;
 
@@ -378,6 +379,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			{
 				int Cha = 2;
 				ST::sharedManager()->Net->SendData(SELECT_CHAR_WIZARD, &Cha, sizeof(int));
+				HeroManager::sharedManager()->SetType(Cha);
 			}
 			break;
 		} 
