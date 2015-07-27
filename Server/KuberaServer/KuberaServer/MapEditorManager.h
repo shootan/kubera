@@ -129,20 +129,7 @@ public:
 		return BlueTower.size();
 	}
 
-	Information GetRockData(int i)
-	{
-		return Rock.at(i);
-	}
 	
-	Information GetRock2Data(int i)
-	{
-		return Rock2.at(i);
-	}
-
-	Information GetTreeData(int i)
-	{
-		return Tree.at(i);
-	}
 
 	Information GetRedTowerData(int i)
 	{

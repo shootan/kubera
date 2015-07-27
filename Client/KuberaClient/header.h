@@ -114,3 +114,10 @@ struct Information
 	float x, z;
 };
 
+struct ObjectInfo{
+	int		m_Id;
+	int		m_Hp;
+	int		m_Damage;
+	int		m_Level;
+	Vector3 m_Pos;
+};

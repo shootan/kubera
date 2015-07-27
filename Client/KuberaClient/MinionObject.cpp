@@ -21,7 +21,7 @@ MinionObject::MinionObject(void)
 
 	m_fWalkSpeed = 15.0f;
 	m_HP = 50.f;
-	m_Damage = 10.f;
+	m_Damage = 10.0f;
 	m_Defense = 3;
 
 	m_iparticleNum = 500;

@@ -739,8 +739,6 @@ void CScene::UpdateOtherClient(PlayerPacket _PI)
 	}*/
 }
 
-
-
 CGameObject* CScene::GetObject(int num)
 {
 	//return m_ppObjects[num];

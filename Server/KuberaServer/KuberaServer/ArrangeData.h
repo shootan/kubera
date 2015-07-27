@@ -60,7 +60,10 @@ private:
 
 	void CheckMinionLive();
 
-	//
+	//ObjectInfo
+
+	ObjectInfo MonsterInfo[6];
+	//ObjectInfo TowerInfo
 	
 	
 
@@ -71,6 +74,7 @@ public:
 	
 	void SetTime(float _time, IOBuffer* _list);
 	int SetID();
-
+	void UpdateMonster();
+	void SetObjectInfo();
 	void AttackData(IOBuffer* _list);
 };

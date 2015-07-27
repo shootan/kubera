@@ -69,6 +69,7 @@ struct ObjectInfo{
 	int		m_Hp;
 	int		m_Damage;
 	int		m_Level;
+	int		m_Defence;
 	Vector3 m_Pos;
 };
 

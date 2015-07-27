@@ -19,6 +19,7 @@ public:
 	//리스트로 관리해줄 포인터
 	IOBuffer*	m_pNextBufferList;
 	Player*		m_pPlayerList;
+	ObjectInfo  m_pOjbectInfo[6];
 
 	//핸들
 	HANDLE m_hIO;

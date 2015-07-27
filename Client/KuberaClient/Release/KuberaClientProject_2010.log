@@ -1,17 +1,44 @@
-﻿빌드 시작: 2015-07-26 오전 2:19:28
+﻿빌드 시작: 2015-07-26 오전 11:44:32
      1>2 노드의 "C:\Users\Cho\Desktop\졸업작품\kubera\Client\KuberaClient\KuberaClientProject_2010.vcxproj" 프로젝트(build 대상)입니다.
      1>InitializeBuildStatus:
          "AlwaysCreate"이(가) 지정되었기 때문에 "Release\KuberaClientProject.unsuccessfulbuild"을(를) 만들고 있습니다.
        ClCompile:
-         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I"C:\Program Files\Autodesk\FBX\FBX SDK\2015.1\include" /IDXUT\Core /IDXUT\Optional /Zi /nologo /W4 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _WINDOWS /D D3DXFX_LARGEADDRESS_HANDLE /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /arch:SSE2 /fp:fast /Zc:wchar_t /Zc:forScope /openmp- /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt GameFramework.cpp  
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I"C:\Program Files\Autodesk\FBX\FBX SDK\2015.1\include" /IDXUT\Core /IDXUT\Optional /Zi /nologo /W4 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _WINDOWS /D D3DXFX_LARGEADDRESS_HANDLE /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /arch:SSE2 /fp:fast /Zc:wchar_t /Zc:forScope /openmp- /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt Camera.cpp ControlManager.cpp FBX\GFBXMesh.cpp FBX\GFBXMeshLoader.cpp GameFramework.cpp GameObject.cpp HeroObject.cpp KuberaClientProject.cpp LoadScene.cpp Mesh.cpp MinionObject.cpp MissileObject.cpp Network.cpp ObstacleObject.cpp OtherPlayerObject.cpp Particle2Mesh.cpp Particle3Mesh.cpp ParticleMesh.cpp ParticleObject.cpp Scene.cpp SelectScene.cpp Shader.cpp Textureclass.cpp Timer.cpp TowerObject.cpp UIClass.cpp UIObject.cpp astarclass.cpp  
+         Camera.cpp
+         ControlManager.cpp
+         GFBXMesh.cpp
+     1>FBX\GFBXMesh.cpp(163): warning C4018: '<' : signed 또는 unsigned가 일치하지 않습니다.
+     1>FBX\GFBXMesh.cpp(166): warning C4244: '=' : 'int'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>FBX\GFBXMesh.cpp(168): warning C4244: '=' : 'int'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>FBX\GFBXMesh.cpp(206): warning C4018: '<' : signed 또는 unsigned가 일치하지 않습니다.
+     1>FBX\GFBXMesh.cpp(238): warning C4018: '<' : signed 또는 unsigned가 일치하지 않습니다.
+     1>FBX\GFBXMesh.cpp(247): warning C4018: '<' : signed 또는 unsigned가 일치하지 않습니다.
+     1>FBX\GFBXMesh.cpp(219): warning C4101: 'hr' :참조되지 않은 지역 변수입니다.
+     1>FBX\GFBXMesh.cpp(268): warning C4018: '>' : signed 또는 unsigned가 일치하지 않습니다.
+     1>FBX\GFBXMesh.cpp(274): warning C4018: '<' : signed 또는 unsigned가 일치하지 않습니다.
+     1>FBX\GFBXMesh.cpp(290): warning C4018: '<' : signed 또는 unsigned가 일치하지 않습니다.
+     1>FBX\GFBXMesh.cpp(289): warning C4189: 'a' : 지역 변수가 초기화되었으나 참조되지 않았습니다.
+     1>FBX\GFBXMesh.cpp(259): warning C4101: 'hr' :참조되지 않은 지역 변수입니다.
+     1>FBX\GFBXMesh.cpp(301): warning C4018: '<' : signed 또는 unsigned가 일치하지 않습니다.
+         GFBXMeshLoader.cpp
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(17): warning C4101: 'position' :참조되지 않은 지역 변수입니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(19): warning C4101: 'uv' :참조되지 않은 지역 변수입니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(18): warning C4101: 'normal' :참조되지 않은 지역 변수입니다.
+     1>FBX\GFBXMeshLoader.cpp(120): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(371) : 'sprintf' 선언을 참조하십시오.
+     1>FBX\GFBXMeshLoader.cpp(517): warning C4018: '<' : signed 또는 unsigned가 일치하지 않습니다.
+     1>FBX\GFBXMeshLoader.cpp(644): warning C4018: '<' : signed 또는 unsigned가 일치하지 않습니다.
+     1>FBX\GFBXMeshLoader.cpp(1000): warning C4244: '=' : 'fbxsdk_2015_1::FbxLongLong'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>FBX\GFBXMeshLoader.cpp(1008): warning C4244: '초기화 중' : 'fbxsdk_2015_1::FbxLongLong'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>FBX\GFBXMeshLoader.cpp(1008): warning C4189: 'frameNum' : 지역 변수가 초기화되었으나 참조되지 않았습니다.
+     1>FBX\GFBXMeshLoader.cpp(1037): warning C4189: 'a' : 지역 변수가 초기화되었으나 참조되지 않았습니다.
+     1>FBX\GFBXMeshLoader.cpp(1109): warning C4389: '==' : signed 또는 unsigned가 일치하지 않습니다.
          GameFramework.cpp
      1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(17): warning C4101: 'position' :참조되지 않은 지역 변수입니다.
      1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(19): warning C4101: 'uv' :참조되지 않은 지역 변수입니다.
      1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(18): warning C4101: 'normal' :참조되지 않은 지역 변수입니다.
      1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\UIClass.h(31): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
      1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\UIClass.h(31): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-     1>GameFramework.cpp(53): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(304) : 'scanf' 선언을 참조하십시오.
      1>GameFramework.cpp(321): warning C4244: '인수' : 'float'에서 'DWORD'(으)로 변환하면서 데이터가 손실될 수 있습니다.
      1>GameFramework.cpp(321): warning C4244: '인수' : 'float'에서 'DWORD'(으)로 변환하면서 데이터가 손실될 수 있습니다.
      1>GameFramework.cpp(321): warning C4244: '인수' : 'float'에서 'DWORD'(으)로 변환하면서 데이터가 손실될 수 있습니다.
@@ -33,6 +60,142 @@
      1>GameFramework.cpp(585): warning C4238: 비표준 확장이 사용됨 : 클래스 rvalue를 lvalue로 사용했습니다.
      1>GameFramework.cpp(592): warning C4238: 비표준 확장이 사용됨 : 클래스 rvalue를 lvalue로 사용했습니다.
      1>GameFramework.cpp(598): warning C4238: 비표준 확장이 사용됨 : 클래스 rvalue를 lvalue로 사용했습니다.
+         GameObject.cpp
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(17): warning C4101: 'position' :참조되지 않은 지역 변수입니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(19): warning C4101: 'uv' :참조되지 않은 지역 변수입니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(18): warning C4101: 'normal' :참조되지 않은 지역 변수입니다.
+     1>GameObject.cpp(119): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>GameObject.cpp(121): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>GameObject.cpp(123): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+         HeroObject.cpp
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(17): warning C4101: 'position' :참조되지 않은 지역 변수입니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(19): warning C4101: 'uv' :참조되지 않은 지역 변수입니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(18): warning C4101: 'normal' :참조되지 않은 지역 변수입니다.
+     1>HeroObject.cpp(35): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>HeroObject.cpp(83): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>HeroObject.cpp(85): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>HeroObject.cpp(87): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>HeroObject.cpp(204): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>HeroObject.cpp(246): warning C4244: '인수' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>HeroObject.cpp(246): warning C4244: '인수' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>HeroObject.cpp(246): warning C4244: '인수' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>HeroObject.cpp(246): warning C4244: '인수' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>HeroObject.cpp(273): warning C4244: '인수' : 'int'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>HeroObject.cpp(273): warning C4244: '인수' : 'int'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>HeroObject.cpp(518): warning C4244: '=' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>HeroObject.cpp(525): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>HeroObject.cpp(533): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+         KuberaClientProject.cpp
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(17): warning C4101: 'position' :참조되지 않은 지역 변수입니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(19): warning C4101: 'uv' :참조되지 않은 지역 변수입니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(18): warning C4101: 'normal' :참조되지 않은 지역 변수입니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\UIClass.h(31): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\UIClass.h(31): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>KuberaClientProject.cpp(115): warning C4996: 'freopen': This function or variable may be unsafe. Consider using freopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(249) : 'freopen' 선언을 참조하십시오.
+     1>KuberaClientProject.cpp(116): warning C4996: 'freopen': This function or variable may be unsafe. Consider using freopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(249) : 'freopen' 선언을 참조하십시오.
+     1>KuberaClientProject.cpp(117): warning C4996: 'freopen': This function or variable may be unsafe. Consider using freopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(249) : 'freopen' 선언을 참조하십시오.
+         LoadScene.cpp
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\UIClass.h(31): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\UIClass.h(31): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(17): warning C4101: 'position' :참조되지 않은 지역 변수입니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(19): warning C4101: 'uv' :참조되지 않은 지역 변수입니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(18): warning C4101: 'normal' :참조되지 않은 지역 변수입니다.
+     1>LoadScene.cpp(11): warning C4101: 'a' :참조되지 않은 지역 변수입니다.
+     1>LoadScene.cpp(22): warning C4244: '인수' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>LoadScene.cpp(63): warning C4244: '인수' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>LoadScene.cpp(63): warning C4244: '인수' : 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+         Mesh.cpp
+     1>Mesh.cpp(230): warning C4189: 'i' : 지역 변수가 초기화되었으나 참조되지 않았습니다.
+     1>Mesh.cpp(438): warning C4244: '=' : 'fbxsdk_2015_1::FbxDouble'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>Mesh.cpp(439): warning C4244: '=' : 'fbxsdk_2015_1::FbxDouble'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>Mesh.cpp(440): warning C4244: '=' : 'fbxsdk_2015_1::FbxDouble'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+         MinionObject.cpp
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(17): warning C4101: 'position' :참조되지 않은 지역 변수입니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(19): warning C4101: 'uv' :참조되지 않은 지역 변수입니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(18): warning C4101: 'normal' :참조되지 않은 지역 변수입니다.
+     1>MinionObject.cpp(61): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>MinionObject.cpp(63): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>MinionObject.cpp(65): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+         MissileObject.cpp
+     1>MissileObject.cpp(69): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>MissileObject.cpp(71): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>MissileObject.cpp(73): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+         Network.cpp
+     1>Network.cpp(67): warning C4244: '인수' : 'int'에서 'u_short'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>Network.cpp(100): warning C4127: 조건식이 상수입니다.
+     1>Network.cpp(92): warning C4189: 'Number' : 지역 변수가 초기화되었으나 참조되지 않았습니다.
+     1>Network.cpp(93): warning C4101: 'Buf' :참조되지 않은 지역 변수입니다.
+     1>Network.cpp(86): warning C4101: 'dwSize' :참조되지 않은 지역 변수입니다.
+     1>Network.cpp(94): warning C4189: 'Count' : 지역 변수가 초기화되었으나 참조되지 않았습니다.
+     1>Network.cpp(87): warning C4101: 'key' :참조되지 않은 지역 변수입니다.
+     1>Network.cpp(90): warning C4189: 'size' : 지역 변수가 초기화되었으나 참조되지 않았습니다.
+     1>Network.cpp(88): warning C4101: 'over' :참조되지 않은 지역 변수입니다.
+     1>Network.cpp(155): warning C4189: 'adq' : 지역 변수가 초기화되었으나 참조되지 않았습니다.
+     1>Network.cpp(173): warning C4189: 'p' : 지역 변수가 초기화되었으나 참조되지 않았습니다.
+         ObstacleObject.cpp
+     1>ObstacleObject.cpp(42): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>ObstacleObject.cpp(44): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>ObstacleObject.cpp(46): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+         OtherPlayerObject.cpp
+     1>OtherPlayerObject.cpp(59): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>OtherPlayerObject.cpp(61): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>OtherPlayerObject.cpp(63): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+         Particle2Mesh.cpp
+     1>Particle2Mesh.cpp(130): warning C4018: '<' : signed 또는 unsigned가 일치하지 않습니다.
+         Particle3Mesh.cpp
+     1>Particle3Mesh.cpp(134): warning C4018: '<' : signed 또는 unsigned가 일치하지 않습니다.
+     1>Particle3Mesh.cpp(297): warning C4101: 'i' :참조되지 않은 지역 변수입니다.
+     1>Particle3Mesh.cpp(332): warning C4101: 'i' :참조되지 않은 지역 변수입니다.
+         ParticleMesh.cpp
+     1>ParticleMesh.cpp(128): warning C4018: '<' : signed 또는 unsigned가 일치하지 않습니다.
+         ParticleObject.cpp
+     1>ParticleObject.cpp(75): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>ParticleObject.cpp(77): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>ParticleObject.cpp(79): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>ParticleObject.cpp(70): warning C4101: 'rotationZ' :참조되지 않은 지역 변수입니다.
+     1>ParticleObject.cpp(70): warning C4101: 'rotationY' :참조되지 않은 지역 변수입니다.
+     1>ParticleObject.cpp(70): warning C4101: 'rotationX' :참조되지 않은 지역 변수입니다.
+     1>ParticleObject.cpp(69): warning C4101: 'angleZ' :참조되지 않은 지역 변수입니다.
+     1>ParticleObject.cpp(69): warning C4101: 'angleX' :참조되지 않은 지역 변수입니다.
+     1>ParticleObject.cpp(69): warning C4101: 'angleY' :참조되지 않은 지역 변수입니다.
+         Scene.cpp
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(17): warning C4101: 'position' :참조되지 않은 지역 변수입니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(19): warning C4101: 'uv' :참조되지 않은 지역 변수입니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(18): warning C4101: 'normal' :참조되지 않은 지역 변수입니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\UIClass.h(31): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\UIClass.h(31): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+         컴파일하고 있습니다...
+         SelectScene.cpp
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\UIClass.h(31): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\UIClass.h(31): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(17): warning C4101: 'position' :참조되지 않은 지역 변수입니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(19): warning C4101: 'uv' :참조되지 않은 지역 변수입니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(18): warning C4101: 'normal' :참조되지 않은 지역 변수입니다.
+         Shader.cpp
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(17): warning C4101: 'position' :참조되지 않은 지역 변수입니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(19): warning C4101: 'uv' :참조되지 않은 지역 변수입니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\fbx\Vertex.h(18): warning C4101: 'normal' :참조되지 않은 지역 변수입니다.
+         Textureclass.cpp
+         Timer.cpp
+         TowerObject.cpp
+     1>TowerObject.cpp(45): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>TowerObject.cpp(47): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>TowerObject.cpp(49): warning C4244: '인수' : 'double'에서 'FLOAT'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+         UIClass.cpp
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\UIClass.h(31): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\UIClass.h(31): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>UIClass.cpp(38): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>UIClass.cpp(39): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>UIClass.cpp(161): warning C4018: '<' : signed 또는 unsigned가 일치하지 않습니다.
+     1>UIClass.cpp(254): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>UIClass.cpp(255): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+         UIObject.cpp
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\UIClass.h(31): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+     1>c:\users\cho\desktop\졸업작품\kubera\client\kuberaclient\UIClass.h(31): warning C4244: '=' : 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+         astarclass.cpp
        ResourceCompile:
          모든 출력이 최신 상태입니다.
        Link:
@@ -95,4 +258,4 @@
 
 빌드했습니다.
 
-경과 시간: 00:00:17.48
+경과 시간: 00:02:29.89
