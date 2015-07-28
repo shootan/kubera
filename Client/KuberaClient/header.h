@@ -71,7 +71,7 @@ enum TAG
 
 enum STATE
 {
-	IDLE, ATTACK, MOVE, DEATH, SKILL1
+	IDLE, ATTACK, MOVE, DEATH, SKILL1, WAIT
 };
 
 enum TEAM
@@ -120,4 +120,9 @@ struct ObjectInfo{
 	int		m_Damage;
 	int		m_Level;
 	Vector3 m_Pos;
+};
+
+enum MONSTERTYPE
+{
+	MONSTERTYPENONE, CLEFT, TURTLE, CANNONGOLEM
 };

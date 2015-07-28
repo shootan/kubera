@@ -90,6 +90,7 @@ private:
 
 	float m_HpbarRWidth, m_HpbarRHeight; //hp바
 	float m_HpbarGWidth, m_HpbarGHeight;
+	float m_Hpbar;
 
 	float m_CharacterFaceWidth , m_CharacterFaceHeight; //캐릭터 정보창 얼굴
 
@@ -106,6 +107,9 @@ private:
 	int m_nWndClientHeight;
 	int m_nPrevWndClientWidth;
 	int m_nPrevWndClientHeight;
+
+	float m_fGameTimeSecond;
+	float m_fGameTimeMinute;
 public:
 	CScene(void);
 	~CScene(void);
@@ -167,4 +171,7 @@ public:
 	void RenderUI(ID3D11DeviceContext *pd3dDeviceContext, int _wndWidth, int _wndHeight);
 	float GetMinimapUIWidth() {return m_UIMinimapWidth;}
 	float GetMinimapUIHeight() {return m_UIMinimapHeight;}
+
+	void SetUIHpUpdate();
+	void SetFontUI(CDXUTTextHelper* _text, int _num);
 };

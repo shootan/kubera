@@ -23,6 +23,9 @@ private:
 	BOOL m_bUseParticle;
 	BOOL m_bUseParticleMissile;
 	BOOL m_bUseParticleAttack;
+
+	//ui 데스 카운트
+	int m_nDeathCount;
 public:
 	OtherPlayerObject();
 	~OtherPlayerObject();
@@ -34,5 +37,7 @@ public:
 	bool InMotion();
 
 	void SetAniMesh(GFBX::Mesh *pAniMesh);
+
+	int GetDeathCount() {return m_nDeathCount;}
 
 };

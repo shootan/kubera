@@ -16,9 +16,13 @@ void ControlManager::TouchRightDown(float _x, float _y, HWND hWnd)
 		if ( fpINTersectionTime > 0) {
 			vGroundPlaneHit = vRayOrigin;
 			vGroundPlaneHit += ( vRayDirection * fpINTersectionTime );
-			HeroManager::sharedManager()->m_pHero->SetNewDestination(vGroundPlaneHit);
-			printf("X: %.1f y: %.1f z: %.1f \n", vGroundPlaneHit.x, vGroundPlaneHit.y, vGroundPlaneHit.z);
-			HeroManager::sharedManager()->m_pHero->SetState(MOVE);
+			if(HeroManager::sharedManager()->m_pHero->GetState() != WAIT && 
+				HeroManager::sharedManager()->m_pHero->GetState() != DEATH)  //죽으뒤 리스폰시간에 움직이면 move로 바뀌기때문에 설정 부활이 우선
+			{
+				HeroManager::sharedManager()->m_pHero->SetNewDestination(vGroundPlaneHit);
+				printf("X: %.1f y: %.1f z: %.1f \n", vGroundPlaneHit.x, vGroundPlaneHit.y, vGroundPlaneHit.z);
+				HeroManager::sharedManager()->m_pHero->SetState(MOVE);
+			}
 		}
 	}     
 

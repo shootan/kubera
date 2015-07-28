@@ -10,7 +10,7 @@ class MinionObject : public CGameObject
 private:
 	float m_fAttackTime;
 	float m_Time;
-
+	float m_fRespawnTime;
 	int m_PrevState;
 
 	int m_iparticleNum;
@@ -19,6 +19,7 @@ private:
 	BOOL m_bUseParticleAttack;
 
 	BOOL m_bDeathAnimation;
+	BOOL m_bAttack;
 
 	D3DXVECTOR3 m_vWayPoint;  //처음 생성 지점
 
