@@ -9,7 +9,7 @@ TowerObject::TowerObject(void)
 	m_Visible = TRUE;
 	m_fAttackTime = 0.f;
 	m_HP = 300.0f;
-	m_Damage = 50.0f;
+	m_Damage = 1.0f;
 	m_bExplosion = false;
 }
 

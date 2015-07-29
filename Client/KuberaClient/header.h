@@ -121,3 +121,8 @@ struct ObjectInfo{
 	int		m_Level;
 	Vector3 m_Pos;
 };
+
+enum MONSTERTYPE
+{
+	MONSTERTYPENONE, CLEFT, TURTLE
+};
