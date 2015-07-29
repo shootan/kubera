@@ -22,6 +22,8 @@ OtherPlayerObject::OtherPlayerObject(void)
 	m_bUseParticle = FALSE;
 	m_bUseParticleMissile = FALSE;
 	m_bUseParticleAttack = FALSE;
+
+	m_nDeathCount = 0;
 }
 
 OtherPlayerObject::~OtherPlayerObject(void)
@@ -231,6 +233,7 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 			{
 				m_Time = 1.1f;
 				//m_iState = IDLE;
+				m_nDeathCount++;
 			}
 			break;
 		case WIZARD:
@@ -239,6 +242,7 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 			{
 				m_Time = 1.1f;
 				//m_iState = IDLE;
+				m_nDeathCount++;
 			}
 
 			break;

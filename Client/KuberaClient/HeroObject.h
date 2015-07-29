@@ -13,6 +13,7 @@ private:
 	D3DXVECTOR3 m_vAstarIncrement;
 	BOOL m_bMove;
 	float m_time;
+	float m_fRespawnTime;
 	BOOL m_bWarriorAttack;
 	
 	float m_fAttackTime;
@@ -37,7 +38,13 @@ private:
 	int m_Defence_Level;
 	int m_Damage_Level;
 
+	//ui hp바를 위해 만듬
+	float m_PrevHP;
+	//hp가 시작하자마자 -값이 되어버리는 버그때문에 만듬
+	BOOL m_bHpFUCK;
 
+	//ui 데스 카운트
+	int m_nDeathCount;
 public:
 	HeroObject();
 	~HeroObject();
@@ -63,6 +70,9 @@ public:
 
 	int GetLevel() { return m_Level;}
 
+	void SetPrevHP(int _hp) { m_PrevHP = _hp;}
+	float GetPrevHP() { return m_PrevHP;}
+	int GetDeathCount() {return m_nDeathCount;}
 	Vector3 GetDestination()
 	{
 		Vector3 p;

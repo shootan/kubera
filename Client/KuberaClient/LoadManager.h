@@ -43,6 +43,7 @@ public:
 	GFBX::Mesh *m_pCleftMesh;
 	GFBX::Mesh *m_pTurtleMesh;
 	GFBX::Mesh *m_pGolemMesh;
+	GFBX::Mesh *m_pCannonGolemMesh;
 	//바닥 메쉬
 	GFBX::Mesh *pPlaneMesh;
 	//넥서스메쉬
@@ -104,7 +105,7 @@ public:
 		printf("CreateInstancingShader\n");
 		m_pInstancingShaders = new CInstancingShader();
 		m_pInstancingShaders->CreateShader(pd3dDevice, 10);
-		//m_pInstancingShaders->BuildObjects(pd3dDevice);
+		m_pInstancingShaders->BuildObjects(pd3dDevice);
 		
 		//게임 객체에 대한 포인터들의 배열을 정의한다.
 		m_nIntanceObjects = m_pInstancingShaders->GetObjectsNumber();
@@ -168,7 +169,7 @@ public:
 
 	void LoadCleftModel(ID3D11Device *pd3dDevice)
 	{
-		printf("Load BearModel \n");
+		printf("Load CleftModel \n");
 
 		//코뿔소 메쉬
 		m_pCleftMesh = new GFBX::Mesh();
@@ -177,7 +178,7 @@ public:
 		m_pCleftMesh->OnCreateDevice(pd3dDevice);
 		for(int i=0; i<m_pCleftMesh->GetSubsetCount(); i++)
 		{
-			m_pCleftMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(50, 10, 25));
+			m_pCleftMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(80, 10, 25));
 			m_pCleftMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Monster/cleft/cleft.tif");
 		}
 		printf("Success Load \n");
@@ -202,7 +203,7 @@ public:
 
 	void LoadGolemModel(ID3D11Device *pd3dDevice)
 	{
-		printf("Load TurtleModel \n");
+		printf("Load GolemModel \n");
 
 		//거북이 메쉬
 		m_pGolemMesh = new GFBX::Mesh();
@@ -217,9 +218,26 @@ public:
 		printf("Success Load \n");
 	}
 
+	void LoadCannonGolemModel(ID3D11Device *pd3dDevice)
+	{
+		printf("Load CannonGolemModel \n");
+
+		//거북이 메쉬
+		m_pCannonGolemMesh = new GFBX::Mesh();
+		GFBXMeshLoader::getInstance()->OnCreateDevice(pd3dDevice);
+		GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pCannonGolemMesh, L"Monster/cannongolem/cannongolem2.FBX", pd3dDevice);
+		m_pCannonGolemMesh->OnCreateDevice(pd3dDevice);
+		for(int i=0; i<m_pCannonGolemMesh->GetSubsetCount(); i++)
+		{
+			m_pCannonGolemMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(100, 10, 25));
+			m_pCannonGolemMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Monster/cannongolem/cannongolem.tif");
+		}
+		printf("Success Load \n");
+	}
+
 	void LoadLichkingModel(ID3D11Device *pd3dDevice)
 	{
-		printf("Load TurtleModel \n");
+		printf("Load LichKingModel \n");
 
 		//코뿔소 메쉬
 		m_pLichkingMesh = new GFBX::Mesh();
@@ -236,7 +254,7 @@ public:
 
 	void LoadTestModel(ID3D11Device *pd3dDevice)
 	{
-		printf("Load TurtleModel \n");
+		printf("Load TestModel \n");
 
 		//코뿔소 메쉬
 		m_pTestMesh = new GFBX::Mesh();

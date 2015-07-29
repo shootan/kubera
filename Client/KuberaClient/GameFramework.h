@@ -11,6 +11,8 @@
 #include "SelectScene.h"
 #include "ST.h"
 
+#define MAX_UI_FONT 7
+
 class CGameFramework
 {
 private:
@@ -61,6 +63,7 @@ private:
 	CDXUTTextHelper* m_pTxtHelper;
 	CDXUTTextHelper* m_pTxtHelper2;
 	CDXUTTextHelper* m_pCharacterInfo;
+	CDXUTTextHelper* m_pUIFont[MAX_UI_FONT];
 
 	CDXUTDialogResourceManager m_DialogResourceManager;
 
@@ -105,6 +108,4 @@ public:
 	void TurnZBufferOn();
 	void TurnZBufferOff();
 
-	//UI
-	void SetUIUpdate();
 };

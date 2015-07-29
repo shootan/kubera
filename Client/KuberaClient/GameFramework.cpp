@@ -48,16 +48,17 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 
 	//Direct3D 디바이스, 디바이스 컨텍스트, 스왑 체인 등을 생성하는 함수를 호출한다. 
 	if (!CreateDirect3DDisplay()) return(false); 
-    	char IP[30];
-     	printf("IP : ");
-     	scanf("%s", IP);
-   	Net.InitClient(IP, 9000);
-   	ST::sharedManager()->Net = &Net;	
-   
-   	while (!Net.m_InitFinish)
-   	{
-   		Sleep(100);
-   	}
+
+   	char IP[30];
+    	printf("IP : ");
+    	scanf("%s", IP);
+  	Net.InitClient(IP, 9000);
+  	ST::sharedManager()->Net = &Net;	
+  
+  	while (!Net.m_InitFinish)
+  	{
+  		Sleep(100);
+  	}
 	MapEditorManager::sharedManager()->LoadMapData();
 	printf("Server Connect \n");
 
@@ -75,6 +76,9 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	BuildObjects();
 
 	time = 0.0f;
+
+
+	printf("GameFrameWork \n");
 
 	return(true);
 }
@@ -245,6 +249,8 @@ bool CGameFramework::CreateDirect3DDisplay()
 	m_pTxtHelper = new CDXUTTextHelper( m_pd3dDevice, m_pd3dDeviceContext, &m_DialogResourceManager, 20 );
 	m_pTxtHelper2 = new CDXUTTextHelper( m_pd3dDevice, m_pd3dDeviceContext, &m_DialogResourceManager, 20 );
 	m_pCharacterInfo = new CDXUTTextHelper(m_pd3dDevice, m_pd3dDeviceContext, &m_DialogResourceManager, 20);
+	for(int i=0; i<MAX_UI_FONT; i++)
+		m_pUIFont[i] = new CDXUTTextHelper(m_pd3dDevice, m_pd3dDeviceContext, &m_DialogResourceManager, 20);
 
 	return(true);
 }
@@ -348,23 +354,31 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			}
 			if(HeroManager::sharedManager()->m_pHero != NULL && ST::sharedManager()->m_bStart == TRUE)
 			{
-				m_CameraPosX = HeroManager::sharedManager()->m_pHero->GetPos().x;
-				m_CameraPosZ = HeroManager::sharedManager()->m_pHero->GetPos().z-10;
+				if(HeroManager::sharedManager()->m_pHero->GetState() == WAIT)
+				{
+					Vector3 po;
+					if(HeroManager::sharedManager()->m_pHero->GetID() % 2 == 0)
+					{
+						po.x = 390;
+						po.y = 0;
+						po.z = -10;
+					}
+					else
+					{
+						po.y = 0;
+						po.x = -390;
+						po.z = -10;
+					}
+					m_CameraPosX = po.x;
+					m_CameraPosZ = po.z;
+				}
+				else
+				{
+					m_CameraPosX = HeroManager::sharedManager()->m_pHero->GetPos().x;
+					m_CameraPosZ = HeroManager::sharedManager()->m_pHero->GetPos().z-10;
+				}
 			}			
 			break;
-		/*case VK_UP:
-			if(HeroManager::sharedManager()->m_pHero != NULL)
-			{
-				HeroManager::sharedManager()->m_pHero->SetState(DEATH);
-			}
-			break;
-
-		case VK_DOWN:
-			if(HeroManager::sharedManager()->m_pHero != NULL)
-			{
-				HeroManager::sharedManager()->m_pHero->SetState(SKILL1);
-			}
-			break;*/
 		case '1':
 			if(LoadManager::sharedManager()->LoadFinish && !ST::sharedManager()->m_bStart)
 			{
@@ -428,6 +442,8 @@ void CGameFramework::OnDestroy()
 	SAFE_DELETE( m_pTxtHelper );
 	SAFE_DELETE( m_pTxtHelper2 );
 	SAFE_DELETE( m_pCharacterInfo );
+	for(int i=0; i<MAX_UI_FONT; i++)
+		SAFE_DELETE( m_pUIFont[i] );
 }
 
 void CGameFramework::BuildObjects()
@@ -546,7 +562,7 @@ void CGameFramework::FrameAdvance()
  		if (ST::sharedManager()->m_bSelected == TRUE)
 		{
  			m_pScene = new CScene();
- 			m_pScene->m_Camera = m_pCamera;
+			m_pScene->m_Camera = m_pCamera;
  			if (m_pScene)
 			{
 				m_pScene->BuildObjects(m_pd3dDevice);
@@ -561,7 +577,6 @@ void CGameFramework::FrameAdvance()
 	if(ST::sharedManager()->m_bStart == TRUE)
 	//if(LoadManager::sharedManager()->LoadFinish)
 	{
-
 		this->ExchangeInfo();
 		m_pScene->OtherPlayerTargetSetting();
 
@@ -587,8 +602,6 @@ void CGameFramework::FrameAdvance()
 		m_pd3dDeviceContext->RSSetViewports(1, &m_pCamera->GetViewport());
 		m_pScene->Render(m_pd3dDeviceContext, ::timeGetTime() * 0.001f, m_pCamera);
 
-		RenderText();
-
 		m_pCameraMinimap->UpdateShaderVariables(m_pd3dDeviceContext);
 		//m_pCameraMinimap->FrameMove(m_GameTimer.GetTimeElapsed());
 		m_pd3dDeviceContext->RSSetViewports(1, &m_pCameraMinimap->GetViewport());
@@ -600,6 +613,8 @@ void CGameFramework::FrameAdvance()
 		m_pd3dDeviceContext->RSSetViewports(1, &m_pUICamera->GetViewport());
 		m_pScene->RenderUI(m_pd3dDeviceContext, m_nWndClientWidth, m_nWndClientHeight);
 		TurnZBufferOn();
+
+		RenderText();
 	}
 
 	m_pDXGISwapChain->Present(0, 0);
@@ -825,12 +840,13 @@ void CGameFramework::RenderText()
 	m_pTxtHelper->DrawTextLine(str);
 	m_pTxtHelper2->End();
 
-	/*m_pCharacterInfo->Begin();
-	m_pCharacterInfo->SetInsertionPos(m_UIInfoWidth/2 + m_UIInfoWidth/20 + m_SwordWidth, m_nWndClientHeight - m_UIInfoHeight + m_UIInfoHeight/3 - m_SwordHeight/2);
-	m_pCharacterInfo->SetForegroundColor( D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f));
-	swprintf(str, 255, L" : %.0f\n : %.0f\n : %.0f", HeroManager::sharedManager()->m_pHero->GetDamage(),HeroManager::sharedManager()->m_pHero->GetDefense(),HeroManager::sharedManager()->m_pHero->GetSpeed());
-	m_pCharacterInfo->DrawTextLine(str);
-	m_pCharacterInfo->End();*/
+	m_pScene->SetFontUI(m_pUIFont[0], 0); //정보창 공격력 수치정보
+	m_pScene->SetFontUI(m_pUIFont[1], 1); //정보창 방어력 수치정보
+	m_pScene->SetFontUI(m_pUIFont[2], 2); //정보창 스피드 수치정보
+	m_pScene->SetFontUI(m_pUIFont[3], 3); //정보창 레벨 수치정보
+	m_pScene->SetFontUI(m_pUIFont[4], 4); //오른쪽위 시간 정보
+	m_pScene->SetFontUI(m_pUIFont[5], 5); //오른쪽위 킬 정보
+	m_pScene->SetFontUI(m_pUIFont[6], 6); //오른쪽위 데스 정보
 }
 
 void CGameFramework::TurnZBufferOn()
@@ -844,12 +860,4 @@ void CGameFramework::TurnZBufferOff()
 {
 	m_pd3dDeviceContext->OMSetDepthStencilState(m_depthDisabledStencilState, 1);
 	return;
-}
-
-void CGameFramework::SetUIUpdate()
-{
-	//캐릭터 Hp바
-	//m_HpbarGWidth *= HeroManager::sharedManager()->m_pHero->GetHP()/HeroManager::sharedManager()->m_pHero->GetLevel() * 100; 
-	//m_pUI[8]->SetBitmapWH(m_HpbarGWidth, m_HpbarGHeight);
-
 }

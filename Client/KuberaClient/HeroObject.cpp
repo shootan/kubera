@@ -19,6 +19,7 @@ HeroObject::HeroObject(void)
 	m_iPrevState = 0;
 
 	m_time = 0.0f;
+	m_fRespawnTime = 0.0f;
 
 	m_iparticleNum = 500;
 	m_bUseParticle = FALSE;
@@ -28,16 +29,20 @@ HeroObject::HeroObject(void)
 
 	//초기 정보값
 	m_Level = 1;			//레벨1
-	m_HP = 100.f;				//hp 100
+	m_HP = 100.0f;				//hp 100
+	m_PrevHP = m_HP;
 	m_Defense = 3;			//방어력 3
-	m_fWalkSpeed = 15.f;	//스피드 15
-	m_Damage = 10.f;		//데미지 10
+	m_fWalkSpeed = 30.0f;	//스피드 15
+	m_Damage = 10.0f;		//데미지 10
 	m_SkillDamage = 20 + m_Damage;		//스킬데미지 20
 	m_Exp = 10;				//필요 경험치 10
 	m_Speed_Level = 1;		//스피드 레벨 1
 	m_Defence_Level = 1;	//방어력 레벨 1
 	m_Damage_Level = 1;		//데미지 레벨 1
 
+
+	m_bHpFUCK = TRUE;
+	m_nDeathCount = 0;
 
 	node_t* temp;
 
@@ -184,29 +189,21 @@ void HeroObject::Update(float fTimeElapsed)
 		m_iPrevState = m_iState;
 	}
 
+	if(m_bHpFUCK)
+	{
+		m_HP = m_Level * 100;
+		m_bHpFUCK = FALSE;
+	}
+
 	if(m_HP <= 0.0f)
 	{
-		if(m_bDeathAnimation)
+		if(!m_bDeathAnimation)
 		{
-			Vector3 po;
-			if(m_ID % 2 == 0)
-			{
-				po.x = 390;
-				po.y = 0;
-				po.z = 0;
-			}
-			else
-			{
-				po.y = 0;
-				po.x = -390;
-				po.z = 0;
-			}
 			m_HP = m_Level * 100;
-			this->SetPos(po);
-			m_bDeathAnimation = FALSE;
-			return;
+			m_iState = DEATH;
+			m_bDeathAnimation = TRUE;
+			m_nDeathCount++;
 		}
-		m_iState = DEATH;
 		return;
 	}
 	if(m_iState != MOVE) return;
@@ -315,6 +312,9 @@ void HeroObject::Animate(float fTimeElapsed)
 	}
 	else if(m_iState == ATTACK)
 	{
+		if(m_pTarget->GetState() == DEATH) //상대가 죽었을시 공격 안하게 설정
+			m_iState = IDLE;
+
 		switch(m_iType)
 		{
 		case KNIGHT:
@@ -412,8 +412,8 @@ void HeroObject::Animate(float fTimeElapsed)
 			if(m_time > 34.0f)
 			{
 				m_time = 1.1f;
-				m_iState = IDLE;
-				m_bDeathAnimation = TRUE;
+				m_iState = WAIT;
+				SetPosition(D3DXVECTOR3(1000, 0, 200));
 			}
 			break;
 		case WIZARD:
@@ -421,11 +421,36 @@ void HeroObject::Animate(float fTimeElapsed)
 			if(m_time > 34.0f)
 			{
 				m_time = 1.1f;
-				m_iState = IDLE;
-				m_bDeathAnimation = TRUE;
+				m_iState = WAIT;
+				SetPosition(D3DXVECTOR3(1000, 0, 200));
 			}
-
 			break;
+		}
+	}
+	else if(m_iState == WAIT)
+	{
+		m_fRespawnTime += fTimeElapsed;
+
+		if(m_fRespawnTime >= 5.0f)
+		{
+			m_fRespawnTime = 0;
+			m_iState = IDLE;
+			m_bDeathAnimation = FALSE;
+
+			Vector3 po;
+			if(m_ID % 2 == 0)
+			{
+				po.x = 390;
+				po.y = 0;
+				po.z = 0;
+			}
+			else
+			{
+				po.y = 0;
+				po.x = -390;
+				po.z = 0;
+			}
+			this->SetPos(po);
 		}
 	}
 	else if(m_iState == SKILL1)
@@ -526,7 +551,7 @@ void HeroObject::DamageUp(float _damage)
 }
 void HeroObject::SpeedUp(float _speed)
 {
-	m_fWalkSpeed = _speed * 3 + 12;  //초기 15 부터 3씩증가
+	m_fWalkSpeed = _speed * 3 + 27;  //초기 15 부터 3씩증가
 }
 void HeroObject::DefenseUp(float _defense)
 {

@@ -52,6 +52,7 @@ CScene::CScene(void)
 
 	m_HpbarRWidth = 250, m_HpbarRHeight = 15;
 	m_HpbarGWidth = 250, m_HpbarGHeight = 15;
+	m_Hpbar = 250;
 
 	m_CharacterFaceWidth = 47, m_CharacterFaceHeight = 80;
 	m_Skillq_buttonWidth = 25, m_Skillq_buttonHeight = 45;
@@ -62,6 +63,9 @@ CScene::CScene(void)
 	m_UpgradeSwordWidth = 23, m_UpgradeSwordHeight = 40;
 	m_UpgradeShieldWidth = 23, m_UpgradeShieldHeight = 40;
 	m_UpgradeBootsWidth = 23, m_UpgradeBootsHeight = 40;
+
+	m_fGameTimeSecond = 0.0f;
+	m_fGameTimeMinute = 0.0f;
 }
 
 
@@ -74,11 +78,11 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 {
 	m_Control.m_Camera = m_Camera;
 	CreateBlend(pd3dDevice);
-	
+
 	//이 쉐이더 객체에 대한 포인터들의 배열을 정의한다.
 	m_pObjectShaders = LoadManager::sharedManager()->m_pObjectShaders;
 	m_pInstancingShaders = LoadManager::sharedManager()->m_pInstancingShaders;
-	m_pInstancingShaders->BuildObjects(pd3dDevice);
+	//m_pInstancingShaders->BuildObjects(pd3dDevice);   //이거 때메 터졌던거
 	m_pAnimationShaders = LoadManager::sharedManager()->m_pAnimationShaders;
 	m_pParticleShaders = LoadManager::sharedManager()->m_pParticleShaders;
 
@@ -128,11 +132,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pAnimationShaders->AddObject(m_pPlane);
 	m_pAnimationShaders->AddObject(m_pBlueNexus);
 	m_pAnimationShaders->AddObject(m_pRedNexus);
-
-
-	//오브젝트 쉐이더에 지형 넥서스 연결
-	/*for(int i=0; i<iObjectNum; i++)
-		m_pObjectShaders->AddObject(pBoundBox[i]);*/
+	
 
 	//아더 플레이어 생성
 	OtherPlayerManager::sharedManager()->SetMesh(m_pWarriorMesh, m_pWizardMesh);
@@ -140,13 +140,15 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pAnimationShaders->AddObject(OtherPlayerManager::sharedManager()->m_pOtherPlayer);
 
 	//미니언 생성
-	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(100, 0, 0), LoadManager::sharedManager()->m_pGolemMesh, 50, 10, 25);
-	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(-100, 0, 0), LoadManager::sharedManager()->m_pLichkingMesh, 50, 10, 25);
+	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(100, 0, 0), LoadManager::sharedManager()->m_pCannonGolemMesh, 50, 10, 25);
+	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(-100, 0, 0), LoadManager::sharedManager()->m_pCannonGolemMesh, 50, 10, 25);
 	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(-400, 0, 160), LoadManager::sharedManager()->m_pCleftMesh, 50, 10, 25);
 	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(-400, 0, -160), LoadManager::sharedManager()->m_pTurtleMesh, 50, 10, 25);
 	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(400, 0, 160), LoadManager::sharedManager()->m_pCleftMesh, 50, 10, 25);
 	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(400, 0, -160), LoadManager::sharedManager()->m_pTurtleMesh, 50, 10, 25);
 
+	MinionManager::sharedManager()->m_pMinion[0]->SetType(CANNONGOLEM);
+	MinionManager::sharedManager()->m_pMinion[1]->SetType(CANNONGOLEM);
 	MinionManager::sharedManager()->m_pMinion[2]->SetType(CLEFT);
 	MinionManager::sharedManager()->m_pMinion[3]->SetType(TURTLE);
 	MinionManager::sharedManager()->m_pMinion[4]->SetType(CLEFT);
@@ -242,6 +244,8 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	
 	//조명 생성
 	CreateLightShaderVariables(pd3dDevice);
+
+
 }
 
 void CScene::ReleaseObjects()
@@ -407,6 +411,15 @@ bool CScene::ProcessInput()
 
 void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 {
+	//게임시간
+	m_fGameTimeSecond += fTimeElapsed;
+	if(m_fGameTimeSecond > 59.99f)
+	{
+		m_fGameTimeSecond = 0.0f;
+		m_fGameTimeMinute++;
+	}
+
+	//조명
 	if(m_pLights && m_pd3dcbLights) 
 	{
 		m_pLights->m_d3dxvCameraPosition =  D3DXVECTOR4(m_Camera->m_CameraPos, 1.0f);
@@ -530,6 +543,8 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 	}
 	GameCollision(HeroManager::sharedManager()->m_pHero, m_pBlueNexus); //캐릭터와 넥서스 충돌체크
 	GameCollision(HeroManager::sharedManager()->m_pHero, m_pRedNexus);
+
+
 }
 
 void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext, float fTimeElapsed, CCamera *pCamera)
@@ -574,11 +589,16 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext, float fTimeElapsed, C
 	m_pInstancingShaders->Render(pd3dDeviceContext, pCamera);
 
 	for(int i=0; i<MAX_MISSILE; i++)
+	{
+		if(MissileManager::sharedManager()->m_pMissile[i] == NULL) continue;
 		MissileManager::sharedManager()->m_pMissile[i]->Render(pd3dDeviceContext, pCamera);
-	
-	for(int i=0; i<MapEditorManager::sharedManager()->GetTreeSize() + MapEditorManager::sharedManager()->GetRockSize() + MapEditorManager::sharedManager()->GetRock2Size(); i++)
+	}
+
+	for(int i=0; i<MAX_OBSTACLE; i++)
+	{
+		if(ObstacleManager::sharedManager()->m_pObstacle[i] == NULL) continue;
 		ObstacleManager::sharedManager()->m_pObstacle[i]->Render(pd3dDeviceContext, pCamera);
-	
+	}
   	
 	
 	if(pCamera->GetMode() == CAMERA)
@@ -589,7 +609,10 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext, float fTimeElapsed, C
 			TowerManager::sharedManager()->m_pTower[i]->Render(pd3dDeviceContext, pCamera);
 		}
 		for(int i=0; i<MAX_DESTROY_TOWER; i++)
+		{
+			if(ObstacleManager::sharedManager()->m_pDestroyTower[i] == NULL) continue;
 			ObstacleManager::sharedManager()->m_pDestroyTower[i]->Render(pd3dDeviceContext, pCamera);
+		}
 	}
 
 	//애니메이션 쉐이더 렌더
@@ -654,6 +677,11 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext, float fTimeElapsed, C
 	//m_pParticleMesh->SetCamVec(m_Camera->GetRightVector(), m_Camera->GetUpVector());
 	//m_pParticle2Mesh->SetCamVec(m_Camera->GetRightVector(), m_Camera->GetUpVector());
 	//m_pParticle3Mesh->SetCamVec(m_Camera->GetRightVector(), m_Camera->GetUpVector());
+
+
+	//ui
+	SetUIHpUpdate();
+
 }
 
 int CScene::GetMousePosX()
@@ -1122,4 +1150,65 @@ void CScene::RenderUI(ID3D11DeviceContext *pd3dDeviceContext,int  _wndWidth,int 
 	m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[16]->m_d3dxmtxWorld);
 	m_pUIObjects[16]->Render(pd3dDeviceContext, _wndWidth/2 + m_UpgradeBootsWidth*4 + m_UpgradeBootsWidth*2/5, _wndHeight - m_UIskillbarHeight + m_UpgradeBootsHeight);
 
+}
+
+void CScene::SetUIHpUpdate()
+{
+	if(HeroManager::sharedManager()->m_pHero->GetHP() != HeroManager::sharedManager()->m_pHero->GetPrevHP())
+	{
+		HeroManager::sharedManager()->m_pHero->SetPrevHP(HeroManager::sharedManager()->m_pHero->GetHP());
+
+		m_Hpbar = (m_nWndClientWidth*m_HpbarGWidth) / m_nPrevWndClientWidth * (HeroManager::sharedManager()->m_pHero->GetHP()/(HeroManager::sharedManager()->m_pHero->GetLevel()*100));
+		m_pUI[8]->SetBitmapWH(m_Hpbar, m_HpbarGHeight);
+	}
+}
+
+
+void CScene::SetFontUI(CDXUTTextHelper* _text, int _num)
+{
+	WCHAR str[255];
+
+	_text->Begin();
+	if(_num == 0) //공격력
+	{
+		_text->SetInsertionPos( m_UIInfoWidth/2 + m_UIInfoWidth/20 + m_SwordWidth, m_nWndClientHeight - m_UIInfoHeight + m_UIInfoHeight/3 - m_SwordHeight/2);
+		swprintf(str, 255, L"  : %.0f", HeroManager::sharedManager()->m_pHero->GetDamage());
+	}
+	else if(_num == 1) //방어력
+	{
+		_text->SetInsertionPos( m_UIInfoWidth/2 + m_UIInfoWidth/20 + m_ShielWidth, m_nWndClientHeight - m_UIInfoHeight/2 - m_ShielHeight/2);
+		swprintf(str, 255, L"  : %d", HeroManager::sharedManager()->m_pHero->GetDefense());
+	}
+	else if(_num == 2) //스피드
+	{
+		_text->SetInsertionPos( m_UIInfoWidth/2 + m_UIInfoWidth/20 + m_BootsWidth, m_nWndClientHeight - m_UIInfoHeight + m_UIInfoHeight*2/3 - m_BootsHeight/2);
+		swprintf(str, 255, L"  : %.0f", HeroManager::sharedManager()->m_pHero->GetSpeed());
+	}
+	else if(_num == 3) //레벨 수치
+	{
+		_text->SetInsertionPos( 0 + m_CharacterFaceWidth/4, m_nWndClientHeight - m_UIInfoHeight + m_CharacterFaceHeight/3 + m_CharacterFaceHeight/12 + m_CharacterFaceHeight);
+		swprintf(str, 255, L" Lv : %d", HeroManager::sharedManager()->m_pHero->GetLevel());
+	}
+	else if(_num == 4)
+	{
+		_text->SetInsertionPos(m_nWndClientWidth - m_UIScoreWidth + m_UIScoreWidth/10, m_UIScoreHeight/3);
+		swprintf(str, 255, L" %.f:%.f", m_fGameTimeMinute, m_fGameTimeSecond);
+	}
+	else if(_num == 5)
+	{
+		_text->SetInsertionPos( m_nWndClientWidth - m_UIScoreWidth + m_UIScoreWidth/3 + m_UIScoreWidth/20, m_UIScoreHeight/3);
+		swprintf(str, 255, L" K : %d", OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetDeathCount());
+	}
+	else if(_num == 6)
+	{
+		_text->SetInsertionPos(m_nWndClientWidth - m_UIScoreWidth + m_UIScoreWidth*2/3 + m_UIScoreWidth/20, m_UIScoreHeight/3);
+		swprintf(str, 255, L" D : %d", HeroManager::sharedManager()->m_pHero->GetDeathCount());
+	}
+	//else if(_num == 7)
+	//else if(_num == 8)
+	//else if(_num == 9)
+
+	_text->SetForegroundColor( D3DXCOLOR( 0.0f, 1.0f, 0.0f, 1.0f ) );
+	_text->DrawTextLine(str);
+	_text->End();
 }
