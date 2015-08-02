@@ -1,5 +1,6 @@
 #pragma once
 #include "Mesh.h"
+#include "Textureclass.h"
 
 
 class UIClass : public CMesh
