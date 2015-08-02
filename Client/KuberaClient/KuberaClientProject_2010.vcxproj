@@ -411,6 +411,7 @@
     <ClCompile Include="Particle3Mesh.cpp" />
     <ClCompile Include="ParticleMesh.cpp" />
     <ClCompile Include="ParticleObject.cpp" />
+    <ClCompile Include="ParticleWizardSkillMesh.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SelectScene.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -469,6 +470,7 @@
     <ClInclude Include="ParticleManager.h" />
     <ClInclude Include="ParticleMesh.h" />
     <ClInclude Include="ParticleObject.h" />
+    <ClInclude Include="ParticleWizardSkillMesh.h" />
     <CLInclude Include="resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SelectScene.h" />

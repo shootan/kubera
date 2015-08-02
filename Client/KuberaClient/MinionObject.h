@@ -23,7 +23,8 @@ private:
 
 	D3DXVECTOR3 m_vWayPoint;  //처음 생성 지점
 
-	int m_Level;
+	//죽은 횟수
+	int m_nDeathCount;
 
 public:
 	MinionObject();
@@ -38,4 +39,5 @@ public:
 
 	void SetWayPoint(D3DXVECTOR3 _v) { m_vWayPoint = _v; }
 	D3DXVECTOR3 GetWayPoint() { return m_vWayPoint; }
+
 };

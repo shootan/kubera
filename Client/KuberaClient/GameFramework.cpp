@@ -347,7 +347,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 		case VK_SPACE:
 
 			//ST::sharedManager()->m_bSelected = TRUE;
-			if(LoadManager::sharedManager()->LoadFinish && !ST::sharedManager()->m_bStart)
+			if(LoadManager::sharedManager()->LoadFinish && ST::sharedManager()->m_bStart == FALSE)
 			{
 				ST::sharedManager()->Net->SendHeader(READY_GAME);
 			}
@@ -379,7 +379,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			}			
 			break;
 		case '1':
-			if(LoadManager::sharedManager()->LoadFinish && !ST::sharedManager()->m_bStart)
+			if(LoadManager::sharedManager()->LoadFinish && ST::sharedManager()->m_bStart == FALSE)
 			{
 				int Cha = 1;
 				ST::sharedManager()->Net->SendData(SELECT_CHAR_WARIOR, &Cha, sizeof(int));
@@ -388,7 +388,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			break;
 
 		case '2':
-			if(LoadManager::sharedManager()->LoadFinish && !ST::sharedManager()->m_bStart)
+			if(LoadManager::sharedManager()->LoadFinish && ST::sharedManager()->m_bStart == FALSE)
 			{
 				int Cha = 2;
 				ST::sharedManager()->Net->SendData(SELECT_CHAR_WIZARD, &Cha, sizeof(int));
@@ -778,66 +778,66 @@ void CGameFramework::SendHeroData()
 
 void CGameFramework::RenderText()
 {
-	m_pTxtHelper->Begin();
-	m_pTxtHelper->SetInsertionPos(30, 40);
-	m_pTxtHelper->SetForegroundColor( D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ) );
-	//m_pTxtHelper->DrawTextLine(L"Target : ");
-	WCHAR str[255];
-	for(int i=0; i<MAX_TOWER; i++)
-	{
-		if(TowerManager::sharedManager()->m_pTower[i] == NULL) continue;
-		if(HeroManager::sharedManager()->m_pHero->GetTarget() == TowerManager::sharedManager()->m_pTower[i])
-		{
-			int id = TowerManager::sharedManager()->m_pTower[i]->GetID();
-			swprintf(str, 255, L"Target : Tower [%d], HP : %.0f",id, TowerManager::sharedManager()->m_pTower[i]->GetHP());
-			m_pTxtHelper->DrawTextLine(str);
-			break;
-		}
-	}
+	//m_pTxtHelper->Begin();
+	//m_pTxtHelper->SetInsertionPos(30, 40);
+	//m_pTxtHelper->SetForegroundColor( D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ) );
+	////m_pTxtHelper->DrawTextLine(L"Target : ");
+	//WCHAR str[255];
+	//for(int i=0; i<MAX_TOWER; i++)
+	//{
+	//	if(TowerManager::sharedManager()->m_pTower[i] == NULL) continue;
+	//	if(HeroManager::sharedManager()->m_pHero->GetTarget() == TowerManager::sharedManager()->m_pTower[i])
+	//	{
+	//		int id = TowerManager::sharedManager()->m_pTower[i]->GetID();
+	//		swprintf(str, 255, L"Target : Tower [%d], HP : %.0f",id, TowerManager::sharedManager()->m_pTower[i]->GetHP());
+	//		m_pTxtHelper->DrawTextLine(str);
+	//		break;
+	//	}
+	//}
 
-	for(int i=0; i<MAX_MINION; i++)
-	{
-		if(MinionManager::sharedManager()->m_pMinion[i] == NULL ) continue;
-		if(HeroManager::sharedManager()->m_pHero->GetTarget() == MinionManager::sharedManager()->m_pMinion[i])
-		{
-			int id = MinionManager::sharedManager()->m_pMinion[i]->GetID();
-			swprintf(str, 255, L"Target : Minion [%d], HP : %.0f",id, MinionManager::sharedManager()->m_pMinion[i]->GetHP());
-			m_pTxtHelper->DrawTextLine(str);
-			break;
-		}
+	//for(int i=0; i<MAX_MINION; i++)
+	//{
+	//	if(MinionManager::sharedManager()->m_pMinion[i] == NULL ) continue;
+	//	if(HeroManager::sharedManager()->m_pHero->GetTarget() == MinionManager::sharedManager()->m_pMinion[i])
+	//	{
+	//		int id = MinionManager::sharedManager()->m_pMinion[i]->GetID();
+	//		swprintf(str, 255, L"Target : Minion [%d], HP : %.0f",id, MinionManager::sharedManager()->m_pMinion[i]->GetHP());
+	//		m_pTxtHelper->DrawTextLine(str);
+	//		break;
+	//	}
 
-	}
+	//}
 
 
-	if(HeroManager::sharedManager()->m_pHero->GetTarget() == OtherPlayerManager::sharedManager()->m_pOtherPlayer)
-	{
-		int id = OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetID();
-		swprintf(str, 255, L"Target : OtherPlayer [%d], HP : %.0f",id, OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetHP());
-		m_pTxtHelper->DrawTextLine(str);
-	}
-	
+	//if(HeroManager::sharedManager()->m_pHero->GetTarget() == OtherPlayerManager::sharedManager()->m_pOtherPlayer)
+	//{
+	//	int id = OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetID();
+	//	swprintf(str, 255, L"Target : OtherPlayer [%d], HP : %.0f",id, OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetHP());
+	//	m_pTxtHelper->DrawTextLine(str);
+	//}
+	//
 
-	if(HeroManager::sharedManager()->m_pHero->GetTarget() == HeroManager::sharedManager()->RedNexus)
-	{
-		swprintf(str, 255, L"Target : RedNexus, HP : %.0f", HeroManager::sharedManager()->RedNexus->GetHP());
-		m_pTxtHelper->DrawTextLine(str);
-	}
+	//if(HeroManager::sharedManager()->m_pHero->GetTarget() == HeroManager::sharedManager()->RedNexus)
+	//{
+	//	swprintf(str, 255, L"Target : RedNexus, HP : %.0f", HeroManager::sharedManager()->RedNexus->GetHP());
+	//	m_pTxtHelper->DrawTextLine(str);
+	//}
 
-	if(HeroManager::sharedManager()->m_pHero->GetTarget() == HeroManager::sharedManager()->BlueNexus)
-	{
-		swprintf(str, 255, L"Target : BlueNexus, HP : %.0f", HeroManager::sharedManager()->BlueNexus->GetHP());
-		m_pTxtHelper->DrawTextLine(str);
-	}
+	//if(HeroManager::sharedManager()->m_pHero->GetTarget() == HeroManager::sharedManager()->BlueNexus)
+	//{
+	//	swprintf(str, 255, L"Target : BlueNexus, HP : %.0f", HeroManager::sharedManager()->BlueNexus->GetHP());
+	//	m_pTxtHelper->DrawTextLine(str);
+	//}
 
-	m_pTxtHelper->End();
+	//m_pTxtHelper->End();
 
-	m_pTxtHelper2->Begin();
-	m_pTxtHelper2->SetInsertionPos(5, 10);
-	m_pTxtHelper2->SetForegroundColor( D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ) );
-	//m_pTxtHelper->DrawTextLine(L"Target : ");
-	swprintf(str, 255, L"HERO HP : [ %.0f ]", HeroManager::sharedManager()->m_pHero->GetHP());
-	m_pTxtHelper->DrawTextLine(str);
-	m_pTxtHelper2->End();
+	//m_pTxtHelper2->Begin();
+	//m_pTxtHelper2->SetInsertionPos(5, 10);
+	//m_pTxtHelper2->SetForegroundColor( D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ) );
+	////m_pTxtHelper->DrawTextLine(L"Target : ");
+	//swprintf(str, 255, L"HERO HP : [ %.0f ]", HeroManager::sharedManager()->m_pHero->GetHP());
+	//m_pTxtHelper->DrawTextLine(str);
+	//m_pTxtHelper2->End();
 
 	m_pScene->SetFontUI(m_pUIFont[0], 0); //정보창 공격력 수치정보
 	m_pScene->SetFontUI(m_pUIFont[1], 1); //정보창 방어력 수치정보
@@ -846,6 +846,13 @@ void CGameFramework::RenderText()
 	m_pScene->SetFontUI(m_pUIFont[4], 4); //오른쪽위 시간 정보
 	m_pScene->SetFontUI(m_pUIFont[5], 5); //오른쪽위 킬 정보
 	m_pScene->SetFontUI(m_pUIFont[6], 6); //오른쪽위 데스 정보
+	if(HeroManager::sharedManager()->m_pHero->GetTarget() != NULL)
+	{
+		m_pScene->SetFontUI(m_pUIFont[7], 7); //타겟 정보창 공격력 수치정보
+		m_pScene->SetFontUI(m_pUIFont[8], 8); //타겟 정보창 방어력 수치정보
+		m_pScene->SetFontUI(m_pUIFont[9], 9); //타겟 정보창 스피드 수치정보
+		m_pScene->SetFontUI(m_pUIFont[10], 10); //타겟 정보창 스피드 수치정보
+	}
 }
 
 void CGameFramework::TurnZBufferOn()

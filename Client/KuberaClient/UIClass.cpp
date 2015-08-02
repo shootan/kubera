@@ -322,7 +322,7 @@ bool UIClass::LoadTexture(ID3D11Device* device, WCHAR* filename)
 {
 	bool result;
 
-
+	
 	// Create the texture object.
 	m_pTexture = new CTextureclass;
 	if(!m_pTexture)
@@ -352,4 +352,18 @@ void UIClass::ReleaseTexture()
 	}
 
 	return;
+}
+
+void UIClass::SetTexture(ID3D11Device* device , WCHAR* textureFilename)
+{
+	// Load the texture for this bitmap.
+	if(m_pTexture)
+	{
+		m_pTexture->Release();
+		delete m_pTexture;
+		m_pTexture = 0;
+	}
+
+	LoadTexture(device, textureFilename);
+
 }

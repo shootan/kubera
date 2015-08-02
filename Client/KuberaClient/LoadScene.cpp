@@ -42,12 +42,11 @@ void LoadScene::LoadData(ID3D11Device *m_pd3dDevice, ID3D11DeviceContext* m_pd3d
   	case 29:
 		LoadManager::sharedManager()->LoadCleftModel(m_pd3dDevice);
 		LoadManager::sharedManager()->LoadTurtleModel(m_pd3dDevice);
-		LoadManager::sharedManager()->LoadGolemModel(m_pd3dDevice);
 		LoadManager::sharedManager()->LoadCannonGolemModel(m_pd3dDevice);
   		break;
 	case 34:
-		LoadManager::sharedManager()->LoadLichkingModel(m_pd3dDevice);
-		LoadManager::sharedManager()->LoadTestModel(m_pd3dDevice);
+		LoadManager::sharedManager()->LoadMageModel(m_pd3dDevice);
+		LoadManager::sharedManager()->LoadVarianModel(m_pd3dDevice);
 		break;
   	case 41:
   		LoadManager::sharedManager()->LoadParticle(m_pd3dDevice);

@@ -11,7 +11,7 @@
 #include "SelectScene.h"
 #include "ST.h"
 
-#define MAX_UI_FONT 7
+#define MAX_UI_FONT 11
 
 class CGameFramework
 {

@@ -2,9 +2,6 @@
 #include "GameObject.h"
 #include "astarclass.h"
 #include "ST.h"
-#include "MissileManager.h"
-#include "ParticleManager.h"
-#include "OtherPlayerManager.h"
 
 
 class HeroObject : public CGameObject
@@ -31,15 +28,12 @@ private:
 	BOOL m_bUseParticleAttack;
 
 	//정보
-	int m_Level;
-	int m_SkillDamage;
-	int m_Exp;
 	int m_Speed_Level;
 	int m_Defence_Level;
 	int m_Damage_Level;
 
-	//ui hp바를 위해 만듬
-	float m_PrevHP;
+	BOOL m_bUpgrade;
+
 	//hp가 시작하자마자 -값이 되어버리는 버그때문에 만듬
 	BOOL m_bHpFUCK;
 
@@ -60,6 +54,15 @@ public:
 
 	void SetState(int _state) { m_iState = _state;}
 
+	void SetUpgradePossible(BOOL _upgrade) { m_bUpgrade = _upgrade;}
+	BOOL GetUpgradePossible() { return m_bUpgrade;}
+
+	void SetDamageLevel(int _level) { m_Damage_Level = _level;}
+	void SetDefenseLevel(int _level) { m_Defence_Level = _level;}
+	void SetSpeedLevel(int _level) { m_Speed_Level = _level;}
+	int GetDamageLevel() { return m_Damage_Level;}
+	int GetDefenseLevel() { return m_Defence_Level;}
+	int GetSpeedLevel() { return m_Speed_Level;}
 
 	//레벨 업에 따른 캐릭터 정보
 	void UpdateCharacterInfo(int _Level);
@@ -68,11 +71,8 @@ public:
 	void SpeedUp(float _speed);
 	void DefenseUp(float _defense);
 
-	int GetLevel() { return m_Level;}
-
-	void SetPrevHP(int _hp) { m_PrevHP = _hp;}
-	float GetPrevHP() { return m_PrevHP;}
 	int GetDeathCount() {return m_nDeathCount;}
+
 	Vector3 GetDestination()
 	{
 		Vector3 p;

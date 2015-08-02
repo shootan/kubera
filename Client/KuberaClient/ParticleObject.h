@@ -8,7 +8,6 @@ class ParticleObject : public CGameObject
 private:
 	BOOL m_bUsed;
 	float m_time;
-	CGameObject* m_pAttacker;
 
 	D3DXVECTOR3 m_CameraPosition;
 public:
@@ -29,6 +28,4 @@ public:
 
 	void SetCameraPos(D3DXVECTOR3 _camerapos) { m_CameraPosition = _camerapos; }
 
-	void SetAttacker(CGameObject* _attacker) { m_pAttacker = _attacker; }
-	CGameObject* GetAttacker() { return m_pAttacker; }
 };

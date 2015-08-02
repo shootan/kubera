@@ -22,12 +22,10 @@ void SelectScene::BuildObject(ID3D11Device *m_pd3dDevice)
 	m_pWizard->SetTeam(1);
 	m_pWarrior->SetPosition(D3DXVECTOR3(25, 0, 0));
 	m_pWizard->SetPosition(D3DXVECTOR3(-25, 0, 0));
-	m_pWarrior->SetScale(D3DXVECTOR3(0.1, 0.1, 0.1));
-	m_pWizard->SetScale(D3DXVECTOR3(0.1, 0.1, 0.1));
 	m_pWizard->SetState(IDLE);
 	m_pWarrior->SetState(IDLE);
-	m_pWizard->SetMesh(LoadManager::sharedManager()->m_pWizardMesh);
-	m_pWarrior->SetMesh(LoadManager::sharedManager()->m_pWarriorMesh);
+	m_pWizard->SetMesh(LoadManager::sharedManager()->m_pMageMesh);
+	m_pWarrior->SetMesh(LoadManager::sharedManager()->m_pVarianMesh);
 	m_pWizard->SetType(WIZARD);
 	m_pWarrior->SetType(KNIGHT);
 

@@ -1,5 +1,8 @@
 #include "HeroObject.h"
 #include "Shader.h"
+#include "MissileManager.h"
+#include "ParticleManager.h"
+#include "OtherPlayerManager.h"
 
 HeroObject::HeroObject(void)
 {
@@ -40,7 +43,7 @@ HeroObject::HeroObject(void)
 	m_Defence_Level = 1;	//방어력 레벨 1
 	m_Damage_Level = 1;		//데미지 레벨 1
 
-
+	m_bUpgrade = FALSE;
 	m_bHpFUCK = TRUE;
 	m_nDeathCount = 0;
 
@@ -301,38 +304,43 @@ void HeroObject::Animate(float fTimeElapsed)
 		switch(m_iType)
 		{
 		case KNIGHT:
-			if(m_time < 1.1f) m_time = 1.1f;
-			if(m_time > 7.0f) m_time = 1.1f;
+			if(m_time < 16.9f) m_time = 16.9f;
+			if(m_time > 20.4f) m_time = 16.9f;
 			break;
 		case WIZARD:
-			if(m_time < 1.1f) m_time = 1.1f;
-			if(m_time > 7.1f) m_time = 1.1f;
+			if(m_time < 6.9f) m_time = 6.9f;
+			if(m_time > 11.7f) m_time = 6.9f; 
 			break;
 		}
 	}
 	else if(m_iState == ATTACK)
 	{
 		if(m_pTarget->GetState() == DEATH) //상대가 죽었을시 공격 안하게 설정
+		{
 			m_iState = IDLE;
+			return;
+		}
 
 		switch(m_iType)
 		{
 		case KNIGHT:
-			if(m_time < 41.0f) m_time = 41.0f;
-			if(m_time > 43.0f && m_bWarriorAttack)
+			if(m_time < 28.0f) m_time = 28.0f;
+			if(m_time > 29.0f && m_bWarriorAttack)
 			{
-				m_pTarget->SetAttackDamage(this->m_Damage);
+				m_pTarget->SetAttackDamage(this->m_Damage - m_pTarget->GetDefense());
+				m_pTarget->SetAttacker(this);
+
 				m_bWarriorAttack = FALSE;
 			}
-			if(m_time > 44.0f)
+			if(m_time > 30.0f)
 			{
 				m_bWarriorAttack = TRUE;
-				m_time = 41.0f;
+				m_time = 28.0f;
 			}
 			break;
 		case WIZARD:
-			if(m_time < 20.0f) m_time = 20.0f;
-			if(m_time > 21.5f && m_time < 22.0f)
+			if(m_time < 24.5f) m_time = 24.5f;
+			if(m_time > 26.0f && m_time < 26.1f)
 			{
 				if(m_bUseParticleAttack == FALSE)
 				{
@@ -354,9 +362,9 @@ void HeroObject::Animate(float fTimeElapsed)
 					}
 				}
 			}
-			if(m_time > 23.0f) 
+			if(m_time > 26.9f)
 			{
-				m_time = 20.0f;
+				m_time = 24.5f; 
 				m_bUseParticleAttack = FALSE;
 			}
 			break;
@@ -369,7 +377,7 @@ void HeroObject::Animate(float fTimeElapsed)
 			m_iState = IDLE;
 			return;
 		}
-		m_fAttackTime += fTimeElapsed;
+		//m_fAttackTime += fTimeElapsed;
 	}
 	else if(m_iState == MOVE)
 	{
@@ -379,26 +387,42 @@ void HeroObject::Animate(float fTimeElapsed)
 			m_bUseParticleMissile = FALSE;
 			ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetUsed(FALSE);
 			ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetTarget(NULL);
-			ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetPosition(D3DXVECTOR3(1200, 0, 0));
+			ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetPosition(D3DXVECTOR3(0, 0, -2000));
+			m_iparticleNum = 500;
 		}
 
 		switch(m_iType)
 		{
 		case KNIGHT:
-			if(m_pTarget != NULL && 
-				ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 25.f && m_pTarget->GetTeam() != this->GetTeam())
-				m_iState = ATTACK;
+			if(m_pTarget != NULL &&	m_pTarget->GetTeam() != this->GetTeam())
+			{
+				if(m_pTarget->GetFaceType() == GOLEM_FACE || m_pTarget->GetFaceType() == TURTLE_FACE || m_pTarget->GetFaceType() == CLEFT_FACE)
+				{
+					if(ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < GetBoundSizeX()/2 + m_pTarget->GetBoundSizeX()/2)
+						m_iState = ATTACK;
+				}
+				else if (m_pTarget->GetFaceType() == NEXUS_FACE)
+				{
+					if(ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 35.f)
+						m_iState = ATTACK;
+				}
+				else
+					if(ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 25.f)
+						m_iState = ATTACK;
 
-			if(m_time < 57.5f) m_time = 57.5f;
-			if(m_time > 59.7f ) m_time = 57.5f;
+			}
+
+			if(m_time < 0.1f) m_time = 0.1f;
+			if(m_time > 1.7f) m_time = 0.1f; 
 			break;
 		case WIZARD:
 			if(m_pTarget != NULL && 
-				ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 50.f && m_pTarget->GetTeam() != this->GetTeam())
+				ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 50.f && 
+				m_pTarget->GetTeam() != this->GetTeam())
 				m_iState = ATTACK;
 
-			if(m_time < 68.0f) m_time = 68.0f;
-			if(m_time > 70.3f ) m_time = 68.0f;
+			if(m_time < 0.1f) m_time = 0.1f;
+			if(m_time > 1.7f) m_time = 0.1f; 
 			break;
 		}
 		m_fAttackTime = 0.f;
@@ -408,8 +432,9 @@ void HeroObject::Animate(float fTimeElapsed)
 		switch(m_iType)
 		{
 		case KNIGHT:
-			if(m_time < 30.0f) m_time = 30.0f;
-			if(m_time > 34.0f)
+			if(m_time < 6.9f) m_time = 6.9f;
+			if(m_time > 11.9f) m_time = 6.9f;
+			if(m_time > 11.8f && m_time < 11.9f)
 			{
 				m_time = 1.1f;
 				m_iState = WAIT;
@@ -417,8 +442,9 @@ void HeroObject::Animate(float fTimeElapsed)
 			}
 			break;
 		case WIZARD:
-			if(m_time < 30.0f) m_time = 30.0f;
-			if(m_time > 34.0f)
+			if(m_time < 31.5f) m_time = 31.5f;
+			if(m_time > 36.3f) m_time = 31.5f;
+			if(m_time > 36.2f && m_time < 36.3f)
 			{
 				m_time = 1.1f;
 				m_iState = WAIT;
@@ -458,8 +484,9 @@ void HeroObject::Animate(float fTimeElapsed)
 		switch(m_iType)
 		{
 		case KNIGHT:
-			if(m_time < 50.0f)  m_time = 50.0f;
-			if(m_time > 54.0f) 
+			if(m_time < 35.2f) m_time = 35.2f;
+			if(m_time > 38.3f) m_time = 35.2f;
+			if(m_time > 38.2f && m_time < 38.3f) 
 			{
 				m_time = 1.1f;
 				m_iState = IDLE;
@@ -483,8 +510,9 @@ void HeroObject::Animate(float fTimeElapsed)
 					}
 				}
 			}
-			if(m_time < 45.0f) m_time = 45.0f;
-			if(m_time > 48.5f && m_time < 49.f)
+			if(m_time < 41.3f) m_time = 41.3f;
+			if(m_time > 44.7f) m_time = 41.3f; 
+			if(m_time > 43.6f && m_time < 43.7f)
 			{
 				if(m_bUseParticleMissile == FALSE)
 				{
@@ -495,11 +523,7 @@ void HeroObject::Animate(float fTimeElapsed)
 						if(ParticleManager::sharedManager()->m_pParticle[i]->GetType() == WIZARD_SKILL_MISSILE)
 						{
 							ParticleManager::sharedManager()->m_pParticle[i]->SetUsed(TRUE);
-	
-							//ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(OtherPlayerManager::sharedManager()->m_pOtherPlayer);
-							
-							if(ParticleManager::sharedManager()->m_pParticle[i]->GetTarget() == NULL)
-								ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(this);
+
 							D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
 							ParticleManager::sharedManager()->m_pParticle[i]->SetDirection(m_vWalkIncrement);
 							ParticleManager::sharedManager()->m_pParticle[i]->SetPosition(D3DXVECTOR3(m_Pos.x, m_Pos.y + 10, m_Pos.z) + m_vWalkIncrement * 15);
@@ -510,7 +534,7 @@ void HeroObject::Animate(float fTimeElapsed)
 					}
 				}
 			}
-			if(m_time > 49.5f)
+			if(m_time > 44.6f)
 			{
 				m_bUseParticle = FALSE;
 				m_bUseParticleMissile = FALSE;
@@ -534,7 +558,14 @@ void HeroObject::LevelUp()
 	if(m_Exp <= 0)
 	{
 		m_Level += 1;
+
+		if(m_Level > 10)
+		{
+			m_Level = 10;
+			return;
+		}
 		UpdateCharacterInfo(m_Level);
+		m_bUpgrade = TRUE;
 	}
 }
 
@@ -547,7 +578,7 @@ void HeroObject::UpdateCharacterInfo(int _Level)
 void HeroObject::DamageUp(float _damage)
 {
 	m_Damage = _damage * 5 + 5;    //초기10 부터 5씩증가 
-	m_Speed_Level = 20 + m_Damage;
+	m_SkillDamage = 20 + m_Damage;
 }
 void HeroObject::SpeedUp(float _speed)
 {

@@ -1,5 +1,6 @@
 #include "ParticleObject.h"
 #include "MinionManager.h"
+#include "OtherPlayerManager.h"
 
 ParticleObject::ParticleObject(void)
 {
@@ -33,15 +34,15 @@ void ParticleObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
 
 	//// Calculate the rotation angle before. Next, change the walk direction into 
 	//// an increment by multiplying by speed.
-	float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
-	D3DXVECTOR3 cross;
-	D3DXVec3Cross( &cross, &m_vWalkIncrement, &m_vFacingDirection );
-	fAngle = acosf( fAngle );
-	if ( cross.y >  0.0f ) {
-		fAngle *=-1.0f;
-	}
-	fAngle /= D3DX_PI;
-	this->SetRotation(2, 1/fAngle);
+	//float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
+	//D3DXVECTOR3 cross;
+	//D3DXVec3Cross( &cross, &m_vWalkIncrement, &m_vFacingDirection );
+	//fAngle = acosf( fAngle );
+	//if ( cross.y >  0.0f ) {
+	//	fAngle *=-1.0f;
+	//}
+	//fAngle /= D3DX_PI;
+	//this->SetRotation(2, 1/fAngle);
 
 	m_vWalkIncrement *= m_fWalkSpeed;       
 
@@ -118,60 +119,67 @@ void ParticleObject::Render(ID3D11DeviceContext *pd3dDeviceContext, CCamera *pCa
 
 void ParticleObject::Update(float fTimeElapsed)
 {
+	//if(m_pTarget != NULL || m_pAttacker != NULL)
+
+
 	m_pMesh->Frame(fTimeElapsed);
 
-	if(m_pTarget == NULL) return;
+	if(m_bUsed == FALSE) return;
 
-	if(m_iType == WIZARD_SKILL_BODY)
+	if(m_iType == WIZARD_SKILL_BODY && m_pTarget != NULL)
 		SetPosition(m_pTarget->GetPosition());
-	else if(m_iType == WIZARD_SKILL_MISSILE)
+	else if(m_iType == WIZARD_SKILL_MISSILE && m_pAttacker != NULL)
 	{
-
 		m_Pos += m_vWalkIncrement * fTimeElapsed * m_fWalkSpeed;
 
-		if(m_pTarget->GetTag() != EFFECT)
-		{
-			for(int i=0;i<MAX_MINION; i++) //미니언 스킬 적중 처리
-			{
-				if(MinionManager::sharedManager()->m_pMinion[i] == NULL) continue;
 
-				if (ST::sharedManager()->GetDistance(this->GetPos(), MinionManager::sharedManager()->m_pMinion[i]->GetPos()) <= 5.f)
-				{
-					MinionManager::sharedManager()->m_pMinion[i]->SetAttackDamage(m_pAttacker->GetDamage());
-					m_Pos = D3DXVECTOR3(1200, 0, 0);
-					m_bUsed = FALSE;
-				}
-				else if (ST::sharedManager()->GetDistance(this->GetPos(), m_pAttacker->GetPos()) >= 100.f)
-				{
-					m_pTarget = NULL;
-					m_Pos = D3DXVECTOR3(1200, 0, 0);
-					m_bUsed = FALSE;
-				}
-			}
-			/*if (ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) <= 5.f)
+		for(int i=0;i<MAX_MINION; i++) //미니언 스킬 적중 처리
+		{
+			if(MinionManager::sharedManager()->m_pMinion[i] == NULL) continue;
+
+			if (ST::sharedManager()->GetDistance(this->GetPos(), MinionManager::sharedManager()->m_pMinion[i]->GetPos()) <= 5.f)
 			{
-				m_pTarget->SetAttackDamage(m_pAttacker->GetDamage());
+				MinionManager::sharedManager()->m_pMinion[i]->SetAttackDamage(m_pAttacker->GetSkillDamage() - MinionManager::sharedManager()->m_pMinion[i]->GetDefense());
+
+				MinionManager::sharedManager()->m_pMinion[i]->SetAttacker(m_pAttacker);
 				m_pTarget = NULL;
-				m_Pos = D3DXVECTOR3(1200, 0, 0);
+				m_pAttacker = NULL;
+				m_Pos = D3DXVECTOR3(0, 0, -2000);
 				m_bUsed = FALSE;
+				break;
+			}
+			else if(ST::sharedManager()->GetDistance(this->GetPos(), OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetPos()) <= 10.f)
+			{
+				OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetAttackDamage(m_pAttacker->GetSkillDamage() - OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetDefense());
+
+				OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetAttacker(m_pAttacker);
+				m_pTarget = NULL;
+				m_pAttacker = NULL;
+				m_Pos = D3DXVECTOR3(0, 0, -2000);
+				m_bUsed = FALSE;
+				break;
 			}
 			else if (ST::sharedManager()->GetDistance(this->GetPos(), m_pAttacker->GetPos()) >= 100.f)
 			{
 				m_pTarget = NULL;
-				m_Pos = D3DXVECTOR3(1200, 0, 0);
+				m_pAttacker = NULL;
+				m_Pos = D3DXVECTOR3(0, 0, -2000);
 				m_bUsed = FALSE;
-			}*/
+				break;
+			}
 		}
+		
 	}
-	else if(m_iType == WIZARD_ATTACK)
+	else if(m_iType == WIZARD_ATTACK && m_pTarget != NULL && m_pAttacker != NULL)
 	{
 		SetNewDestination(m_pTarget->GetPosition() + D3DXVECTOR3(0 , m_pTarget->GetBoundSizeY()/2, 0));
 
-		if(m_pTarget->GetHP()< 1.0f)
+		if(m_pTarget->GetHP() <= 0.0f)
 		{
-			m_Pos = D3DXVECTOR3(1200, 0 ,0);
+			m_Pos = D3DXVECTOR3(0, 0 ,-2000);
 			m_bUsed = FALSE;
 			m_pTarget = NULL;
+			m_pAttacker = NULL;
 			return;
 		}
 
@@ -192,16 +200,19 @@ void ParticleObject::Update(float fTimeElapsed)
 
 		if ( finished < 1.0f ) 
 		{
-			if(m_pTarget->GetTag() != OTHERPLAYER) m_pTarget->SetAttackDamage(m_pAttacker->GetDamage());
-			m_Pos = D3DXVECTOR3(1200, 0 ,0);
+			m_pTarget->SetAttackDamage(m_pAttacker->GetDamage() - m_pTarget->GetDefense());
+			m_pTarget->SetAttacker(m_pAttacker);
+			m_Pos = D3DXVECTOR3(0, 0 ,-2000);
 			m_bUsed = FALSE;
 			m_pTarget = NULL;
+			m_pAttacker = NULL;
 		}
 		else if(finished > 80.0f)
 		{
-			m_Pos = D3DXVECTOR3(1200, 0 ,0);
+			m_Pos = D3DXVECTOR3(0, 0 ,-2000);
 			m_bUsed = FALSE;
 			m_pTarget = NULL;
+			m_pAttacker = NULL;
 		}
 	}
 }

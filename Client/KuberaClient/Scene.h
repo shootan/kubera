@@ -20,7 +20,7 @@
 #include "UIObject.h"
 #include "UIClass.h"
 
-#define MAX_UI 17
+#define MAX_UI 31
 
 class CScene
 {
@@ -48,9 +48,9 @@ private:
 	GFBX::Mesh *m_pWarriorMesh;
 	GFBX::Mesh *m_pWizardMesh;
 
-	ParticleMesh *m_pParticleMesh;
-	Particle3Mesh *m_pParticle2Mesh;
-	Particle3Mesh *m_pParticle3Mesh;
+	//ParticleMesh *m_pParticleMesh;
+	//Particle3Mesh *m_pParticle2Mesh;
+	//Particle3Mesh *m_pParticle3Mesh;
 
 
 	float m_fMissileAttackTime;
@@ -68,6 +68,9 @@ private:
 
 	CGameObject *m_pBlueNexus;
 	CGameObject *m_pRedNexus;
+	CGameObject *m_pDestroyNexus;
+
+	BOOL m_bGameOver;
 
 
 	//조명
@@ -83,6 +86,7 @@ private:
 	float m_UIMinimapWidth, m_UIMinimapHeight;   //미니맵 UI
 	float m_UIInfoWidth, m_UIInfoHeight;			//캐릭터 정보창 UI
 	float m_UIScoreWidth, m_UIScoreHeight;		//점수판 UI
+	float m_UITargetInfoWidth, m_UITargetInfoHeight;			//타겟 정보창 UI
 
 	float m_SwordWidth, m_SwordHeight; //특성 아이콘
 	float m_ShielWidth, m_ShielHeight;
@@ -91,6 +95,10 @@ private:
 	float m_HpbarRWidth, m_HpbarRHeight; //hp바
 	float m_HpbarGWidth, m_HpbarGHeight;
 	float m_Hpbar;
+
+	float m_TargetHpbarRWidth, m_TargetHpbarRHeight; //타겟 hp바
+	float m_TargetHpbarGWidth, m_TargetHpbarGHeight;
+	float m_TargetHpbar;
 
 	float m_CharacterFaceWidth , m_CharacterFaceHeight; //캐릭터 정보창 얼굴
 
@@ -103,6 +111,10 @@ private:
 	float m_UpgradeShieldWidth, m_UpgradeShieldHeight;
 	float m_UpgradeBootsWidth, m_UpgradeBootsHeight;
 
+	float m_UpgradeButtonWidth, m_UpgradeButtonHeight;  //업그레이드 버튼
+	float m_UpgradeButtonNumberWidth, m_UpgradeButtonNumberHeight; //업그레이드 버튼 숫자
+	float m_GameWinLoseWidth, m_GameWinLoseHeight;
+
 	int m_nWndClientWidth;
 	int m_nWndClientHeight;
 	int m_nPrevWndClientWidth;
@@ -110,6 +122,10 @@ private:
 
 	float m_fGameTimeSecond;
 	float m_fGameTimeMinute;
+	BOOL m_bChangeImage;
+	BOOL m_bChangeHpbar;
+	int m_iPrevFaceType;
+	int m_iPrevHpType;
 public:
 	CScene(void);
 	~CScene(void);

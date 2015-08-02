@@ -361,7 +361,7 @@ void Particle2Mesh::UpdateParticles(float frameTime)
 	// Each frame we update all the particles by making them move downwards using their position, velocity, and the frame time.
 	for(i=0; i<m_currentParticleCount; i++)
 	{
-		m_particleList[i].positionY = m_particleList[i].positionY - (m_particleList[i].velocity * frameTime * 10);
+		//m_particleList[i].positionY = m_particleList[i].positionY - (m_particleList[i].velocity * frameTime * 10);
 		//m_particleList[i].positionX += frameTime * 20;
 		m_particleList[i].m_fTime += frameTime;
 		m_particleList[i].m_fFadeFactor = min(max(1 - m_particleList[i].m_fTime / 0.6f, 0), 1);
@@ -378,7 +378,7 @@ void Particle2Mesh::KillParticles()
 	// Kill all the particles that have gone below a certain height range.
 	for(i=0; i<m_maxParticles; i++)
 	{
-		if((m_particleList[i].active == true) && (m_particleList[i].m_fTime < 0.6f))
+		if((m_particleList[i].active == true) && (m_particleList[i].m_fTime > 0.6f))
 		{
 			m_particleList[i].m_fTime = 0.f;
 			m_particleList[i].m_fFadeFactor = 0.f;

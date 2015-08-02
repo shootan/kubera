@@ -16,6 +16,7 @@ OtherPlayerObject::OtherPlayerObject(void)
 
 	m_fAttackTime = 0.0f;
 	m_Time = 0.0f;
+	m_fRespawnTime = 0.0f;
 	m_fWalkSpeed = 25.0f;
 
 	m_iparticleNum = 500;
@@ -296,16 +297,17 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 			break;
 		}
 
-		if(m_pTarget->GetHP() < 1 || ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) > 50.0f)
+		if(m_pTarget->GetHP() <= 0  || ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) > 50.0f)
 		{
 			m_pTarget = NULL;
-			m_fAttackTime = 0.0f;
+
 			//m_iState = IDLE;
 			return;
 		}
-		m_fAttackTime += fTimeElapsed;
-
 		break;
+	case WAIT:
+		break;
+		
 	case SKILL1:
 		switch(m_iType)
 		{
@@ -373,7 +375,7 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 				ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetPosition(D3DXVECTOR3(1200, 0, 0));
 				m_iparticleNum = 500;
 				m_Time = 1.1f;
-			//	m_iState = IDLE;
+				//m_iState = IDLE;
 			}
 
 			break;

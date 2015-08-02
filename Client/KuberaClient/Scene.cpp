@@ -28,8 +28,11 @@ CScene::CScene(void)
 	m_pPlane = NULL;
 	m_pBlueNexus = NULL;
 	m_pRedNexus = NULL;
+	m_pDestroyNexus = NULL;
 	m_pWarriorMesh = NULL;
 	m_pWizardMesh = NULL;
+
+	m_bGameOver = FALSE;
 
 	m_particleEnableBlendingState = 0;
 	m_particleDisableBlendingState = 0;
@@ -45,6 +48,7 @@ CScene::CScene(void)
 	m_UIMinimapWidth= 197.6573f, m_UIMinimapHeight = 234.375f;
 	m_UIInfoWidth = 197.6573f, m_UIInfoHeight = 156.25f;
 	m_UIScoreWidth = 131.7715f, m_UIScoreHeight = 78.125f;
+	m_UITargetInfoWidth = 197.6573f, m_UITargetInfoHeight = 156.25f;
 
 	m_SwordWidth = 20, m_SwordHeight = 20;
 	m_ShielWidth = 20, m_ShielHeight = 20;
@@ -53,6 +57,10 @@ CScene::CScene(void)
 	m_HpbarRWidth = 250, m_HpbarRHeight = 15;
 	m_HpbarGWidth = 250, m_HpbarGHeight = 15;
 	m_Hpbar = 250;
+
+	m_TargetHpbarRWidth = 95, m_TargetHpbarRHeight = 10; //타겟 hp바
+	m_TargetHpbarGWidth = 95, m_TargetHpbarGHeight = 10;
+	m_TargetHpbar = 95;
 
 	m_CharacterFaceWidth = 47, m_CharacterFaceHeight = 80;
 	m_Skillq_buttonWidth = 25, m_Skillq_buttonHeight = 45;
@@ -64,8 +72,14 @@ CScene::CScene(void)
 	m_UpgradeShieldWidth = 23, m_UpgradeShieldHeight = 40;
 	m_UpgradeBootsWidth = 23, m_UpgradeBootsHeight = 40;
 
+	m_UpgradeButtonWidth= 60, m_UpgradeButtonHeight = 20; 
+	m_UpgradeButtonNumberWidth = 10, m_UpgradeButtonNumberHeight = 18; //업그레이드 버튼 숫자
+	m_GameWinLoseWidth = 300, m_GameWinLoseHeight = 200;
+
 	m_fGameTimeSecond = 0.0f;
 	m_fGameTimeMinute = 0.0f;
+	m_bChangeImage = FALSE;
+	m_bChangeHpbar = FALSE;
 }
 
 
@@ -91,10 +105,10 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_nObjects = LoadManager::sharedManager()->m_nObjects;
 
 	//워리어 메쉬
-	m_pWarriorMesh = LoadManager::sharedManager()->m_pWarriorMesh;
+	m_pWarriorMesh = LoadManager::sharedManager()->m_pVarianMesh;
 
 	//위자드 메쉬
-	m_pWizardMesh = LoadManager::sharedManager()->m_pWizardMesh;
+	m_pWizardMesh = LoadManager::sharedManager()->m_pMageMesh;
 
 	//재질설정
 	CMaterial *pMaterial = new CMaterial();
@@ -105,9 +119,10 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	pMaterial->m_Material.m_d3dxcEmissive = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 	
 	//히어로 생성
-	HeroManager::sharedManager()->CreateHero(LoadManager::sharedManager()->m_pWarriorMesh, LoadManager::sharedManager()->m_pWizardMesh, 10, 13, 10);
-	HeroManager::sharedManager()->m_pHero->SetScale(D3DXVECTOR3(0.1, 0.1, 0.1));
+	HeroManager::sharedManager()->CreateHero(LoadManager::sharedManager()->m_pVarianMesh, LoadManager::sharedManager()->m_pMageMesh, 10, 13, 10);
 	HeroManager::sharedManager()->m_pHero->SetMaterial(pMaterial);
+	HeroManager::sharedManager()->m_pHero->SetFaceType(HERO1_FACE);
+
 	//바닥 생성
 	m_pPlane = new CGameObject();
 	m_pPlane->SetMesh(LoadManager::sharedManager()->pPlaneMesh);
@@ -117,26 +132,29 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	//넥서스 2개 생성
 	m_pBlueNexus = LoadManager::sharedManager()->m_pBlueNexus;
 	m_pRedNexus = LoadManager::sharedManager()->m_pRedNexus;
+	m_pDestroyNexus = LoadManager::sharedManager()->m_pDestroyNexus;
 
 	HeroManager::sharedManager()->SetNexus(m_pRedNexus, m_pBlueNexus);
 
 	//pFBXMesh->Release();
 
 	//파티클 메쉬
-	m_pParticleMesh = LoadManager::sharedManager()->m_pParticleMesh;
-	m_pParticle2Mesh = LoadManager::sharedManager()->m_pParticle2Mesh;
-	m_pParticle3Mesh = LoadManager::sharedManager()->m_pParticle3Mesh;
+	//m_pParticleMesh = LoadManager::sharedManager()->m_pParticleMesh;
+	//m_pParticle2Mesh = LoadManager::sharedManager()->m_pParticle2Mesh;
+	//m_pParticle3Mesh = LoadManager::sharedManager()->m_pParticle3Mesh;
 
  	//애니메이션 쉐이더에 객체 연결
  	m_pAnimationShaders->AddObject(HeroManager::sharedManager()->m_pHero);
 	m_pAnimationShaders->AddObject(m_pPlane);
 	m_pAnimationShaders->AddObject(m_pBlueNexus);
 	m_pAnimationShaders->AddObject(m_pRedNexus);
+	m_pAnimationShaders->AddObject(m_pDestroyNexus);
 	
 
 	//아더 플레이어 생성
 	OtherPlayerManager::sharedManager()->SetMesh(m_pWarriorMesh, m_pWizardMesh);
 	OtherPlayerManager::sharedManager()->CreateOtherPlayer(D3DXVECTOR3(1500, 0, 0), 10, 13, 10);
+	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetFaceType(HERO2_FACE);
 	m_pAnimationShaders->AddObject(OtherPlayerManager::sharedManager()->m_pOtherPlayer);
 
 	//미니언 생성
@@ -148,11 +166,17 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(400, 0, -160), LoadManager::sharedManager()->m_pTurtleMesh, 50, 10, 25);
 
 	MinionManager::sharedManager()->m_pMinion[0]->SetType(CANNONGOLEM);
+	MinionManager::sharedManager()->m_pMinion[0]->SetFaceType(GOLEM_FACE);
 	MinionManager::sharedManager()->m_pMinion[1]->SetType(CANNONGOLEM);
+	MinionManager::sharedManager()->m_pMinion[1]->SetFaceType(GOLEM_FACE);
 	MinionManager::sharedManager()->m_pMinion[2]->SetType(CLEFT);
+	MinionManager::sharedManager()->m_pMinion[2]->SetFaceType(CLEFT_FACE);
 	MinionManager::sharedManager()->m_pMinion[3]->SetType(TURTLE);
+	MinionManager::sharedManager()->m_pMinion[3]->SetFaceType(TURTLE_FACE);
 	MinionManager::sharedManager()->m_pMinion[4]->SetType(CLEFT);
+	MinionManager::sharedManager()->m_pMinion[4]->SetFaceType(CLEFT_FACE);
 	MinionManager::sharedManager()->m_pMinion[5]->SetType(TURTLE);
+	MinionManager::sharedManager()->m_pMinion[5]->SetFaceType(TURTLE_FACE);
 	for(int i=0; i< MAX_MINION; i++)
 	{
 		if(MinionManager::sharedManager()->m_pMinion[i] == NULL) continue;
@@ -298,6 +322,8 @@ bool CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 			m_UIInfoHeight = (m_nWndClientHeight*m_UIInfoHeight) / m_nPrevWndClientHeight; 
 			m_UIScoreWidth = (m_nWndClientWidth*m_UIScoreWidth) / m_nPrevWndClientWidth;
 			m_UIScoreHeight = (m_nWndClientHeight*m_UIScoreHeight) / m_nPrevWndClientHeight; 
+			m_UITargetInfoWidth = (m_nWndClientWidth*m_UITargetInfoWidth) / m_nPrevWndClientWidth;
+			m_UITargetInfoHeight = (m_nWndClientHeight*m_UITargetInfoHeight) / m_nPrevWndClientHeight; 
 
 			m_SwordWidth = (m_nWndClientWidth*m_SwordWidth) / m_nPrevWndClientWidth;
 			m_SwordHeight = (m_nWndClientHeight*m_SwordHeight) / m_nPrevWndClientHeight; 
@@ -310,6 +336,11 @@ bool CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 			m_HpbarRHeight = (m_nWndClientHeight*m_HpbarRHeight) / m_nPrevWndClientHeight; 
 			m_HpbarGWidth = (m_nWndClientWidth*m_HpbarGWidth) / m_nPrevWndClientWidth;
 			m_HpbarGHeight = (m_nWndClientHeight*m_HpbarGHeight) / m_nPrevWndClientHeight; 
+
+			m_TargetHpbarRWidth = (m_nWndClientWidth*m_TargetHpbarRWidth) / m_nPrevWndClientWidth;
+			m_TargetHpbarRHeight = (m_nWndClientHeight*m_TargetHpbarRHeight) / m_nPrevWndClientHeight; 
+			m_TargetHpbarGWidth = (m_nWndClientWidth*m_TargetHpbarGWidth) / m_nPrevWndClientWidth;
+			m_TargetHpbarGHeight = (m_nWndClientHeight*m_TargetHpbarGHeight) / m_nPrevWndClientHeight;
 
 			m_CharacterFaceWidth = (m_nWndClientWidth*m_CharacterFaceWidth) / m_nPrevWndClientWidth;
 			m_CharacterFaceHeight = (m_nWndClientHeight*m_CharacterFaceHeight) / m_nPrevWndClientHeight; 
@@ -328,6 +359,15 @@ bool CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 			m_UpgradeShieldHeight = (m_nWndClientHeight*m_UpgradeShieldHeight) / m_nPrevWndClientHeight; 
 			m_UpgradeBootsWidth = (m_nWndClientWidth*m_UpgradeBootsWidth) / m_nPrevWndClientWidth;
 			m_UpgradeBootsHeight = (m_nWndClientHeight*m_UpgradeBootsHeight) / m_nPrevWndClientHeight; 
+
+			m_UpgradeButtonWidth = (m_nWndClientWidth*m_UpgradeButtonWidth) / m_nPrevWndClientWidth;
+			m_UpgradeButtonHeight = (m_nWndClientHeight*m_UpgradeButtonHeight) / m_nPrevWndClientHeight; 
+			m_UpgradeButtonNumberWidth = (m_nWndClientWidth*m_UpgradeButtonNumberWidth) / m_nPrevWndClientWidth;
+			m_UpgradeButtonNumberHeight = (m_nWndClientHeight*m_UpgradeButtonNumberHeight) / m_nPrevWndClientHeight; 
+
+			m_GameWinLoseWidth = (m_nWndClientWidth*m_GameWinLoseWidth) / m_nPrevWndClientWidth;
+			m_GameWinLoseHeight = (m_nWndClientHeight*m_GameWinLoseHeight) / m_nPrevWndClientHeight; 
+
 
 			m_nPrevWndClientWidth = m_nWndClientWidth;
 			m_nPrevWndClientHeight = m_nWndClientHeight;
@@ -354,6 +394,20 @@ bool CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 			m_pUI[14]->SetBitmapWH(m_UpgradeSwordWidth, m_UpgradeSwordHeight);
 			m_pUI[15]->SetBitmapWH(m_UpgradeShieldWidth, m_UpgradeShieldHeight);
 			m_pUI[16]->SetBitmapWH(m_UpgradeBootsWidth, m_UpgradeBootsHeight);
+			m_pUI[17]->SetBitmapWH(m_UITargetInfoWidth, m_UITargetInfoHeight);
+			m_pUI[18]->SetBitmapWH(m_SwordWidth, m_SwordHeight);
+			m_pUI[19]->SetBitmapWH(m_ShielWidth, m_ShielHeight);
+			m_pUI[20]->SetBitmapWH(m_BootsWidth, m_BootsHeight);
+			m_pUI[21]->SetBitmapWH(m_CharacterFaceWidth, m_CharacterFaceHeight);
+			m_pUI[22]->SetBitmapWH(m_TargetHpbarRWidth, m_TargetHpbarRHeight);
+			m_pUI[23]->SetBitmapWH(m_TargetHpbarGWidth, m_TargetHpbarGHeight);
+			m_pUI[24]->SetBitmapWH(m_UpgradeButtonWidth, m_UpgradeButtonHeight);
+			m_pUI[25]->SetBitmapWH(m_UpgradeButtonNumberWidth, m_UpgradeButtonNumberHeight);
+			m_pUI[26]->SetBitmapWH(m_UpgradeButtonNumberWidth, m_UpgradeButtonNumberHeight);
+			m_pUI[27]->SetBitmapWH(m_UpgradeButtonNumberWidth, m_UpgradeButtonNumberHeight);
+			m_pUI[28]->SetBitmapWH(m_GameWinLoseWidth, m_GameWinLoseHeight);
+			m_pUI[29]->SetBitmapWH(m_GameWinLoseWidth, m_GameWinLoseHeight);
+			m_pUI[30]->SetBitmapWH(m_GameWinLoseWidth, m_GameWinLoseHeight);
 			break;
 		}
 	case WM_LBUTTONDOWN:
@@ -395,6 +449,30 @@ bool CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 		case 'Q':
 			HeroManager::sharedManager()->m_pHero->SetState(SKILL1);
 			break;
+		case '1':
+			if(HeroManager::sharedManager()->m_pHero->GetUpgradePossible() == TRUE)
+			{
+				HeroManager::sharedManager()->m_pHero->SetDamageLevel(HeroManager::sharedManager()->m_pHero->GetDamageLevel() + 1);
+				HeroManager::sharedManager()->m_pHero->DamageUp(HeroManager::sharedManager()->m_pHero->GetDamageLevel());
+				HeroManager::sharedManager()->m_pHero->SetUpgradePossible(FALSE);
+			}
+			break;
+		case '2':
+			if(HeroManager::sharedManager()->m_pHero->GetUpgradePossible() == TRUE)
+			{
+				HeroManager::sharedManager()->m_pHero->SetDefenseLevel(HeroManager::sharedManager()->m_pHero->GetDefenseLevel() + 1);
+				HeroManager::sharedManager()->m_pHero->DefenseUp(HeroManager::sharedManager()->m_pHero->GetDefenseLevel());
+				HeroManager::sharedManager()->m_pHero->SetUpgradePossible(FALSE);
+			}
+			break;
+		case '3':
+			if(HeroManager::sharedManager()->m_pHero->GetUpgradePossible() == TRUE)
+			{
+				HeroManager::sharedManager()->m_pHero->SetSpeedLevel(HeroManager::sharedManager()->m_pHero->GetSpeedLevel() + 1);
+				HeroManager::sharedManager()->m_pHero->SpeedUp(HeroManager::sharedManager()->m_pHero->GetSpeedLevel());
+				HeroManager::sharedManager()->m_pHero->SetUpgradePossible(FALSE);
+			}
+			break;
 		}
 
 	case WM_KEYUP:
@@ -418,6 +496,8 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 		m_fGameTimeSecond = 0.0f;
 		m_fGameTimeMinute++;
 	}
+	if(m_fGameTimeMinute >= 15)
+		m_bGameOver = TRUE;
 
 	//조명
 	if(m_pLights && m_pd3dcbLights) 
@@ -428,6 +508,58 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 		m_pLights->m_pLights[0].m_d3dxvPosition = HeroManager::sharedManager()->m_pHero->GetPosition() + D3DXVECTOR3(0, 350, 0);
 	}
 
+	//ui 타겟 얼굴 설정/
+	if(HeroManager::sharedManager()->m_pHero->GetTarget() != NULL)
+	{
+		if(m_iPrevFaceType != HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType())
+			m_bChangeImage = FALSE;
+
+		if(HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType() == CLEFT_FACE && m_bChangeImage == FALSE)
+		{
+			m_pUIObjects[21]->GetUI()->SetTexture(pd3dDevice, L"UI/cleft_face.png");
+			m_bChangeImage = TRUE;
+			m_iPrevFaceType = HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType();
+		}
+		else if(HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType() == GOLEM_FACE && m_bChangeImage == FALSE)
+		{
+			m_pUIObjects[21]->GetUI()->SetTexture(pd3dDevice, L"UI/golem_face.png");
+			m_bChangeImage = TRUE;
+			m_iPrevFaceType = HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType();
+		}
+		else if(HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType() ==  TURTLE_FACE && m_bChangeImage == FALSE)
+		{
+			m_pUIObjects[21]->GetUI()->SetTexture(pd3dDevice, L"UI/turtle_face.png");
+			m_bChangeImage = TRUE;
+			m_iPrevFaceType = HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType();
+		}
+		else if(HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType() ==  NEXUS_FACE && m_bChangeImage == FALSE)
+		{
+			m_pUIObjects[21]->GetUI()->SetTexture(pd3dDevice, L"UI/nexus_face.png");
+			m_bChangeImage = TRUE;
+			m_iPrevFaceType = HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType();
+		}
+		else if(HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType() ==  TOWER_FACE && m_bChangeImage == FALSE)
+		{
+			m_pUIObjects[21]->GetUI()->SetTexture(pd3dDevice, L"UI/tower_face.png");
+			m_bChangeImage = TRUE;
+			m_iPrevFaceType = HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType();
+		}
+		else if(HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType() ==  HERO1_FACE && m_bChangeImage == FALSE)
+		{
+			m_pUIObjects[21]->GetUI()->SetTexture(pd3dDevice, L"UI/lichking.png");
+			m_bChangeImage = TRUE;
+		}
+		else if(HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType() ==  HERO2_FACE && m_bChangeImage == FALSE)
+		{
+			m_pUIObjects[21]->GetUI()->SetTexture(pd3dDevice, L"UI/kaeltas.png");
+			m_bChangeImage = TRUE;
+			m_iPrevFaceType = HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType();
+		}
+	}
+	else
+		m_bChangeImage = FALSE;
+
+	//히어로 
 	HeroManager::sharedManager()->m_pHero->Animate(fTimeElapsed);
 	HeroManager::sharedManager()->m_pHero->Update(fTimeElapsed);
  
@@ -438,11 +570,7 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 	for(int i=0; i<MAX_PARTICLE; i++)
 	{
 		if(ParticleManager::sharedManager()->m_pParticle[i] == NULL) continue;
-
-		if(ParticleManager::sharedManager()->m_pParticle[i]->GetTarget() != NULL &&
-			ParticleManager::sharedManager()->m_pParticle[i]->GetTarget()->GetTag() == EFFECT)
-			ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(HeroManager::sharedManager()->m_pHero);
-
+		//if(ParticleManager::sharedManager()->m_pParticle[i]->GetUsed() == FALSE) continue;
 		ParticleManager::sharedManager()->m_pParticle[i]->Update(fTimeElapsed);
 	}
 	m_pPlayerBox[0]->SetPosition(HeroManager::sharedManager()->m_pHero->GetPosition()); //미니맵 캐릭터 박스 이동
@@ -498,31 +626,19 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 	OtherPlayerManager::sharedManager()->m_pOtherPlayer->Animate(fTimeElapsed);
 	
 	
-	//플레이어 충돌박스 보이기
-	//pBoundBox[0]->SetPosition(HeroManager::sharedManager()->m_pHero->GetPosition());
-
-	//m_pHero->SetAstar(TRUE);
-		/*if(m_ppObjects[j]->GetTag() == HERO)
-		{
-			for(int i=0; i< m_nObjects; i++)
-			{
-				if(m_ppObjects[i] == NULL)
-					continue;
-				if(m_ppObjects[i]->GetTag() == OBSTACLE)
-				{
-					if(m_ppObjects[i]->GetBoundSizeX()*2 + m_ppObjects[j]->GetBoundSizeX()>
-						sqrt(double((m_ppObjects[i]->GetPosition().x - m_ppObjects[j]->GetPosition().x)*
-						(m_ppObjects[i]->GetPosition().x - m_ppObjects[j]->GetPosition().x)) + 
-						double((m_ppObjects[i]->GetPosition().z - m_ppObjects[j]->GetPosition().z)*
-						(m_ppObjects[i]->GetPosition().z - m_ppObjects[j]->GetPosition().z))))
-						m_ppObjects[j]->SetAstar(TRUE);
-					else
-						if(m_ppObjects[j]->GetAstar() == TRUE)
-							m_ppObjects[j]->SetAstar(FALSE);
-				}
-			}
-		}*/
-	//}
+	//넥서스 터질때
+	if(m_pBlueNexus->GetHP() <= 0 && m_bGameOver == FALSE)
+	{
+		m_pDestroyNexus->SetPosition(m_pBlueNexus->GetPosition());
+		m_pBlueNexus->SetPosition(D3DXVECTOR3(-2000, 0, 0));
+		m_bGameOver = TRUE;
+	}
+	else if(m_pRedNexus->GetHP() <= 0 && m_bGameOver == FALSE)
+	{
+		m_pDestroyNexus->SetPosition(m_pRedNexus->GetPosition());
+		m_pRedNexus->SetPosition(D3DXVECTOR3(-2000, 0, 0));
+		m_bGameOver = TRUE;
+	}
 
 	for(int i=0; i<MAX_OBSTACLE; i++) //캐릭터와 장애물 충돌체크
 	{
@@ -543,6 +659,7 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 	}
 	GameCollision(HeroManager::sharedManager()->m_pHero, m_pBlueNexus); //캐릭터와 넥서스 충돌체크
 	GameCollision(HeroManager::sharedManager()->m_pHero, m_pRedNexus);
+	GameCollision(HeroManager::sharedManager()->m_pHero, m_pDestroyNexus);
 
 
 }
@@ -636,6 +753,10 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext, float fTimeElapsed, C
 			m_pAnimationShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pRedNexus->m_d3dxmtxWorld);
 		m_pRedNexus->Render(pd3dDeviceContext, pCamera);
 
+		if(m_pDestroyNexus->IsVisible(pCamera))
+			m_pAnimationShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pDestroyNexus->m_d3dxmtxWorld);
+		m_pDestroyNexus->Render(pd3dDeviceContext, pCamera);
+
 		for(int i=0; i<MAX_MINION; i++)
 		{
 			if(MinionManager::sharedManager()->m_pMinion[i] == NULL) continue;
@@ -654,23 +775,25 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext, float fTimeElapsed, C
 	
 
 
-
-	TurnOnAlphaBlending(pd3dDeviceContext, m_particleEnableBlendingState);
-	m_pParticleShaders->Render(pd3dDeviceContext);
-	for(int i=0; i<MAX_PARTICLE; i++)
+	if(pCamera->GetMode() == CAMERA)
 	{
-		if(ParticleManager::sharedManager()->m_pParticle[i] == NULL) continue;
+		TurnOnAlphaBlending(pd3dDeviceContext, m_particleEnableBlendingState);
+		m_pParticleShaders->Render(pd3dDeviceContext);
+		for(int i=0; i<MAX_PARTICLE; i++)
+		{
+			if(ParticleManager::sharedManager()->m_pParticle[i] == NULL) continue;
 
-		if(ParticleManager::sharedManager()->m_pParticle[i]->IsVisible(pCamera))
-			m_pParticleShaders->UpdateShaderVariables(pd3dDeviceContext, &ParticleManager::sharedManager()->m_pParticle[i]->m_d3dxmtxWorld);
-		ParticleManager::sharedManager()->m_pParticle[i]->Render(pd3dDeviceContext, pCamera);
+			if(ParticleManager::sharedManager()->m_pParticle[i]->IsVisible(pCamera))
+				m_pParticleShaders->UpdateShaderVariables(pd3dDeviceContext, &ParticleManager::sharedManager()->m_pParticle[i]->m_d3dxmtxWorld);
+			ParticleManager::sharedManager()->m_pParticle[i]->Render(pd3dDeviceContext, pCamera);
 	
+		}
+		TurnOffAlphaBlending(pd3dDeviceContext, m_particleDisableBlendingState);
 	}
-	TurnOffAlphaBlending(pd3dDeviceContext, m_particleDisableBlendingState);
-
-	m_pParticleMesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
-	m_pParticle2Mesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
-	m_pParticle3Mesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
+	LoadManager::sharedManager()->m_pParticleMesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
+	LoadManager::sharedManager()->m_pParticle2Mesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
+	//LoadManager::sharedManager()->m_pParticle3Mesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
+	LoadManager::sharedManager()->m_pParticleWizardSkillMesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
 	//m_pParticleMesh->SetCamVec(D3DXVECTOR3(m_Camera->GetPitch(), 0, 0), D3DXVECTOR3(0, 0, m_Camera->GetRoll()));
 	//m_pParticle2Mesh->SetCamVec(D3DXVECTOR3(m_Camera->GetPitch(), 0, 0), D3DXVECTOR3(0, 0, m_Camera->GetRoll()));
 	//m_pParticle3Mesh->SetCamVec(D3DXVECTOR3(m_Camera->GetPitch(), 0, 0), D3DXVECTOR3(0, 0, m_Camera->GetRoll()));
@@ -1078,6 +1201,23 @@ void CScene::CreateUI(ID3D11Device *pd3dDevice,int  _wndWidth,int  _wndHeight)
 	m_pUI[14]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/Sword.png",m_UpgradeSwordWidth, m_UpgradeSwordHeight); //특성 업그레이드 공격
 	m_pUI[15]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/Shield.png",m_UpgradeShieldWidth, m_UpgradeShieldHeight); //특성 업그레이드 방어
 	m_pUI[16]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/Boots.png",m_UpgradeBootsWidth, m_UpgradeBootsHeight); //특성 업그레이드 스피드
+
+	m_pUI[17]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/UI_Info_black.png",m_UITargetInfoWidth, m_UITargetInfoHeight); //타겟 정보창
+	m_pUI[18]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/Sword.png",m_SwordWidth, m_SwordHeight); //검 타겟 정보창
+	m_pUI[19]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/Shield.png",m_ShielWidth, m_ShielHeight); //방패 타겟 정보창
+	m_pUI[20]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/Boots.png",m_BootsWidth, m_BootsHeight); //신발 타겟 정보창
+	m_pUI[21]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/lichking.png",m_CharacterFaceWidth, m_CharacterFaceHeight); //타겟 캐릭터 얼굴
+	m_pUI[22]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/Hp_Bar_Red.png",m_TargetHpbarRWidth, m_TargetHpbarRHeight); //타겟 hp바 빨간색
+	m_pUI[23]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/Hp_Bar_Green1.png",m_TargetHpbarGWidth, m_TargetHpbarGHeight); // 타겟 hp바 초록색
+
+	m_pUI[24]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/upgrade_button.png",m_UpgradeButtonWidth, m_UpgradeButtonHeight);//업그레이드 버튼
+	m_pUI[25]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/1_button.png",m_UpgradeButtonNumberWidth, m_UpgradeButtonNumberHeight);//1 버튼
+	m_pUI[26]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/2_button.png",m_UpgradeButtonNumberWidth, m_UpgradeButtonNumberHeight);//2 버튼
+	m_pUI[27]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/3_button.png",m_UpgradeButtonNumberWidth, m_UpgradeButtonNumberHeight);//3 버튼
+
+	m_pUI[28]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/Game_Win.png",m_GameWinLoseWidth, m_GameWinLoseHeight);//WIN
+	m_pUI[29]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/Game_Lose.png",m_GameWinLoseWidth, m_GameWinLoseHeight);//LOSE
+	m_pUI[30]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/Game_Draw.png",m_GameWinLoseWidth, m_GameWinLoseHeight);//DRAW
 	for(int i=0; i<MAX_UI; i++)
 	{
 		m_pUIObjects[i] = new UIObject();
@@ -1097,6 +1237,13 @@ void CScene::RenderUI(ID3D11DeviceContext *pd3dDeviceContext,int  _wndWidth,int 
 	m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[9]->m_d3dxmtxWorld);
 	m_pUIObjects[9]->Render(pd3dDeviceContext, 0 + m_CharacterFaceWidth/4 , _wndHeight - m_UIInfoHeight + m_CharacterFaceHeight/3 + m_CharacterFaceHeight/13 );
 
+	if(HeroManager::sharedManager()->m_pHero->GetTarget() != NULL)
+	{
+		//타겟 캐릭터 얼굴 창
+		m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[21]->m_d3dxmtxWorld);
+		m_pUIObjects[21]->Render(pd3dDeviceContext, 0 + m_CharacterFaceWidth/4 , m_CharacterFaceHeight/3 + m_CharacterFaceHeight/13 );
+	}
+
 	TurnOnAlphaBlending(pd3dDeviceContext, m_particleEnableBlendingState);
 
 	//스킬 바 UI
@@ -1111,6 +1258,13 @@ void CScene::RenderUI(ID3D11DeviceContext *pd3dDeviceContext,int  _wndWidth,int 
 	//스코어 창 UI
 	m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[3]->m_d3dxmtxWorld);
 	m_pUIObjects[3]->Render(pd3dDeviceContext, _wndWidth - m_UIScoreWidth, 0);
+	
+	if(HeroManager::sharedManager()->m_pHero->GetTarget() != NULL)
+	{
+		//타겟 정보창 UI
+		m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[17]->m_d3dxmtxWorld);
+		m_pUIObjects[17]->Render(pd3dDeviceContext, 0.f, m_UITargetInfoHeight/100);
+	}
 
 	TurnOffAlphaBlending(pd3dDeviceContext, m_particleDisableBlendingState);
 	//공격력 특성
@@ -1150,6 +1304,122 @@ void CScene::RenderUI(ID3D11DeviceContext *pd3dDeviceContext,int  _wndWidth,int 
 	m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[16]->m_d3dxmtxWorld);
 	m_pUIObjects[16]->Render(pd3dDeviceContext, _wndWidth/2 + m_UpgradeBootsWidth*4 + m_UpgradeBootsWidth*2/5, _wndHeight - m_UIskillbarHeight + m_UpgradeBootsHeight);
 
+
+	if(HeroManager::sharedManager()->m_pHero->GetTarget() != NULL)
+	{
+		//공격력 특성 타겟 정보창
+		m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[18]->m_d3dxmtxWorld);
+		m_pUIObjects[18]->Render(pd3dDeviceContext, m_UIInfoWidth/2 + m_UIInfoWidth/20, m_UIInfoHeight/3 - m_SwordHeight/2);
+		//방어력 특성 타겟 정보창
+		m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[19]->m_d3dxmtxWorld);
+		m_pUIObjects[19]->Render(pd3dDeviceContext, m_UIInfoWidth/2 + m_UIInfoWidth/20, m_UIInfoHeight/2 - m_ShielHeight/2);
+		//스피드 특성 타겟 정보창
+		m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[20]->m_d3dxmtxWorld);
+		m_pUIObjects[20]->Render(pd3dDeviceContext, m_UIInfoWidth/2 + m_UIInfoWidth/20, m_UIInfoHeight*2/3 - m_BootsHeight/2);
+
+		//hp바 빨간색
+		m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[22]->m_d3dxmtxWorld);
+		m_pUIObjects[22]->Render(pd3dDeviceContext, m_UIInfoWidth/2 ,  m_UITargetInfoHeight - m_TargetHpbarRHeight*4);
+		//hp바 초록색
+		m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[23]->m_d3dxmtxWorld);
+		m_pUIObjects[23]->Render(pd3dDeviceContext, m_UIInfoWidth/2 ,  m_UITargetInfoHeight - m_TargetHpbarRHeight*4);
+	}
+
+	if(HeroManager::sharedManager()->m_pHero->GetUpgradePossible() == TRUE)
+	{
+		//특성 업그레이드 버튼
+		m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[24]->m_d3dxmtxWorld);
+		m_pUIObjects[24]->Render(pd3dDeviceContext, _wndWidth/2 +m_UpgradeSwordWidth*2 - m_UpgradeSwordWidth/8 + m_UpgradeSwordWidth*2/5, _wndHeight - m_UIskillbarHeight);
+		//특성 업그레이드 버튼1
+		m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[25]->m_d3dxmtxWorld);
+		m_pUIObjects[25]->Render(pd3dDeviceContext, _wndWidth/2 +m_UpgradeSwordWidth*2 - m_UpgradeSwordWidth/8, _wndHeight - m_UIskillbarHeight + m_UpgradeSwordHeight);
+		//특성 업그레이드 버튼2
+		m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[26]->m_d3dxmtxWorld);
+		m_pUIObjects[26]->Render(pd3dDeviceContext, _wndWidth/2 + m_UpgradeShieldWidth*3 + m_UpgradeShieldWidth*1/15, _wndHeight - m_UIskillbarHeight +m_UpgradeShieldHeight);
+		//특성 업그레이드 버튼3
+		m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[27]->m_d3dxmtxWorld);
+		m_pUIObjects[27]->Render(pd3dDeviceContext, _wndWidth/2 + m_UpgradeBootsWidth*4 + m_UpgradeBootsWidth*2/5, _wndHeight - m_UIskillbarHeight + m_UpgradeBootsHeight);
+	}
+
+
+	TurnOnAlphaBlending(pd3dDeviceContext, m_particleEnableBlendingState); //승리 패배
+	if(m_bGameOver == TRUE)
+	{
+		if(HeroManager::sharedManager()->m_pHero->GetTeam() == RED_TEAM)
+		{
+			if(m_pBlueNexus->GetHP() <= 0)
+			{
+				//WIN
+				m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[28]->m_d3dxmtxWorld);
+				m_pUIObjects[28]->Render(pd3dDeviceContext, _wndWidth/2 - m_GameWinLoseWidth/2 , _wndHeight/2 - m_GameWinLoseHeight);
+			}
+			else if(m_pRedNexus->GetHP() <= 0)
+			{
+				//LOSE
+				m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[29]->m_d3dxmtxWorld);
+				m_pUIObjects[29]->Render(pd3dDeviceContext, _wndWidth/2 - m_GameWinLoseWidth/2 , _wndHeight/2 - m_GameWinLoseHeight);
+			}
+			else
+			{
+				if(HeroManager::sharedManager()->m_pHero->GetDeathCount() < OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetDeathCount())
+				{
+					//WIN
+					m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[28]->m_d3dxmtxWorld);
+					m_pUIObjects[28]->Render(pd3dDeviceContext, _wndWidth/2 - m_GameWinLoseWidth/2 , _wndHeight/2 - m_GameWinLoseHeight);
+				}
+				else if(HeroManager::sharedManager()->m_pHero->GetDeathCount() > OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetDeathCount())
+				{
+					//LOSE
+					m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[29]->m_d3dxmtxWorld);
+					m_pUIObjects[29]->Render(pd3dDeviceContext, _wndWidth/2 - m_GameWinLoseWidth/2 , _wndHeight/2 - m_GameWinLoseHeight);
+				}
+				else
+				{
+					//DRAW
+					m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[30]->m_d3dxmtxWorld);
+					m_pUIObjects[30]->Render(pd3dDeviceContext, _wndWidth/2 - m_GameWinLoseWidth/2 , _wndHeight/2 - m_GameWinLoseHeight);
+				}
+			}
+		}
+		else if(HeroManager::sharedManager()->m_pHero->GetTeam() == BLUE_TEAM)
+		{
+			if(m_pRedNexus->GetHP() <= 0)
+			{
+				//WIN
+				m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[28]->m_d3dxmtxWorld);
+				m_pUIObjects[28]->Render(pd3dDeviceContext, _wndWidth/2 - m_GameWinLoseWidth/2 , _wndHeight/2 - m_GameWinLoseHeight);
+			}
+			else if(m_pBlueNexus->GetHP() <= 0)
+			{
+				//LOSE
+				m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[29]->m_d3dxmtxWorld);
+				m_pUIObjects[29]->Render(pd3dDeviceContext, _wndWidth/2 - m_GameWinLoseWidth/2 , _wndHeight/2 - m_GameWinLoseHeight);
+			}
+			else
+			{
+				if(HeroManager::sharedManager()->m_pHero->GetDeathCount() < OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetDeathCount())
+				{
+					//WIN
+					m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[28]->m_d3dxmtxWorld);
+					m_pUIObjects[28]->Render(pd3dDeviceContext, _wndWidth/2 - m_GameWinLoseWidth/2 , _wndHeight/2 - m_GameWinLoseHeight);
+				}
+				else if(HeroManager::sharedManager()->m_pHero->GetDeathCount() > OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetDeathCount())
+				{
+					//LOSE
+					m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[29]->m_d3dxmtxWorld);
+					m_pUIObjects[29]->Render(pd3dDeviceContext, _wndWidth/2 - m_GameWinLoseWidth/2 , _wndHeight/2 - m_GameWinLoseHeight);
+				}
+				else
+				{
+					//DRAW
+					m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[30]->m_d3dxmtxWorld);
+					m_pUIObjects[30]->Render(pd3dDeviceContext, _wndWidth/2 - m_GameWinLoseWidth/2 , _wndHeight/2 - m_GameWinLoseHeight);
+				}
+			}
+		}
+	}
+	TurnOffAlphaBlending(pd3dDeviceContext, m_particleDisableBlendingState);
+
 }
 
 void CScene::SetUIHpUpdate()
@@ -1160,6 +1430,38 @@ void CScene::SetUIHpUpdate()
 
 		m_Hpbar = (m_nWndClientWidth*m_HpbarGWidth) / m_nPrevWndClientWidth * (HeroManager::sharedManager()->m_pHero->GetHP()/(HeroManager::sharedManager()->m_pHero->GetLevel()*100));
 		m_pUI[8]->SetBitmapWH(m_Hpbar, m_HpbarGHeight);
+	}
+
+	if(HeroManager::sharedManager()->m_pHero->GetTarget() != NULL)
+	{
+		if(m_iPrevHpType != HeroManager::sharedManager()->m_pHero->GetTarget()->GetID())
+		{
+			m_bChangeHpbar = TRUE;
+			m_iPrevHpType = HeroManager::sharedManager()->m_pHero->GetTarget()->GetID();
+		}
+
+		if(HeroManager::sharedManager()->m_pHero->GetTarget()->GetHP() != HeroManager::sharedManager()->m_pHero->GetTarget()->GetPrevHP() ||
+			m_bChangeHpbar == TRUE)
+		{
+			HeroManager::sharedManager()->m_pHero->GetTarget()->SetPrevHP(HeroManager::sharedManager()->m_pHero->GetTarget()->GetHP());
+
+			if(HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType() == CLEFT_FACE || 
+				HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType() == TURTLE_FACE ||
+				HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType() == GOLEM_FACE)
+				m_TargetHpbar = (m_nWndClientWidth*m_TargetHpbarGWidth) / m_nPrevWndClientWidth * (HeroManager::sharedManager()->m_pHero->GetTarget()->GetHP()/(HeroManager::sharedManager()->m_pHero->GetTarget()->GetLevel()*50));
+			else if(HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType() == TOWER_FACE)
+				m_TargetHpbar = (m_nWndClientWidth*m_TargetHpbarGWidth) / m_nPrevWndClientWidth * (HeroManager::sharedManager()->m_pHero->GetTarget()->GetHP()/(HeroManager::sharedManager()->m_pHero->GetTarget()->GetLevel()*2));
+			else if(HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType() == NEXUS_FACE)
+				m_TargetHpbar = (m_nWndClientWidth*m_TargetHpbarGWidth) / m_nPrevWndClientWidth * (HeroManager::sharedManager()->m_pHero->GetTarget()->GetHP()/(HeroManager::sharedManager()->m_pHero->GetTarget()->GetLevel()*5));
+			else if(HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType() == HERO1_FACE ||
+				HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType() == HERO2_FACE)
+				m_TargetHpbar = (m_nWndClientWidth*m_TargetHpbarGWidth) / m_nPrevWndClientWidth * (HeroManager::sharedManager()->m_pHero->GetTarget()->GetHP()/(HeroManager::sharedManager()->m_pHero->GetTarget()->GetLevel()*100));
+
+
+			m_pUI[23]->SetBitmapWH(m_TargetHpbar, m_TargetHpbarGHeight);
+
+			m_bChangeHpbar = FALSE;
+		}
 	}
 }
 
@@ -1182,32 +1484,48 @@ void CScene::SetFontUI(CDXUTTextHelper* _text, int _num)
 	else if(_num == 2) //스피드
 	{
 		_text->SetInsertionPos( m_UIInfoWidth/2 + m_UIInfoWidth/20 + m_BootsWidth, m_nWndClientHeight - m_UIInfoHeight + m_UIInfoHeight*2/3 - m_BootsHeight/2);
-		swprintf(str, 255, L"  : %.0f", HeroManager::sharedManager()->m_pHero->GetSpeed());
+		swprintf(str, 255, L"  : %.0f", HeroManager::sharedManager()->m_pHero->GetSpeed());	
 	}
 	else if(_num == 3) //레벨 수치
 	{
 		_text->SetInsertionPos( 0 + m_CharacterFaceWidth/4, m_nWndClientHeight - m_UIInfoHeight + m_CharacterFaceHeight/3 + m_CharacterFaceHeight/12 + m_CharacterFaceHeight);
 		swprintf(str, 255, L" Lv : %d", HeroManager::sharedManager()->m_pHero->GetLevel());
 	}
-	else if(_num == 4)
+	else if(_num == 4) //시간
 	{
 		_text->SetInsertionPos(m_nWndClientWidth - m_UIScoreWidth + m_UIScoreWidth/10, m_UIScoreHeight/3);
 		swprintf(str, 255, L" %.f:%.f", m_fGameTimeMinute, m_fGameTimeSecond);
 	}
-	else if(_num == 5)
+	else if(_num == 5) // 킬
 	{
 		_text->SetInsertionPos( m_nWndClientWidth - m_UIScoreWidth + m_UIScoreWidth/3 + m_UIScoreWidth/20, m_UIScoreHeight/3);
 		swprintf(str, 255, L" K : %d", OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetDeathCount());
 	}
-	else if(_num == 6)
+	else if(_num == 6) //데스
 	{
 		_text->SetInsertionPos(m_nWndClientWidth - m_UIScoreWidth + m_UIScoreWidth*2/3 + m_UIScoreWidth/20, m_UIScoreHeight/3);
 		swprintf(str, 255, L" D : %d", HeroManager::sharedManager()->m_pHero->GetDeathCount());
 	}
-	//else if(_num == 7)
-	//else if(_num == 8)
-	//else if(_num == 9)
-
+	else if(_num == 7) // 타겟 공격력
+	{
+		_text->SetInsertionPos( m_UIInfoWidth/2 + m_UIInfoWidth/20 + m_SwordWidth, m_UIInfoHeight/3 - m_SwordHeight/2);
+		swprintf(str, 255, L"  : %.0f", HeroManager::sharedManager()->m_pHero->GetTarget()->GetDamage());
+	}
+	else if(_num == 8) // 타겟 방어력
+	{
+		_text->SetInsertionPos( m_UIInfoWidth/2 + m_UIInfoWidth/20 + m_ShielWidth, m_UITargetInfoHeight - m_UIInfoHeight/2 - m_ShielHeight/2);
+		swprintf(str, 255, L"  : %d", HeroManager::sharedManager()->m_pHero->GetTarget()->GetDefense());
+	}
+	else if(_num == 9) // 타겟 스피드
+	{
+		_text->SetInsertionPos( m_UIInfoWidth/2 + m_UIInfoWidth/20 + m_BootsWidth, m_UITargetInfoHeight - m_UIInfoHeight + m_UIInfoHeight*2/3 - m_BootsHeight/2);
+		swprintf(str, 255, L"  : %.0f", HeroManager::sharedManager()->m_pHero->GetTarget()->GetSpeed());	
+	}
+	else if(_num == 10) // 타겟 레벨
+	{
+		_text->SetInsertionPos( 0 + m_CharacterFaceWidth/4, m_CharacterFaceHeight/3 + m_CharacterFaceHeight/10 + m_CharacterFaceHeight);
+		swprintf(str, 255, L" Lv : %d", HeroManager::sharedManager()->m_pHero->GetTarget()->GetLevel());	
+	}
 	_text->SetForegroundColor( D3DXCOLOR( 0.0f, 1.0f, 0.0f, 1.0f ) );
 	_text->DrawTextLine(str);
 	_text->End();

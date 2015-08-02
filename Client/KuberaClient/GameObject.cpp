@@ -29,20 +29,28 @@ CGameObject::CGameObject(void)
 	m_nReferences = 1;
 
 	m_HP = 0.f;
+	m_PrevHP = m_HP;
+	m_Level = 100;
+	m_SkillDamage = 0.f;
 	m_Damage = 0.f;
 	m_Defense = 0;
+	m_Exp = 0;
 	m_Visible = TRUE;
-	m_fWalkSpeed = 0.1f;
+	m_fWalkSpeed = 0.0f;
 	m_iTag = NONE;
 	m_iTargetID = 0;
 	m_iState = IDLE;
 	m_iTeam = NONE_TEAM;
+
+	m_iFaceType = NONE_FACE;
 
 	BoundsizeX = 0.0f;
 	BoundsizeY = 0.0f;
 	BoundsizeZ = 0.0f;
 
 	m_pTarget = NULL;
+	m_pAttacker = NULL;
+
 	m_bSelected = FALSE;
 
 	m_pMaterial = NULL;

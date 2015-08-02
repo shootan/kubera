@@ -42,15 +42,21 @@ protected:
 	//
 	int			m_ID;
 	float		m_HP;
+	int			m_Level;
 	float		m_Damage;
+	float		m_SkillDamage;
 	int			m_Defense;
 	float		m_fWalkSpeed;
+	int			m_Exp;
 	BOOL		m_Visible;
 	int			m_iTag;
 	int			m_iState;
 	int			m_iTargetID;
 	int			m_iTeam;
 	int			m_iType;
+	int			m_iFaceType;
+	//ui hp바를 위해 만듬
+	float		m_PrevHP;
 
 	//
 	int m_nReferences;
@@ -66,6 +72,7 @@ protected:
 
 	BOOL		 m_bSelected;
 	CGameObject* m_pTarget;
+	CGameObject* m_pAttacker;
 	//BOOL m_bAstar;
 	//BOOL m_bFindPath;
 
@@ -112,8 +119,11 @@ public:
 	float GetHP() {return m_HP;}
 	void SetHP(float _hp) { m_HP = _hp; }
 
+	int GetLevel() { return m_Level;}
+
 	float GetDamage() {return m_Damage;}
 	void SetDamage(float _damage) { m_Damage = _damage; }
+	float GetSkillDamage() { return m_SkillDamage;}
 
 	int GetDefense() { return m_Defense;}
 	void SetDefense(int _defense) { m_Defense = _defense; }
@@ -121,7 +131,11 @@ public:
 	float GetSpeed() { return m_fWalkSpeed; }
 	void SetSpeed(float _speed) { m_fWalkSpeed = _speed; } 
 
+	void SetPrevHP(int _hp) { m_PrevHP = _hp;}
+	float GetPrevHP() { return m_PrevHP;}
+
 	void SetAttackDamage(float _damage) { m_HP -= _damage; }
+	void SetExp(int _exp) { m_Exp -= _exp;}
 
 	int GetType() { return m_iType; }
 	void SetType(int _type) { m_iType = _type; }
@@ -135,8 +149,14 @@ public:
 	void SetTag(int _tag) { m_iTag = _tag;}
 	void SetTargetID(int _id) { m_iTargetID = _id;}
 	int GetTargetID() { return m_iTargetID; }
+
 	void SetTarget(CGameObject* _target) { m_pTarget = _target; }
 	CGameObject* GetTarget() { return m_pTarget; }
+	void SetAttacker(CGameObject* _attacker) { m_pAttacker = _attacker; }
+	CGameObject* GetAttacker() { return m_pAttacker; }
+
+	void SetFaceType(int _type) { m_iFaceType = _type;}
+	int GetFaceType() { return m_iFaceType; }
 
 	void SetBoundSize(float x, float y, float z);
 	float GetBoundSizeX() {return BoundsizeX;}

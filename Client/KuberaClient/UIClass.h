@@ -29,6 +29,7 @@ public:
 	int GetScreenH(){ return m_screenHeight;}
 	void SetScreenWH(int x, int y) { m_screenWidth = x; m_screenHeight = y;}
 	void SetBitmapWH(float x, float y) { m_bitmapWidth = x; m_bitmapHeight = y;}
+	void SetTexture(ID3D11Device*, WCHAR*);
 
 private:
 	bool InitializeBuffers(ID3D11Device*);
@@ -37,6 +38,7 @@ private:
 
 	bool LoadTexture(ID3D11Device*, WCHAR*);
 	void ReleaseTexture();
+
 
 private:
 	CTextureclass* m_pTexture;

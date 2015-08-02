@@ -23,8 +23,9 @@ MinionObject::MinionObject(void)
 	m_Level = 1;
 	m_fWalkSpeed = 10.0f;
 	m_HP = 50.f;
+	m_PrevHP = m_HP;
 
-	m_Damage = 3.f;
+	m_Damage = 6.f;
 	m_Defense = 3;
 
 	m_iparticleNum = 500;
@@ -34,7 +35,8 @@ MinionObject::MinionObject(void)
 
 	m_bDeathAnimation = FALSE;
 	m_bAttack = FALSE;
-
+	m_nDeathCount = 0;
+	
 	m_vWayPoint = D3DXVECTOR3(0 , 0, 0);
 }
 
@@ -159,9 +161,22 @@ void MinionObject::Update(float fTimeElapsed)
 		if(!m_bDeathAnimation)
 		{
 			m_HP = m_Level * 50;
+			if(m_pAttacker)
+				m_pAttacker->SetExp(m_Level * 3);
 			m_iState = DEATH;
 			m_bDeathAnimation = TRUE;
+			m_nDeathCount++;
 		}
+	}
+
+	if(m_nDeathCount >= 3)
+	{
+		m_nDeathCount = 0;
+
+		m_Level++;
+		m_HP = m_Level * 50;
+		m_Damage = m_Level*2 + 4;
+		m_Defense = m_Level + 2;
 	}
 
 }
@@ -203,7 +218,7 @@ void MinionObject::Animate(float fTimeElapsed)
 			if(m_Time < 38.5f) m_Time = 38.5f;
 			if(m_Time > 40.0f && m_Time < 41.6f && !m_bAttack)
 			{
-				m_pTarget->SetAttackDamage(m_Damage);
+				m_pTarget->SetAttackDamage(m_Damage - m_pTarget->GetDefense());
 				m_bAttack = TRUE;
 			}
 			if(m_Time > 41.6f)
@@ -216,7 +231,7 @@ void MinionObject::Animate(float fTimeElapsed)
 			if(m_Time < 29.4f) m_Time = 29.4f;
 			if(m_Time > 30.8f && m_Time < 31.8f && !m_bAttack)
 			{
-				m_pTarget->SetAttackDamage(m_Damage);
+				m_pTarget->SetAttackDamage(m_Damage - m_pTarget->GetDefense());
 				m_bAttack = TRUE;
 			}
 			if(m_Time > 31.8f)
@@ -229,7 +244,7 @@ void MinionObject::Animate(float fTimeElapsed)
 			if(m_Time < 21.5f) m_Time = 21.5f;
 			if(m_Time > 23.8f && m_Time < 24.8f && !m_bAttack)
 			{
-				m_pTarget->SetAttackDamage(m_Damage);
+				m_pTarget->SetAttackDamage(m_Damage - m_pTarget->GetDefense());
 				m_bAttack = TRUE;
 			}
 			if(m_Time > 24.8f)
