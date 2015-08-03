@@ -36,9 +36,8 @@ public:
 		m_pOtherPlayer = new OtherPlayerObject();
 		//m_pOtherPlayer->SetAniMesh(mesh);
 		m_pOtherPlayer->SetPosition(pos);
-		//m_pTower[i]->SetP(pos.x, pos.y, pos.z);
 		m_pOtherPlayer->SetBoundSize(boundx, boundy, boundz);
-		m_pOtherPlayer->SetScale(D3DXVECTOR3(0.1, 0.1, 0.1));
+		//m_pOtherPlayer->SetScale(D3DXVECTOR3(0.1, 0.1, 0.1));
 		
 	}
 

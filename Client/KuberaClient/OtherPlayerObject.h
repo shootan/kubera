@@ -18,8 +18,6 @@ private:
 
 	int m_PrevState;
 
-	GFBX::Mesh *m_pAniMesh;
-
 	int m_iparticleNum;
 	BOOL m_bUseParticle;
 	BOOL m_bUseParticleMissile;
@@ -36,8 +34,6 @@ public:
 	virtual void SetNewDestination ( D3DXVECTOR3 _pos );
 	virtual void Update(float fTimeElapsed);
 	bool InMotion();
-
-	void SetAniMesh(GFBX::Mesh *pAniMesh);
 
 	int GetDeathCount() {return m_nDeathCount;}
 

@@ -1,13 +1,13 @@
 #include "OtherPlayerObject.h"
 #include "MissileManager.h"
+#include "Shader.h"
 
 OtherPlayerObject::OtherPlayerObject(void)
 {
 	CGameObject::CGameObject();
 
-	m_pAniMesh = NULL;
 	m_iTag = OTHERPLAYER;
-	m_Visible = FALSE;
+	m_Visible = TRUE;
 	m_ID = 0;
 	m_PrevState = IDLE;
 	m_bSetDestination = FALSE;
@@ -24,6 +24,16 @@ OtherPlayerObject::OtherPlayerObject(void)
 	m_bUseParticleMissile = FALSE;
 	m_bUseParticleAttack = FALSE;
 
+
+	//초기 정보값
+	m_Level = 1;			//레벨1
+	m_HP = 100.0f;				//hp 100
+	m_PrevHP = m_HP;
+	m_Defense = 3;			//방어력 3
+	m_fWalkSpeed = 30.0f;	//스피드 15
+	m_Damage = 10.0f;		//데미지 10
+	m_SkillDamage = 20 + m_Damage;		//스킬데미지 20
+
 	m_nDeathCount = 0;
 }
 
@@ -34,10 +44,7 @@ OtherPlayerObject::~OtherPlayerObject(void)
 
 void OtherPlayerObject::Render(ID3D11DeviceContext *pd3dDeviceContext, float fTimeElapsed, CCamera *pCamera)
 {
-	//if (m_pMaterial) CMaterialShader::UpdateShaderVariable(pd3dDeviceContext, &m_pMaterial->m_Material);
-
-	if(m_Visible != TRUE) return;
-	if(m_pAniMesh == NULL) return;
+	if (m_pMaterial) CMaterialShader::UpdateMaterialShaderVariable(pd3dDeviceContext, &m_pMaterial->m_Material);
 
 	if(m_iTag == OTHERPLAYER)
 	{
@@ -80,7 +87,7 @@ void OtherPlayerObject::Render(ID3D11DeviceContext *pd3dDeviceContext, float fTi
 
 	if (m_pAniMesh)
 	{
-		/*bool bIsVisible = true;
+		bool bIsVisible = true;
 
 		for(int i=0; i<m_pAniMesh->GetSubsetCount(); i++)
 		{
@@ -94,7 +101,7 @@ void OtherPlayerObject::Render(ID3D11DeviceContext *pd3dDeviceContext, float fTi
 			}
 		}
 
-		if (bIsVisible)*/ m_pAniMesh->Render(pd3dDeviceContext, m_Time);
+		if (bIsVisible) m_pAniMesh->Render(pd3dDeviceContext, m_Time);
 	}
 }
 
@@ -152,7 +159,6 @@ bool OtherPlayerObject::InMotion()
 
 void OtherPlayerObject::Update(float fTimeElapsed)
 {
-	if(m_Visible == FALSE) return;
 
 	if ( InMotion() && m_bSetDestination == TRUE)
 	{
@@ -383,12 +389,4 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 		break;
 	}
 	
-}
-
-
-void OtherPlayerObject::SetAniMesh(GFBX::Mesh *pAniMesh)
-{
-	//if (m_pAniMesh) m_pAniMesh->Release();
-	m_pAniMesh = pAniMesh;
-	//if (m_pAniMesh) m_pAniMesh->AddRef();
 }

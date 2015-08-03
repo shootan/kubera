@@ -153,7 +153,9 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 
 	//아더 플레이어 생성
 	OtherPlayerManager::sharedManager()->SetMesh(m_pWarriorMesh, m_pWizardMesh);
-	OtherPlayerManager::sharedManager()->CreateOtherPlayer(D3DXVECTOR3(1500, 0, 0), 10, 13, 10);
+	OtherPlayerManager::sharedManager()->CreateOtherPlayer(D3DXVECTOR3(0, 0, 0), 10, 13, 10);
+	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetMesh(m_pWizardMesh);
+	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetMaterial(pMaterial);
 	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetFaceType(HERO2_FACE);
 	m_pAnimationShaders->AddObject(OtherPlayerManager::sharedManager()->m_pOtherPlayer);
 
@@ -766,12 +768,11 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext, float fTimeElapsed, C
 			MinionManager::sharedManager()->m_pMinion[i]->Render(pd3dDeviceContext, fTimeElapsed, pCamera);
 		}
 
+		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer->IsVisible(pCamera))
+			m_pAnimationShaders->UpdateShaderVariables(pd3dDeviceContext, &OtherPlayerManager::sharedManager()->m_pOtherPlayer->m_d3dxmtxWorld);
+		OtherPlayerManager::sharedManager()->m_pOtherPlayer->Render(pd3dDeviceContext, fTimeElapsed, pCamera);
 	}
 
-
-	if(OtherPlayerManager::sharedManager()->m_pOtherPlayer->IsVisible(pCamera))
-		m_pAnimationShaders->UpdateShaderVariables(pd3dDeviceContext, &OtherPlayerManager::sharedManager()->m_pOtherPlayer->m_d3dxmtxWorld);
-	OtherPlayerManager::sharedManager()->m_pOtherPlayer->Render(pd3dDeviceContext, fTimeElapsed, pCamera);
 	
 
 
