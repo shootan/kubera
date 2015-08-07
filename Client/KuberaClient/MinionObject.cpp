@@ -11,7 +11,7 @@ MinionObject::MinionObject(void)
 	m_iTag = MINION;
 	m_Visible = FALSE;
 	m_ID = 0;
-	m_PrevState = IDLE;
+	m_iPrevState = IDLE;
 	m_iTargetID = 0;
 	m_iTeam = NONE_TEAM;
 	m_iType = 0;
@@ -184,6 +184,12 @@ void MinionObject::Update(float fTimeElapsed)
 void MinionObject::Animate(float fTimeElapsed)
 {
 	m_Time += fTimeElapsed * 2.0f;
+
+	if( m_iPrevState != m_iState)
+	{
+		m_Time = 0.f;
+		m_iPrevState = m_iState;
+	}
 
 	if(m_iState == IDLE)
 	{

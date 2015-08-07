@@ -11,7 +11,7 @@ private:
 	float m_fAttackTime;
 	float m_Time;
 	float m_fRespawnTime;
-	int m_PrevState;
+	int m_iPrevState;
 
 	int m_iparticleNum;
 	BOOL m_bUseParticle;

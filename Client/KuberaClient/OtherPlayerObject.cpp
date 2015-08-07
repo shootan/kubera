@@ -13,6 +13,7 @@ OtherPlayerObject::OtherPlayerObject(void)
 	m_bSetDestination = FALSE;
 	m_iTargetID = 0;
 	m_bWarriorAttack = TRUE;
+	m_bWarriorSkill = TRUE;
 
 	m_fAttackTime = 0.0f;
 	m_Time = 0.0f;
@@ -192,12 +193,12 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 		switch(m_iType)
 		{
 		case KNIGHT:
-			if(m_Time < 1.1f) m_Time = 1.1f;
-			if(m_Time > 7.0f) m_Time = 1.1f;
+			if(m_Time < 16.8f) m_Time = 16.8f;
+			if(m_Time > 21.3f) m_Time = 16.8f;
 			break;
 		case WIZARD:
-			if(m_Time < 1.1f) m_Time = 1.1f;
-			if(m_Time > 7.1f) m_Time = 1.1f;
+			if(m_Time < 6.9f) m_Time = 6.9f;
+			if(m_Time > 11.7f) m_Time = 6.9f; 
 			break;
 		}
 		break;
@@ -208,7 +209,8 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 			m_bUseParticleMissile = FALSE;
 			ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetUsed(FALSE);
 			ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetTarget(NULL);
-			ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetPosition(D3DXVECTOR3(1200, 0, 0));
+			ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetPosition(D3DXVECTOR3(0, 0, -2000));
+			m_iparticleNum = 500;
 		}
 		switch(m_iType)
 		{
@@ -216,6 +218,9 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 // 			if(m_pTarget != NULL && 
 // 				ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 25.f && m_pTarget->GetTeam() != this->GetTeam())
 				//m_iState = ATTACK;
+
+			m_bWarriorAttack = TRUE;
+			m_bWarriorSkill = TRUE;
 
 			if(m_Time < 57.5f) m_Time = 57.5f;
 			if(m_Time > 59.7f ) m_Time = 57.5f;
@@ -225,8 +230,11 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 // 				ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 50.f && m_pTarget->GetTeam() != this->GetTeam())
 				//m_iState = ATTACK;
 
-			if(m_Time < 68.0f) m_Time = 68.0f;
-			if(m_Time > 70.3f ) m_Time = 68.0f;
+			m_bUseParticleAttack = FALSE;
+			m_bUseParticleMissile = FALSE;
+
+			if(m_Time < 0.1f) m_Time = 0.1f;
+			if(m_Time > 1.7f) m_Time = 0.1f; 
 			break;
 		}
 		m_fAttackTime = 0.f;
@@ -235,8 +243,9 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 		switch(m_iType)
 		{
 		case KNIGHT:
-			if(m_Time < 30.0f) m_Time = 30.0f;
-			if(m_Time > 34.0f)
+			if(m_Time < 6.9f) m_Time = 6.9f;
+			if(m_Time > 11.9f) m_Time = 6.9f;
+			if(m_Time > 11.8f && m_Time < 11.9f)
 			{
 				m_Time = 1.1f;
 				//m_iState = IDLE;
@@ -244,8 +253,9 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 			}
 			break;
 		case WIZARD:
-			if(m_Time < 30.0f) m_Time = 30.0f;
-			if(m_Time > 34.0f)
+			if(m_Time < 31.5f) m_Time = 31.5f;
+			if(m_Time > 36.3f) m_Time = 31.5f;
+			if(m_Time > 36.2f && m_Time < 36.3f)
 			{
 				m_Time = 1.1f;
 				//m_iState = IDLE;
@@ -259,21 +269,28 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 		switch(m_iType)
 		{
 		case KNIGHT:
-			if(m_Time < 41.0f) m_Time = 41.0f;
-			if(m_Time > 43.0f && m_bWarriorAttack)
-			{
-				m_pTarget->SetAttackDamage(this->m_Damage);
-				m_bWarriorAttack = FALSE;
-			}
-			if(m_Time > 44.0f)
+			if(m_Time < 26.7f) m_Time = 26.7f;
+			if(m_Time > 29.0f)
 			{
 				m_bWarriorAttack = TRUE;
-				m_Time = 41.0f;
+				m_Time = 26.7f;
+			}
+			if(m_Time > 28.0f && m_bWarriorAttack)
+			{
+				m_pTarget->SetAttackDamage(this->m_Damage - m_pTarget->GetDefense());
+				m_pTarget->SetAttacker(this);
+
+				m_bWarriorAttack = FALSE;
 			}
 			break;
 		case WIZARD:
-			if(m_Time < 20.0f) m_Time = 20.0f;
-			if(m_Time > 21.5f && m_Time < 22.0f)
+			if(m_Time < 24.5f) m_Time = 24.5f;
+			if(m_Time > 26.9f)
+			{
+				m_Time = 24.5f; 
+				m_bUseParticleAttack = FALSE;
+			}
+			if(m_Time > 26.0f && m_Time < 26.1f)
 			{
 				if(m_bUseParticleAttack == FALSE)
 				{
@@ -285,7 +302,7 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 						if(ParticleManager::sharedManager()->m_pParticle[i]->GetType() == WIZARD_ATTACK)
 						{
 							D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
-							ParticleManager::sharedManager()->m_pParticle[i]->SetPosition(m_Pos + D3DXVECTOR3(0 , BoundsizeY *2/3, 0) + m_vWalkIncrement*20);
+							ParticleManager::sharedManager()->m_pParticle[i]->SetPosition(m_Pos + D3DXVECTOR3(0 , BoundsizeY *2/3, 0) + m_vWalkIncrement*15);
 							ParticleManager::sharedManager()->m_pParticle[i]->SetUsed(TRUE);
 							ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(m_pTarget);
 							ParticleManager::sharedManager()->m_pParticle[i]->SetAttacker(this);
@@ -294,11 +311,6 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 						}
 					}
 				}
-			}
-			if(m_Time > 23.0f) 
-			{
-				m_Time = 20.0f;
-				m_bUseParticleAttack = FALSE;
 			}
 			break;
 		}
@@ -318,17 +330,27 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 		switch(m_iType)
 		{
 		case KNIGHT:
-			if(m_Time < 50.0f)  m_Time = 50.0f;
-			if(m_Time > 52.6f && m_bWarriorAttack)
+			if(m_pTarget) SetWatchTarget(m_pTarget->GetPosition());
+
+			if(m_Time < 34.3f) m_Time = 34.3f;
+			if(m_Time > 37.0f) m_Time = 34.3f;
+			if(m_Time > 36.9f && m_Time < 37.0f)
 			{
-				m_pTarget->SetAttackDamage(this->m_Damage);
-				m_bWarriorAttack = FALSE;
-			}
-			if(m_Time > 54.0f) 
-			{
-				m_bWarriorAttack = TRUE;
 				m_Time = 1.1f;
 				m_iState = IDLE;
+				m_bWarriorSkill = TRUE;
+			}
+			if(m_Time > 35.7f && m_Time < 36.6f  && m_bWarriorSkill)
+			{
+				if(m_pTarget && m_pTarget->GetState() != DEATH)
+				{
+					if(ST::sharedManager()->GetDistance(this->GetPosition(), m_pTarget->GetPosition()) < 40.f)
+					{
+						m_pTarget->SetAttackDamage(this->m_SkillDamage - m_pTarget->GetDefense());
+						m_pTarget->SetAttacker(this);
+					}
+				}
+				m_bWarriorSkill = FALSE;
 			}
 			break;
 		case WIZARD:
@@ -349,8 +371,19 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 					}
 				}
 			}
-			if(m_Time < 45.0f) m_Time = 45.0f;
-			if(m_Time > 48.5f && m_Time < 49.f)
+			if(m_Time < 41.3f) m_Time = 41.3f;
+			if(m_Time > 44.7f) m_Time = 41.3f;
+			if(m_Time > 44.6f)
+			{
+				m_bUseParticle = FALSE;
+				m_bUseParticleMissile = FALSE;
+				ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetUsed(FALSE);
+				ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetTarget(NULL);
+				ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetPosition(D3DXVECTOR3(1200, 0, 0));
+				m_iparticleNum = 500;
+				//m_iState = IDLE;
+			}
+			if(m_Time > 43.6f && m_Time < 43.7f)
 			{
 				if(m_bUseParticleMissile == FALSE)
 				{
@@ -361,7 +394,6 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 						if(ParticleManager::sharedManager()->m_pParticle[i]->GetType() == WIZARD_SKILL_MISSILE)
 						{
 							ParticleManager::sharedManager()->m_pParticle[i]->SetUsed(TRUE);
-							ParticleManager::sharedManager()->m_pParticle[i]->SetTarget(ParticleManager::sharedManager()->m_pParticle[i]);
 							D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
 							ParticleManager::sharedManager()->m_pParticle[i]->SetDirection(m_vWalkIncrement);
 							ParticleManager::sharedManager()->m_pParticle[i]->SetPosition(D3DXVECTOR3(m_Pos.x, m_Pos.y + 10, m_Pos.z) + m_vWalkIncrement * 30);
@@ -372,21 +404,33 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 					}
 				}
 			}
-			if(m_Time > 49.5f)
-			{
-				m_bUseParticle = FALSE;
-				m_bUseParticleMissile = FALSE;
-				ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetUsed(FALSE);
-				ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetTarget(NULL);
-				ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetPosition(D3DXVECTOR3(1200, 0, 0));
-				m_iparticleNum = 500;
-				m_Time = 1.1f;
-				//m_iState = IDLE;
-			}
-
 			break;
 		}
 		break;
 	}
 	
+}
+
+
+void OtherPlayerObject::SetWatchTarget(D3DXVECTOR3 _pos)
+{
+	m_vDestination.x = _pos.x;
+	m_vDestination.y = _pos.y;
+	m_vDestination.z = _pos.z;       
+	m_vWalkIncrement = m_vDestination - m_Pos;
+	D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
+	//m_bFindPath = FALSE;
+
+
+	//// Calculate the rotation angle before. Next, change the walk direction into 
+	//// an increment by multiplying by speed.
+	float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
+	D3DXVECTOR3 cross;
+	D3DXVec3Cross( &cross, &m_vWalkIncrement, &m_vFacingDirection );
+	fAngle = acosf( fAngle );
+	if ( cross.y >  0.0f ) {
+		fAngle *=-1.0f;
+	}
+	fAngle /= D3DX_PI;
+	this->SetRotation(2, 1/fAngle);
 }

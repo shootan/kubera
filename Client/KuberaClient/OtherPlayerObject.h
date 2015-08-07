@@ -11,6 +11,7 @@ private:
 	
 	BOOL m_bSetDestination;	
 	BOOL m_bWarriorAttack;
+	BOOL m_bWarriorSkill;
 
 	float m_fAttackTime;
 	float m_Time;
@@ -36,5 +37,5 @@ public:
 	bool InMotion();
 
 	int GetDeathCount() {return m_nDeathCount;}
-
+	void SetWatchTarget(D3DXVECTOR3 _pos);
 };

@@ -19,7 +19,7 @@ HeroObject::HeroObject(void)
 	m_bAstar = FALSE;
 	m_bFindPath = FALSE;
 	m_bDeathAnimation = FALSE;
-	m_iPrevState = 0;
+	m_iPrevState = m_iState;
 
 	m_time = 0.0f;
 	m_fRespawnTime = 0.0f;
@@ -27,6 +27,7 @@ HeroObject::HeroObject(void)
 	m_iparticleNum = 500;
 	m_bUseParticle = FALSE;
 	m_bWarriorAttack = TRUE;
+	m_bWarriorSkill = TRUE;
 	m_bUseParticleMissile = FALSE;
 	m_bUseParticleAttack = FALSE;
 
@@ -188,7 +189,7 @@ void HeroObject::Update(float fTimeElapsed)
 
 	if(m_iPrevState != m_iState)
 	{
-		m_time = 1.1f;
+		m_time = 0.f;
 		m_iPrevState = m_iState;
 	}
 
@@ -294,9 +295,6 @@ void HeroObject::Animate(float fTimeElapsed)
 {
 	m_time += fTimeElapsed * 2.0f;
 
-	//printf(" %.3f \n", m_time);
-
-
 	//printf(" %.1f \n", m_time);
 
 	if(m_iState == IDLE)
@@ -304,8 +302,8 @@ void HeroObject::Animate(float fTimeElapsed)
 		switch(m_iType)
 		{
 		case KNIGHT:
-			if(m_time < 16.9f) m_time = 16.9f;
-			if(m_time > 20.4f) m_time = 16.9f;
+			if(m_time < 16.8f) m_time = 16.8f;
+			if(m_time > 21.3f) m_time = 16.8f;
 			break;
 		case WIZARD:
 			if(m_time < 6.9f) m_time = 6.9f;
@@ -318,28 +316,34 @@ void HeroObject::Animate(float fTimeElapsed)
 		if(m_pTarget->GetState() == DEATH) //상대가 죽었을시 공격 안하게 설정
 		{
 			m_iState = IDLE;
+			m_time = 0.f;
 			return;
 		}
 
 		switch(m_iType)
 		{
 		case KNIGHT:
-			if(m_time < 28.0f) m_time = 28.0f;
-			if(m_time > 29.0f && m_bWarriorAttack)
+			if(m_time < 26.7f) m_time = 26.7f;
+			if(m_time > 29.0f)
+			{
+				m_bWarriorAttack = TRUE;
+				m_time = 26.7f;
+			}
+			if(m_time > 28.0f && m_bWarriorAttack)
 			{
 				m_pTarget->SetAttackDamage(this->m_Damage - m_pTarget->GetDefense());
 				m_pTarget->SetAttacker(this);
 
 				m_bWarriorAttack = FALSE;
 			}
-			if(m_time > 30.0f)
-			{
-				m_bWarriorAttack = TRUE;
-				m_time = 28.0f;
-			}
 			break;
 		case WIZARD:
 			if(m_time < 24.5f) m_time = 24.5f;
+			if(m_time > 26.9f)
+			{
+				m_time = 24.5f; 
+				m_bUseParticleAttack = FALSE;
+			}
 			if(m_time > 26.0f && m_time < 26.1f)
 			{
 				if(m_bUseParticleAttack == FALSE)
@@ -361,11 +365,6 @@ void HeroObject::Animate(float fTimeElapsed)
 						}
 					}
 				}
-			}
-			if(m_time > 26.9f)
-			{
-				m_time = 24.5f; 
-				m_bUseParticleAttack = FALSE;
 			}
 			break;
 		}
@@ -410,16 +409,21 @@ void HeroObject::Animate(float fTimeElapsed)
 					if(ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 25.f)
 						m_iState = ATTACK;
 
+				m_bWarriorAttack = TRUE;
+				m_bWarriorSkill = TRUE;
 			}
 
 			if(m_time < 0.1f) m_time = 0.1f;
-			if(m_time > 1.7f) m_time = 0.1f; 
+			if(m_time > 1.7f) m_time = 0.1f;
 			break;
 		case WIZARD:
 			if(m_pTarget != NULL && 
 				ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 50.f && 
 				m_pTarget->GetTeam() != this->GetTeam())
 				m_iState = ATTACK;
+
+			m_bUseParticleAttack = FALSE;
+			m_bUseParticleMissile = FALSE;
 
 			if(m_time < 0.1f) m_time = 0.1f;
 			if(m_time > 1.7f) m_time = 0.1f; 
@@ -484,12 +488,30 @@ void HeroObject::Animate(float fTimeElapsed)
 		switch(m_iType)
 		{
 		case KNIGHT:
-			if(m_time < 35.2f) m_time = 35.2f;
-			if(m_time > 38.3f) m_time = 35.2f;
-			if(m_time > 38.2f && m_time < 38.3f) 
+			if(m_pTarget) SetWatchTarget(m_pTarget->GetPosition());
+
+			if(m_time < 34.3f) m_time = 34.3f;
+			if(m_time > 37.0f) m_time = 34.3f;
+			if(m_time > 36.9f && m_time < 37.0f)
+				//if(m_time < 50.8f) m_time = 50.8f;
+				//if(m_time > 54.3f) m_time = 50.8f;
+				//if(m_time > 54.2f && m_time < 54.3f)
 			{
 				m_time = 1.1f;
 				m_iState = IDLE;
+				m_bWarriorSkill = TRUE;
+			}
+			if(m_time > 35.7f && m_time < 36.6f  && m_bWarriorSkill)
+			{
+				if(m_pTarget && m_pTarget->GetState() != DEATH)
+				{
+					if(ST::sharedManager()->GetDistance(this->GetPosition(), m_pTarget->GetPosition()) < 40.f)
+					{
+						m_pTarget->SetAttackDamage(this->m_SkillDamage - m_pTarget->GetDefense());
+						m_pTarget->SetAttacker(this);
+					}
+				}
+				m_bWarriorSkill = FALSE;
 			}
 			break;
 		case WIZARD:
@@ -511,7 +533,17 @@ void HeroObject::Animate(float fTimeElapsed)
 				}
 			}
 			if(m_time < 41.3f) m_time = 41.3f;
-			if(m_time > 44.7f) m_time = 41.3f; 
+			if(m_time > 44.7f) m_time = 41.3f;
+			if(m_time > 44.6f)
+			{
+				m_bUseParticle = FALSE;
+				m_bUseParticleMissile = FALSE;
+				ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetUsed(FALSE);
+				ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetTarget(NULL);
+				ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetPosition(D3DXVECTOR3(1200, 0, 0));
+				m_iparticleNum = 500;
+				m_iState = IDLE;
+			}
 			if(m_time > 43.6f && m_time < 43.7f)
 			{
 				if(m_bUseParticleMissile == FALSE)
@@ -533,17 +565,6 @@ void HeroObject::Animate(float fTimeElapsed)
 						}
 					}
 				}
-			}
-			if(m_time > 44.6f)
-			{
-				m_bUseParticle = FALSE;
-				m_bUseParticleMissile = FALSE;
-				ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetUsed(FALSE);
-				ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetTarget(NULL);
-				ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetPosition(D3DXVECTOR3(1200, 0, 0));
-				m_iparticleNum = 500;
-				m_time = 1.1f;
-				m_iState = IDLE;
 			}
 
 			break;
@@ -587,4 +608,27 @@ void HeroObject::SpeedUp(float _speed)
 void HeroObject::DefenseUp(float _defense)
 {
 	m_Defense = _defense * 3;  //초기 3부터 3씩 증가
+}
+
+void HeroObject::SetWatchTarget(D3DXVECTOR3 _pos)
+{
+	m_vDestination.x = _pos.x;
+	m_vDestination.y = _pos.y;
+	m_vDestination.z = _pos.z;       
+	m_vWalkIncrement = m_vDestination - m_Pos;
+	D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
+	//m_bFindPath = FALSE;
+
+
+	//// Calculate the rotation angle before. Next, change the walk direction into 
+	//// an increment by multiplying by speed.
+	float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
+	D3DXVECTOR3 cross;
+	D3DXVec3Cross( &cross, &m_vWalkIncrement, &m_vFacingDirection );
+	fAngle = acosf( fAngle );
+	if ( cross.y >  0.0f ) {
+		fAngle *=-1.0f;
+	}
+	fAngle /= D3DX_PI;
+	this->SetRotation(2, 1/fAngle);
 }

@@ -424,42 +424,42 @@ bool ParticleWizardSkillMesh::UpdateBuffers(ID3D11DeviceContext* deviceContext)
 	for(i=0; i<m_currentParticleCount; i++)
 	{
 		// Bottom left.
-		m_vertices[index].position = D3DXVECTOR3(m_particleList[i].positionX - m_particleSize, m_particleList[i].positionY - m_particleSize, m_particleList[i].positionZ) - m_vCamRight - m_vCamUp;
+		m_vertices[index].position = D3DXVECTOR3(m_particleList[i].positionX - m_particleSize, m_particleList[i].positionY - m_particleSize, m_particleList[i].positionZ);// - m_vCamRight - m_vCamUp;
 		m_vertices[index].texture = D3DXVECTOR2(0.0f, 1.0f);
 		//m_vertices[index].color = D3DXVECTOR4(m_particleList[i].red, m_particleList[i].green, m_particleList[i].blue, 1.0f);
 		m_vertices[index].color = D3DXVECTOR4(m_particleList[i].red, m_particleList[i].green, m_particleList[i].blue, m_particleList[i].m_fFadeFactor*255.0f);
 		index++;
 
 		// Top left.
-		m_vertices[index].position = D3DXVECTOR3(m_particleList[i].positionX - m_particleSize, m_particleList[i].positionY + m_particleSize, m_particleList[i].positionZ) - m_vCamRight + m_vCamUp;
+		m_vertices[index].position = D3DXVECTOR3(m_particleList[i].positionX - m_particleSize, m_particleList[i].positionY + m_particleSize, m_particleList[i].positionZ);// - m_vCamRight + m_vCamUp;
 		m_vertices[index].texture = D3DXVECTOR2(0.0f, 0.0f);
 		//m_vertices[index].color = D3DXVECTOR4(m_particleList[i].red, m_particleList[i].green, m_particleList[i].blue, 1.0f);
 		m_vertices[index].color = D3DXVECTOR4(m_particleList[i].red, m_particleList[i].green, m_particleList[i].blue, m_particleList[i].m_fFadeFactor*255.0f);
 		index++;
 
 		// Bottom right.
-		m_vertices[index].position = D3DXVECTOR3(m_particleList[i].positionX + m_particleSize, m_particleList[i].positionY - m_particleSize, m_particleList[i].positionZ) + m_vCamRight - m_vCamUp;
+		m_vertices[index].position = D3DXVECTOR3(m_particleList[i].positionX + m_particleSize, m_particleList[i].positionY - m_particleSize, m_particleList[i].positionZ);// + m_vCamRight - m_vCamUp;
 		m_vertices[index].texture = D3DXVECTOR2(1.0f, 1.0f);
 		//m_vertices[index].color = D3DXVECTOR4(m_particleList[i].red, m_particleList[i].green, m_particleList[i].blue, 1.0f);
 		m_vertices[index].color = D3DXVECTOR4(m_particleList[i].red, m_particleList[i].green, m_particleList[i].blue, m_particleList[i].m_fFadeFactor*255.0f);
 		index++;
 
 		// Bottom right.
-		m_vertices[index].position = D3DXVECTOR3(m_particleList[i].positionX + m_particleSize, m_particleList[i].positionY - m_particleSize, m_particleList[i].positionZ) + m_vCamRight - m_vCamUp;
+		m_vertices[index].position = D3DXVECTOR3(m_particleList[i].positionX + m_particleSize, m_particleList[i].positionY - m_particleSize, m_particleList[i].positionZ);// + m_vCamRight - m_vCamUp;
 		m_vertices[index].texture = D3DXVECTOR2(1.0f, 1.0f);
 		//m_vertices[index].color = D3DXVECTOR4(m_particleList[i].red, m_particleList[i].green, m_particleList[i].blue, 1.0f);
 		m_vertices[index].color = D3DXVECTOR4(m_particleList[i].red, m_particleList[i].green, m_particleList[i].blue, m_particleList[i].m_fFadeFactor*255.0f);
 		index++;
 
 		// Top left.
-		m_vertices[index].position = D3DXVECTOR3(m_particleList[i].positionX - m_particleSize, m_particleList[i].positionY + m_particleSize, m_particleList[i].positionZ) - m_vCamRight + m_vCamUp;
+		m_vertices[index].position = D3DXVECTOR3(m_particleList[i].positionX - m_particleSize, m_particleList[i].positionY + m_particleSize, m_particleList[i].positionZ);// - m_vCamRight + m_vCamUp;
 		m_vertices[index].texture = D3DXVECTOR2(0.0f, 0.0f);
 		//m_vertices[index].color = D3DXVECTOR4(m_particleList[i].red, m_particleList[i].green, m_particleList[i].blue, 1.0f);
 		m_vertices[index].color = D3DXVECTOR4(m_particleList[i].red, m_particleList[i].green, m_particleList[i].blue, m_particleList[i].m_fFadeFactor*255.0f);
 		index++;
 
 		// Top right.
-		m_vertices[index].position = D3DXVECTOR3(m_particleList[i].positionX + m_particleSize, m_particleList[i].positionY + m_particleSize, m_particleList[i].positionZ) + m_vCamRight + m_vCamUp;
+		m_vertices[index].position = D3DXVECTOR3(m_particleList[i].positionX + m_particleSize, m_particleList[i].positionY + m_particleSize, m_particleList[i].positionZ);// + m_vCamRight + m_vCamUp;
 		m_vertices[index].texture = D3DXVECTOR2(1.0f, 0.0f);
 		//m_vertices[index].color = D3DXVECTOR4(m_particleList[i].red, m_particleList[i].green, m_particleList[i].blue, 1.0f);
 		m_vertices[index].color = D3DXVECTOR4(m_particleList[i].red, m_particleList[i].green, m_particleList[i].blue, m_particleList[i].m_fFadeFactor*255.0f);

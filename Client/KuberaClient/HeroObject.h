@@ -12,6 +12,7 @@ private:
 	float m_time;
 	float m_fRespawnTime;
 	BOOL m_bWarriorAttack;
+	BOOL m_bWarriorSkill;
 	
 	float m_fAttackTime;
 	int m_iPrevState;
@@ -72,6 +73,7 @@ public:
 	void DefenseUp(float _defense);
 
 	int GetDeathCount() {return m_nDeathCount;}
+	void SetWatchTarget(D3DXVECTOR3 _pos);
 
 	Vector3 GetDestination()
 	{

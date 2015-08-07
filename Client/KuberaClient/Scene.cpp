@@ -121,7 +121,10 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	//히어로 생성
 	HeroManager::sharedManager()->CreateHero(LoadManager::sharedManager()->m_pVarianMesh, LoadManager::sharedManager()->m_pMageMesh, 10, 13, 10);
 	HeroManager::sharedManager()->m_pHero->SetMaterial(pMaterial);
-	HeroManager::sharedManager()->m_pHero->SetFaceType(HERO1_FACE);
+	if(HeroManager::sharedManager()->m_pHero->GetType() == 1)
+		HeroManager::sharedManager()->m_pHero->SetFaceType(HERO1_FACE);
+	else if(HeroManager::sharedManager()->m_pHero->GetType() == 2)
+		HeroManager::sharedManager()->m_pHero->SetFaceType(HERO2_FACE);
 
 	//바닥 생성
 	m_pPlane = new CGameObject();
@@ -154,9 +157,14 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	//아더 플레이어 생성
 	OtherPlayerManager::sharedManager()->SetMesh(m_pWarriorMesh, m_pWizardMesh);
 	OtherPlayerManager::sharedManager()->CreateOtherPlayer(D3DXVECTOR3(0, 0, 0), 10, 13, 10);
-	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetMesh(m_pWizardMesh);
+	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetMesh(m_pWizardMesh); // 다른곳에서 설정?
 	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetMaterial(pMaterial);
-	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetFaceType(HERO2_FACE);
+	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetType(2); //다른곳에서 설정?
+
+	if(OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetType() == 1)
+		OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetFaceType(HERO1_FACE);
+	else if(OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetType() == 2)
+		OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetFaceType(HERO2_FACE);
 	m_pAnimationShaders->AddObject(OtherPlayerManager::sharedManager()->m_pOtherPlayer);
 
 	//미니언 생성
@@ -548,12 +556,13 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 		}
 		else if(HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType() ==  HERO1_FACE && m_bChangeImage == FALSE)
 		{
-			m_pUIObjects[21]->GetUI()->SetTexture(pd3dDevice, L"UI/lichking.png");
+			m_pUIObjects[21]->GetUI()->SetTexture(pd3dDevice, L"UI/varian.png");
 			m_bChangeImage = TRUE;
+			m_iPrevFaceType = HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType();
 		}
 		else if(HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType() ==  HERO2_FACE && m_bChangeImage == FALSE)
 		{
-			m_pUIObjects[21]->GetUI()->SetTexture(pd3dDevice, L"UI/kaeltas.png");
+			m_pUIObjects[21]->GetUI()->SetTexture(pd3dDevice, L"UI/Coldwraith.png");
 			m_bChangeImage = TRUE;
 			m_iPrevFaceType = HeroManager::sharedManager()->m_pHero->GetTarget()->GetFaceType();
 		}
@@ -792,9 +801,10 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext, float fTimeElapsed, C
 		TurnOffAlphaBlending(pd3dDeviceContext, m_particleDisableBlendingState);
 	}
 	LoadManager::sharedManager()->m_pParticleMesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
-	LoadManager::sharedManager()->m_pParticle2Mesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
+	//LoadManager::sharedManager()->m_pParticle2Mesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
+	//LoadManager::sharedManager()->m_pParticleWizardSkillMesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
+
 	//LoadManager::sharedManager()->m_pParticle3Mesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
-	LoadManager::sharedManager()->m_pParticleWizardSkillMesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
 	//m_pParticleMesh->SetCamVec(D3DXVECTOR3(m_Camera->GetPitch(), 0, 0), D3DXVECTOR3(0, 0, m_Camera->GetRoll()));
 	//m_pParticle2Mesh->SetCamVec(D3DXVECTOR3(m_Camera->GetPitch(), 0, 0), D3DXVECTOR3(0, 0, m_Camera->GetRoll()));
 	//m_pParticle3Mesh->SetCamVec(D3DXVECTOR3(m_Camera->GetPitch(), 0, 0), D3DXVECTOR3(0, 0, m_Camera->GetRoll()));
@@ -1193,7 +1203,10 @@ void CScene::CreateUI(ID3D11Device *pd3dDevice,int  _wndWidth,int  _wndHeight)
 	m_pUI[6]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/Boots.png",m_BootsWidth, m_BootsHeight); //신발
 	m_pUI[7]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/Hp_Bar_Red.png",m_HpbarRWidth, m_HpbarRHeight); //hp바 빨간색
 	m_pUI[8]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/Hp_Bar_Green1.png",m_HpbarGWidth, m_HpbarGHeight); //hp바 초록색
-	m_pUI[9]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/lichking.png",m_CharacterFaceWidth, m_CharacterFaceHeight); //캐릭터 얼굴
+	if(HeroManager::sharedManager()->m_pHero->GetType() == 1)
+		m_pUI[9]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/varian.png",m_CharacterFaceWidth, m_CharacterFaceHeight); //캐릭터 얼굴
+	else if(HeroManager::sharedManager()->m_pHero->GetType() == 2)
+		m_pUI[9]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/Coldwraith.png",m_CharacterFaceWidth, m_CharacterFaceHeight); //캐릭터 얼굴
 	m_pUI[10]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/skillq_button.png",m_Skillq_buttonWidth, m_Skillq_buttonHeight); //스킬 q
 	m_pUI[11]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/skillw_button.png",m_Skillw_buttonWidth, m_Skillw_buttonHeight); //스킬 w
 	m_pUI[12]->Initialize(pd3dDevice, _wndWidth, _wndHeight, L"UI/skillq_button.png",m_Skillq_buttonWidth, m_Skillq_buttonHeight); //스킬 q

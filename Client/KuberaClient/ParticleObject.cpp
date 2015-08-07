@@ -104,6 +104,25 @@ void ParticleObject::Render(ID3D11DeviceContext *pd3dDeviceContext, CCamera *pCa
 	mWorld = mtxScale * mtxRotate * mtxTrans;
 	m_d3dxmtxWorld = mWorld;
 
+
+	if(m_iType != WIZARD_SKILL_BODY)
+	{
+		D3DXVECTOR3 d3dxvRight, d3dxvUp(0.0f, 1.0f, 0.0f);
+		D3DXVECTOR3 d3dxvLook = pCamera->m_CameraPos - this->GetPosition();
+		D3DXVec3Normalize(&d3dxvLook, &d3dxvLook);
+		D3DXVec3Cross(&d3dxvRight, &d3dxvUp, &d3dxvLook);
+		D3DXVec3Normalize(&d3dxvRight, &d3dxvRight);
+		m_d3dxmtxWorld._11 = d3dxvRight.x; 
+		m_d3dxmtxWorld._12 = d3dxvRight.y; 
+		m_d3dxmtxWorld._13 = d3dxvRight.z; 
+		m_d3dxmtxWorld._21 = d3dxvUp.x; 
+		m_d3dxmtxWorld._22 = d3dxvUp.y; 
+		m_d3dxmtxWorld._23 = d3dxvUp.z; 
+		m_d3dxmtxWorld._31 = d3dxvLook.x; 
+		m_d3dxmtxWorld._32 = d3dxvLook.y; 
+		m_d3dxmtxWorld._33 = d3dxvLook.z; 
+	}
+
 	if (m_pMesh)
 	{
 		bool bIsVisible = true;
@@ -137,7 +156,7 @@ void ParticleObject::Update(float fTimeElapsed)
 		{
 			if(MinionManager::sharedManager()->m_pMinion[i] == NULL) continue;
 
-			if (ST::sharedManager()->GetDistance(this->GetPos(), MinionManager::sharedManager()->m_pMinion[i]->GetPos()) <= 5.f)
+			if (ST::sharedManager()->GetDistance(this->GetPosition(), MinionManager::sharedManager()->m_pMinion[i]->GetPosition() + D3DXVECTOR3(0, 10, 0)) <= 10.f)
 			{
 				MinionManager::sharedManager()->m_pMinion[i]->SetAttackDamage(m_pAttacker->GetSkillDamage() - MinionManager::sharedManager()->m_pMinion[i]->GetDefense());
 
@@ -148,7 +167,7 @@ void ParticleObject::Update(float fTimeElapsed)
 				m_bUsed = FALSE;
 				break;
 			}
-			else if(ST::sharedManager()->GetDistance(this->GetPos(), OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetPos()) <= 10.f)
+			else if(ST::sharedManager()->GetDistance(this->GetPosition(), OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetPosition() + D3DXVECTOR3(0, 10, 0)) <= 10.f)
 			{
 				OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetAttackDamage(m_pAttacker->GetSkillDamage() - OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetDefense());
 
@@ -159,7 +178,7 @@ void ParticleObject::Update(float fTimeElapsed)
 				m_bUsed = FALSE;
 				break;
 			}
-			else if (ST::sharedManager()->GetDistance(this->GetPos(), m_pAttacker->GetPos()) >= 100.f)
+			else if (ST::sharedManager()->GetDistance(this->GetPosition(), m_pAttacker->GetPosition() + D3DXVECTOR3(0, 10, 0)) >= 100.f)
 			{
 				m_pTarget = NULL;
 				m_pAttacker = NULL;
@@ -172,7 +191,7 @@ void ParticleObject::Update(float fTimeElapsed)
 	}
 	else if(m_iType == WIZARD_ATTACK && m_pTarget != NULL && m_pAttacker != NULL)
 	{
-		SetNewDestination(m_pTarget->GetPosition() + D3DXVECTOR3(0 , m_pTarget->GetBoundSizeY()/2, 0));
+		SetNewDestination(m_pTarget->GetPosition() + D3DXVECTOR3(0 , m_pTarget->GetBoundSizeY()/2 * 2, 0));
 
 		if(m_pTarget->GetHP() <= 0.0f)
 		{

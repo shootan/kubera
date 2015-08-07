@@ -232,7 +232,7 @@ bool ParticleMesh::InitializeParticleSystem()
 	// Set the random deviation of where the particles can be located when emitted.
 	m_particleDeviationX = 20.f;//0.5f;
 	m_particleDeviationY = 30.f;//0.1f;
-	m_particleDeviationZ = 10.f;//2.0f;
+	m_particleDeviationZ = 20.f;//2.0f;
 
 	// Set the speed and speed variation of particles.
 	m_particleVelocity = 1.0f;
