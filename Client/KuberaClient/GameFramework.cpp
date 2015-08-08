@@ -49,11 +49,11 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	//Direct3D 디바이스, 디바이스 컨텍스트, 스왑 체인 등을 생성하는 함수를 호출한다. 
 	if (!CreateDirect3DDisplay()) return(false); 
 
-   	char IP[30];
-    	printf("IP : ");
-    	scanf("%s", IP);
-  	Net.InitClient(IP, 9000);
-  	ST::sharedManager()->Net = &Net;	
+	char IP[30];
+	printf("IP : ");
+	scanf("%s", IP);
+	Net.InitClient(IP, 9000);
+	ST::sharedManager()->Net = &Net;	
   
   	while (!Net.m_InitFinish)
   	{
@@ -65,8 +65,8 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	//렌더링할 객체(게임 월드 객체)를 생성한다. 
 
 	HeroManager::sharedManager()->SetID(Net.m_ID);
-	HeroManager::sharedManager()->SetTeam(1);
-	HeroManager::sharedManager()->SetType(2);
+	//HeroManager::sharedManager()->SetTeam(1);
+	//HeroManager::sharedManager()->SetType(2);
 
 	printf("SetData \n");
 	
@@ -559,7 +559,7 @@ void CGameFramework::FrameAdvance()
 		m_pd3dDeviceContext->RSSetViewports(1, &m_pSelectCamera->GetViewport());
 		m_pSelectScene->AnimateObject(m_GameTimer.GetTimeElapsed());
 		m_pSelectScene->RenderObject(m_pd3dDeviceContext, m_GameTimer.GetTimeElapsed(), m_pSelectCamera);
- 		if (ST::sharedManager()->m_bSelected == TRUE)
+ 		if (ST::sharedManager()->m_bSelected == TRUE || ST::sharedManager()->m_bReconnect)
 		{
  			m_pScene = new CScene();
 			m_pScene->m_Camera = m_pCamera;
@@ -750,30 +750,25 @@ void CGameFramework::SetCameraPos()
 
 void CGameFramework::ExchangeInfo()
 {
- 	if(Net.m_ClientCount != 0)
- 	{
 
-		m_pScene->SetOtherClient(Net.PI);
-		m_pScene->UpdateOtherClient(Net.PI);
-	}	
+	//m_pScene->SetOtherClient(Net.PI);
+	m_pScene->UpdateOtherClient(Net.PI);
 }
 
 void CGameFramework::SendHeroData()
 {
-	if(Net.m_ID != 0)
-	{
-		HeroInfo.PI.m_Data.m_Pos = HeroManager::sharedManager()->m_pHero->GetPos();
-		HeroInfo.PI.m_iState = HeroManager::sharedManager()->m_pHero->GetState();
-		HeroInfo.PI.m_iTargetID = HeroManager::sharedManager()->m_pHero->GetTargetID();
-		HeroInfo.PI.m_ID = Net.m_ID;
-		HeroInfo.PI.m_Data.m_HP = HeroManager::sharedManager()->m_pHero->GetHP();
-		HeroInfo.PI.m_Data.m_Damage = HeroManager::sharedManager()->m_pHero->GetDamage();
-		HeroInfo.PI.m_Data.m_Rot = HeroManager::sharedManager()->m_pHero->GetRot();
-		HeroInfo.PI.m_Type = HeroManager::sharedManager()->m_pHero->GetType();
-		HeroInfo.size = sizeof(PlayerPacket);
+	HeroInfo.PI.m_Data.m_Pos = HeroManager::sharedManager()->m_pHero->GetPos();
+	HeroInfo.PI.m_iState = HeroManager::sharedManager()->m_pHero->GetState();
+	HeroInfo.PI.m_iTargetID = HeroManager::sharedManager()->m_pHero->GetTargetID();
+	HeroInfo.PI.m_ID = Net.m_ID;
+	HeroInfo.PI.m_Data.m_HP = HeroManager::sharedManager()->m_pHero->GetHP();
+	HeroInfo.PI.m_Data.m_Damage = HeroManager::sharedManager()->m_pHero->GetDamage();
+	HeroInfo.PI.m_Data.m_Rot = HeroManager::sharedManager()->m_pHero->GetRot();
+	HeroInfo.PI.m_Type = HeroManager::sharedManager()->m_pHero->GetType();
+	HeroInfo.size = sizeof(PlayerPacket);
 
-		Net.SendData(HERODATA, &HeroInfo, sizeof(PlayerPacket));
-	}
+	Net.SendData(HERODATA, &HeroInfo, sizeof(PlayerPacket));
+
 }
 
 

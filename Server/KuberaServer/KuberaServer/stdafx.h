@@ -60,7 +60,7 @@ struct Player{
 	int m_Team;
 	BOOL m_Connect;
 	float	m_AttackTime;
-	PlayerPacket*	m_PI;
+	PlayerPacket	m_PI;
 	Player*			m_pNext;
 };
 
@@ -82,7 +82,7 @@ struct IOBuffer{
 	int			m_iRecvbytes;
 	int			m_iSendbytes;
 	int			m_iSendbytesCount;
-	int			m_MinionCount;
+	BOOL		m_bGameStart;
 	int			m_ReconnectCount;
 	int			m_Header;
 	BOOL		m_bSendFinish;

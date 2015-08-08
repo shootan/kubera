@@ -65,7 +65,7 @@ protected:
 	int ScreenX, ScreenY;
 	CPoint GamePos;
 	//
-	ZDIB m_image, m_image2, m_image3, m_image4, m_RockImage, m_TowerImage, m_TreeImage, m_NexusImage;
+	ZDIB m_image, m_image2, m_image3, m_image4, m_RockImage,m_RockImage2, m_TowerImage, m_TreeImage, m_NexusImage;
 	CRect m_Rect1, m_Rect2, m_Rect3, m_Rect4;
 	HPEN pen;
 	int lineX, lineY;

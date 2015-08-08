@@ -434,3 +434,10 @@ void OtherPlayerObject::SetWatchTarget(D3DXVECTOR3 _pos)
 	fAngle /= D3DX_PI;
 	this->SetRotation(2, 1/fAngle);
 }
+
+void OtherPlayerObject::SetAniMesh(GFBX::Mesh *pAniMesh)
+{
+	//if (m_pAniMesh) m_pAniMesh->Release();
+	m_pAniMesh = pAniMesh;
+	//if (m_pAniMesh) m_pAniMesh->AddRef();
+}

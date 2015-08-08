@@ -554,7 +554,7 @@ void ArrangeData::SetTime(float _time, IOBuffer* _list)
 
 	while(Buffer != NULL)
 	{
-		if(!Buffer->m_Connect || Buffer->m_pPlayer->m_PI->PI.m_iState != 1)
+		if(!Buffer->m_Connect || Buffer->m_pPlayer->m_PI.PI.m_iState != 1)
 		{
 			Buffer->m_pPlayer->m_AttackTime = 0.0f;
 			Buffer = Buffer->m_pNext;
@@ -711,13 +711,13 @@ void AttackData(IOBuffer* _list)
 	while(Buffer != NULL)
 	{
 		//EnterCriticalSection(&m_BufferListLock);
-		if(!Buffer->m_Connect || Buffer->m_pPlayer->m_PI->PI.m_iState != 1)
+		if(!Buffer->m_Connect || Buffer->m_pPlayer->m_PI.PI.m_iState != 1)
 		{
 			Buffer = Buffer->m_pNext;
 			continue;
 		}
 		
-		switch(Buffer->m_pPlayer->m_PI->PI.m_Type)
+		switch(Buffer->m_pPlayer->m_PI.PI.m_Type)
 		{
 		case 1:
 			if(Buffer->m_pPlayer->m_AttackTime > 4.0f)
@@ -725,9 +725,9 @@ void AttackData(IOBuffer* _list)
 				IOBuffer* Buffer2 = _list;
 				while(Buffer2 != NULL)
 				{
-					if(Buffer->m_pPlayer->m_PI->PI.m_iTargetID == Buffer2->m_Id)
+					if(Buffer->m_pPlayer->m_PI.PI.m_iTargetID == Buffer2->m_Id)
 					{
-						Buffer2->m_pPlayer->m_PI->PI.m_Data.m_HP -= Buffer->m_pPlayer->m_PI->PI.m_Data.m_Damage;
+						Buffer2->m_pPlayer->m_PI.PI.m_Data.m_HP -= Buffer->m_pPlayer->m_PI.PI.m_Data.m_Damage;
 					}
 					Buffer2 = Buffer2->m_pNext;
 				}
@@ -740,9 +740,9 @@ void AttackData(IOBuffer* _list)
 				IOBuffer* Buffer2 = _list;
 				while(Buffer2 != NULL)
 				{
-					if(Buffer->m_pPlayer->m_PI->PI.m_iTargetID == Buffer2->m_Id)
+					if(Buffer->m_pPlayer->m_PI.PI.m_iTargetID == Buffer2->m_Id)
 					{
-						Buffer2->m_pPlayer->m_PI->PI.m_Data.m_HP -= Buffer->m_pPlayer->m_PI->PI.m_Data.m_Damage;
+						Buffer2->m_pPlayer->m_PI.PI.m_Data.m_HP -= Buffer->m_pPlayer->m_PI.PI.m_Data.m_Damage;
 					}
 					Buffer2 = Buffer2->m_pNext;
 				}

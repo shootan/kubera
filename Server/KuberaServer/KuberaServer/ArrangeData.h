@@ -51,7 +51,7 @@ private:
 	void SetRoot();
 	void SetMinionPosition(float _dt);
 	void RegenMinion();
-	
+
 
 	void SetRoot1();
 	void SetRoot2();
@@ -64,14 +64,14 @@ private:
 
 	ObjectInfo MonsterInfo[6];
 	//ObjectInfo TowerInfo
-	
-	
+
+
 
 public:
 	ArrangeData();
 	~ArrangeData();
 
-	
+
 	void SetTime(float _time, IOBuffer* _list);
 	int SetID();
 	void UpdateMonster();

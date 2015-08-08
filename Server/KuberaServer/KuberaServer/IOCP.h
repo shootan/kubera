@@ -39,7 +39,7 @@ public:
 	char	m_ID[100];
 
 	float	m_MinionTimer;
-	
+
 	//ÇÔ¼ö
 	IOCPServer();
 	~IOCPServer();
