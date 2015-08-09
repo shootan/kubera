@@ -1,7 +1,7 @@
 #include "Scene.h"
 #include "LoadManager.h"
 #include "MinionManager.h"
-
+#include "SoundManager.h"
 CScene::CScene(void)
 {
 	m_pObjectShaders = NULL;
@@ -282,6 +282,8 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	
 	//조명 생성
 	CreateLightShaderVariables(pd3dDevice);
+
+	SoundManager::sharedManager()->play(SOUND_MAIN_BGM);
 
 
 }
@@ -852,63 +854,22 @@ void CScene::AddOtherPlayer(ID3D11Device *pd3dDevice)
 void CScene::SetOtherClient(PlayerPacket _PI)
 {
 
-	//for(int i=0; i<_Count; i++)
-	//{
-	//	if(_PI[i].Use == TRUE) continue;
-	//	if(_PI[i].PI.m_ID == 0) continue;
-	//	if(_PI[i].PI.m_Type == 0) continue;
-	//	for(int j=0; j<MAX_OTHER_PLAYER; j++)
-	//	{
-	//		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetID() != 0) continue;
-	//		OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetID(_PI[i].PI.m_ID);
-	//		OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetPos(_PI[i].PI.m_Data.m_Pos);
-	//		OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetState(_PI[i].PI.m_iState);
-	//		OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetTargetID(_PI[i].PI.m_iTargetID);
-	//		OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetHP(_PI[i].PI.m_Data.m_HP);
-	//		OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetDamage(_PI[i].PI.m_Data.m_Damage);
-
-	//		OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Data.m_Rot);
-
-	//		OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetType(_PI[i].PI.m_Type);
-	//		if(_PI[i].PI.m_Type == 1)
-	//			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetAniMesh(m_pWarriorMesh);
-	//		else if(_PI[i].PI.m_Type == 2)
-	//			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetAniMesh(m_pWizardMesh);
-
-
-	//		if(_PI[i].PI.m_ID%2 == 0)
-	//			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetTeam(RED_TEAM);
-	//		else
-	//			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetTeam(BLUE_TEAM);
-	//		OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetVisible(TRUE);
-	//		_PI[i].Use = TRUE;
-	//		break;
-	//	}
-	//}
 }
 
 void CScene::UpdateOtherClient(PlayerPacket _PI)
 {
-	/*for(int i=0; i<_Count; i++)
-	{
-		if(_PI[i].Use != TRUE) continue;
-		if(_PI[i].PI.m_ID == 0) continue;
-		for(int j=0; j<MAX_OTHER_PLAYER; j++)
-		{
-			if(OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->GetID() != _PI[i].PI.m_ID) continue;
-			D3DXVECTOR3 q;
-			q.x = _PI[i].PI.m_Data.m_Pos.x;
-			q.y = _PI[i].PI.m_Data.m_Pos.y;
-			q.z = _PI[i].PI.m_Data.m_Pos.z;
-			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetNewDestination(q);
-			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetRot(_PI[i].PI.m_Data.m_Rot);
-			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetState(_PI[i].PI.m_iState);
-			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetTargetID(_PI[i].PI.m_iTargetID);
-			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetHP(_PI[i].PI.m_Data.m_HP);
-			OtherPlayerManager::sharedManager()->m_pOtherPlayer[j]->SetDamage(_PI[i].PI.m_Data.m_Damage);
-			break;
-		}
-	}*/
+	D3DXVECTOR3 q;
+	q.x = _PI.PI.m_Data.m_Pos.x;
+	q.y = _PI.PI.m_Data.m_Pos.y;
+	q.z = _PI.PI.m_Data.m_Pos.z;
+	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetNewDestination(q);
+	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetRot(_PI.PI.m_Data.m_Rot);
+	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetState(_PI.PI.m_iState);
+	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetTargetID(_PI.PI.m_iTargetID);
+	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetHP(_PI.PI.m_Data.m_HP);
+	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetDamage(_PI.PI.m_Data.m_Damage);
+	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetDefense(_PI.PI.m_Data.m_Defence);
+	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetSpeed(_PI.PI.m_Data.m_Speed);
 }
 
 CGameObject* CScene::GetObject(int num)

@@ -1,5 +1,8 @@
 #include "Network.h"
 #include "ST.h"
+#include "HeroManager.h"
+#include "OtherPlayerManager.h"
+
 Network::Network()
 {
 	ZeroMemory(&PI, sizeof(PlayerPacket));
@@ -92,6 +95,11 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 	int Number = 0;
 	char Buf[BUFSIZE];
 	int Count = 0;
+	recv(server->m_ConnectSock, (char*)&server->m_ID, sizeof(int), 0);
+	int e = server->m_ID;
+	printf("내 아이디 : %d \n", e);
+	HeroManager::sharedManager()->SetTeam(server->m_ID);
+
 	int Header = CLIENT_CONNECT;
 	retval = send(server->m_ConnectSock, (char*)&Header, sizeof(int), 0);
 
@@ -108,12 +116,20 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 		switch(Header)
 		{
 		case CLIENT_CONNECT:
-
+			int _id;
+			retval = recv(server->m_ConnectSock, (char*)&_id, sizeof(int),0);
+			OtherPlayerManager::sharedManager()->SetId(_id);
+			printf("상대 아이디 : %d \n ", _id);
 			break;
 		case INITCLIENT:
 			{
-				
-				
+
+				retval = recv(server->m_ConnectSock, (char*)&p, sizeof(PlayerPacket), 0);
+
+				HeroManager::sharedManager()->SetPlayerInfo(p.PI);
+
+				ST::sharedManager()->m_bReconnect = TRUE;
+				//ST::sharedManager()->m_bStart
 				break;
 			}
 		case HERODATA:
@@ -123,7 +139,8 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 					break;
 
 				server->PI = p;
-		
+				printf("%.2f, %.2f, %.2f \n", p.PI.m_Data.m_Pos.x, p.PI.m_Data.m_Pos.z, p.PI.m_Data.m_Rot);
+
 				break;
 			}
 		case HEROCOUNT:
@@ -136,11 +153,13 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 			}
 		case START_GAME:
 			ST::sharedManager()->m_bSelected = TRUE;
+			printf("게임 시작 \n");
 			break;
 
 		case SELECT_CHAR:
 			retval = recv(server->m_ConnectSock, (char*)&server->OtherChar, sizeof(int),0);
-		
+			OtherPlayerManager::sharedManager()->SetType(server->OtherChar);
+			break;
 		}
 
 

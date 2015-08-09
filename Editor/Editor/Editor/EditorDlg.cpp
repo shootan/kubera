@@ -165,11 +165,11 @@ BOOL CEditorDlg::OnInitDialog()
 	pen2 = CreatePen(PS_SOLID, 1, RGB(0, 255, 0));
 	m_BuildType = 0;
 	m_TeamType = 1;
-
-	m_RockImage.LoadDibPath("res/rock1.bmp");
-	m_TowerImage.LoadDibPath("res/tower1.bmp");
-	m_TreeImage.LoadDibPath("res/tree1.bmp");
-	m_NexusImage.LoadDibPath("res/Nexus1.bmp");
+	m_RockImage2.LoadDibPath("res/Rock3.bmp");
+	m_RockImage.LoadDibPath("res/rock2.bmp");
+	m_TowerImage.LoadDibPath("res/tower2.bmp");
+	m_TreeImage.LoadDibPath("res/tree2.bmp");
+	m_NexusImage.LoadDibPath("res/Nexus2.bmp");
 
 	SetTimer(1, 50, NULL);
 
@@ -245,7 +245,7 @@ void CEditorDlg::OnPaint()
 			re.right =  (int)iterList->x + 12  + 610;
 			re.top = 410  - (int)iterList->z - 12;
 			re.bottom = 410  - (int)iterList->z + 12;
-			m_RockImage.DrawDIB(&dc, SetRectScrollPos(re));
+			m_RockImage2.DrawDIB(&dc, SetRectScrollPos(re));
 		}
 		for(iterList = Tree.begin(); iterList!= Tree.end(); iterList++)
 		{
@@ -257,18 +257,18 @@ void CEditorDlg::OnPaint()
 		}
 		for(iterList = Tower.begin(); iterList!= Tower.end(); iterList++)
 		{
-			re.left = (int)iterList->x - 12 + 610;
-			re.right =  (int)iterList->x + 12  + 610;
-			re.top = 410  - (int)iterList->z - 12;
-			re.bottom = 410  - (int)iterList->z + 12;
+			re.left = (int)iterList->x - 16 + 610;
+			re.right =  (int)iterList->x + 16  + 610;
+			re.top = 410  - (int)iterList->z - 16;
+			re.bottom = 410  - (int)iterList->z + 16;
 			m_TowerImage.DrawDIB(&dc, SetRectScrollPos(re));
 		}
 		for(iterList = Nexus.begin(); iterList!= Nexus.end(); iterList++)
 		{
-			re.left = (int)iterList->x - 12 + 610;
-			re.right =  (int)iterList->x + 12  + 610;
-			re.top = 410  - (int)iterList->z - 12;
-			re.bottom = 410  - (int)iterList->z + 12;
+			re.left = (int)iterList->x - 20 + 610;
+			re.right =  (int)iterList->x + 20  + 610;
+			re.top = 410  - (int)iterList->z - 20;
+			re.bottom = 410  - (int)iterList->z + 20;
 			m_NexusImage.DrawDIB(&dc, SetRectScrollPos(re));
 		}
 		if(m_bClick)
@@ -409,7 +409,7 @@ void CEditorDlg::OnRed()
 void CEditorDlg::OnRock()
 {
 	m_BuildType = 1;
-	m_image4.LoadDibPath("res/Rock1.bmp");
+	m_image4.LoadDibPath("res/Rock2.bmp");
 
 	m_bClick = TRUE;
 }
@@ -417,7 +417,7 @@ void CEditorDlg::OnRock()
 void CEditorDlg::OnRock2()
 {
 	m_BuildType = 2;
-	m_image4.LoadDibPath("res/Rock1.bmp");
+	m_image4.LoadDibPath("res/Rock3.bmp");
 	m_bClick = TRUE;
 }
 
@@ -425,20 +425,20 @@ void CEditorDlg::OnRock2()
 void CEditorDlg::OnTree()
 {
 	m_BuildType = 3;
-	m_image4.LoadDibPath("res/tree1.bmp");
+	m_image4.LoadDibPath("res/tree2.bmp");
 	m_bClick = TRUE;
 }
 void CEditorDlg::OnTower()
 {
 	m_BuildType = 4;
-	m_image4.LoadDibPath("res/tower1.bmp");
+	m_image4.LoadDibPath("res/tower2.bmp");
 	m_bClick = TRUE;
 }
 
 void CEditorDlg::OnNexus()
 {
 	m_BuildType = 5;
-	m_image4.LoadDibPath("res/Nexus1.bmp");
+	m_image4.LoadDibPath("res/Nexus2.bmp");
 	m_bClick = TRUE;
 }
 

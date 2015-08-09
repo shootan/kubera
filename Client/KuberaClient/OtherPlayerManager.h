@@ -11,12 +11,13 @@ public:
 	GFBX::Mesh *m_pWarriorMesh;
 	int m_Type;
 	int m_Team;
-
+	int m_Id;
 
 public:
 	OtherPlayerManager()
 	{
 		memset(&m_pOtherPlayer,NULL,sizeof(m_pOtherPlayer));
+		m_Type = 1;
 	}
 	~OtherPlayerManager()
 	{
@@ -37,10 +38,22 @@ public:
 	void CreateOtherPlayer(D3DXVECTOR3 pos, float boundx, float boundy, float boundz)
 	{
 		m_pOtherPlayer = new OtherPlayerObject();
-		//m_pOtherPlayer->SetAniMesh(mesh);
+		if(m_Type == 1 )
+		{
+			m_pOtherPlayer->SetAniMesh(m_pWarriorMesh);
+		}
+		if(m_Type == 2)
+		{
+			m_pOtherPlayer->SetAniMesh(m_pWizardMesh);
+		}
+		if(m_Id == 1)
+			pos = D3DXVECTOR3(390, 0, 0);
+		if(m_Id == 2)
+			pos = D3DXVECTOR3(-390, 0, 0);
 		m_pOtherPlayer->SetPosition(pos);
 		m_pOtherPlayer->SetBoundSize(boundx, boundy, boundz);
-		//m_pOtherPlayer->SetScale(D3DXVECTOR3(0.1, 0.1, 0.1));
+		m_pOtherPlayer->SetScale(D3DXVECTOR3(0.1, 0.1, 0.1));
+		m_pOtherPlayer->SetHP(100);
 		
 	}
 
@@ -50,8 +63,19 @@ public:
 		m_pWizardMesh = _wizard;
 	}
 
+
 	void SetTeam(int _team) {m_Team = _team;}
 	int GetTeam() {return m_Team;}
-	void SetType(int _type) { m_Type = _type; }
 	int GetType() { return m_Type; }
+
+	void SetType(int _type)
+	{
+		m_Type = _type;
+	}
+
+	void SetId(int _id)
+	{
+		m_Id = _id;
+	}
+
 };

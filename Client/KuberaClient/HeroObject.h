@@ -35,6 +35,8 @@ private:
 
 	BOOL m_bUpgrade;
 
+	BOOL m_bSoundLimit;
+
 	//hp가 시작하자마자 -값이 되어버리는 버그때문에 만듬
 	BOOL m_bHpFUCK;
 

@@ -2,6 +2,7 @@
 #include "SelectScene.h"
 #include "LoadManager.h"
 #include "HeroManager.h"
+#include "SoundManager.h"
 
 SelectScene::SelectScene()
 {
@@ -46,6 +47,10 @@ void SelectScene::BuildObject(ID3D11Device *m_pd3dDevice)
 
 	m_pAniShaders->AddObject(m_pWarrior);
 	m_pAniShaders->AddObject(m_pWizard);
+
+	SoundManager::sharedManager()->play(SOUND_SELECT_BGM);
+
+	
 }
 
 void SelectScene::AnimateObject(float _dt)

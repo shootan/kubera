@@ -1,5 +1,6 @@
 #include "LoadScene.h"
 #include "LoadManager.h"
+#include "SoundManager.h"
 
 LoadScene::LoadScene()
 {
@@ -24,6 +25,7 @@ void LoadScene::LoadData(ID3D11Device *m_pd3dDevice, ID3D11DeviceContext* m_pd3d
   	switch(m_Count)
   	{
   	case 7:
+		SoundManager::sharedManager()->sndLoad();
   		LoadManager::sharedManager()->LoadShaderInstancing1(m_pd3dDevice);
   		break;
 	case 10:
@@ -73,4 +75,6 @@ void LoadScene::BuildObject(ID3D11Device *m_pd3dDevice)
 		m_ButtonImageObject[i]->SetUI(m_ButtonImage[i]);
 		m_pUIShaders->AddObject(m_ButtonImageObject[i]);
 	}
+
+	SoundManager::sharedManager()->init();
 }

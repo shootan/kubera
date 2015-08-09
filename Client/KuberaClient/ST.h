@@ -11,6 +11,7 @@ private:
 		m_bSelected = FALSE;
 		m_bStart = FALSE;
 		Net = NULL;
+		m_bReconnect = FALSE;
 	}
 public:
 	~ST()
@@ -21,6 +22,7 @@ public:
 	BOOL m_bVisible;
 	BOOL m_bSelected;
 	BOOL m_bStart;
+	BOOL m_bReconnect;
 
 	Network* Net;
 public:
