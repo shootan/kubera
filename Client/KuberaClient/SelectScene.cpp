@@ -2,6 +2,7 @@
 #include "SelectScene.h"
 #include "LoadManager.h"
 #include "HeroManager.h"
+#include "SoundManager.h"
 
 SelectScene::SelectScene()
 {
@@ -20,8 +21,8 @@ void SelectScene::BuildObject(ID3D11Device *m_pd3dDevice)
 	m_pWizard = new HeroObject();
 	m_pWizard->SetHP(50);
 	m_pWizard->SetTeam(1);
-	m_pWarrior->SetPosition(D3DXVECTOR3(25, 0, 0));
-	m_pWizard->SetPosition(D3DXVECTOR3(-25, 0, 0));
+	m_pWarrior->SetPosition(D3DXVECTOR3(-25, 0, 0));
+	m_pWizard->SetPosition(D3DXVECTOR3(25, 0, 0));
 	m_pWizard->SetState(IDLE);
 	m_pWarrior->SetState(IDLE);
 	m_pWizard->SetMesh(LoadManager::sharedManager()->m_pMageMesh);
@@ -42,6 +43,10 @@ void SelectScene::BuildObject(ID3D11Device *m_pd3dDevice)
 
 	m_pAniShaders->AddObject(m_pWarrior);
 	m_pAniShaders->AddObject(m_pWizard);
+
+	SoundManager::sharedManager()->play(SOUND_SELECT_BGM);
+
+	
 }
 
 void SelectScene::AnimateObject(float _dt)

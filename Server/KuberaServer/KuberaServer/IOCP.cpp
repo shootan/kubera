@@ -585,8 +585,8 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 
 	case READY_GAME:
 
-		if(m_iClientCount > 1)
-		{
+// 		if(m_iClientCount > 1)
+// 		{
 			Buffer = m_pNextBufferList;
 			while (Buffer != NULL)
 			{
@@ -597,7 +597,7 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 
 				Buffer = Buffer->m_pNext;
 			}
-		}
+		//}
 		break;
 	}
 

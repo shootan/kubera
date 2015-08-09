@@ -1,7 +1,7 @@
 #include "Scene.h"
 #include "LoadManager.h"
 #include "MinionManager.h"
-
+#include "SoundManager.h"
 CScene::CScene(void)
 {
 	m_pObjectShaders = NULL;
@@ -278,6 +278,8 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	
 	//조명 생성
 	CreateLightShaderVariables(pd3dDevice);
+
+	SoundManager::sharedManager()->play(SOUND_MAIN_BGM);
 
 
 }

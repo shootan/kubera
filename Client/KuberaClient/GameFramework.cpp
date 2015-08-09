@@ -1,6 +1,7 @@
 #include "GameFramework.h"
 #include "MapEditorManager.h"
 #include "LoadManager.h"
+#include "SoundManager.h"
 
 CGameFramework::CGameFramework()
 {
@@ -382,6 +383,8 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 		case '1':
 			if(LoadManager::sharedManager()->LoadFinish && ST::sharedManager()->m_bStart == FALSE)
 			{
+				SoundManager::sharedManager()->stop(2);
+				SoundManager::sharedManager()->play(SOUND_WARR_SELECT);
 				int Cha = 1;
 				ST::sharedManager()->Net->SendData(SELECT_CHAR_WARIOR, &Cha, sizeof(int));
 				HeroManager::sharedManager()->SetType(Cha);
@@ -391,6 +394,8 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 		case '2':
 			if(LoadManager::sharedManager()->LoadFinish && ST::sharedManager()->m_bStart == FALSE)
 			{
+				SoundManager::sharedManager()->stop(2);
+				SoundManager::sharedManager()->play(SOUND_SKEL_SELECT);
 				int Cha = 2;
 				ST::sharedManager()->Net->SendData(SELECT_CHAR_WIZARD, &Cha, sizeof(int));
 				HeroManager::sharedManager()->SetType(Cha);
@@ -469,7 +474,7 @@ void CGameFramework::BuildObjects()
 	m_pSelectCamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.9f, 1.0f);
 	m_pSelectCamera->SetProjParams((float)D3DXToRadian(90.0f), float(m_nWndClientWidth)/float(m_nWndClientHeight), 1.0f, 500.0f);
 	m_pSelectCamera->SetViewParams( &D3DXVECTOR3(0, 30, -40), &D3DXVECTOR3(0, 0, 1) );
-	m_pSelectCamera->m_CameraPos = D3DXVECTOR3(0, 30, -40);
+	m_pSelectCamera->m_CameraPos = D3DXVECTOR3(0, 30, -75);
 
 	m_pCameraMinimap = new CCamera();
 	m_pCameraMinimap->CreateShaderVariables(m_pd3dDevice);
@@ -561,6 +566,7 @@ void CGameFramework::FrameAdvance()
 		m_pSelectScene->RenderObject(m_pd3dDeviceContext, m_GameTimer.GetTimeElapsed(), m_pSelectCamera);
  		if (ST::sharedManager()->m_bSelected == TRUE || ST::sharedManager()->m_bReconnect)
 		{
+			SoundManager::sharedManager()->stop(0);
  			m_pScene = new CScene();
 			m_pScene->m_Camera = m_pCamera;
  			if (m_pScene)

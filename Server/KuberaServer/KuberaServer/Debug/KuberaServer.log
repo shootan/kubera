@@ -1,4 +1,4 @@
-﻿빌드 시작: 2015-07-27 오후 1:54:37
+﻿빌드 시작: 2015-08-09 오후 3:41:12
      1>2 노드의 "C:\Users\Cho\Desktop\졸업작품\kubera\Server\KuberaServer\KuberaServer\KuberaServer.vcxproj" 프로젝트(build 대상)입니다.
      1>InitializeBuildStatus:
          "AlwaysCreate"이(가) 지정되었기 때문에 "Debug\KuberaServer.unsuccessfulbuild"을(를) 만들고 있습니다.
@@ -17,4 +17,4 @@
 
 빌드했습니다.
 
-경과 시간: 00:00:00.17
+경과 시간: 00:00:00.23

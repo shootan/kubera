@@ -3,6 +3,7 @@
 #include "MissileManager.h"
 #include "ParticleManager.h"
 #include "OtherPlayerManager.h"
+#include "SoundManager.h"
 
 HeroObject::HeroObject(void)
 {
@@ -31,6 +32,8 @@ HeroObject::HeroObject(void)
 	m_bUseParticleMissile = FALSE;
 	m_bUseParticleAttack = FALSE;
 
+	m_bSoundLimit = FALSE;
+
 	//초기 정보값
 	m_Level = 1;			//레벨1
 	m_HP = 100.0f;				//hp 100
@@ -47,6 +50,9 @@ HeroObject::HeroObject(void)
 	m_bUpgrade = FALSE;
 	m_bHpFUCK = TRUE;
 	m_nDeathCount = 0;
+
+	m_iState = IDLE;
+	m_iPrevState = m_iState;
 
 	node_t* temp;
 
@@ -293,9 +299,14 @@ void HeroObject::Update(float fTimeElapsed)
 
 void HeroObject::Animate(float fTimeElapsed)
 {
-	m_time += fTimeElapsed * 2.0f;
+	m_time += fTimeElapsed * 1.5f;
 
+	if(m_iState != m_iPrevState)
+	{
+		m_bSoundLimit = FALSE;
+	}
 	//printf(" %.1f \n", m_time);
+	
 
 	if(m_iState == IDLE)
 	{
@@ -323,9 +334,19 @@ void HeroObject::Animate(float fTimeElapsed)
 		switch(m_iType)
 		{
 		case KNIGHT:
-			if(m_time < 26.7f) m_time = 26.7f;
+			if(m_time < 26.7f) 
+			{
+				m_time = 26.7f;
+				if(!m_bSoundLimit)
+				{
+					SoundManager::sharedManager()->play(SOUND_WARR_ATTACK);
+					m_bSoundLimit = TRUE;
+				}
+
+			}
 			if(m_time > 29.0f)
 			{
+				m_bSoundLimit = FALSE;
 				m_bWarriorAttack = TRUE;
 				m_time = 26.7f;
 			}
@@ -335,6 +356,8 @@ void HeroObject::Animate(float fTimeElapsed)
 				m_pTarget->SetAttacker(this);
 
 				m_bWarriorAttack = FALSE;
+				
+
 			}
 			break;
 		case WIZARD:
@@ -343,11 +366,18 @@ void HeroObject::Animate(float fTimeElapsed)
 			{
 				m_time = 24.5f; 
 				m_bUseParticleAttack = FALSE;
+				m_bSoundLimit = FALSE;
 			}
 			if(m_time > 26.0f && m_time < 26.1f)
 			{
 				if(m_bUseParticleAttack == FALSE)
 				{
+					if(!m_bSoundLimit)
+					{
+						SoundManager::sharedManager()->play(SOUND_SKEL_ATTACK);
+						m_bSoundLimit = TRUE;
+					}
+					
 					for(int i=0; i<MAX_PARTICLE; i++)
 					{
 						if(ParticleManager::sharedManager()->m_pParticle[i] == NULL) continue;
@@ -413,8 +443,20 @@ void HeroObject::Animate(float fTimeElapsed)
 				m_bWarriorSkill = TRUE;
 			}
 
-			if(m_time < 0.1f) m_time = 0.1f;
-			if(m_time > 1.7f) m_time = 0.1f;
+			if(m_time < 0.1f)
+			{
+				if(!m_bSoundLimit)
+				{
+					SoundManager::sharedManager()->play(SOUND_WARR_MOVE);
+					m_bSoundLimit = TRUE;
+				}
+				m_time = 0.1f;
+			}
+			if(m_time > 1.7f)
+			{
+				m_time = 0.1f;
+				m_bSoundLimit = FALSE;
+			}
 			break;
 		case WIZARD:
 			if(m_pTarget != NULL && 
@@ -425,8 +467,19 @@ void HeroObject::Animate(float fTimeElapsed)
 			m_bUseParticleAttack = FALSE;
 			m_bUseParticleMissile = FALSE;
 
-			if(m_time < 0.1f) m_time = 0.1f;
-			if(m_time > 1.7f) m_time = 0.1f; 
+			if(m_time < 0.1f)
+			{
+				if(!m_bSoundLimit)
+				{
+					SoundManager::sharedManager()->play(SOUND_SKEL_MOVE);
+					m_bSoundLimit = TRUE;
+				}
+				m_time = 0.1f;
+			}
+			if(m_time > 1.7f) {
+				m_time = 0.1f; 
+				m_bSoundLimit = FALSE;
+			}
 			break;
 		}
 		m_fAttackTime = 0.f;
@@ -436,20 +489,38 @@ void HeroObject::Animate(float fTimeElapsed)
 		switch(m_iType)
 		{
 		case KNIGHT:
-			if(m_time < 6.9f) m_time = 6.9f;
+			if(m_time < 6.9f)
+			{
+				if(!m_bSoundLimit)
+				{
+					SoundManager::sharedManager()->play(SOUND_SKEL_MOVE);
+					m_bSoundLimit = TRUE;
+				}
+				m_time = 6.9f;
+			}
 			if(m_time > 11.9f) m_time = 6.9f;
 			if(m_time > 11.8f && m_time < 11.9f)
 			{
+				m_bSoundLimit = FALSE;
 				m_time = 1.1f;
 				m_iState = WAIT;
 				SetPosition(D3DXVECTOR3(1000, 0, 200));
 			}
 			break;
 		case WIZARD:
-			if(m_time < 31.5f) m_time = 31.5f;
+			if(m_time < 31.5f)
+			{
+				m_time = 31.5f;
+				if(!m_bSoundLimit)
+				{
+					SoundManager::sharedManager()->play(SOUND_SKEL_MOVE);
+					m_bSoundLimit = TRUE;
+				}
+			}
 			if(m_time > 36.3f) m_time = 31.5f;
 			if(m_time > 36.2f && m_time < 36.3f)
 			{
+				m_bSoundLimit = FALSE;
 				m_time = 1.1f;
 				m_iState = WAIT;
 				SetPosition(D3DXVECTOR3(1000, 0, 200));
@@ -490,7 +561,15 @@ void HeroObject::Animate(float fTimeElapsed)
 		case KNIGHT:
 			if(m_pTarget) SetWatchTarget(m_pTarget->GetPosition());
 
-			if(m_time < 34.3f) m_time = 34.3f;
+			if(m_time < 34.3f)
+			{
+				m_time = 34.3f;
+				if(!m_bSoundLimit)
+				{
+					SoundManager::sharedManager()->play(SOUND_WARR_SKILL);
+					m_bSoundLimit = TRUE;
+				}
+			}
 			if(m_time > 37.0f) m_time = 34.3f;
 			if(m_time > 36.9f && m_time < 37.0f)
 				//if(m_time < 50.8f) m_time = 50.8f;
@@ -500,6 +579,7 @@ void HeroObject::Animate(float fTimeElapsed)
 				m_time = 1.1f;
 				m_iState = IDLE;
 				m_bWarriorSkill = TRUE;
+				m_bSoundLimit = FALSE;
 			}
 			if(m_time > 35.7f && m_time < 36.6f  && m_bWarriorSkill)
 			{
@@ -543,9 +623,15 @@ void HeroObject::Animate(float fTimeElapsed)
 				ParticleManager::sharedManager()->m_pParticle[m_iparticleNum]->SetPosition(D3DXVECTOR3(1200, 0, 0));
 				m_iparticleNum = 500;
 				m_iState = IDLE;
+				m_bSoundLimit = FALSE;
 			}
 			if(m_time > 43.6f && m_time < 43.7f)
 			{
+				if(!m_bSoundLimit)
+				{
+					SoundManager::sharedManager()->play(SOUND_SKEL_SKILL);
+					m_bSoundLimit = TRUE;
+				}
 				if(m_bUseParticleMissile == FALSE)
 				{
 					for(int i=0; i<MAX_PARTICLE; i++)
