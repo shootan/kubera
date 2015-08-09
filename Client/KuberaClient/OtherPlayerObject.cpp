@@ -185,7 +185,7 @@ void OtherPlayerObject::Update(float fTimeElapsed)
 
 void OtherPlayerObject::Animate(float fTimeElapsed)
 {
-	m_Time += fTimeElapsed*2.0f;
+	m_Time += fTimeElapsed*1.5f;
 	//printf(" %.3f \n", m_Time);
 	switch(m_iState)
 	{
@@ -330,8 +330,6 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 		switch(m_iType)
 		{
 		case KNIGHT:
-			if(m_pTarget) SetWatchTarget(m_pTarget->GetPosition());
-
 			if(m_Time < 34.3f) m_Time = 34.3f;
 			if(m_Time > 37.0f) m_Time = 34.3f;
 			if(m_Time > 36.9f && m_Time < 37.0f)
@@ -409,30 +407,6 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 		break;
 	}
 	
-}
-
-
-void OtherPlayerObject::SetWatchTarget(D3DXVECTOR3 _pos)
-{
-	m_vDestination.x = _pos.x;
-	m_vDestination.y = _pos.y;
-	m_vDestination.z = _pos.z;       
-	m_vWalkIncrement = m_vDestination - m_Pos;
-	D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
-	//m_bFindPath = FALSE;
-
-
-	//// Calculate the rotation angle before. Next, change the walk direction into 
-	//// an increment by multiplying by speed.
-	float fAngle = D3DXVec3Dot( &m_vWalkIncrement, &m_vFacingDirection );
-	D3DXVECTOR3 cross;
-	D3DXVec3Cross( &cross, &m_vWalkIncrement, &m_vFacingDirection );
-	fAngle = acosf( fAngle );
-	if ( cross.y >  0.0f ) {
-		fAngle *=-1.0f;
-	}
-	fAngle /= D3DX_PI;
-	this->SetRotation(2, 1/fAngle);
 }
 
 void OtherPlayerObject::SetAniMesh(GFBX::Mesh *pAniMesh)

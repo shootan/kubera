@@ -71,8 +71,6 @@ private:
 	Network Net;
 	float time;
 
-	//minimap
-	BOOL m_bMinimapReset;
 
 public:
 	CGameFramework();

@@ -186,22 +186,8 @@ public:
 	//ui
 	void CreateUI(ID3D11Device *pd3dDevice,int  _wndWidth,int  _wndHeight);
 	void RenderUI(ID3D11DeviceContext *pd3dDeviceContext, int _wndWidth, int _wndHeight);
-	float GetMinimapUIWidth(int _clientwidth, int _clientheight) 
-	{ 
-		m_UIMinimapWidth = (_clientwidth*m_UIMinimapWidth) / 900;
-		m_UIMinimapHeight = (_clientheight*m_UIMinimapHeight) / 600;
-		m_pUIObjects[1]->GetUI()->SetScreenWH(_clientwidth, _clientheight);
-		m_pUI[1]->SetBitmapWH(m_UIMinimapWidth, m_UIMinimapHeight);
-		return m_UIMinimapWidth;
-	}
-	float GetMinimapUIHeight(int _clientwidth, int _clientheight) 
-	{
-		m_UIMinimapWidth = (_clientwidth*m_UIMinimapWidth) / 900;
-		m_UIMinimapHeight = (_clientheight*m_UIMinimapHeight) / 600;
-		m_pUIObjects[1]->GetUI()->SetScreenWH(_clientwidth, _clientheight);
-		m_pUI[1]->SetBitmapWH(m_UIMinimapWidth, m_UIMinimapHeight);
-		return m_UIMinimapHeight;
-	}
+	float GetMinimapUIWidth() {return m_UIMinimapWidth;}
+	float GetMinimapUIHeight() {	return m_UIMinimapHeight;}
 
 	void SetUIHpUpdate();
 	void SetFontUI(CDXUTTextHelper* _text, int _num);

@@ -161,9 +161,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	//아더 플레이어 생성
 	OtherPlayerManager::sharedManager()->SetMesh(m_pWarriorMesh, m_pWizardMesh);
 	OtherPlayerManager::sharedManager()->CreateOtherPlayer(D3DXVECTOR3(0, 0, 0), 10, 13, 10);
-	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetMesh(m_pWizardMesh); // 다른곳에서 설정?
 	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetMaterial(pMaterial);
-	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetType(2); //다른곳에서 설정?
 
 	if(OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetType() == 1)
 		OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetFaceType(HERO1_FACE);

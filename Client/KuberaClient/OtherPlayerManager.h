@@ -40,20 +40,19 @@ public:
 		m_pOtherPlayer = new OtherPlayerObject();
 		if(m_Type == 1 )
 		{
-			m_pOtherPlayer->SetAniMesh(m_pWarriorMesh);
+			m_pOtherPlayer->SetMesh(m_pWarriorMesh);
 		}
 		if(m_Type == 2)
 		{
-			m_pOtherPlayer->SetAniMesh(m_pWizardMesh);
+			m_pOtherPlayer->SetMesh(m_pWizardMesh);
 		}
+		m_pOtherPlayer->SetTeam(m_Id);
 		if(m_Id == 1)
 			pos = D3DXVECTOR3(390, 0, 0);
 		if(m_Id == 2)
 			pos = D3DXVECTOR3(-390, 0, 0);
 		m_pOtherPlayer->SetPosition(pos);
 		m_pOtherPlayer->SetBoundSize(boundx, boundy, boundz);
-		m_pOtherPlayer->SetScale(D3DXVECTOR3(0.1, 0.1, 0.1));
-		m_pOtherPlayer->SetHP(100);
 		
 	}
 

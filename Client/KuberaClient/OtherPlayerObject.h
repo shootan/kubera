@@ -38,5 +38,4 @@ public:
 	bool InMotion();
 
 	int GetDeathCount() {return m_nDeathCount;}
-	void SetWatchTarget(D3DXVECTOR3 _pos);
 };

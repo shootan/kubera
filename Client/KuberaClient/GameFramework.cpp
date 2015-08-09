@@ -36,8 +36,6 @@ CGameFramework::CGameFramework()
 	m_pUICamera = NULL;
 	m_pSelectCamera = NULL;
 
-	m_bMinimapReset = FALSE;
-
 }
 
 CGameFramework::~CGameFramework()
@@ -73,8 +71,8 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	//HeroManager::sharedManager()->SetType(2);
 
 	//지워야함 서버에서 보내줄정보
-	OtherPlayerManager::sharedManager()->SetTeam(2);
-	OtherPlayerManager::sharedManager()->SetType(1);
+	//OtherPlayerManager::sharedManager()->SetTeam(2);
+	//OtherPlayerManager::sharedManager()->SetType(1);
 
 	printf("SetData \n");
 	
@@ -332,7 +330,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			if(ST::sharedManager()->m_bStart == TRUE && m_pScene)
 			{
 				
-				m_pCameraMinimap->SetViewport(m_pd3dDeviceContext,m_nWndClientWidth - m_pScene->GetMinimapUIWidth(m_nWndClientWidth,m_nWndClientHeight)  + m_pScene->GetMinimapUIWidth(m_nWndClientWidth,m_nWndClientHeight)/7, m_nWndClientHeight - m_pScene->GetMinimapUIHeight(m_nWndClientWidth,m_nWndClientHeight) + m_pScene->GetMinimapUIHeight(m_nWndClientWidth,m_nWndClientHeight)/13, m_pScene->GetMinimapUIWidth(m_nWndClientWidth,m_nWndClientHeight) - m_pScene->GetMinimapUIWidth(m_nWndClientWidth, m_nWndClientHeight)/7 , m_pScene->GetMinimapUIHeight(m_nWndClientWidth, m_nWndClientHeight), 0.3f, 0.4f);
+				m_pCameraMinimap->SetViewport(m_pd3dDeviceContext,m_nWndClientWidth - m_pScene->GetMinimapUIWidth()  + m_pScene->GetMinimapUIWidth()/7, m_nWndClientHeight - m_pScene->GetMinimapUIHeight() + m_pScene->GetMinimapUIHeight()/13, m_pScene->GetMinimapUIWidth() - m_pScene->GetMinimapUIWidth()/7 , m_pScene->GetMinimapUIHeight(), 0.3f, 0.4f);
 			}
 			
 			CreateRenderTargetDepthStencilView();
@@ -592,12 +590,6 @@ void CGameFramework::FrameAdvance()
 			{
 				m_pScene->BuildObjects(m_pd3dDevice);
 				m_pScene->CreateUI(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight);
-
-				if(m_bMinimapReset = FALSE)
-				{
-					m_pCameraMinimap->SetViewport(m_pd3dDeviceContext,m_nWndClientWidth - m_pScene->GetMinimapUIWidth(m_nWndClientWidth,m_nWndClientHeight)  + m_pScene->GetMinimapUIWidth(m_nWndClientWidth,m_nWndClientHeight)/7, m_nWndClientHeight - m_pScene->GetMinimapUIHeight(m_nWndClientWidth,m_nWndClientHeight) + m_pScene->GetMinimapUIHeight(m_nWndClientWidth,m_nWndClientHeight)/13, m_pScene->GetMinimapUIWidth(m_nWndClientWidth,m_nWndClientHeight) - m_pScene->GetMinimapUIWidth(m_nWndClientWidth, m_nWndClientHeight)/7 , m_pScene->GetMinimapUIHeight(m_nWndClientWidth, m_nWndClientHeight), 0.3f, 0.4f);
-					m_bMinimapReset = TRUE;
-				}
 			}
  			ST::sharedManager()->m_bStart = TRUE;
 			printf("SelectFinish \n");
@@ -796,6 +788,7 @@ void CGameFramework::SendHeroData()
 	HeroInfo.PI.m_Data.m_Damage = HeroManager::sharedManager()->m_pHero->GetDamage();
 	HeroInfo.PI.m_Data.m_Rot = HeroManager::sharedManager()->m_pHero->GetRot();
 	HeroInfo.PI.m_Type = HeroManager::sharedManager()->m_pHero->GetType();
+	HeroInfo.PI.m_Data.m_Speed = HeroManager::sharedManager()->m_pHero->GetSpeed();
 	HeroInfo.size = sizeof(PlayerPacket);
 
 	Net.SendData(HERODATA, &HeroInfo, sizeof(PlayerPacket));
