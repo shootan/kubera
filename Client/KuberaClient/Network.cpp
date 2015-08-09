@@ -139,7 +139,7 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 					break;
 
 				server->PI = p;
-				printf("%.2f, %.2f, %.2f \n", p.PI.m_Data.m_Pos.x, p.PI.m_Data.m_Pos.z, p.PI.m_Data.m_Rot);
+				printf("%.2f, %.2f, %.2f \n", server->PI.PI.m_Data.m_Pos.x, server->PI.PI.m_Data.m_Pos.z, server->PI.PI.m_Data.m_Rot);
 
 				break;
 			}
@@ -159,6 +159,7 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 		case SELECT_CHAR:
 			retval = recv(server->m_ConnectSock, (char*)&server->OtherChar, sizeof(int),0);
 			OtherPlayerManager::sharedManager()->SetType(server->OtherChar);
+			printf("Type : %d", server->OtherChar);
 			break;
 		}
 

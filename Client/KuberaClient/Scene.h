@@ -167,7 +167,7 @@ public:
 	// net
 
 	void SetOtherClient(PlayerPacket _PI);
-	void UpdateOtherClient(PlayerPacket _PI);
+	void UpdateOtherClient(PlayerPacket* _PI);
 
 	void OtherPlayerTargetSetting();
 

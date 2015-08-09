@@ -160,7 +160,7 @@ bool OtherPlayerObject::InMotion()
 
 void OtherPlayerObject::Update(float fTimeElapsed)
 {
-
+	printf("1 : X: %d, Z:%d, STATE : %d, ROT : %.3f \n", m_Pos.x, m_Pos.z, m_iState, m_Rot);
 	if ( InMotion() && m_bSetDestination == TRUE)
 	{
 		D3DXVECTOR3 update_delta = m_vWalkIncrement;
@@ -178,6 +178,8 @@ void OtherPlayerObject::Update(float fTimeElapsed)
 		s_pos.z = m_vDestination.z;
 		float finished = ST::sharedManager()->GetDistance(f_pos, s_pos);
 
+		
+
 		if ( finished < 0.5f ) 
 			m_Pos = m_vDestination;
 	}
@@ -185,8 +187,8 @@ void OtherPlayerObject::Update(float fTimeElapsed)
 
 void OtherPlayerObject::Animate(float fTimeElapsed)
 {
-	m_Time += fTimeElapsed*2.0f;
-	//printf(" %.3f \n", m_Time);
+	m_Time += fTimeElapsed*1.5f;
+	//printf("STATE : %d \n", m_iState);
 	switch(m_iState)
 	{
 	case IDLE:

@@ -297,16 +297,16 @@ void IOCPServer::OnInit(IOBuffer* _buff)
 	IOBuffer* Buffer = m_pNextBufferList;
 	send(_buff->m_ClientSock, (char*)&_buff->m_Id, sizeof(int), 0);
 
-	while (Buffer != NULL)
-	{
-		if( _buff->m_Id != Buffer->m_Id)
-		{
-			int Header = CLIENT_CONNECT;
-			int retval = send(_buff->m_ClientSock, (char*)&Header, sizeof(int), 0);
-			retval = send(_buff->m_ClientSock, (char*)&Buffer->m_Id, sizeof(int), 0);
-		}
-		Buffer = Buffer->m_pNext;
-	}
+// 	while (Buffer != NULL)
+// 	{
+// 		if( _buff->m_Id != Buffer->m_Id)
+// 		{
+// 			int Header = CLIENT_CONNECT;
+// 			int retval = send(_buff->m_ClientSock, (char*)&Header, sizeof(int), 0);
+// 			retval = send(_buff->m_ClientSock, (char*)&Buffer->m_Id, sizeof(int), 0);
+// 		}
+// 		Buffer = Buffer->m_pNext;
+// 	}
 	this->SetOpCode(_buff, OP_RECV);
 	_buff->m_iSendbytes = 0;
 	_buff->m_iSendbytesCount = 0;
@@ -424,7 +424,7 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 		{
 			if(_buff->m_Id == play->m_Id)
 			{
-				play->m_Team = p;
+				play->m_PI.PI.m_ID = p;
 				break;
 			}
 			play = play->m_pNext;
@@ -441,7 +441,7 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 		{
 			if(_buff->m_Id == play->m_Id)
 			{
-				play->m_Team = p;
+				play->m_PI.PI.m_ID = p;
 				break;
 			}
 			play = play->m_pNext;
@@ -449,24 +449,19 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 		break;
 
 	case SELECT_CHAR_WARIOR:
-		_buff->m_Header = Header;
+		_buff->m_Header = SELECT_CHAR;
 		
 		memcpy(&p, _buff->m_RecvBuf+ HEADERSIZE, sizeof(int));
 		play = m_pPlayerList;
 		printf("%d번, 워리어선택 \n", _buff->m_Id);
-		while(play != NULL)
-		{
-			if(_buff->m_Id == play->m_Id)
-			{
-				play->m_Char = p;
-				break;
-			}
-			play = play->m_pNext;
-		}
+
+		_buff->m_pPlayer->m_PI.PI.m_Type = p;
+		break;
+
 		break;
 
 	case SELECT_CHAR_WIZARD:
-		_buff->m_Header = Header;
+		_buff->m_Header = SELECT_CHAR;
 		
 		memcpy(&p, _buff->m_RecvBuf+ HEADERSIZE, sizeof(int));
 		play = m_pPlayerList;
@@ -475,7 +470,7 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 		{
 			if(_buff->m_Id == play->m_Id)
 			{
-				play->m_Char = p;
+				_buff->m_pPlayer->m_PI.PI.m_Type = p;
 				break;
 			}
 			play = play->m_pNext;
@@ -556,10 +551,10 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 			if( _buff->m_Id != Buffer->m_Id)
 			{
 				int Size = HEADERSIZE + sizeof(int);
-				char* Buffer = new char[Size];
-				*(int*)Buffer = SELECT_TEAM;
-				memcpy(Buffer+HEADERSIZE, &play->m_Team, sizeof(int));
-				int retval = send(_buff->m_ClientSock, Buffer, Size, 0);
+				char* buff = new char[Size];
+				*(int*)buff = SELECT_TEAM;
+				memcpy(buff+HEADERSIZE, &_buff->m_pPlayer->m_PI.PI.m_ID, sizeof(int));
+				int retval = send(Buffer->m_ClientSock, buff, Size, 0);
 				
 			}
 			Buffer = Buffer->m_pNext;
@@ -573,10 +568,10 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 			if( _buff->m_Id != Buffer->m_Id)
 			{
 				int Size = HEADERSIZE + sizeof(int);
-				char* Buffer = new char[Size];
-				*(int*)Buffer = SELECT_CHAR;
-				memcpy(Buffer+HEADERSIZE, &play->m_Char, sizeof(int));
-				int retval = send(_buff->m_ClientSock, Buffer, Size, 0);
+				char* buff = new char[Size];
+				*(int*)buff = SELECT_CHAR;
+				memcpy(buff+HEADERSIZE, &_buff->m_pPlayer->m_PI.PI.m_Type, sizeof(int));
+				int retval = send(Buffer->m_ClientSock, buff, Size, 0);
 
 			}
 			Buffer = Buffer->m_pNext;
@@ -585,8 +580,8 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 
 	case READY_GAME:
 
-// 		if(m_iClientCount > 1)
-// 		{
+ 		if(m_iClientCount > 1)
+ 		{
 			Buffer = m_pNextBufferList;
 			while (Buffer != NULL)
 			{
@@ -597,7 +592,7 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 
 				Buffer = Buffer->m_pNext;
 			}
-		//}
+		}
 		break;
 	}
 

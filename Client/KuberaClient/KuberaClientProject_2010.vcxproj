@@ -100,8 +100,8 @@
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
     <ExecutablePath>$(DXSDK_DIR)Utilities\bin\x86;$(ExecutablePath)</ExecutablePath>
-    <IncludePath>C:\Program Files\Autodesk\FBX\FBX SDK\2015.1\include;$(DXSDK_DIR)Include;C:\Users\Cho\Desktop\졸업작품\kubera\Client\KuberaClient\FMOD\inc;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files\Autodesk\FBX\FBX SDK\2015.1\lib\vs2010\x86\release;$(DXSDK_DIR)Lib\x86;C:\Users\Cho\Desktop\졸업작품\kubera\Client\KuberaClient\FMOD\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Program Files\Autodesk\FBX\FBX SDK\2015.1\include;$(DXSDK_DIR)Include;FMOD\inc;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\Autodesk\FBX\FBX SDK\2015.1\lib\vs2010\x86\release;$(DXSDK_DIR)Lib\x86;FMOD\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|X64'">
     <LinkIncremental>false</LinkIncremental>

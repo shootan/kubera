@@ -38,13 +38,14 @@ public:
 	void CreateOtherPlayer(D3DXVECTOR3 pos, float boundx, float boundy, float boundz)
 	{
 		m_pOtherPlayer = new OtherPlayerObject();
+		m_pOtherPlayer->SetTeam(m_Id);
 		if(m_Type == 1 )
 		{
-			m_pOtherPlayer->SetAniMesh(m_pWarriorMesh);
+			m_pOtherPlayer->SetMesh(m_pWarriorMesh);
 		}
 		if(m_Type == 2)
 		{
-			m_pOtherPlayer->SetAniMesh(m_pWizardMesh);
+			m_pOtherPlayer->SetMesh(m_pWizardMesh);
 		}
 		if(m_Id == 1)
 			pos = D3DXVECTOR3(390, 0, 0);
@@ -52,8 +53,8 @@ public:
 			pos = D3DXVECTOR3(-390, 0, 0);
 		m_pOtherPlayer->SetPosition(pos);
 		m_pOtherPlayer->SetBoundSize(boundx, boundy, boundz);
-		m_pOtherPlayer->SetScale(D3DXVECTOR3(0.1, 0.1, 0.1));
-		m_pOtherPlayer->SetHP(100);
+		//m_pOtherPlayer->SetScale(D3DXVECTOR3(0.1, 0.1, 0.1));
+		//m_pOtherPlayer->SetHP(100);
 		
 	}
 
