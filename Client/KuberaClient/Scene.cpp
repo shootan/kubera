@@ -498,8 +498,12 @@ bool CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 
 bool CScene::ProcessInput()
 {
+
+
 	return(false);
 }
+
+
 
 void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 {
@@ -854,20 +858,22 @@ void CScene::SetOtherClient(PlayerPacket _PI)
 
 }
 
-void CScene::UpdateOtherClient(PlayerPacket _PI)
+void CScene::UpdateOtherClient(PlayerPacket* _PI)
 {
+	printf("2 : X: %d, Z:%d, STATE : %d, ROT : %.3f \n", _PI->PI.m_Data.m_Pos.x, _PI->PI.m_Data.m_Pos.z, _PI->PI.m_iState, _PI->PI.m_Data.m_Rot);
+	
 	D3DXVECTOR3 q;
-	q.x = _PI.PI.m_Data.m_Pos.x;
-	q.y = _PI.PI.m_Data.m_Pos.y;
-	q.z = _PI.PI.m_Data.m_Pos.z;
+	q.x = _PI->PI.m_Data.m_Pos.x;
+	q.y = _PI->PI.m_Data.m_Pos.y;
+	q.z = _PI->PI.m_Data.m_Pos.z;
 	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetNewDestination(q);
-	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetRot(_PI.PI.m_Data.m_Rot);
-	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetState(_PI.PI.m_iState);
-	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetTargetID(_PI.PI.m_iTargetID);
-	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetHP(_PI.PI.m_Data.m_HP);
-	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetDamage(_PI.PI.m_Data.m_Damage);
-	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetDefense(_PI.PI.m_Data.m_Defence);
-	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetSpeed(_PI.PI.m_Data.m_Speed);
+	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetRot(_PI->PI.m_Data.m_Rot);
+	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetState(_PI->PI.m_iState);
+	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetTargetID(_PI->PI.m_iTargetID);
+	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetHP(_PI->PI.m_Data.m_HP);
+	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetDamage(_PI->PI.m_Data.m_Damage);
+	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetDefense(_PI->PI.m_Data.m_Defence);
+	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetSpeed(_PI->PI.m_Data.m_Speed);
 }
 
 CGameObject* CScene::GetObject(int num)

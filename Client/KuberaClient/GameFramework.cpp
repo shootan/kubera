@@ -67,12 +67,6 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	//렌더링할 객체(게임 월드 객체)를 생성한다. 
 
 	HeroManager::sharedManager()->SetID(Net.m_ID);
-	//HeroManager::sharedManager()->SetTeam(1);
-	//HeroManager::sharedManager()->SetType(2);
-
-	//지워야함 서버에서 보내줄정보
-	//OtherPlayerManager::sharedManager()->SetTeam(2);
-	//OtherPlayerManager::sharedManager()->SetType(1);
 
 	printf("SetData \n");
 	
@@ -600,7 +594,7 @@ void CGameFramework::FrameAdvance()
 	if(ST::sharedManager()->m_bStart == TRUE)
 	//if(LoadManager::sharedManager()->LoadFinish)
 	{
-		this->ExchangeInfo();
+		//m_pScene->UpdateOtherClient(&Net.PI);
 		m_pScene->OtherPlayerTargetSetting();
 
 		ProcessInput();
@@ -775,7 +769,7 @@ void CGameFramework::ExchangeInfo()
 {
 
 	//m_pScene->SetOtherClient(Net.PI);
-	m_pScene->UpdateOtherClient(Net.PI);
+	
 }
 
 void CGameFramework::SendHeroData()

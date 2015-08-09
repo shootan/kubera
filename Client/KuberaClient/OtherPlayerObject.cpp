@@ -107,6 +107,7 @@ void OtherPlayerObject::Render(ID3D11DeviceContext *pd3dDeviceContext, float fTi
 }
 
 void OtherPlayerObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
+	//printf("1 : X: %.3f, Z:%.3f, STATE : %d, ROT : %.3f \n", _pos.x, _pos.z, m_iState, m_Rot);
 	if(_pos == m_Pos) return;
 	
 	if(m_iState == ATTACK || m_iState == DEATH) return;
@@ -124,14 +125,18 @@ void OtherPlayerObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
 	if(finished > 50.0f)
 	{
 		this->m_Pos = _pos;
+		printf("asdfddddddddddddddddddddddddddddddddddddddddddddddddddddd \n");
 		return;
 	}
-
+	printf("1 : X: %.3f, Z:%.3f, \n", m_vWalkIncrement.x, m_vWalkIncrement.z);
 	m_vDestination.x = _pos.x;
 	m_vDestination.y = _pos.y;
-	m_vDestination.z = _pos.z;       
+	m_vDestination.z = _pos.z;      
+	
 	m_vWalkIncrement = m_vDestination - m_Pos;
+	printf("2 : X: %.3f, Z:%.3f, \n", m_vWalkIncrement.x, m_vWalkIncrement.z);
 	D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
+	printf("3 : X: %.3f, Z:%.3f, \n", m_vWalkIncrement.x, m_vWalkIncrement.z);
 	//m_bFindPath = FALSE;
 
 
@@ -148,23 +153,30 @@ void OtherPlayerObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
 // 	this->SetRotation(2, 1/fAngle);
 
 	m_vWalkIncrement *= m_fWalkSpeed;
+	printf("%.3f      , %.3f            %.3f", m_fWalkSpeed,m_fWalkSpeed,m_fWalkSpeed);
 	m_bSetDestination = TRUE;
 
 }
 
 bool OtherPlayerObject::InMotion()
 {	
-	if(m_Pos.x == m_vDestination.x && m_Pos.z == m_vDestination.z) return false;
+	if(m_Pos.x == m_vDestination.x && m_Pos.z == m_vDestination.z)
+		{
+			printf("4 : X: %.3f, Z:%.3f, \n", m_vWalkIncrement.x, m_vWalkIncrement.z);
+			return false;
+	}
 	else return true;
 }
 
 void OtherPlayerObject::Update(float fTimeElapsed)
 {
-
+	//printf("1 : X: %.3f, Z:%.3f, STATE : %d, ROT : %.3f \n", m_Pos.x, m_Pos.z, m_iState, m_Rot);
 	if ( InMotion() && m_bSetDestination == TRUE)
 	{
+		printf("5 : X: %.3f, Z:%.3f, \n", m_vWalkIncrement.x, m_vWalkIncrement.z);
 		D3DXVECTOR3 update_delta = m_vWalkIncrement;
 		D3DXVECTOR3 location_vector = m_vDestination - m_Pos;
+		printf("6 : X: %.3f, Z:%.3f, \n", m_vWalkIncrement.x, m_vWalkIncrement.z);
 
 		m_Pos += update_delta * fTimeElapsed;
 
@@ -176,7 +188,10 @@ void OtherPlayerObject::Update(float fTimeElapsed)
 		s_pos.x = m_vDestination.x;
 		s_pos.y = m_vDestination.y;
 		s_pos.z = m_vDestination.z;
+		printf("6 : X: %.3f, Z:%.3f, \n", m_vDestination.x, m_vDestination.z);
 		float finished = ST::sharedManager()->GetDistance(f_pos, s_pos);
+
+		
 
 		if ( finished < 0.5f ) 
 			m_Pos = m_vDestination;
@@ -186,7 +201,7 @@ void OtherPlayerObject::Update(float fTimeElapsed)
 void OtherPlayerObject::Animate(float fTimeElapsed)
 {
 	m_Time += fTimeElapsed*1.5f;
-	//printf(" %.3f \n", m_Time);
+
 	switch(m_iState)
 	{
 	case IDLE:

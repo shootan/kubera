@@ -144,7 +144,12 @@ public:
 	void SetVisible(BOOL _vi) { m_Visible  = _vi; }
 	BOOL GetVisible() { return m_Visible; }
 	int GetState() { return m_iState; }
-	void SetState(int _state) {m_iState = _state; }
+	void SetState(int _state) 
+	{
+		int dfdfdf;
+		dfdfdf = 0;
+		m_iState = _state; 
+	}
 	int GetTag() { return m_iTag; }
 	void SetTag(int _tag) { m_iTag = _tag;}
 	void SetTargetID(int _id) { m_iTargetID = _id;}
