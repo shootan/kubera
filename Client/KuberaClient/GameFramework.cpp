@@ -606,7 +606,7 @@ void CGameFramework::FrameAdvance()
 	if(ST::sharedManager()->m_bStart == TRUE)
 	//if(LoadManager::sharedManager()->LoadFinish)
 	{
-		m_pScene->UpdateOtherClient(&Net.PI);
+		//m_pScene->UpdateOtherClient(&Net.PI);
 		m_pScene->OtherPlayerTargetSetting();
 
 		ProcessInput();
@@ -794,6 +794,7 @@ void CGameFramework::SendHeroData()
 	HeroInfo.PI.m_Data.m_Damage = HeroManager::sharedManager()->m_pHero->GetDamage();
 	HeroInfo.PI.m_Data.m_Rot = HeroManager::sharedManager()->m_pHero->GetRot();
 	HeroInfo.PI.m_Type = HeroManager::sharedManager()->m_pHero->GetType();
+	HeroInfo.PI.m_Data.m_Speed = HeroManager::sharedManager()->m_pHero->GetSpeed();
 	HeroInfo.size = sizeof(PlayerPacket);
 
 	Net.SendData(HERODATA, &HeroInfo, sizeof(PlayerPacket));

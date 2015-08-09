@@ -39,6 +39,7 @@ public:
 	{
 		m_pOtherPlayer = new OtherPlayerObject();
 		m_pOtherPlayer->SetTeam(m_Id);
+		m_pOtherPlayer->SetType(m_Type);
 		if(m_Type == 1 )
 		{
 			m_pOtherPlayer->SetMesh(m_pWarriorMesh);
@@ -56,6 +57,22 @@ public:
 		//m_pOtherPlayer->SetScale(D3DXVECTOR3(0.1, 0.1, 0.1));
 		//m_pOtherPlayer->SetHP(100);
 		
+	}
+
+	void SetPlayerInfo(PlayerPacket _pi)
+	{
+		D3DXVECTOR3 q;
+		q.x = _pi.PI.m_Data.m_Pos.x;
+		q.y = 0;
+		q.z =_pi.PI.m_Data.m_Pos.z;
+		m_pOtherPlayer->SetNewDestination(q);
+		m_pOtherPlayer->SetRot(_pi.PI.m_Data.m_Rot);
+		m_pOtherPlayer->SetState(_pi.PI.m_iState);
+		m_pOtherPlayer->SetTargetID(_pi.PI.m_iTargetID);
+		m_pOtherPlayer->SetHP(_pi.PI.m_Data.m_HP);
+		m_pOtherPlayer->SetDamage(_pi.PI.m_Data.m_Damage);
+		m_pOtherPlayer->SetDefense(_pi.PI.m_Data.m_Defence);
+		m_pOtherPlayer->SetSpeed(_pi.PI.m_Data.m_Speed);
 	}
 
 	void SetMesh(GFBX::Mesh* _warrior, GFBX::Mesh* _wizard)

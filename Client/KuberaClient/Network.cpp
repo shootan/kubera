@@ -137,9 +137,20 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 				retval = recv(server->m_ConnectSock, (char*)&p, sizeof(PlayerPacket), 0);
 				if(retval == SOCKET_ERROR)
 					break;
-
-				server->PI = p;
-				printf("%.2f, %.2f, %.2f \n", server->PI.PI.m_Data.m_Pos.x, server->PI.PI.m_Data.m_Pos.z, server->PI.PI.m_Data.m_Rot);
+				OtherPlayerManager::sharedManager()->SetPlayerInfo(p);
+// 				server->PI = p;
+// 				printf("%.2f, %.2f, %.2f \n", server->PI.PI.m_Data.m_Pos.x, server->PI.PI.m_Data.m_Pos.z, server->PI.PI.m_Data.m_Rot);
+// 
+// 				if(server->PI.PI.m_iState != 0)
+// 				{
+// 					int d;
+// 					d = 3;
+// 					d += 4;
+// 					printf("11111111111111111111111111111111111\n");
+// 				}
+				
+				
+				
 
 				break;
 			}

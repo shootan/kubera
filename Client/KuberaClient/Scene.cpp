@@ -498,8 +498,12 @@ bool CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 
 bool CScene::ProcessInput()
 {
+
+
 	return(false);
 }
+
+
 
 void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 {
