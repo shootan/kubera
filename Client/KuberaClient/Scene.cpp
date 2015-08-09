@@ -76,10 +76,14 @@ CScene::CScene(void)
 	m_UpgradeButtonNumberWidth = 10, m_UpgradeButtonNumberHeight = 18; //업그레이드 버튼 숫자
 	m_GameWinLoseWidth = 300, m_GameWinLoseHeight = 200;
 
+	m_nPrevWndClientWidth = 900;
+	m_nPrevWndClientHeight = 600;
+
 	m_fGameTimeSecond = 0.0f;
 	m_fGameTimeMinute = 0.0f;
 	m_bChangeImage = FALSE;
 	m_bChangeHpbar = FALSE;
+	m_bUIReset = FALSE;
 }
 
 
@@ -316,7 +320,7 @@ bool CScene::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam,
 
 bool CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
-	switch (nMessageID)
+	switch (nMessageID)	
 	{
 		/*윈도우의 크기가 변경될 때(현재는 “Alt+Enter“ 전체 화면 모드와 윈도우 모드로 전환될 때) 스왑 체인의 후면버퍼 크기를 조정하고 후면버퍼에 대한 렌더 타겟 뷰를 다시 생성한다. */
 	case WM_SIZE:
@@ -1245,6 +1249,12 @@ void CScene::CreateUI(ID3D11Device *pd3dDevice,int  _wndWidth,int  _wndHeight)
 
 void CScene::RenderUI(ID3D11DeviceContext *pd3dDeviceContext,int  _wndWidth,int  _wndHeight)
 {
+	if(m_bUIReset == FALSE)
+	{
+		SetUISize();
+		m_bUIReset = TRUE;
+	}
+
 	m_pUIShaders->Render(pd3dDeviceContext);
 
 	//캐릭터 얼굴 창
@@ -1543,4 +1553,98 @@ void CScene::SetFontUI(CDXUTTextHelper* _text, int _num)
 	_text->SetForegroundColor( D3DXCOLOR( 0.0f, 1.0f, 0.0f, 1.0f ) );
 	_text->DrawTextLine(str);
 	_text->End();
+}
+
+void CScene::SetUISize()
+{
+	m_UIskillbarWidth = (m_nWndClientWidth*m_UIskillbarWidth) / 900;
+	m_UIskillbarHeight = (m_nWndClientHeight*m_UIskillbarHeight) / 600; 
+	m_UIMinimapWidth = (m_nWndClientWidth*m_UIMinimapWidth) / 900;
+	m_UIMinimapHeight = (m_nWndClientHeight*m_UIMinimapHeight) / 600; 
+	m_UIInfoWidth = (m_nWndClientWidth*m_UIInfoWidth) / 900;
+	m_UIInfoHeight = (m_nWndClientHeight*m_UIInfoHeight) / 600; 
+	m_UIScoreWidth = (m_nWndClientWidth*m_UIScoreWidth) / 900;
+	m_UIScoreHeight = (m_nWndClientHeight*m_UIScoreHeight) / 600; 
+	m_UITargetInfoWidth = (m_nWndClientWidth*m_UITargetInfoWidth) / 900;
+	m_UITargetInfoHeight = (m_nWndClientHeight*m_UITargetInfoHeight) / 600; 
+
+	m_SwordWidth = (m_nWndClientWidth*m_SwordWidth) / 900;
+	m_SwordHeight = (m_nWndClientHeight*m_SwordHeight) / 600; 
+	m_ShielWidth = (m_nWndClientWidth*m_ShielWidth) / 900;
+	m_ShielHeight = (m_nWndClientHeight*m_ShielHeight) / 600; 
+	m_BootsWidth = (m_nWndClientWidth*m_BootsWidth) / 900;
+	m_BootsHeight = (m_nWndClientHeight*m_BootsHeight) / 600; 
+
+	m_HpbarRWidth = (m_nWndClientWidth*m_HpbarRWidth) / 900;
+	m_HpbarRHeight = (m_nWndClientHeight*m_HpbarRHeight) / 600; 
+	m_HpbarGWidth = (m_nWndClientWidth*m_HpbarGWidth) / 900;
+	m_HpbarGHeight = (m_nWndClientHeight*m_HpbarGHeight) / 600; 
+
+	m_TargetHpbarRWidth = (m_nWndClientWidth*m_TargetHpbarRWidth) / 900;
+	m_TargetHpbarRHeight = (m_nWndClientHeight*m_TargetHpbarRHeight) / 600; 
+	m_TargetHpbarGWidth = (m_nWndClientWidth*m_TargetHpbarGWidth) / 900;
+	m_TargetHpbarGHeight = (m_nWndClientHeight*m_TargetHpbarGHeight) / 600;
+
+	m_CharacterFaceWidth = (m_nWndClientWidth*m_CharacterFaceWidth) / 900;
+	m_CharacterFaceHeight = (m_nWndClientHeight*m_CharacterFaceHeight) / 600; 
+	m_Skillq_buttonWidth = (m_nWndClientWidth*m_Skillq_buttonWidth) / 900;
+	m_Skillq_buttonHeight = (m_nWndClientHeight*m_Skillq_buttonHeight) / 600; 
+	m_Skillw_buttonWidth = (m_nWndClientWidth*m_Skillw_buttonWidth) / 900;
+	m_Skillw_buttonHeight = (m_nWndClientHeight*m_Skillw_buttonHeight) / 600; 
+	m_Skille_buttonWidth = (m_nWndClientWidth*m_Skille_buttonWidth) / 900;
+	m_Skille_buttonHeight = (m_nWndClientHeight*m_Skille_buttonHeight) / 600; 
+	m_Skillr_buttonWidth = (m_nWndClientWidth*m_Skillr_buttonWidth) / 900;
+	m_Skillr_buttonHeight = (m_nWndClientHeight*m_Skillr_buttonHeight) / 600; 
+
+	m_UpgradeSwordWidth = (m_nWndClientWidth*m_UpgradeSwordWidth) / 900;
+	m_UpgradeSwordHeight = (m_nWndClientHeight*m_UpgradeSwordHeight) / 600; 
+	m_UpgradeShieldWidth = (m_nWndClientWidth*m_UpgradeShieldWidth) / 900;
+	m_UpgradeShieldHeight = (m_nWndClientHeight*m_UpgradeShieldHeight) / 600; 
+	m_UpgradeBootsWidth = (m_nWndClientWidth*m_UpgradeBootsWidth) / 900;
+	m_UpgradeBootsHeight = (m_nWndClientHeight*m_UpgradeBootsHeight) / 600; 
+
+	m_UpgradeButtonWidth = (m_nWndClientWidth*m_UpgradeButtonWidth) / 900;
+	m_UpgradeButtonHeight = (m_nWndClientHeight*m_UpgradeButtonHeight) / 600; 
+	m_UpgradeButtonNumberWidth = (m_nWndClientWidth*m_UpgradeButtonNumberWidth) / 900;
+	m_UpgradeButtonNumberHeight = (m_nWndClientHeight*m_UpgradeButtonNumberHeight) / 600; 
+
+	m_GameWinLoseWidth = (m_nWndClientWidth*m_GameWinLoseWidth) / 900;
+	m_GameWinLoseHeight = (m_nWndClientHeight*m_GameWinLoseHeight) / 600; 
+
+	for(int i=0; i<MAX_UI; i++)
+	{
+		if(m_pUIObjects[i]->GetUI()->GetScreenW() != m_nWndClientWidth || m_pUIObjects[i]->GetUI()->GetScreenH() != m_nWndClientHeight)
+			m_pUIObjects[i]->GetUI()->SetScreenWH(m_nWndClientWidth, m_nWndClientHeight);
+	}
+	m_pUI[0]->SetBitmapWH(m_UIskillbarWidth, m_UIskillbarHeight);
+	m_pUI[1]->SetBitmapWH(m_UIMinimapWidth, m_UIMinimapHeight);
+	m_pUI[2]->SetBitmapWH(m_UIInfoWidth, m_UIInfoHeight);
+	m_pUI[3]->SetBitmapWH(m_UIScoreWidth, m_UIScoreHeight);
+	m_pUI[4]->SetBitmapWH(m_SwordWidth, m_SwordHeight);
+	m_pUI[5]->SetBitmapWH(m_ShielWidth, m_ShielHeight);
+	m_pUI[6]->SetBitmapWH(m_BootsWidth, m_BootsHeight);
+	m_pUI[7]->SetBitmapWH(m_HpbarRWidth, m_HpbarRHeight);
+	m_pUI[8]->SetBitmapWH(m_HpbarGWidth, m_HpbarGHeight);
+	m_pUI[9]->SetBitmapWH(m_CharacterFaceWidth, m_CharacterFaceHeight);
+	m_pUI[10]->SetBitmapWH(m_Skillq_buttonWidth, m_Skillq_buttonHeight);
+	m_pUI[11]->SetBitmapWH(m_Skillw_buttonWidth, m_Skillw_buttonHeight);
+	m_pUI[12]->SetBitmapWH(m_Skille_buttonWidth, m_Skille_buttonHeight);
+	m_pUI[13]->SetBitmapWH(m_Skillr_buttonWidth, m_Skillr_buttonHeight);
+	m_pUI[14]->SetBitmapWH(m_UpgradeSwordWidth, m_UpgradeSwordHeight);
+	m_pUI[15]->SetBitmapWH(m_UpgradeShieldWidth, m_UpgradeShieldHeight);
+	m_pUI[16]->SetBitmapWH(m_UpgradeBootsWidth, m_UpgradeBootsHeight);
+	m_pUI[17]->SetBitmapWH(m_UITargetInfoWidth, m_UITargetInfoHeight);
+	m_pUI[18]->SetBitmapWH(m_SwordWidth, m_SwordHeight);
+	m_pUI[19]->SetBitmapWH(m_ShielWidth, m_ShielHeight);
+	m_pUI[20]->SetBitmapWH(m_BootsWidth, m_BootsHeight);
+	m_pUI[21]->SetBitmapWH(m_CharacterFaceWidth, m_CharacterFaceHeight);
+	m_pUI[22]->SetBitmapWH(m_TargetHpbarRWidth, m_TargetHpbarRHeight);
+	m_pUI[23]->SetBitmapWH(m_TargetHpbarGWidth, m_TargetHpbarGHeight);
+	m_pUI[24]->SetBitmapWH(m_UpgradeButtonWidth, m_UpgradeButtonHeight);
+	m_pUI[25]->SetBitmapWH(m_UpgradeButtonNumberWidth, m_UpgradeButtonNumberHeight);
+	m_pUI[26]->SetBitmapWH(m_UpgradeButtonNumberWidth, m_UpgradeButtonNumberHeight);
+	m_pUI[27]->SetBitmapWH(m_UpgradeButtonNumberWidth, m_UpgradeButtonNumberHeight);
+	m_pUI[28]->SetBitmapWH(m_GameWinLoseWidth, m_GameWinLoseHeight);
+	m_pUI[29]->SetBitmapWH(m_GameWinLoseWidth, m_GameWinLoseHeight);
+	m_pUI[30]->SetBitmapWH(m_GameWinLoseWidth, m_GameWinLoseHeight);
 }

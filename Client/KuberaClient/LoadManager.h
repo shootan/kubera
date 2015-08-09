@@ -27,7 +27,9 @@ public:
 	CAnimationShader *m_pAnimationShaders_NoLight;
 	CParticleShader *m_pParticleShaders;
 	CObjectShader *m_pObjectShaders;
+
 	CUIShader *m_pUIShaders_Loading;
+	CUIShader *m_pUIShaders_Select;
 	CUIShader *m_pUIShaders_Game;
 	int m_nShaders;
 
@@ -90,6 +92,9 @@ public:
 	{
 		m_pUIShaders_Loading = new CUIShader();
 		m_pUIShaders_Loading->CreateShader(pd3Device, 80);
+
+		m_pUIShaders_Select = new CUIShader();
+		m_pUIShaders_Select->CreateShader(pd3Device, 80);
 
 		m_pUIShaders_Game = new CUIShader();
 		m_pUIShaders_Game->CreateShader(pd3Device, 80);

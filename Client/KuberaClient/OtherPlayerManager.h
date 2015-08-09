@@ -9,6 +9,9 @@ public:
 	OtherPlayerObject* m_pOtherPlayer;
 	GFBX::Mesh *m_pWizardMesh;
 	GFBX::Mesh *m_pWarriorMesh;
+	int m_Type;
+	int m_Team;
+
 
 public:
 	OtherPlayerManager()
@@ -46,4 +49,9 @@ public:
 		m_pWarriorMesh = _warrior;
 		m_pWizardMesh = _wizard;
 	}
+
+	void SetTeam(int _team) {m_Team = _team;}
+	int GetTeam() {return m_Team;}
+	void SetType(int _type) { m_Type = _type; }
+	int GetType() { return m_Type; }
 };

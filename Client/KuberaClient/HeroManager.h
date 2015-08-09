@@ -66,10 +66,12 @@ public:
 	}
 
 	void SetTeam(int _team) {m_Team = _team;}
+	int GetTeam() {return m_Team;}
 	void SetNexus(CGameObject* _red, CGameObject* _blue) { RedNexus= _red; BlueNexus = _blue; }
 	void SetID(int _id){ m_iID = _id; }
 	void SetStartPos(D3DXVECTOR3 _v) { m_vPos = _v; }
 	void SetHP(float _hp) { m_HP = _hp; }
 	void SetType(int _type) { m_Type = _type; }
+	int GetType() { return m_Type; }
 	int GetID() { return m_iID; }
 };

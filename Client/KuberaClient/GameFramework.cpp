@@ -34,6 +34,9 @@ CGameFramework::CGameFramework()
 	m_pCameraMinimap = NULL;
 	m_pUICamera = NULL;
 	m_pSelectCamera = NULL;
+
+	m_bMinimapReset = FALSE;
+
 }
 
 CGameFramework::~CGameFramework()
@@ -67,6 +70,10 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	HeroManager::sharedManager()->SetID(Net.m_ID);
 	HeroManager::sharedManager()->SetTeam(1);
 	HeroManager::sharedManager()->SetType(2);
+
+	//지워야함 서버에서 보내줄정보
+	OtherPlayerManager::sharedManager()->SetTeam(2);
+	OtherPlayerManager::sharedManager()->SetType(1);
 
 	printf("SetData \n");
 	
@@ -294,6 +301,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
 	if(m_pScene) m_pScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
+	if(m_pSelectScene) m_pSelectScene->OnProcessingKeyboardMessage(hWnd, nMessageID, wParam, lParam);
 
 	if(nMessageID != WM_MOUSEWHEEL)
 		m_CameraUpDown = 0;
@@ -318,13 +326,12 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			m_pUICamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.0f, 0.1f);
 			m_pSelectCamera->SetViewport(m_pd3dDeviceContext, 0, 0, m_nWndClientWidth, m_nWndClientHeight, 0.9f, 1.0f);
 
-			if(ST::sharedManager()->m_bStart == TRUE)
+			D3DXMatrixOrthoLH(&m_orthoMatrix, (float)m_nWndClientWidth, (float)m_nWndClientHeight, 1.0f, 500.0f);
+
+			if(ST::sharedManager()->m_bStart == TRUE && m_pScene)
 			{
-				//UI크기 및 배치 재설정
-
-				D3DXMatrixOrthoLH(&m_orthoMatrix, (float)m_nWndClientWidth, (float)m_nWndClientHeight, 1.0f, 500.0f);
-
-				m_pCameraMinimap->SetViewport(m_pd3dDeviceContext,m_nWndClientWidth - m_pScene->GetMinimapUIWidth()  + m_pScene->GetMinimapUIWidth()/7, m_nWndClientHeight - m_pScene->GetMinimapUIHeight() + m_pScene->GetMinimapUIHeight()/13, m_pScene->GetMinimapUIWidth() - m_pScene->GetMinimapUIWidth()/7 , m_pScene->GetMinimapUIHeight(), 0.3f, 0.4f);
+				
+				m_pCameraMinimap->SetViewport(m_pd3dDeviceContext,m_nWndClientWidth - m_pScene->GetMinimapUIWidth(m_nWndClientWidth,m_nWndClientHeight)  + m_pScene->GetMinimapUIWidth(m_nWndClientWidth,m_nWndClientHeight)/7, m_nWndClientHeight - m_pScene->GetMinimapUIHeight(m_nWndClientWidth,m_nWndClientHeight) + m_pScene->GetMinimapUIHeight(m_nWndClientWidth,m_nWndClientHeight)/13, m_pScene->GetMinimapUIWidth(m_nWndClientWidth,m_nWndClientHeight) - m_pScene->GetMinimapUIWidth(m_nWndClientWidth, m_nWndClientHeight)/7 , m_pScene->GetMinimapUIHeight(m_nWndClientWidth, m_nWndClientHeight), 0.3f, 0.4f);
 			}
 			
 			CreateRenderTargetDepthStencilView();
@@ -539,7 +546,11 @@ void CGameFramework::FrameAdvance()
 		{
  			m_pSelectScene = new SelectScene();
  			m_pSelectScene->m_pCamera = m_pSelectCamera;
- 			if (m_pSelectScene) m_pSelectScene->BuildObject(m_pd3dDevice);
+ 			if (m_pSelectScene) 
+			{
+				m_pSelectScene->BuildObject(m_pd3dDevice);
+				m_pSelectScene->CreateUI(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight);
+			}
  			LoadManager::sharedManager()->LoadFinish = TRUE;
 
 			delete m_pLoadScene;
@@ -555,10 +566,16 @@ void CGameFramework::FrameAdvance()
 		if (m_pd3dDepthStencilView) m_pd3dDeviceContext->ClearDepthStencilView(m_pd3dDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 		m_pSelectCamera->UpdateShaderVariables(m_pd3dDeviceContext);
-		//m_pSelectCamera->FrameMove(m_GameTimer.GetTimeElapsed());
 		m_pd3dDeviceContext->RSSetViewports(1, &m_pSelectCamera->GetViewport());
 		m_pSelectScene->AnimateObject(m_GameTimer.GetTimeElapsed());
 		m_pSelectScene->RenderObject(m_pd3dDeviceContext, m_GameTimer.GetTimeElapsed(), m_pSelectCamera);
+
+		TurnZBufferOff();
+		m_pUICamera->UpdateShaderVariables(m_pd3dDeviceContext, m_orthoMatrix);
+		m_pd3dDeviceContext->RSSetViewports(1, &m_pUICamera->GetViewport());
+		m_pSelectScene->RenderUI(m_pd3dDeviceContext, m_nWndClientWidth, m_nWndClientHeight);
+		TurnZBufferOn();
+
  		if (ST::sharedManager()->m_bSelected == TRUE)
 		{
  			m_pScene = new CScene();
@@ -567,6 +584,12 @@ void CGameFramework::FrameAdvance()
 			{
 				m_pScene->BuildObjects(m_pd3dDevice);
 				m_pScene->CreateUI(m_pd3dDevice, m_nWndClientWidth, m_nWndClientHeight);
+
+				if(m_bMinimapReset = FALSE)
+				{
+					m_pCameraMinimap->SetViewport(m_pd3dDeviceContext,m_nWndClientWidth - m_pScene->GetMinimapUIWidth(m_nWndClientWidth,m_nWndClientHeight)  + m_pScene->GetMinimapUIWidth(m_nWndClientWidth,m_nWndClientHeight)/7, m_nWndClientHeight - m_pScene->GetMinimapUIHeight(m_nWndClientWidth,m_nWndClientHeight) + m_pScene->GetMinimapUIHeight(m_nWndClientWidth,m_nWndClientHeight)/13, m_pScene->GetMinimapUIWidth(m_nWndClientWidth,m_nWndClientHeight) - m_pScene->GetMinimapUIWidth(m_nWndClientWidth, m_nWndClientHeight)/7 , m_pScene->GetMinimapUIHeight(m_nWndClientWidth, m_nWndClientHeight), 0.3f, 0.4f);
+					m_bMinimapReset = TRUE;
+				}
 			}
  			ST::sharedManager()->m_bStart = TRUE;
 			printf("SelectFinish \n");

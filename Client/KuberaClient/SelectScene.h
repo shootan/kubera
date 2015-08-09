@@ -6,20 +6,32 @@
 #include "Camera.h"
 #include "HeroObject.h"
 #include "Light.h"
+
+#define SLECTSCENE_MAX_UI 6
+
 class SelectScene
 {
 private:
 
 	int m_Count;
-	int m_Width;
-	int m_Height;
-	UIClass* m_TeamImage[2];
-	UIObject* m_TeamImageObject[2];
-	CUIShader* m_pUIShaders;
 	
 	CAnimationShader* m_pAniShaders;
 	HeroObject *m_pWarrior;
 	HeroObject *m_pWizard;
+
+	//UI
+	UIClass* m_pUI[SLECTSCENE_MAX_UI];
+	CUIShader *m_pUIShaders;
+	UIObject* m_pUIObjects[SLECTSCENE_MAX_UI];
+
+	int m_nWndClientWidth;
+	int m_nWndClientHeight;
+	int m_nPrevWndClientWidth;
+	int m_nPrevWndClientHeight;
+
+	float m_ArrowWidth, m_ArrowHeight; //화살표
+	float m_TeamWidth, m_TeamHeight; //팀
+	float m_ChoiceButtonWidth, m_ChoiceButtonHeight; //캐릭터 번호
 
 public:
 	SelectScene();
@@ -28,5 +40,10 @@ public:
 	void BuildObject(ID3D11Device *m_pd3dDevice);
 	void AnimateObject(float _dt);
 	void RenderObject(ID3D11DeviceContext*pd3dDeviceContext, float fTimeElapsed, CCamera *pCamera);
+	bool OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
+
+	//ui
+	void CreateUI(ID3D11Device *pd3dDevice,int  _wndWidth,int  _wndHeight);
+	void RenderUI(ID3D11DeviceContext *pd3dDeviceContext, int _wndWidth, int _wndHeight);
 	
 };
