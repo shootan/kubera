@@ -125,7 +125,6 @@ void OtherPlayerObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
 	if(finished > 50.0f)
 	{
 		this->m_Pos = _pos;
-		printf("asdfddddddddddddddddddddddddddddddddddddddddddddddddddddd \n");
 		return;
 	}
 	printf("1 : X: %.3f, Z:%.3f, \n", m_vWalkIncrement.x, m_vWalkIncrement.z);
@@ -134,9 +133,7 @@ void OtherPlayerObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
 	m_vDestination.z = _pos.z;      
 	
 	m_vWalkIncrement = m_vDestination - m_Pos;
-	printf("2 : X: %.3f, Z:%.3f, \n", m_vWalkIncrement.x, m_vWalkIncrement.z);
 	D3DXVec3Normalize ( &m_vWalkIncrement, &m_vWalkIncrement );
-	printf("3 : X: %.3f, Z:%.3f, \n", m_vWalkIncrement.x, m_vWalkIncrement.z);
 	//m_bFindPath = FALSE;
 
 
@@ -153,7 +150,6 @@ void OtherPlayerObject::SetNewDestination ( D3DXVECTOR3 _pos ) {
 // 	this->SetRotation(2, 1/fAngle);
 
 	m_vWalkIncrement *= m_fWalkSpeed;
-	printf("%.3f      , %.3f            %.3f", m_fWalkSpeed,m_fWalkSpeed,m_fWalkSpeed);
 	m_bSetDestination = TRUE;
 
 }
@@ -162,7 +158,6 @@ bool OtherPlayerObject::InMotion()
 {	
 	if(m_Pos.x == m_vDestination.x && m_Pos.z == m_vDestination.z)
 		{
-			printf("4 : X: %.3f, Z:%.3f, \n", m_vWalkIncrement.x, m_vWalkIncrement.z);
 			return false;
 	}
 	else return true;
@@ -173,22 +168,21 @@ void OtherPlayerObject::Update(float fTimeElapsed)
 	//printf("1 : X: %.3f, Z:%.3f, STATE : %d, ROT : %.3f \n", m_Pos.x, m_Pos.z, m_iState, m_Rot);
 	if ( InMotion() && m_bSetDestination == TRUE)
 	{
-		printf("5 : X: %.3f, Z:%.3f, \n", m_vWalkIncrement.x, m_vWalkIncrement.z);
 		D3DXVECTOR3 update_delta = m_vWalkIncrement;
 		D3DXVECTOR3 location_vector = m_vDestination - m_Pos;
-		printf("6 : X: %.3f, Z:%.3f, \n", m_vWalkIncrement.x, m_vWalkIncrement.z);
 
 		m_Pos += update_delta * fTimeElapsed;
 
 		Vector3 f_pos;
 		Vector3 s_pos;
+		ZeroMemory(&f_pos, sizeof(Vector3));
+		ZeroMemory(&s_pos, sizeof(Vector3));
 		f_pos.x = m_Pos.x;
 		f_pos.y = m_Pos.y;
 		f_pos.z = m_Pos.z;
 		s_pos.x = m_vDestination.x;
 		s_pos.y = m_vDestination.y;
 		s_pos.z = m_vDestination.z;
-		printf("6 : X: %.3f, Z:%.3f, \n", m_vDestination.x, m_vDestination.z);
 		float finished = ST::sharedManager()->GetDistance(f_pos, s_pos);
 
 		
@@ -237,8 +231,14 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 			m_bWarriorAttack = TRUE;
 			m_bWarriorSkill = TRUE;
 
-			if(m_Time < 57.5f) m_Time = 57.5f;
-			if(m_Time > 59.7f ) m_Time = 57.5f;
+			if(m_Time < 0.1f)
+			{
+				m_Time = 0.1f;
+			}
+			if(m_Time > 1.7f)
+			{
+				m_Time = 0.1f;
+			}
 			break;
 		case WIZARD:
 // 			if(m_pTarget != NULL && 

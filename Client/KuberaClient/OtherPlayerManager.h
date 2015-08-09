@@ -39,6 +39,7 @@ public:
 	{
 		m_pOtherPlayer = new OtherPlayerObject();
 		m_pOtherPlayer->SetTeam(m_Id);
+		m_pOtherPlayer->SetID(m_Id);
 		m_pOtherPlayer->SetType(m_Type);
 		if(m_Type == 1 )
 		{
@@ -73,6 +74,7 @@ public:
 		m_pOtherPlayer->SetDamage(_pi.PI.m_Data.m_Damage);
 		m_pOtherPlayer->SetDefense(_pi.PI.m_Data.m_Defence);
 		m_pOtherPlayer->SetSpeed(_pi.PI.m_Data.m_Speed);
+		m_pOtherPlayer->SetLevel(_pi.PI.m_Data.m_Level);
 	}
 
 	void SetMesh(GFBX::Mesh* _warrior, GFBX::Mesh* _wizard)

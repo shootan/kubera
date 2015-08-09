@@ -303,6 +303,7 @@ void HeroObject::Animate(float fTimeElapsed)
 
 	if(m_iState != m_iPrevState)
 	{
+		//m_iPrevState = m_iState;
 		m_bSoundLimit = FALSE;
 	}
 	//printf(" %.1f \n", m_time);
@@ -541,14 +542,14 @@ void HeroObject::Animate(float fTimeElapsed)
 			Vector3 po;
 			if(m_ID % 2 == 0)
 			{
-				po.x = 390;
+				po.x = -390;
 				po.y = 0;
 				po.z = 0;
 			}
 			else
 			{
 				po.y = 0;
-				po.x = -390;
+				po.x = 390;
 				po.z = 0;
 			}
 			this->SetPos(po);

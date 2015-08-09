@@ -1,5 +1,5 @@
 #include "TowerObject.h"
-
+#include "SoundManager.h"
 TowerObject::TowerObject(void)
 {
 	CGameObject::CGameObject();
@@ -66,6 +66,7 @@ void TowerObject::Update(float fTimeElapsed)
 {
 	if(m_HP< 1.0f && !m_bExplosion)
 	{
+		SoundManager::sharedManager()->play(SOUND_TOWER_DESTROY);
 		for(int i=0;i<MAX_DESTROY_TOWER; i++)
 		{
 			if(ObstacleManager::sharedManager()->m_pDestroyTower[i]->GetUsed() == TRUE) continue;
@@ -92,12 +93,13 @@ void TowerObject::Update(float fTimeElapsed)
 		return;
 	}
 	
+
 	for(int i=0; i<MAX_PARTICLE; i++)
 	{
 		if(ParticleManager::sharedManager()->m_pParticle[i] == NULL) continue;
 		if(MissileManager::sharedManager()->m_pMissile[i]->GetUsed() == TRUE) continue;
 
-
+		//SoundManager::sharedManager()->play(SOUND_TOWER_ATTACK);
 		if(ParticleManager::sharedManager()->m_pParticle[i]->GetType() == WIZARD_ATTACK)
 		{
 			if(m_fAttackTime >= 1.3f)

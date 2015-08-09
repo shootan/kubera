@@ -20,7 +20,7 @@ private:
 
 	BOOL m_bDeathAnimation;
 	BOOL m_bAttack;
-
+	BOOL m_bSoundLimit;
 	D3DXVECTOR3 m_vWayPoint;  //처음 생성 지점
 
 	//죽은 횟수

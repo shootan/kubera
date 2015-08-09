@@ -777,6 +777,7 @@ void CGameFramework::SendHeroData()
 	HeroInfo.PI.m_Data.m_Pos = HeroManager::sharedManager()->m_pHero->GetPos();
 	HeroInfo.PI.m_iState = HeroManager::sharedManager()->m_pHero->GetState();
 	HeroInfo.PI.m_iTargetID = HeroManager::sharedManager()->m_pHero->GetTargetID();
+	HeroInfo.PI.m_Data.m_Level = HeroManager::sharedManager()->m_pHero->GetLevel();
 	HeroInfo.PI.m_ID = Net.m_ID;
 	HeroInfo.PI.m_Data.m_HP = HeroManager::sharedManager()->m_pHero->GetHP();
 	HeroInfo.PI.m_Data.m_Damage = HeroManager::sharedManager()->m_pHero->GetDamage();

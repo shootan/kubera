@@ -2,6 +2,8 @@
 #include "MissileManager.h"
 #include "Shader.h"
 #include "HeroManager.h"
+#include "SoundManager.h"
+#include "OtherPlayerManager.h"
 
 MinionObject::MinionObject(void)
 {
@@ -19,6 +21,7 @@ MinionObject::MinionObject(void)
 	m_fAttackTime = 0.0f;
 	m_Time = 0.0f;
 	m_fRespawnTime = 0.0f;
+	m_bSoundLimit = FALSE;
 
 	m_Level = 1;
 	m_fWalkSpeed = 10.0f;
@@ -27,6 +30,7 @@ MinionObject::MinionObject(void)
 
 	m_Damage = 6.f;
 	m_Defense = 3;
+	m_iPrevState = m_iState;
 
 	m_iparticleNum = 500;
 	m_bUseParticle = FALSE;
@@ -148,9 +152,18 @@ void MinionObject::Update(float fTimeElapsed)
 	{
 		if(ST::sharedManager()->GetDistance(HeroManager::sharedManager()->m_pHero->GetPosition(), m_Pos) < 50 &&
 			ST::sharedManager()->GetDistance(m_vWayPoint, HeroManager::sharedManager()->m_pHero->GetPosition()) <= 100 &&
-			!m_bDeathAnimation ) //히어로 타겟잡기
+			!m_bDeathAnimation && HeroManager::sharedManager()->m_pHero->GetState() != DEATH) //히어로 타겟잡기
 		{
 			m_pTarget = HeroManager::sharedManager()->m_pHero;
+			m_iState = MOVE;
+			SetNewDestination(m_pTarget->GetPosition());
+		}
+
+		if(ST::sharedManager()->GetDistance(OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetPosition(), m_Pos) < 50 &&
+			ST::sharedManager()->GetDistance(m_vWayPoint, OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetPosition()) <= 100 &&
+			!m_bDeathAnimation && OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetState() != DEATH) //히어로 타겟잡기
+		{
+			m_pTarget = OtherPlayerManager::sharedManager()->m_pOtherPlayer;
 			m_iState = MOVE;
 			SetNewDestination(m_pTarget->GetPosition());
 		}
@@ -188,6 +201,7 @@ void MinionObject::Animate(float fTimeElapsed)
 	if( m_iPrevState != m_iState)
 	{
 		m_Time = 0.f;
+		m_bSoundLimit = FALSE;
 		m_iPrevState = m_iState;
 	}
 
@@ -221,22 +235,42 @@ void MinionObject::Animate(float fTimeElapsed)
 		switch(m_iType)
 		{
 		case CLEFT:
-			if(m_Time < 38.5f) m_Time = 38.5f;
+			if(m_Time < 38.5f)
+				{
+					m_Time = 38.5f;
+					
+			}
+			if(!m_bSoundLimit)
+			{
+				SoundManager::sharedManager()->play(SOUND_MONSTER_ATTACK);
+				m_bSoundLimit = TRUE;
+			}
 			if(m_Time > 40.0f && m_Time < 41.6f && !m_bAttack)
 			{
+				
 				m_pTarget->SetAttackDamage(m_Damage - m_pTarget->GetDefense());
 				m_bAttack = TRUE;
 			}
 			if(m_Time > 41.6f)
 			{
+				m_bSoundLimit = FALSE;
 				m_bAttack = FALSE;
 				m_Time = 38.5f;
 			}
 			break;
 		case TURTLE:
-			if(m_Time < 29.4f) m_Time = 29.4f;
+			if(m_Time < 29.4f)
+			{
+				
+					m_Time = 29.4f;
+			}
 			if(m_Time > 30.8f && m_Time < 31.8f && !m_bAttack)
 			{
+				if(!m_bSoundLimit)
+				{
+					SoundManager::sharedManager()->play(SOUND_MONSTER_ATTACK);
+					m_bSoundLimit = TRUE;
+				}
 				m_pTarget->SetAttackDamage(m_Damage - m_pTarget->GetDefense());
 				m_bAttack = TRUE;
 			}
@@ -244,17 +278,29 @@ void MinionObject::Animate(float fTimeElapsed)
 			{
 				m_bAttack = FALSE;
 				m_Time = 29.4f;
+				m_bSoundLimit = FALSE;
 			}
 			break;
 		case CANNONGOLEM:
-			if(m_Time < 21.5f) m_Time = 21.5f;
+			if(m_Time < 21.5f)
+			{
+					m_Time = 21.5f;
+					
+			}
+			if(!m_bSoundLimit)
+			{
+				SoundManager::sharedManager()->play(SOUND_GOLEM_ATTACK);
+				m_bSoundLimit = TRUE;
+			}
 			if(m_Time > 23.8f && m_Time < 24.8f && !m_bAttack)
 			{
+				
 				m_pTarget->SetAttackDamage(m_Damage - m_pTarget->GetDefense());
 				m_bAttack = TRUE;
 			}
 			if(m_Time > 24.8f)
 			{
+				m_bSoundLimit = FALSE;
 				m_bAttack = FALSE;
 				m_Time = 21.5f;
 			}

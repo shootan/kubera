@@ -25,7 +25,7 @@ class CScene
 {
 private:
 
-	
+	BOOL m_bFinishSound;
 
 	CObjectShader *m_pObjectShaders;
 	CInstancingShader *m_pInstancingShaders;

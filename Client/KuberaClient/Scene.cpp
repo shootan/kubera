@@ -113,7 +113,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 
 	//위자드 메쉬
 	m_pWizardMesh = LoadManager::sharedManager()->m_pMageMesh;
-
+	m_bFinishSound = FALSE;
 	//재질설정
 	CMaterial *pMaterial = new CMaterial();
 	pMaterial->AddRef();
@@ -613,7 +613,7 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 		m_DistanceToHero = ST::sharedManager()->GetDistance(HeroManager::sharedManager()->m_pHero->GetPos(), 
 			TowerManager::sharedManager()->m_pTower[i]->GetPos());
 		if(m_DistanceToHero < 50.0f 
-			&& TowerManager::sharedManager()->m_pTower[i]->GetTeam() != HeroManager::sharedManager()->m_pHero->GetTeam() && HeroManager::sharedManager()->m_pHero->GetHP() > 1.0f)
+			&& TowerManager::sharedManager()->m_pTower[i]->GetTeam() != HeroManager::sharedManager()->m_pHero->GetTeam() && HeroManager::sharedManager()->m_pHero->GetState() != DEATH)
 		{
 			TowerManager::sharedManager()->m_pTower[i]->SetTarget(HeroManager::sharedManager()->m_pHero);
 			continue;
@@ -637,8 +637,6 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 			TowerManager::sharedManager()->m_pTower[i]->SetTarget(NULL);
 			TowerManager::sharedManager()->m_pTower[i]->SetAttackTime(0.f);
 		}
-			
-		
 	}
 
 	OtherPlayerManager::sharedManager()->m_pOtherPlayer->Update(fTimeElapsed);
@@ -648,12 +646,14 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 	//넥서스 터질때
 	if(m_pBlueNexus->GetHP() <= 0 && m_bGameOver == FALSE)
 	{
+		SoundManager::sharedManager()->play(SOUND_NEXUS_DESTROY);
 		m_pDestroyNexus->SetPosition(m_pBlueNexus->GetPosition());
 		m_pBlueNexus->SetPosition(D3DXVECTOR3(-2000, 0, 0));
 		m_bGameOver = TRUE;
 	}
 	else if(m_pRedNexus->GetHP() <= 0 && m_bGameOver == FALSE)
 	{
+		SoundManager::sharedManager()->play(SOUND_NEXUS_DESTROY);
 		m_pDestroyNexus->SetPosition(m_pRedNexus->GetPosition());
 		m_pRedNexus->SetPosition(D3DXVECTOR3(-2000, 0, 0));
 		m_bGameOver = TRUE;
@@ -980,6 +980,16 @@ void CScene::OtherPlayerTargetSetting()
 			&& OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetTeam() !=	TowerManager::sharedManager()->m_pTower[j]->GetTeam())
 		{
 			OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetTarget(TowerManager::sharedManager()->m_pTower[j]);
+			return;
+		}
+	}
+
+	for(int j=0; j<MAX_MINION; j++)   //타워와의 타겟 체크
+	{
+		if(MinionManager::sharedManager()->m_pMinion[j] == NULL) continue;
+		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetTargetID() ==	MinionManager::sharedManager()->m_pMinion[j]->GetID())
+		{
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetTarget(MinionManager::sharedManager()->m_pMinion[j]);
 			return;
 		}
 	}
@@ -1339,12 +1349,22 @@ void CScene::RenderUI(ID3D11DeviceContext *pd3dDeviceContext,int  _wndWidth,int 
 			if(m_pBlueNexus->GetHP() <= 0)
 			{
 				//WIN
+				if(!m_bFinishSound)
+					{
+						SoundManager::sharedManager()->play(SOUND_WIN);
+						m_bFinishSound = TRUE;
+					}
 				m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[28]->m_d3dxmtxWorld);
 				m_pUIObjects[28]->Render(pd3dDeviceContext, _wndWidth/2 - m_GameWinLoseWidth/2 , _wndHeight/2 - m_GameWinLoseHeight);
 			}
 			else if(m_pRedNexus->GetHP() <= 0)
 			{
 				//LOSE
+				if(!m_bFinishSound)
+				{
+					SoundManager::sharedManager()->play(SOUND_DEFEAT);
+					m_bFinishSound = TRUE;
+				}
 				m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[29]->m_d3dxmtxWorld);
 				m_pUIObjects[29]->Render(pd3dDeviceContext, _wndWidth/2 - m_GameWinLoseWidth/2 , _wndHeight/2 - m_GameWinLoseHeight);
 			}
@@ -1353,12 +1373,22 @@ void CScene::RenderUI(ID3D11DeviceContext *pd3dDeviceContext,int  _wndWidth,int 
 				if(HeroManager::sharedManager()->m_pHero->GetDeathCount() < OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetDeathCount())
 				{
 					//WIN
+					if(!m_bFinishSound)
+					{
+						SoundManager::sharedManager()->play(SOUND_WIN);
+						m_bFinishSound = TRUE;
+					}
 					m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[28]->m_d3dxmtxWorld);
 					m_pUIObjects[28]->Render(pd3dDeviceContext, _wndWidth/2 - m_GameWinLoseWidth/2 , _wndHeight/2 - m_GameWinLoseHeight);
 				}
 				else if(HeroManager::sharedManager()->m_pHero->GetDeathCount() > OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetDeathCount())
 				{
 					//LOSE
+					if(!m_bFinishSound)
+					{
+						SoundManager::sharedManager()->play(SOUND_DEFEAT);
+						m_bFinishSound = TRUE;
+					}
 					m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[29]->m_d3dxmtxWorld);
 					m_pUIObjects[29]->Render(pd3dDeviceContext, _wndWidth/2 - m_GameWinLoseWidth/2 , _wndHeight/2 - m_GameWinLoseHeight);
 				}
@@ -1375,12 +1405,22 @@ void CScene::RenderUI(ID3D11DeviceContext *pd3dDeviceContext,int  _wndWidth,int 
 			if(m_pRedNexus->GetHP() <= 0)
 			{
 				//WIN
+				if(!m_bFinishSound)
+				{
+					SoundManager::sharedManager()->play(SOUND_WIN);
+					m_bFinishSound = TRUE;
+				}
 				m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[28]->m_d3dxmtxWorld);
 				m_pUIObjects[28]->Render(pd3dDeviceContext, _wndWidth/2 - m_GameWinLoseWidth/2 , _wndHeight/2 - m_GameWinLoseHeight);
 			}
 			else if(m_pBlueNexus->GetHP() <= 0)
 			{
 				//LOSE
+				if(!m_bFinishSound)
+				{
+					SoundManager::sharedManager()->play(SOUND_DEFEAT);
+					m_bFinishSound = TRUE;
+				}
 				m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[29]->m_d3dxmtxWorld);
 				m_pUIObjects[29]->Render(pd3dDeviceContext, _wndWidth/2 - m_GameWinLoseWidth/2 , _wndHeight/2 - m_GameWinLoseHeight);
 			}
@@ -1389,12 +1429,22 @@ void CScene::RenderUI(ID3D11DeviceContext *pd3dDeviceContext,int  _wndWidth,int 
 				if(HeroManager::sharedManager()->m_pHero->GetDeathCount() < OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetDeathCount())
 				{
 					//WIN
+					if(!m_bFinishSound)
+					{
+						SoundManager::sharedManager()->play(SOUND_WIN);
+						m_bFinishSound = TRUE;
+					}
 					m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[28]->m_d3dxmtxWorld);
 					m_pUIObjects[28]->Render(pd3dDeviceContext, _wndWidth/2 - m_GameWinLoseWidth/2 , _wndHeight/2 - m_GameWinLoseHeight);
 				}
 				else if(HeroManager::sharedManager()->m_pHero->GetDeathCount() > OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetDeathCount())
 				{
 					//LOSE
+					if(!m_bFinishSound)
+					{
+						SoundManager::sharedManager()->play(SOUND_DEFEAT);
+						m_bFinishSound = TRUE;
+					}
 					m_pUIShaders->UpdateShaderVariables(pd3dDeviceContext, &m_pUIObjects[29]->m_d3dxmtxWorld);
 					m_pUIObjects[29]->Render(pd3dDeviceContext, _wndWidth/2 - m_GameWinLoseWidth/2 , _wndHeight/2 - m_GameWinLoseHeight);
 				}
