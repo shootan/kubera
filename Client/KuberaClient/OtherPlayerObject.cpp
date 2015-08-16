@@ -237,8 +237,8 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 			m_bWarriorAttack = TRUE;
 			m_bWarriorSkill = TRUE;
 
-			if(m_Time < 57.5f) m_Time = 57.5f;
-			if(m_Time > 59.7f ) m_Time = 57.5f;
+			if(m_Time < 0.1f) m_Time = 0.1f;
+			if(m_Time > 1.7f) m_Time = 0.1f;
 			break;
 		case WIZARD:
 // 			if(m_pTarget != NULL && 

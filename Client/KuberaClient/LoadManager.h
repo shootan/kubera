@@ -319,7 +319,7 @@ public:
 		m_pBlueNexus->SetPosition(D3DXVECTOR3(p.x, 0, p.z));
 		m_pBlueNexus->SetBoundSize(50, 50, 50);
 		m_pBlueNexus->SetHP(500);
-		m_pBlueNexus->SetID(175);
+		m_pBlueNexus->SetID(17);
 		m_pBlueNexus->SetFaceType(NEXUS_FACE);
 
 		p = MapEditorManager::sharedManager()->GetRedNexusPos();
@@ -328,7 +328,7 @@ public:
 		m_pRedNexus->SetPosition(D3DXVECTOR3(p.x, 0, p.z));
 		m_pRedNexus->SetBoundSize(50, 50, 50);
 		m_pRedNexus->SetHP(500);
-		m_pRedNexus->SetID(176);
+		m_pRedNexus->SetID(18);
 		m_pRedNexus->SetFaceType(NEXUS_FACE);
 
 		m_pDestroyNexus = new CGameObject();

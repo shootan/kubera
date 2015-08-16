@@ -1,6 +1,7 @@
 #include "ParticleObject.h"
 #include "MinionManager.h"
 #include "OtherPlayerManager.h"
+#include "HeroManager.h"
 
 ParticleObject::ParticleObject(void)
 {
@@ -167,7 +168,8 @@ void ParticleObject::Update(float fTimeElapsed)
 				m_bUsed = FALSE;
 				break;
 			}
-			else if(ST::sharedManager()->GetDistance(this->GetPosition(), OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetPosition() + D3DXVECTOR3(0, 10, 0)) <= 10.f)
+			
+			if(ST::sharedManager()->GetDistance(this->GetPosition(), OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetPosition() + D3DXVECTOR3(0, 10, 0)) <= 10.f)
 			{
 				OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetAttackDamage(m_pAttacker->GetSkillDamage() - OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetDefense());
 
@@ -178,7 +180,20 @@ void ParticleObject::Update(float fTimeElapsed)
 				m_bUsed = FALSE;
 				break;
 			}
-			else if (ST::sharedManager()->GetDistance(this->GetPosition(), m_pAttacker->GetPosition() + D3DXVECTOR3(0, 10, 0)) >= 100.f)
+
+			if(ST::sharedManager()->GetDistance(this->GetPosition(), HeroManager::sharedManager()->m_pHero->GetPosition() + D3DXVECTOR3(0, 10, 0)) <= 10.f)
+			{
+				HeroManager::sharedManager()->m_pHero->SetAttackDamage(m_pAttacker->GetSkillDamage() - HeroManager::sharedManager()->m_pHero->GetDefense());
+
+				HeroManager::sharedManager()->m_pHero->SetAttacker(m_pAttacker);
+				m_pTarget = NULL;
+				m_pAttacker = NULL;
+				m_Pos = D3DXVECTOR3(0, 0, -2000);
+				m_bUsed = FALSE;
+				break;
+			}
+
+			if (ST::sharedManager()->GetDistance(this->GetPosition(), m_pAttacker->GetPosition() + D3DXVECTOR3(0, 10, 0)) >= 100.f)
 			{
 				m_pTarget = NULL;
 				m_pAttacker = NULL;

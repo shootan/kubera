@@ -39,7 +39,7 @@ public:
 		{
 			if(m_pMinion[i] != NULL) continue;
 			m_pMinion[i] = new MinionObject();
-			m_pMinion[i]->SetID(i+5);
+			m_pMinion[i]->SetID(i+11);
 			m_pMinion[i]->SetMesh(mesh);
 			m_pMinion[i]->SetPosition(pos);
 			m_pMinion[i]->SetBoundSize(boundx, boundy, boundz);

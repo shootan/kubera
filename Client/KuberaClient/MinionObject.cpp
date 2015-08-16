@@ -2,6 +2,7 @@
 #include "MissileManager.h"
 #include "Shader.h"
 #include "HeroManager.h"
+#include "OtherPlayerManager.h"
 
 MinionObject::MinionObject(void)
 {
@@ -148,9 +149,20 @@ void MinionObject::Update(float fTimeElapsed)
 	{
 		if(ST::sharedManager()->GetDistance(HeroManager::sharedManager()->m_pHero->GetPosition(), m_Pos) < 50 &&
 			ST::sharedManager()->GetDistance(m_vWayPoint, HeroManager::sharedManager()->m_pHero->GetPosition()) <= 100 &&
-			!m_bDeathAnimation ) //히어로 타겟잡기
+			!m_bDeathAnimation &&
+			HeroManager::sharedManager()->m_pHero->GetState() != DEATH) //히어로 타겟잡기
 		{
 			m_pTarget = HeroManager::sharedManager()->m_pHero;
+			m_iState = MOVE;
+			SetNewDestination(m_pTarget->GetPosition());
+		}
+
+		if(ST::sharedManager()->GetDistance(OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetPosition(), m_Pos) < 50 &&
+			ST::sharedManager()->GetDistance(m_vWayPoint, OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetPosition()) <= 100 &&
+			!m_bDeathAnimation &&
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetState() != DEATH) //히어로 타겟잡기
+		{
+			m_pTarget = OtherPlayerManager::sharedManager()->m_pOtherPlayer;
 			m_iState = MOVE;
 			SetNewDestination(m_pTarget->GetPosition());
 		}

@@ -613,7 +613,7 @@ void CScene::AnimateObjects(float fTimeElapsed, ID3D11Device *pd3dDevice)
 		m_DistanceToHero = ST::sharedManager()->GetDistance(HeroManager::sharedManager()->m_pHero->GetPos(), 
 			TowerManager::sharedManager()->m_pTower[i]->GetPos());
 		if(m_DistanceToHero < 50.0f 
-			&& TowerManager::sharedManager()->m_pTower[i]->GetTeam() != HeroManager::sharedManager()->m_pHero->GetTeam() && HeroManager::sharedManager()->m_pHero->GetHP() > 1.0f)
+			&& TowerManager::sharedManager()->m_pTower[i]->GetTeam() != HeroManager::sharedManager()->m_pHero->GetTeam() && HeroManager::sharedManager()->m_pHero->GetState() != DEATH)
 		{
 			TowerManager::sharedManager()->m_pTower[i]->SetTarget(HeroManager::sharedManager()->m_pHero);
 			continue;
@@ -984,6 +984,16 @@ void CScene::OtherPlayerTargetSetting()
 		}
 	}
 
+	for(int j=0; j<MAX_MINION; j++)   //미니언과의 타겟 체크
+	{
+		if(MinionManager::sharedManager()->m_pMinion[j] == NULL) continue;
+		if(OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetTargetID() ==   MinionManager::sharedManager()->m_pMinion[j]->GetID())
+		{
+			OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetTarget(MinionManager::sharedManager()->m_pMinion[j]);
+			return;
+		}
+	}
+
 	//플레이어와의 타겟 체크
 	if(OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetTargetID() ==	HeroManager::sharedManager()->m_pHero->GetID()
 		&& OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetTeam() != HeroManager::sharedManager()->m_pHero->GetTeam())              
@@ -1003,6 +1013,7 @@ void CScene::OtherPlayerTargetSetting()
 		OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetTarget(m_pRedNexus);
 		return;
 	}
+
 		
 	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetTarget(NULL);
 	
