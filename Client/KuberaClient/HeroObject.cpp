@@ -303,6 +303,7 @@ void HeroObject::Animate(float fTimeElapsed)
 
 	if(m_iState != m_iPrevState)
 	{
+		//m_iPrevState = m_iState;
 		m_bSoundLimit = FALSE;
 	}
 	//printf(" %.1f \n", m_time);

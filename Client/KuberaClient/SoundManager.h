@@ -18,7 +18,14 @@ enum
 	SOUND_SKEL_ATTACK,
 	SOUND_SKEL_SKILL,
 	SOUND_SKEL_DEATH,
-	SOUND_WARR_DEATH
+	SOUND_WARR_DEATH,
+	SOUND_GOLEM_ATTACK,
+	SOUND_MONSTER_ATTACK,
+	SOUND_DEFEAT,
+	SOUND_WIN,
+	SOUND_TOWER_ATTACK,
+	SOUND_NEXUS_DESTROY,
+	SOUND_TOWER_DESTROY
 };
 
 class SoundManager{
@@ -60,7 +67,13 @@ public:
 	FMOD::Sound*		WarriorDeath;
 	FMOD::Sound*		SkelDeath;
 
-
+	FMOD::Sound*		GolemAttack;
+	FMOD::Sound*		MonsterAttack;
+	FMOD::Sound*		Defeat;
+	FMOD::Sound*		Win;
+	FMOD::Sound*		TowerAttack;
+	FMOD::Sound*		NexusDestroy;
+	FMOD::Sound*		TowerDestroy;
 
 	FMOD_RESULT			result;
 
@@ -112,12 +125,75 @@ public:
 		result = fsystem->createSound("Sound/ÇØ°ñÁ×À½.mp3", FMOD_DEFAULT, 0, &SkelDeath);
 		ERRCHECK(result);
 
+		result = fsystem->createSound("Sound/°ñ·½°ø°Ý.wav", FMOD_DEFAULT, 0, &GolemAttack);
+		ERRCHECK(result);
+
+		result = fsystem->createSound("Sound/¸ó½ºÅÍ°ø°Ý.mp3", FMOD_DEFAULT, 0, &MonsterAttack);
+		ERRCHECK(result);
+
+		result = fsystem->createSound("Sound/½Â¸®.mp3", FMOD_DEFAULT, 0, &Win);
+		ERRCHECK(result);
+
+		result = fsystem->createSound("Sound/ÆÐ¹è.mp3", FMOD_DEFAULT, 0, &Defeat);
+		ERRCHECK(result);
+
+		result = fsystem->createSound("Sound/Å¸¿ö°ø°Ý.wav", FMOD_DEFAULT, 0, &TowerAttack);
+		ERRCHECK(result);
+
+		result = fsystem->createSound("Sound/³Ø¼­½ºÆÄ±«.wav", FMOD_DEFAULT, 0, &NexusDestroy);
+		ERRCHECK(result);
+
+		result = fsystem->createSound("Sound/Å¸¿öÆÄ±«.wav", FMOD_DEFAULT, 0, &TowerDestroy);
+		ERRCHECK(result);
+
 	}
 	void play(int _val)
 	{
 		fsystem->update();
 		switch(_val)
 		{
+		case SOUND_TOWER_ATTACK:
+			{
+				fsystem->playSound(FMOD_CHANNEL_FREE, TowerAttack, false, &effCh);
+				ERRCHECK(result);
+				break;
+			}
+		case SOUND_TOWER_DESTROY:
+			{
+				fsystem->playSound(FMOD_CHANNEL_FREE, TowerDestroy, false, &effCh);
+				ERRCHECK(result);
+				break;
+			}
+		case SOUND_NEXUS_DESTROY:
+			{
+				fsystem->playSound(FMOD_CHANNEL_FREE, NexusDestroy, false, &effCh);
+				ERRCHECK(result);
+				break;
+			}
+		case SOUND_GOLEM_ATTACK:
+			{
+				fsystem->playSound(FMOD_CHANNEL_FREE, GolemAttack, false, &effCh);
+				ERRCHECK(result);
+				break;
+			}
+		case SOUND_MONSTER_ATTACK:
+			{
+				fsystem->playSound(FMOD_CHANNEL_FREE, MonsterAttack, false, &effCh);
+				ERRCHECK(result);
+				break;
+			}
+		case SOUND_WIN:
+			{
+				fsystem->playSound(FMOD_CHANNEL_FREE, Win, false, &effCh);
+				ERRCHECK(result);
+				break;
+			}
+		case SOUND_DEFEAT:
+			{
+				fsystem->playSound(FMOD_CHANNEL_FREE, Defeat, false, &effCh);
+				ERRCHECK(result);
+				break;
+			}
 		case SOUND_SELECT_BGM:
 			{
 				fsystem->playSound(FMOD_CHANNEL_FREE, SelectBGM, false, &bgaCH);

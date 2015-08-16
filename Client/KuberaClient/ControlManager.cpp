@@ -118,6 +118,7 @@ void ControlManager::SetTarget(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRay
 		{
 			HeroManager::sharedManager()->m_pHero->SetTarget(MinionManager::sharedManager()->m_pMinion[i]);
 			HeroManager::sharedManager()->m_pHero->SetTargetID(MinionManager::sharedManager()->m_pMinion[i]->GetID());
+			printf("플레이어가 떄리는 %d \n", MinionManager::sharedManager()->m_pMinion[i]->GetID());
 			return;
 		}
 	}

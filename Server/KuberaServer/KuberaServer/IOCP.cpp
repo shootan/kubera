@@ -297,16 +297,16 @@ void IOCPServer::OnInit(IOBuffer* _buff)
 	IOBuffer* Buffer = m_pNextBufferList;
 	send(_buff->m_ClientSock, (char*)&_buff->m_Id, sizeof(int), 0);
 
-// 	while (Buffer != NULL)
-// 	{
-// 		if( _buff->m_Id != Buffer->m_Id)
-// 		{
-// 			int Header = CLIENT_CONNECT;
-// 			int retval = send(_buff->m_ClientSock, (char*)&Header, sizeof(int), 0);
-// 			retval = send(_buff->m_ClientSock, (char*)&Buffer->m_Id, sizeof(int), 0);
-// 		}
-// 		Buffer = Buffer->m_pNext;
-// 	}
+ 	while (Buffer != NULL)
+ 	{
+ 		if( _buff->m_Id != Buffer->m_Id)
+ 		{
+ 			int Header = CLIENT_CONNECT;
+ 			int retval = send(_buff->m_ClientSock, (char*)&Header, sizeof(int), 0);
+ 			retval = send(_buff->m_ClientSock, (char*)&Buffer->m_Id, sizeof(int), 0);
+ 		}
+ 		Buffer = Buffer->m_pNext;
+ 	}
 	this->SetOpCode(_buff, OP_RECV);
 	_buff->m_iSendbytes = 0;
 	_buff->m_iSendbytesCount = 0;
