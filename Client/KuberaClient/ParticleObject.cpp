@@ -106,7 +106,7 @@ void ParticleObject::Render(ID3D11DeviceContext *pd3dDeviceContext, CCamera *pCa
 	m_d3dxmtxWorld = mWorld;
 
 
-	if(m_iType != WIZARD_SKILL_BODY)
+	if(m_iType != WIZARD_SKILL_BODY && m_iType != BARIAN_SKILL_EFFECT)
 	{
 		D3DXVECTOR3 d3dxvRight, d3dxvUp(0.0f, 1.0f, 0.0f);
 		D3DXVECTOR3 d3dxvLook = pCamera->m_CameraPos - this->GetPosition();
@@ -148,6 +148,8 @@ void ParticleObject::Update(float fTimeElapsed)
 
 	if(m_iType == WIZARD_SKILL_BODY && m_pTarget != NULL)
 		SetPosition(m_pTarget->GetPosition());
+	else if(m_iType == BARIAN_SKILL_EFFECT)
+		SetPosition(D3DXVECTOR3(20, 10, 10));
 	else if(m_iType == WIZARD_SKILL_MISSILE && m_pAttacker != NULL)
 	{
 		m_Pos += m_vWalkIncrement * fTimeElapsed * m_fWalkSpeed;
@@ -233,7 +235,7 @@ void ParticleObject::Update(float fTimeElapsed)
 	}
 	else if(m_iType == WIZARD_ATTACK && m_pTarget != NULL && m_pAttacker != NULL)
 	{
-		SetNewDestination(m_pTarget->GetPosition() + D3DXVECTOR3(0 , m_pTarget->GetBoundSizeY()/2 * 2, 0));
+		SetNewDestination(m_pTarget->GetPosition() + D3DXVECTOR3(0 , m_pTarget->GetBoundSizeY()/2, 0));
 
 		if(m_pTarget->GetHP() <= 0.0f)
 		{

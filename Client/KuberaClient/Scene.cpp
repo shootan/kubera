@@ -123,7 +123,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	pMaterial->m_Material.m_d3dxcEmissive = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
 	
 	//히어로 생성
-	HeroManager::sharedManager()->CreateHero(LoadManager::sharedManager()->m_pVarianMesh, LoadManager::sharedManager()->m_pMageMesh, 10, 13, 10);
+	HeroManager::sharedManager()->CreateHero(LoadManager::sharedManager()->m_pVarianMesh, LoadManager::sharedManager()->m_pMageMesh, 10, 30, 10);
 	HeroManager::sharedManager()->m_pHero->SetMaterial(pMaterial);
 	if(HeroManager::sharedManager()->m_pHero->GetType() == 1)
 		HeroManager::sharedManager()->m_pHero->SetFaceType(HERO1_FACE);
@@ -165,7 +165,7 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 
 	//아더 플레이어 생성
 	OtherPlayerManager::sharedManager()->SetMesh(m_pWarriorMesh, m_pWizardMesh);
-	OtherPlayerManager::sharedManager()->CreateOtherPlayer(D3DXVECTOR3(0, 0, 0), 10, 13, 10);
+	OtherPlayerManager::sharedManager()->CreateOtherPlayer(D3DXVECTOR3(0, 0, 0), 10, 30, 10);
 	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetMaterial(pMaterial);
 
 	ST::sharedManager()->m_pOtherPlayer = OtherPlayerManager::sharedManager()->m_pOtherPlayer;
@@ -177,12 +177,12 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pAnimationShaders->AddObject(OtherPlayerManager::sharedManager()->m_pOtherPlayer);
 
 	//미니언 생성
-	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(100, 0, 0), LoadManager::sharedManager()->m_pCannonGolemMesh, 50, 10, 25);
-	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(-100, 0, 0), LoadManager::sharedManager()->m_pCannonGolemMesh, 50, 10, 25);
-	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(-400, 0, 160), LoadManager::sharedManager()->m_pCleftMesh, 50, 10, 25);
-	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(-400, 0, -160), LoadManager::sharedManager()->m_pTurtleMesh, 50, 10, 25);
-	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(400, 0, 160), LoadManager::sharedManager()->m_pCleftMesh, 50, 10, 25);
-	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(400, 0, -160), LoadManager::sharedManager()->m_pTurtleMesh, 50, 10, 25);
+	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(100, 0, 0), LoadManager::sharedManager()->m_pCannonGolemMesh, 80, 50, 50);
+	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(-100, 0, 0), LoadManager::sharedManager()->m_pCannonGolemMesh, 80, 50, 50);
+	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(-400, 0, 160), LoadManager::sharedManager()->m_pCleftMesh, 60, 30, 40);
+	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(-400, 0, -160), LoadManager::sharedManager()->m_pTurtleMesh, 50, 20, 30);
+	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(400, 0, 160), LoadManager::sharedManager()->m_pCleftMesh, 60, 30, 40);
+	MinionManager::sharedManager()->CreateMinion(D3DXVECTOR3(400, 0, -160), LoadManager::sharedManager()->m_pTurtleMesh, 50, 20, 30);
 
 	MinionManager::sharedManager()->m_pMinion[0]->SetType(CANNONGOLEM);
 	MinionManager::sharedManager()->m_pMinion[0]->SetFaceType(GOLEM_FACE);
@@ -219,6 +219,9 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	{
 		if(ParticleManager::sharedManager()->m_pParticle[i] == NULL) continue;
 		m_pParticleShaders->AddObject(ParticleManager::sharedManager()->m_pParticle[i]);
+
+		/*if(ParticleManager::sharedManager()->m_pParticle[i]->GetType() == BARIAN_SKILL_EFFECT)
+			ParticleManager::sharedManager()->m_pParticle[i]->SetUsed(TRUE);*/
 	}
 
 
@@ -826,6 +829,7 @@ void CScene::Render(ID3D11DeviceContext*pd3dDeviceContext, float fTimeElapsed, C
 		TurnOffAlphaBlending(pd3dDeviceContext, m_particleDisableBlendingState);
 	}
 	LoadManager::sharedManager()->m_pParticleMesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
+	LoadManager::sharedManager()->m_pParticleBarianSkillMesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
 	//LoadManager::sharedManager()->m_pParticle2Mesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
 	//LoadManager::sharedManager()->m_pParticleWizardSkillMesh->SetCamVec(*m_Camera->GetWorldRight(), *m_Camera->GetWorldUp());
 

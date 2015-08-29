@@ -16,6 +16,7 @@
 #include "Particle2Mesh.h"
 //#include "Particle3Mesh.h"
 #include "ParticleWizardSkillMesh.h"
+#include "ParticleBarianSkillMesh.h"
 #include "Camera.h"
 #include "MapEditorManager.h"
 
@@ -59,6 +60,7 @@ public:
 	Particle2Mesh *m_pParticle2Mesh;
 	//Particle3Mesh *m_pParticle3Mesh;
 	ParticleWizardSkillMesh *m_pParticleWizardSkillMesh;
+	ParticleBarianSkillMesh *m_pParticleBarianSkillMesh;
 
 	CGameObject *m_pPlane;
 
@@ -189,7 +191,7 @@ public:
 		m_pCleftMesh->OnCreateDevice(pd3dDevice);
 		for(int i=0; i<m_pCleftMesh->GetSubsetCount(); i++)
 		{
-			m_pCleftMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(80, 40, 25));
+			m_pCleftMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(60, 30, 40));
 			m_pCleftMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Monster/cleft/cleft.tif");
 		}
 		printf("Success Load \n");
@@ -206,7 +208,7 @@ public:
 		m_pTurtleMesh->OnCreateDevice(pd3dDevice);
 		for(int i=0; i<m_pTurtleMesh->GetSubsetCount(); i++)
 		{
-			m_pTurtleMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(50, 20, 25));
+			m_pTurtleMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(50, 20, 30));
 			m_pTurtleMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Monster/turtle/turtle.tif");
 		}
 		printf("Success Load \n");
@@ -216,14 +218,14 @@ public:
 	{
 		printf("Load CannonGolemModel \n");
 
-		//°ÅºÏÀÌ ¸Þ½¬
+		//°ñ·½ ¸Þ½¬
 		m_pCannonGolemMesh = new GFBX::Mesh();
 		GFBXMeshLoader::getInstance()->OnCreateDevice(pd3dDevice);
 		GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pCannonGolemMesh, L"Monster/cannongolem/cannongolem2.FBX", pd3dDevice);
 		m_pCannonGolemMesh->OnCreateDevice(pd3dDevice);
 		for(int i=0; i<m_pCannonGolemMesh->GetSubsetCount(); i++)
 		{
-			m_pCannonGolemMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(100, 100, 25));
+			m_pCannonGolemMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(80, 50, 50));
 			m_pCannonGolemMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Monster/cannongolem/cannongolem.tif");
 		}
 		printf("Success Load \n");
@@ -240,7 +242,7 @@ public:
 		m_pMageMesh->OnCreateDevice(pd3dDevice);
 		for(int i=0; i<m_pMageMesh->GetSubsetCount(); i++)
 		{
-			m_pMageMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(10, 20, 10));
+			m_pMageMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(10, 30, 10));
 			m_pMageMesh->GetSubset(i)->LoadTexture(pd3dDevice, L"Hero/mage/mage.tif");
 		}
 		printf("Success Load \n");
@@ -256,7 +258,7 @@ public:
 		GFBXMeshLoader::getInstance()->LoadFBXMesh(m_pVarianMesh, L"Hero/varian/varian.FBX", pd3dDevice);
 		m_pVarianMesh->OnCreateDevice(pd3dDevice);
 		for(int i=0; i<m_pVarianMesh->GetSubsetCount(); i++)
-			m_pVarianMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(10, 20, 10));
+			m_pVarianMesh->GetSubset(i)->SetBoundingCube(D3DXVECTOR3(10, 30, 10));
 
 		m_pVarianMesh->GetSubset(0)->LoadTexture(pd3dDevice, L"Hero/varian/varian01.tif");
 		m_pVarianMesh->GetSubset(1)->LoadTexture(pd3dDevice, L"Hero/varian/varian02.tif");
@@ -347,15 +349,18 @@ public:
 		m_pParticleMesh->Initialize(pd3dDevice, L"effect/star.dds");
 		printf(".");
 		m_pParticle2Mesh = new Particle2Mesh(pd3dDevice);
-		m_pParticle2Mesh->Initialize(pd3dDevice, L"effect/star.dds");
+		m_pParticle2Mesh->Initialize(pd3dDevice, L"effect/redstar.png");
 
 
 		//m_pParticle3Mesh = new Particle3Mesh(pd3dDevice);
 		//m_pParticle3Mesh->Initialize(pd3dDevice, L"effect/rocketlauncher_fx-2.tif");
 		printf(".");
 		m_pParticleWizardSkillMesh = new ParticleWizardSkillMesh(pd3dDevice);
-		m_pParticleWizardSkillMesh->Initialize(pd3dDevice, L"effect/rocketlauncher_fx-2.tif");
+		m_pParticleWizardSkillMesh->Initialize(pd3dDevice, L"effect/yellowboom.png");
 		printf(".");
+
+		m_pParticleBarianSkillMesh = new ParticleBarianSkillMesh(pd3dDevice);
+		m_pParticleBarianSkillMesh->Initialize(pd3dDevice, L"effect/yellowboom.png");
 
 		//ÆÄÆ¼Å¬ »ý¼º
 		for(int i=0; i<4; i++)
@@ -364,6 +369,8 @@ public:
 			ParticleManager::sharedManager()->CreateParticle(D3DXVECTOR3(0, 10, -2000), m_pParticle2Mesh, WIZARD_ATTACK);
 		for(int i=0; i<10; i++)
 			ParticleManager::sharedManager()->CreateParticle(D3DXVECTOR3(0, 10, -2000), m_pParticleWizardSkillMesh, WIZARD_SKILL_MISSILE);
+		for(int i=0; i<3; i++)
+			ParticleManager::sharedManager()->CreateParticle(D3DXVECTOR3(0, 10, -2000), m_pParticleBarianSkillMesh, BARIAN_SKILL_EFFECT);
 
 		
 	}

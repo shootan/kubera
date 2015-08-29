@@ -39,7 +39,7 @@ HeroObject::HeroObject(void)
 	m_HP = 100.0f;				//hp 100
 	m_PrevHP = m_HP;
 	m_Defense = 3;			//방어력 3
-	m_fWalkSpeed = 30.0f;	//스피드 15
+	m_fWalkSpeed = 50.0f;	//스피드 15
 	m_Damage = 10.0f;		//데미지 10
 	m_SkillDamage = 20 + m_Damage;		//스킬데미지 20
 	m_Exp = 10;				//필요 경험치 10
@@ -299,7 +299,7 @@ void HeroObject::Update(float fTimeElapsed)
 
 void HeroObject::Animate(float fTimeElapsed)
 {
-	m_time += fTimeElapsed * 1.5f;
+	m_time += fTimeElapsed * 2.0f;
 
 	if(m_iState != m_iPrevState)
 	{
@@ -325,7 +325,7 @@ void HeroObject::Animate(float fTimeElapsed)
 	}
 	else if(m_iState == ATTACK)
 	{
-		if(m_pTarget->GetState() == DEATH) //상대가 죽었을시 공격 안하게 설정
+		if(!m_pTarget || m_pTarget->GetState() == DEATH) //상대가 죽었을시 공격 안하게 설정
 		{
 			m_iState = IDLE;
 			m_time = 0.f;
@@ -403,14 +403,13 @@ void HeroObject::Animate(float fTimeElapsed)
 			break;
 		}
 
-		if(m_pTarget->GetHP() < 1 || ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) > 50.0f)
+		if(m_pTarget->GetHP() < 0 || ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) > 50.0f)
 		{
 			m_pTarget = NULL;
 			m_fAttackTime = 0.0f;
 			m_iState = IDLE;
 			return;
 		}
-		//m_fAttackTime += fTimeElapsed;
 	}
 	else if(m_iState == MOVE)
 	{
@@ -427,6 +426,9 @@ void HeroObject::Animate(float fTimeElapsed)
 		switch(m_iType)
 		{
 		case KNIGHT:
+			m_bWarriorAttack = TRUE;
+			m_bWarriorSkill = TRUE;
+
 			if(m_pTarget != NULL &&	m_pTarget->GetTeam() != this->GetTeam())
 			{
 				if(m_pTarget->GetFaceType() == GOLEM_FACE || m_pTarget->GetFaceType() == TURTLE_FACE || m_pTarget->GetFaceType() == CLEFT_FACE)
@@ -442,9 +444,6 @@ void HeroObject::Animate(float fTimeElapsed)
 				else
 					if(ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 25.f)
 						m_iState = ATTACK;
-
-				m_bWarriorAttack = TRUE;
-				m_bWarriorSkill = TRUE;
 			}
 
 			if(m_time < 0.1f)
@@ -463,13 +462,13 @@ void HeroObject::Animate(float fTimeElapsed)
 			}
 			break;
 		case WIZARD:
+			m_bUseParticleAttack = FALSE;
+			m_bUseParticleMissile = FALSE;
+
 			if(m_pTarget != NULL && 
 				ST::sharedManager()->GetDistance(this->GetPos(), m_pTarget->GetPos()) < 50.f && 
 				m_pTarget->GetTeam() != this->GetTeam())
 				m_iState = ATTACK;
-
-			m_bUseParticleAttack = FALSE;
-			m_bUseParticleMissile = FALSE;
 
 			if(m_time < 0.1f)
 			{
@@ -486,7 +485,6 @@ void HeroObject::Animate(float fTimeElapsed)
 			}
 			break;
 		}
-		m_fAttackTime = 0.f;
 	}
 	else if(m_iState == DEATH)
 	{
@@ -575,21 +573,21 @@ void HeroObject::Animate(float fTimeElapsed)
 				}
 			}
 			if(m_time > 37.0f) m_time = 34.3f;
-			if(m_time > 36.9f && m_time < 37.0f)
-				//if(m_time < 50.8f) m_time = 50.8f;
-				//if(m_time > 54.3f) m_time = 50.8f;
-				//if(m_time > 54.2f && m_time < 54.3f)
+			if(m_time > 36.9f && m_time < 37.0f) //스킬 끝날시간
 			{
+				if(m_pTarget) m_iState = ATTACK;
+				else m_iState = IDLE;
+
 				m_time = 1.1f;
-				m_iState = IDLE;
+				m_bWarriorAttack = TRUE;
 				m_bWarriorSkill = TRUE;
 				m_bSoundLimit = FALSE;
 			}
-			if(m_time > 35.7f && m_time < 36.6f  && m_bWarriorSkill)
+			if(m_time > 35.7f && m_time < 36.6f  && m_bWarriorSkill) //데미지 입히는 시간
 			{
 				if(m_pTarget && m_pTarget->GetState() != DEATH)
 				{
-					if(ST::sharedManager()->GetDistance(this->GetPosition(), m_pTarget->GetPosition()) < 40.f)
+					if(ST::sharedManager()->GetDistance(this->GetPosition(), m_pTarget->GetPosition()) < 50.f)
 					{
 						//m_pTarget->SetAttackDamage(this->m_SkillDamage - m_pTarget->GetDefense());
 						m_pTarget->SetAttacker(this);
@@ -699,7 +697,7 @@ void HeroObject::DamageUp(float _damage)
 }
 void HeroObject::SpeedUp(float _speed)
 {
-	m_fWalkSpeed = _speed * 3 + 27;  //초기 15 부터 3씩증가
+	m_fWalkSpeed = _speed * 3 + 47;  //초기 15 부터 3씩증가
 }
 void HeroObject::DefenseUp(float _defense)
 {

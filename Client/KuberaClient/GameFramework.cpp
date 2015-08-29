@@ -51,7 +51,7 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
 	//Direct3D 디바이스, 디바이스 컨텍스트, 스왑 체인 등을 생성하는 함수를 호출한다. 
 	if (!CreateDirect3DDisplay()) return(false); 
 
-	char IP[30];
+	/*char IP[30];
 	printf("IP : ");
 	scanf("%s", IP);
 	Net.InitClient(IP, 9000);
@@ -60,13 +60,16 @@ bool CGameFramework::OnCreate(HINSTANCE hInstance, HWND hMainWnd)
   	while (!Net.m_InitFinish)
   	{
   		Sleep(100);
-  	}
+  	}*/
+
 	MapEditorManager::sharedManager()->LoadMapData();
 	printf("Server Connect \n");
 
 	//렌더링할 객체(게임 월드 객체)를 생성한다. 
 
-	HeroManager::sharedManager()->SetID(Net.m_ID);
+	//HeroManager::sharedManager()->SetID(Net.m_ID);
+	HeroManager::sharedManager()->SetID(1);
+	HeroManager::sharedManager()->SetTeam(1);
 
 	printf("SetData \n");
 	
@@ -350,7 +353,8 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 			//ST::sharedManager()->m_bSelected = TRUE;
 			if(LoadManager::sharedManager()->LoadFinish && ST::sharedManager()->m_bStart == FALSE)
 			{
-				ST::sharedManager()->Net->SendHeader(READY_GAME);
+				ST::sharedManager()->m_bSelected = TRUE;
+				//ST::sharedManager()->Net->SendHeader(READY_GAME);
 			}
 			if(HeroManager::sharedManager()->m_pHero != NULL && ST::sharedManager()->m_bStart == TRUE)
 			{
@@ -385,7 +389,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 				SoundManager::sharedManager()->stop(2);
 				SoundManager::sharedManager()->play(SOUND_WARR_SELECT);
 				int Cha = 1;
-				ST::sharedManager()->Net->SendData(SELECT_CHAR_WARIOR, &Cha, sizeof(int));
+				//ST::sharedManager()->Net->SendData(SELECT_CHAR_WARIOR, &Cha, sizeof(int));
 				HeroManager::sharedManager()->SetType(Cha);
 			}
 			break;
@@ -396,7 +400,7 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 				SoundManager::sharedManager()->stop(2);
 				SoundManager::sharedManager()->play(SOUND_SKEL_SELECT);
 				int Cha = 2;
-				ST::sharedManager()->Net->SendData(SELECT_CHAR_WIZARD, &Cha, sizeof(int));
+				//ST::sharedManager()->Net->SendData(SELECT_CHAR_WIZARD, &Cha, sizeof(int));
 				HeroManager::sharedManager()->SetType(Cha);
 			}
 			break;

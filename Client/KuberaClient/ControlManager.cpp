@@ -126,7 +126,7 @@ void ControlManager::SetTarget(const D3DXVECTOR3 vRayDirection, D3DXVECTOR3 vRay
 	//다른 플레이어 타겟 잡기
 	
 	float dist = INTersectRaySphere(vRayDirection, vRayOrigin, OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetPosition(), 
-		OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetBoundSizeX()*2);
+		OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetBoundSizeX()*10);
 
 	if( dist > 0 )
 	{

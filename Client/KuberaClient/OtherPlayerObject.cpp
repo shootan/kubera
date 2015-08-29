@@ -200,7 +200,7 @@ void OtherPlayerObject::Update(float fTimeElapsed)
 
 void OtherPlayerObject::Animate(float fTimeElapsed)
 {
-	m_Time += fTimeElapsed*1.5f;
+	m_Time += fTimeElapsed*2.0f;
 
 	switch(m_iState)
 	{
