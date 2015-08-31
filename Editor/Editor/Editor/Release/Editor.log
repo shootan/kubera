@@ -1,0 +1,36 @@
+﻿빌드 시작: 2015-08-10 오전 10:17:32
+     1>2 노드의 "C:\Users\Cho\Desktop\졸업작품\kubera\Editor\Editor\Editor\Editor.vcxproj" 프로젝트(build 대상)입니다.
+     1>PrepareForBuild:
+         "C:\Users\Cho\Desktop\졸업작품\kubera\Editor\Editor\Release\" 디렉터리를 만들고 있습니다.
+       InitializeBuildStatus:
+         "AlwaysCreate"이(가) 지정되었기 때문에 "Release\Editor.unsuccessfulbuild"을(를) 만들고 있습니다.
+       ClCompile:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D _WINDOWS /D NDEBUG /D _UNICODE /D UNICODE /D _AFXDLL /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Yc"StdAfx.h" /Fp"Release\Editor.pch" /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
+         stdafx.cpp
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D _WINDOWS /D NDEBUG /D _UNICODE /D UNICODE /D _AFXDLL /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Release\Editor.pch" /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt CBufferDC.cpp Editor.cpp EditorDlg.cpp ZDIB.cpp
+         CBufferDC.cpp
+         Editor.cpp
+         EditorDlg.cpp
+         ZDIB.cpp
+       ResourceCompile:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\rc.exe /D NDEBUG /D _UNICODE /D UNICODE /D _AFXDLL /l"0x0412" /IRelease\ /nologo /fo"Release\Editor.res" Editor.rc 
+       Link:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Cho\Desktop\졸업작품\kubera\Editor\Editor\Release\Editor.exe" /INCREMENTAL:NO /NOLOGO /MANIFEST /ManifestFile:"Release\Editor.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\Cho\Desktop\졸업작품\kubera\Editor\Editor\Release\Editor.pdb" /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF /LTCG /TLBID:1 /ENTRY:"wWinMainCRTStartup" /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Cho\Desktop\졸업작품\kubera\Editor\Editor\Release\Editor.lib" /MACHINE:X86 Release\Editor.res
+         Release\CBufferDC.obj
+         Release\Editor.obj
+         Release\EditorDlg.obj
+         Release\stdafx.obj
+         Release\ZDIB.obj
+         코드를 생성하고 있습니다.
+         코드를 생성했습니다.
+         Editor.vcxproj -> C:\Users\Cho\Desktop\졸업작품\kubera\Editor\Editor\Release\Editor.exe
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\Users\Cho\Desktop\졸업작품\kubera\Editor\Editor\Release\Editor.exe;#1" /manifest Release\Editor.exe.intermediate.manifest "c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\Include\Manifest\dpiaware.manifest"
+       FinalizeBuildStatus:
+         "Release\Editor.unsuccessfulbuild" 파일을 삭제하고 있습니다.
+         "Release\Editor.lastbuildstate"에 연결(touching)하고 있습니다.
+     1>"C:\Users\Cho\Desktop\졸업작품\kubera\Editor\Editor\Editor\Editor.vcxproj" 프로젝트를 빌드했습니다(build 대상).
+
+빌드했습니다.
+
+경과 시간: 00:00:06.56

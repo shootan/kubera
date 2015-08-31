@@ -130,6 +130,8 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	else if(HeroManager::sharedManager()->m_pHero->GetType() == 2)
 		HeroManager::sharedManager()->m_pHero->SetFaceType(HERO2_FACE);
 
+	ST::sharedManager()->m_pHero = HeroManager::sharedManager()->m_pHero;
+
 	//¹Ù´Ú »ý¼º
 	m_pPlane = new CGameObject();
 	m_pPlane->SetMesh(LoadManager::sharedManager()->pPlaneMesh);
@@ -142,6 +144,9 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	m_pDestroyNexus = LoadManager::sharedManager()->m_pDestroyNexus;
 
 	HeroManager::sharedManager()->SetNexus(m_pRedNexus, m_pBlueNexus);
+
+	ST::sharedManager()->m_pRedNexus = m_pRedNexus;
+	ST::sharedManager()->m_pBlueNexus = m_pBlueNexus;
 
 	//pFBXMesh->Release();
 
@@ -163,6 +168,8 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 	OtherPlayerManager::sharedManager()->CreateOtherPlayer(D3DXVECTOR3(0, 0, 0), 10, 13, 10);
 	OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetMaterial(pMaterial);
 
+	ST::sharedManager()->m_pOtherPlayer = OtherPlayerManager::sharedManager()->m_pOtherPlayer;
+
 	if(OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetType() == 1)
 		OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetFaceType(HERO1_FACE);
 	else if(OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetType() == 2)
@@ -179,16 +186,22 @@ void CScene::BuildObjects(ID3D11Device *pd3dDevice)
 
 	MinionManager::sharedManager()->m_pMinion[0]->SetType(CANNONGOLEM);
 	MinionManager::sharedManager()->m_pMinion[0]->SetFaceType(GOLEM_FACE);
+	ST::sharedManager()->m_pMinionObject[0] = MinionManager::sharedManager()->m_pMinion[0];
 	MinionManager::sharedManager()->m_pMinion[1]->SetType(CANNONGOLEM);
 	MinionManager::sharedManager()->m_pMinion[1]->SetFaceType(GOLEM_FACE);
+	ST::sharedManager()->m_pMinionObject[1] = MinionManager::sharedManager()->m_pMinion[1];
 	MinionManager::sharedManager()->m_pMinion[2]->SetType(CLEFT);
 	MinionManager::sharedManager()->m_pMinion[2]->SetFaceType(CLEFT_FACE);
+	ST::sharedManager()->m_pMinionObject[2] = MinionManager::sharedManager()->m_pMinion[2];
 	MinionManager::sharedManager()->m_pMinion[3]->SetType(TURTLE);
 	MinionManager::sharedManager()->m_pMinion[3]->SetFaceType(TURTLE_FACE);
+	ST::sharedManager()->m_pMinionObject[3] = MinionManager::sharedManager()->m_pMinion[3];
 	MinionManager::sharedManager()->m_pMinion[4]->SetType(CLEFT);
 	MinionManager::sharedManager()->m_pMinion[4]->SetFaceType(CLEFT_FACE);
+	ST::sharedManager()->m_pMinionObject[4] = MinionManager::sharedManager()->m_pMinion[4];
 	MinionManager::sharedManager()->m_pMinion[5]->SetType(TURTLE);
 	MinionManager::sharedManager()->m_pMinion[5]->SetFaceType(TURTLE_FACE);
+	ST::sharedManager()->m_pMinionObject[5] = MinionManager::sharedManager()->m_pMinion[5];
 	for(int i=0; i< MAX_MINION; i++)
 	{
 		if(MinionManager::sharedManager()->m_pMinion[i] == NULL) continue;
@@ -462,6 +475,10 @@ bool CScene::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wPar
 		{
 		case 'Q':
 			HeroManager::sharedManager()->m_pHero->SetState(SKILL1);
+			break;
+		case 'P':
+			HeroManager::sharedManager()->m_pHero->SetDamage(100.0f);
+			HeroManager::sharedManager()->m_pHero->SetDefense(100.0f);
 			break;
 		case '1':
 			if(HeroManager::sharedManager()->m_pHero->GetUpgradePossible() == TRUE)

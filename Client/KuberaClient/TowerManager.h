@@ -45,6 +45,7 @@ public:
 			//m_pTower[i]->SetP(pos.x, pos.y, pos.z);
 			m_pTower[i]->SetBoundSize(boundx, boundy, boundz);
 			m_pTower[i]->SetFaceType(TOWER_FACE);
+			ST::sharedManager()->m_pTowerObject[i] = m_pTower[i];
 			break;
 		}
 	}

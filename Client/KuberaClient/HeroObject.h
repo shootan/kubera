@@ -3,7 +3,6 @@
 #include "astarclass.h"
 #include "ST.h"
 
-
 class HeroObject : public CGameObject
 {
 private:

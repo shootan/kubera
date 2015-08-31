@@ -121,6 +121,14 @@ UINT WINAPI Network::WorkerThread(LPVOID arg)
 			OtherPlayerManager::sharedManager()->SetId(_id);
 			printf("상대 아이디 : %d \n ", _id);
 			break;
+
+		case ATTACK_INFO:
+			{
+				AttackInfo ati;
+				retval = recv(server->m_ConnectSock, (char*)&ati, sizeof(AttackInfo), 0);
+				ST::sharedManager()->SetAttack(ati);
+				break;
+			}
 		case INITCLIENT:
 			{
 

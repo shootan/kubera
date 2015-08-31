@@ -158,8 +158,15 @@ void ParticleObject::Update(float fTimeElapsed)
 
 			if (ST::sharedManager()->GetDistance(this->GetPosition(), MinionManager::sharedManager()->m_pMinion[i]->GetPosition() + D3DXVECTOR3(0, 10, 0)) <= 10.f)
 			{
-				MinionManager::sharedManager()->m_pMinion[i]->SetAttackDamage(m_pAttacker->GetSkillDamage() - MinionManager::sharedManager()->m_pMinion[i]->GetDefense());
-
+				//MinionManager::sharedManager()->m_pMinion[i]->SetAttackDamage(m_pAttacker->GetSkillDamage() - MinionManager::sharedManager()->m_pMinion[i]->GetDefense());
+				if(m_pAttacker != ST::sharedManager()->m_pOtherPlayer)
+				{
+					AttackInfo ATI;
+					ATI.m_ID = MinionManager::sharedManager()->m_pMinion[i]->GetID();
+					ATI.m_Damage = m_pAttacker->GetSkillDamage() - MinionManager::sharedManager()->m_pMinion[i]->GetDefense();
+					ST::sharedManager()->Net->SendData(ATTACK_INFO, &ATI, sizeof(AttackInfo));
+				}
+				
 				MinionManager::sharedManager()->m_pMinion[i]->SetAttacker(m_pAttacker);
 				m_pTarget = NULL;
 				m_pAttacker = NULL;
@@ -170,7 +177,14 @@ void ParticleObject::Update(float fTimeElapsed)
 
 			if(ST::sharedManager()->GetDistance(this->GetPosition(), OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetPosition() + D3DXVECTOR3(0, 10, 0)) <= 10.f)
 			{
-				OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetAttackDamage(m_pAttacker->GetSkillDamage() - OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetDefense());
+				//OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetAttackDamage(m_pAttacker->GetSkillDamage() - OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetDefense());
+				if(m_pAttacker != ST::sharedManager()->m_pOtherPlayer)
+				{
+					AttackInfo ATI;
+					ATI.m_ID = OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetID();
+					ATI.m_Damage = m_pAttacker->GetSkillDamage() - OtherPlayerManager::sharedManager()->m_pOtherPlayer->GetDefense();
+					ST::sharedManager()->Net->SendData(ATTACK_INFO, &ATI, sizeof(AttackInfo));
+				}
 
 				OtherPlayerManager::sharedManager()->m_pOtherPlayer->SetAttacker(m_pAttacker);
 				m_pTarget = NULL;
@@ -191,7 +205,14 @@ void ParticleObject::Update(float fTimeElapsed)
 
 			if(ST::sharedManager()->GetDistance(this->GetPosition(), HeroManager::sharedManager()->m_pHero->GetPosition() + D3DXVECTOR3(0, 10, 0)) <= 10.f)
 			{
-				HeroManager::sharedManager()->m_pHero->SetAttackDamage(m_pAttacker->GetSkillDamage() - HeroManager::sharedManager()->m_pHero->GetDefense());
+				//HeroManager::sharedManager()->m_pHero->SetAttackDamage(m_pAttacker->GetSkillDamage() - HeroManager::sharedManager()->m_pHero->GetDefense());
+				if(m_pAttacker != ST::sharedManager()->m_pOtherPlayer)
+				{
+					AttackInfo ATI;
+					ATI.m_ID = HeroManager::sharedManager()->m_pHero->GetID();
+					ATI.m_Damage = m_pAttacker->GetSkillDamage() - HeroManager::sharedManager()->m_pHero->GetDefense();
+					ST::sharedManager()->Net->SendData(ATTACK_INFO, &ATI, sizeof(AttackInfo));
+				}
 
 				HeroManager::sharedManager()->m_pHero->SetAttacker(m_pAttacker);
 				m_pTarget = NULL;
@@ -233,7 +254,14 @@ void ParticleObject::Update(float fTimeElapsed)
 
 		if ( finished < 1.0f ) 
 		{
-			m_pTarget->SetAttackDamage(m_pAttacker->GetDamage() - m_pTarget->GetDefense());
+			//m_pTarget->SetAttackDamage(m_pAttacker->GetDamage() - m_pTarget->GetDefense());
+			if(m_pAttacker != ST::sharedManager()->m_pOtherPlayer)
+			{
+				AttackInfo ATI;
+				ATI.m_ID = m_pTarget->GetID();
+				ATI.m_Damage = m_pAttacker->GetDamage() - m_pTarget->GetDefense();
+				ST::sharedManager()->Net->SendData(ATTACK_INFO, &ATI, sizeof(AttackInfo));
+			}
 			m_pTarget->SetAttacker(m_pAttacker);
 			m_Pos = D3DXVECTOR3(0, 0 ,-2000);
 			m_bUsed = FALSE;

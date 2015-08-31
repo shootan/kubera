@@ -359,7 +359,7 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 				{
 					if(ST::sharedManager()->GetDistance(this->GetPosition(), m_pTarget->GetPosition()) < 40.f)
 					{
-						m_pTarget->SetAttackDamage(this->m_SkillDamage - m_pTarget->GetDefense());
+						//m_pTarget->SetAttackDamage(this->m_SkillDamage - m_pTarget->GetDefense());
 						m_pTarget->SetAttacker(this);
 					}
 				}

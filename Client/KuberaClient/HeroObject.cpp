@@ -353,9 +353,12 @@ void HeroObject::Animate(float fTimeElapsed)
 			}
 			if(m_time > 28.0f && m_bWarriorAttack)
 			{
-				m_pTarget->SetAttackDamage(this->m_Damage - m_pTarget->GetDefense());
+				//m_pTarget->SetAttackDamage(this->m_Damage - m_pTarget->GetDefense());
 				m_pTarget->SetAttacker(this);
-
+				AttackInfo ATI;
+				ATI.m_ID = m_pTarget->GetID();
+				ATI.m_Damage = this->m_Damage - m_pTarget->GetDefense();
+				ST::sharedManager()->Net->SendData(ATTACK_INFO, &ATI, sizeof(AttackInfo));
 				m_bWarriorAttack = FALSE;
 				
 
@@ -588,8 +591,14 @@ void HeroObject::Animate(float fTimeElapsed)
 				{
 					if(ST::sharedManager()->GetDistance(this->GetPosition(), m_pTarget->GetPosition()) < 40.f)
 					{
-						m_pTarget->SetAttackDamage(this->m_SkillDamage - m_pTarget->GetDefense());
+						//m_pTarget->SetAttackDamage(this->m_SkillDamage - m_pTarget->GetDefense());
 						m_pTarget->SetAttacker(this);
+						AttackInfo ATI;
+						ATI.m_ID = m_pTarget->GetID();
+						ATI.m_Damage = this->m_SkillDamage - m_pTarget->GetDefense();
+						ST::sharedManager()->Net->SendData(ATTACK_INFO, &ATI, sizeof(AttackInfo));
+
+						//ST::sharedManager()->Net->SendData()
 					}
 				}
 				m_bWarriorSkill = FALSE;

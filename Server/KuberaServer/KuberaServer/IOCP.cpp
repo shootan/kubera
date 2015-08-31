@@ -482,6 +482,10 @@ void IOCPServer::OnRecvFinish(IOBuffer* _buff, DWORD _size)
 		printf("게임 준비 \n");
 
 		break;
+	case ATTACK_INFO:
+		printf("타격 \n");
+		_buff->m_Header = Header;
+		break;
 	}
 	
 	
@@ -580,8 +584,8 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 
 	case READY_GAME:
 
- 		if(m_iClientCount > 1)
- 		{
+  		if(m_iClientCount > 1)
+  		{
 			Buffer = m_pNextBufferList;
 			while (Buffer != NULL)
 			{
@@ -594,6 +598,24 @@ void IOCPServer::OnSend(IOBuffer* _buff, DWORD _size)
 			}
 		}
 		break;
+
+	case ATTACK_INFO:
+		Buffer = m_pNextBufferList;
+		while (Buffer != NULL)
+		{
+			AttackInfo ATI;
+			memcpy(&ATI, _buff->m_RecvBuf+ HEADERSIZE, sizeof(AttackInfo));
+
+			int Size = HEADERSIZE + sizeof(AttackInfo);
+			char* buff = new char[Size];
+			*(int*)buff = ATTACK_INFO;
+			memcpy(buff+HEADERSIZE, &ATI, sizeof(AttackInfo));
+			int retval = send(Buffer->m_ClientSock, buff, Size, 0);
+
+			//int retval = send(Buffer->m_ClientSock, (char*)&ATI, sizeof(AttackInfo), 0);
+
+			Buffer = Buffer->m_pNext;
+		}
 	}
 
 	this->SetOpCode(_buff, OP_RECV);
