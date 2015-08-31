@@ -36,7 +36,7 @@ public:
 	virtual void SetNewDestination ( D3DXVECTOR3 _pos );
 	virtual void Update(float fTimeElapsed);
 	bool InMotion();
-	void SetLevel(int _level){m_Level = _level;}
+	void SetLevel(int _level) { m_Level = _level; }
 
 	int GetDeathCount() {return m_nDeathCount;}
 };

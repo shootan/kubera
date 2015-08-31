@@ -39,8 +39,8 @@ public:
 	{
 		m_pOtherPlayer = new OtherPlayerObject();
 		m_pOtherPlayer->SetTeam(m_Id);
-		m_pOtherPlayer->SetID(m_Id);
 		m_pOtherPlayer->SetType(m_Type);
+		m_pOtherPlayer->SetID(m_Id);
 		if(m_Type == 1 )
 		{
 			m_pOtherPlayer->SetMesh(m_pWarriorMesh);
