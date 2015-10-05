@@ -292,7 +292,7 @@ void OtherPlayerObject::Animate(float fTimeElapsed)
 			}
 			if(m_Time > 28.0f && m_bWarriorAttack)
 			{
-				m_pTarget->SetAttackDamage(this->m_Damage - m_pTarget->GetDefense());
+				//m_pTarget->SetAttackDamage(this->m_Damage - m_pTarget->GetDefense());
 				m_pTarget->SetAttacker(this);
 
 				m_bWarriorAttack = FALSE;
